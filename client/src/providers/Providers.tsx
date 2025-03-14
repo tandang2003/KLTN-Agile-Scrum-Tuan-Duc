@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
 const Providers = ({ children }: { children: ReactNode }) => {
-  return <div>{children}</div>
+  return <>{children}</>
 }
 
 export default Providers
