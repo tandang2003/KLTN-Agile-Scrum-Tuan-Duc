@@ -4,7 +4,7 @@ import ProjectCards from '@/pages/manager/ProjectCards'
 const ProjectManagerPage = () => {
   return (
     <section>
-      <Tabs defaultValue='tasks' className='w-full mx-2 mt-2'>
+      <Tabs defaultValue='cards' className='w-full mx-2 mt-2'>
         <TabsList className='flex gap-4 rounded-xs '>
           <TabsTrigger value='overview' className='py-2 px-4 rounded-xs text-md'>
             Overview
