@@ -1,6 +1,10 @@
 package com.kltn.server.model.base;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -11,20 +15,20 @@ public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     protected String id;
-//    @Column(name = "dt_created")
-//    protected Instant DTCreate;
-//    @Column(name = "dt_end")
-//    protected Instant DTEnd;
+    @CreatedDate
     @Column(name = "dt_created")
     protected Instant DTCreated;
+    @LastModifiedDate
     @Column(name = "dt_modified")
     protected Instant DTModified;
     @Column(name = "dt_deleted")
     protected Instant DTDeleted;
     @Column(name = "is_deleted")
     protected boolean deleted;
+    @CreatedBy
     @Column(name = "create_by")
     protected String createdBy;
+    @LastModifiedBy
     @Column(name = "modified_by")
     protected String modifiedBy;
     @Column(name = "deleted_by")
@@ -36,15 +40,15 @@ public abstract class BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof BaseEntity that)) return false;
-        return deleted == that.deleted && Objects.equals(id, that.id)  && Objects.equals(DTCreated, that.DTCreated) && Objects.equals(DTModified, that.DTModified) && Objects.equals(DTDeleted, that.DTDeleted) && Objects.equals(createdBy, that.createdBy) && Objects.equals(modifiedBy, that.modifiedBy) && Objects.equals(deletedBy, that.deletedBy);
+        return deleted == that.deleted && Objects.equals(id, that.id) && Objects.equals(DTCreated, that.DTCreated) && Objects.equals(DTModified, that.DTModified) && Objects.equals(DTDeleted, that.DTDeleted) && Objects.equals(createdBy, that.createdBy) && Objects.equals(modifiedBy, that.modifiedBy) && Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,  DTCreated, DTModified, DTDeleted, deleted, createdBy, modifiedBy, deletedBy);
+        return Objects.hash(id, DTCreated, DTModified, DTDeleted, deleted, createdBy, modifiedBy, deletedBy);
     }
 
-    protected BaseEntity(BaseBuilder<?, ?> builder) {
+    protected BaseEntity(BaseEntityBuilder<?, ?> builder) {
         this.id = builder.id;
         this.DTCreated = builder.DTCreated;
         this.DTModified = builder.DTModified;
@@ -120,7 +124,7 @@ public abstract class BaseEntity {
         this.deletedBy = deletedBy;
     }
 
-    protected abstract static class BaseBuilder<T, R extends BaseBuilder<T, R>> {
+    public abstract static class BaseEntityBuilder<T, R extends BaseEntityBuilder<T, R>> {
         protected String id;
         protected Instant DTStart;
         protected Instant DTEnd;
@@ -132,7 +136,7 @@ public abstract class BaseEntity {
         protected String modifiedBy;
         protected String deletedBy;
 
-        protected BaseBuilder() {
+        protected BaseEntityBuilder() {
         }
 
         public R id(String id) {

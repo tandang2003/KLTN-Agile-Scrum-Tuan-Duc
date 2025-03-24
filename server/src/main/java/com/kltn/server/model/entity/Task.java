@@ -7,7 +7,6 @@ import com.kltn.server.model.type.task.TaskTag;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,7 +49,7 @@ public class Task extends BaseEntity {
     @Column(name = "dt_planning")
     private Instant DTPlanning;
 
-    public Task(TaskBuilder builder) {
+    public Task(TaskEntityBuilder builder) {
         super(builder);
         this.title = builder.title;
         this.type = builder.type;
@@ -70,7 +69,10 @@ public class Task extends BaseEntity {
         this.resources = builder.resources;
     }
 
-    public static class TaskBuilder extends BaseBuilder<Task, TaskBuilder> {
+    public Task() {
+    }
+
+    public static class TaskEntityBuilder extends BaseEntityBuilder<Task, TaskEntityBuilder> {
         private List<Resource> resources;
         private String title;
         private TaskStatus type;
@@ -89,88 +91,88 @@ public class Task extends BaseEntity {
         private Instant DTEnd;
         private Instant DTPlanning;
 
-        public TaskBuilder title(String title) {
+        public TaskEntityBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public TaskBuilder type(TaskStatus type) {
+        public TaskEntityBuilder type(TaskStatus type) {
             this.type = type;
             return this;
         }
 
-        public TaskBuilder storyPoint(int storyPoint) {
+        public TaskEntityBuilder storyPoint(int storyPoint) {
             this.storyPoint = storyPoint;
             return this;
         }
 
-        public TaskBuilder resource(List<Resource> resources) {
+        public TaskEntityBuilder resource(List<Resource> resources) {
             this.resources = resources;
             return this;
         }
 
-        public TaskBuilder priority(TaskPriority priority) {
+        public TaskEntityBuilder priority(TaskPriority priority) {
             this.priority = priority;
             return this;
         }
 
-        public TaskBuilder tag(TaskTag tag) {
+        public TaskEntityBuilder tag(TaskTag tag) {
             this.tag = tag;
             return this;
         }
 
-        public TaskBuilder numChangeOfPriority(int numChangeOfPriority) {
+        public TaskEntityBuilder numChangeOfPriority(int numChangeOfPriority) {
             this.numChangeOfPriority = numChangeOfPriority;
             return this;
         }
 
-        public TaskBuilder numChangeOfDescription(int numChangeOfDescription) {
+        public TaskEntityBuilder numChangeOfDescription(int numChangeOfDescription) {
             this.numChangeOfDescription = numChangeOfDescription;
             return this;
         }
 
-        public TaskBuilder complexOfDescription(int complexOfDescription) {
+        public TaskEntityBuilder complexOfDescription(int complexOfDescription) {
             this.complexOfDescription = complexOfDescription;
             return this;
         }
 
-        public TaskBuilder assigner(User assigner) {
+        public TaskEntityBuilder assigner(User assigner) {
             this.assigner = assigner;
             return this;
         }
 
-        public TaskBuilder reviewer(User reviewer) {
+        public TaskEntityBuilder reviewer(User reviewer) {
             this.reviewer = reviewer;
             return this;
         }
 
-        public TaskBuilder sprint(Sprint sprint) {
+        public TaskEntityBuilder sprint(Sprint sprint) {
             this.sprint = sprint;
             return this;
         }
 
-        public TaskBuilder project(Project project) {
+        public TaskEntityBuilder project(Project project) {
             this.project = project;
             return this;
         }
 
-        public TaskBuilder DTStart(Instant DTStart) {
+        public TaskEntityBuilder DTStart(Instant DTStart) {
             this.DTStart = DTStart;
             return this;
         }
 
-        public TaskBuilder DTEnd(Instant DTEnd) {
+        public TaskEntityBuilder DTEnd(Instant DTEnd) {
             this.DTEnd = DTEnd;
             return this;
         }
 
-        public TaskBuilder DTPlanning(Instant DTPlanning) {
+        public TaskEntityBuilder DTPlanning(Instant DTPlanning) {
             this.DTPlanning = DTPlanning;
             return this;
         }
 
         @Override
-        protected TaskBuilder self() {
+        protected TaskEntityBuilder self() {
             return this;
         }
 

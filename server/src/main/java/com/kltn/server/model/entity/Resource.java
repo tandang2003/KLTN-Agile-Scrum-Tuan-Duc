@@ -5,8 +5,6 @@ import com.kltn.server.model.type.resource.ContentType;
 import com.kltn.server.model.type.resource.PlaceContent;
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 public class Resource extends BaseEntity {
     @ManyToOne
@@ -27,7 +25,7 @@ public class Resource extends BaseEntity {
     private PlaceContent placeContent;
     private long size;
 
-    public Resource(ResourceBuilder resourceBuilder) {
+    public Resource(ResourceEntityBuilder resourceBuilder) {
         super(resourceBuilder);
         this.project = resourceBuilder.project;
         this.name = resourceBuilder.name;
@@ -43,7 +41,7 @@ public class Resource extends BaseEntity {
 
     }
 
-    public static class ResourceBuilder extends BaseBuilder<Resource, ResourceBuilder> {
+    public static class ResourceEntityBuilder extends BaseEntityBuilder<Resource, ResourceEntityBuilder> {
         private Project project;
         private Task task;
         private User user;
@@ -53,48 +51,48 @@ public class Resource extends BaseEntity {
         private PlaceContent placeContent;
         private long size;
 
-        public ResourceBuilder project(Project project) {
+        public ResourceEntityBuilder project(Project project) {
             this.project = project;
             return this;
         }
 
-        public ResourceBuilder task(Task task) {
+        public ResourceEntityBuilder task(Task task) {
             this.task = task;
             return this;
         }
 
-        public ResourceBuilder user(User user) {
+        public ResourceEntityBuilder user(User user) {
             this.user = user;
             return this;
         }
 
-        public ResourceBuilder name(String name) {
+        public ResourceEntityBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public ResourceBuilder extension(String extension) {
+        public ResourceEntityBuilder extension(String extension) {
             this.extension = extension;
             return this;
         }
 
-        public ResourceBuilder contentType(ContentType contentType) {
+        public ResourceEntityBuilder contentType(ContentType contentType) {
             this.contentType = contentType;
             return this;
         }
 
-        public ResourceBuilder placeContent(PlaceContent placeContent) {
+        public ResourceEntityBuilder placeContent(PlaceContent placeContent) {
             this.placeContent = placeContent;
             return this;
         }
 
-        public ResourceBuilder size(long size) {
+        public ResourceEntityBuilder size(long size) {
             this.size = size;
             return this;
         }
 
         @Override
-        protected ResourceBuilder self() {
+        protected ResourceEntityBuilder self() {
             return this;
         }
 

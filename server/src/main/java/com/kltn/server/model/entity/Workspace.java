@@ -4,7 +4,6 @@ package com.kltn.server.model.entity;
 import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public class Workspace extends BaseEntity {
     @OneToMany(mappedBy = "workspace")
     private List<Project> projects;
 
-    private Workspace(WorkspaceBuilder workspaceBuilder) {
+    private Workspace(WorkspaceEntityBuilder workspaceBuilder) {
         super(workspaceBuilder);
         this.name = workspaceBuilder.name;
         this.description = workspaceBuilder.description;
@@ -43,14 +42,14 @@ public class Workspace extends BaseEntity {
         return Objects.hash(super.hashCode(), name, description, owner);
     }
 
-    public static class WorkspaceBuilder extends BaseBuilder<Workspace, WorkspaceBuilder> {
+    public static class WorkspaceEntityBuilder extends BaseEntityBuilder<Workspace, WorkspaceEntityBuilder> {
         private String name;
         private String description;
         private User owner;
         private List<Project> projects;
 
         @Override
-        protected WorkspaceBuilder self() {
+        protected WorkspaceEntityBuilder self() {
             return this;
         }
 
@@ -59,17 +58,17 @@ public class Workspace extends BaseEntity {
             return new Workspace(this);
         }
 
-        public WorkspaceBuilder name(String name) {
+        public WorkspaceEntityBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public WorkspaceBuilder description(String description) {
+        public WorkspaceEntityBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public WorkspaceBuilder owner(User owner) {
+        public WorkspaceEntityBuilder owner(User owner) {
             this.owner = owner;
             return this;
         }

@@ -4,7 +4,6 @@ import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -20,7 +19,7 @@ public class Project extends BaseEntity {
     @OneToMany(mappedBy = "project")
     private List<Sprint> sprints;
 
-    public Project(ProjectBuilder builder) {
+    public Project(ProjectEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
         this.description = builder.description;
@@ -34,7 +33,7 @@ public class Project extends BaseEntity {
     }
 
 
-    public static class ProjectBuilder extends BaseBuilder<Project, ProjectBuilder> {
+    public static class ProjectEntityBuilder extends BaseEntityBuilder<Project, ProjectEntityBuilder> {
         private String name;
         private String description;
         private Workspace workspace;
@@ -42,7 +41,7 @@ public class Project extends BaseEntity {
         private List<Sprint> sprints;
 
         @Override
-        protected ProjectBuilder self() {
+        protected ProjectEntityBuilder self() {
             return this;
         }
 
@@ -51,27 +50,27 @@ public class Project extends BaseEntity {
             return new Project(this);
         }
 
-        public ProjectBuilder name(String name) {
+        public ProjectEntityBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public ProjectBuilder description(String description) {
+        public ProjectEntityBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public ProjectBuilder workspace(Workspace workspace) {
+        public ProjectEntityBuilder workspace(Workspace workspace) {
             this.workspace = workspace;
             return this;
         }
 
-        public ProjectBuilder member(Set<User> users) {
+        public ProjectEntityBuilder member(Set<User> users) {
             this.users = users;
             return this;
         }
 
-        public ProjectBuilder sprints(List<Sprint> sprints) {
+        public ProjectEntityBuilder sprints(List<Sprint> sprints) {
             this.sprints = sprints;
             return this;
         }

@@ -5,7 +5,6 @@ import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -39,11 +38,11 @@ public class User extends BaseEntity {
     }
 
 
-    public static UserBuilder builder() {
-        return new UserBuilder();
+    public static UserEntityBuilder builder() {
+        return new UserEntityBuilder();
     }
 
-    private User(UserBuilder builder) {
+    private User(UserEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
         this.password = builder.password;
@@ -57,7 +56,7 @@ public class User extends BaseEntity {
         this.workspace = builder.workspace;
     }
 
-    public static class UserBuilder extends BaseBuilder<User, UserBuilder> {
+    public static class UserEntityBuilder extends BaseEntityBuilder<User, UserEntityBuilder> {
         private String name;
         private String password;
         private String email;
@@ -70,12 +69,12 @@ public class User extends BaseEntity {
         // One user can review multiple tasks
         private Set<Task> reviewedTasks;
 
-        private UserBuilder() {
+        private UserEntityBuilder() {
             super();
         }
 
         @Override
-        protected UserBuilder self() {
+        protected UserEntityBuilder self() {
             return this;
         }
 
@@ -85,52 +84,52 @@ public class User extends BaseEntity {
         }
 
 
-        public UserBuilder name(String name) {
+        public UserEntityBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public UserBuilder password(String password) {
+        public UserEntityBuilder password(String password) {
             this.password = password;
             return this;
         }
 
-        public UserBuilder email(String email) {
+        public UserEntityBuilder email(String email) {
             this.email = email;
             return this;
         }
 
-        public UserBuilder uniId(String uniId) {
+        public UserEntityBuilder uniId(String uniId) {
             this.uniId = uniId;
             return this;
         }
 
-        public UserBuilder uniPassword(String uniPassword) {
+        public UserEntityBuilder uniPassword(String uniPassword) {
             this.uniPassword = uniPassword;
             return this;
         }
 
-        public UserBuilder role(Role role) {
+        public UserEntityBuilder role(Role role) {
             this.role = role;
             return this;
         }
 
-        public UserBuilder project(List<Project> projects) {
+        public UserEntityBuilder project(List<Project> projects) {
             this.projects = projects;
             return this;
         }
 
-        public UserBuilder assignedTasks(Set<Task> assignedTasks) {
+        public UserEntityBuilder assignedTasks(Set<Task> assignedTasks) {
             this.assignedTasks = assignedTasks;
             return this;
         }
 
-        public UserBuilder reviewedTasks(Set<Task> reviewedTasks) {
+        public UserEntityBuilder reviewedTasks(Set<Task> reviewedTasks) {
             this.reviewedTasks = reviewedTasks;
             return this;
         }
 
-        public UserBuilder workspace(List<Workspace> workspace) {
+        public UserEntityBuilder workspace(List<Workspace> workspace) {
             this.workspace = workspace;
             return this;
         }

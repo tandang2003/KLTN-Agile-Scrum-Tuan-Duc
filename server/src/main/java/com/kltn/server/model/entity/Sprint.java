@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "sprints")
@@ -13,14 +12,18 @@ public class Sprint extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+    @Column(name ="dt_planning")
     private Instant DTPlanning;
+    @Column(name ="dt_preview")
     private Instant DTPreview;
+    @Column(name ="dt_start")
     private Instant DTStart;
+    @Column(name ="dt_end")
     private Instant DTEnd;
     @OneToMany(mappedBy = "sprint")
     private List<Task> tasks;
 
-    public Sprint(SprintBuilder sprintBuilder) {
+    public Sprint(SprintEntityBuilder sprintBuilder) {
         super(sprintBuilder);
         this.project = sprintBuilder.project;
         this.DTPlanning = sprintBuilder.DTPlanning;
@@ -33,7 +36,7 @@ public class Sprint extends BaseEntity {
     public Sprint() {
     }
 
-    public static class SprintBuilder extends BaseBuilder<Sprint, SprintBuilder> {
+    public static class SprintEntityBuilder extends BaseEntityBuilder<Sprint, SprintEntityBuilder> {
         private Project project;
         private Instant DTPlanning;
         private Instant DTPreview;
@@ -42,7 +45,7 @@ public class Sprint extends BaseEntity {
         private List<Task> tasks;
 
         @Override
-        protected SprintBuilder self() {
+        protected SprintEntityBuilder self() {
             return this;
         }
 
@@ -51,33 +54,33 @@ public class Sprint extends BaseEntity {
             return new Sprint(this);
         }
 
-        public SprintBuilder project(Project project) {
+        public SprintEntityBuilder project(Project project) {
             this.project = project;
             return this;
         }
 
 
-        public SprintBuilder DTPlanning(Instant DTPlanning) {
+        public SprintEntityBuilder DTPlanning(Instant DTPlanning) {
             this.DTPlanning = DTPlanning;
             return this;
         }
 
-        public SprintBuilder DTPreview(Instant DTPreview) {
+        public SprintEntityBuilder DTPreview(Instant DTPreview) {
             this.DTPreview = DTPreview;
             return this;
         }
 
-        public SprintBuilder DTStart(Instant DTStart) {
+        public SprintEntityBuilder DTStart(Instant DTStart) {
             this.DTStart = DTStart;
             return this;
         }
 
-        public SprintBuilder DTEnd(Instant DTEnd) {
+        public SprintEntityBuilder DTEnd(Instant DTEnd) {
             this.DTEnd = DTEnd;
             return this;
         }
 
-        public SprintBuilder tasks(List<Task> tasks) {
+        public SprintEntityBuilder tasks(List<Task> tasks) {
             this.tasks = tasks;
             return this;
         }

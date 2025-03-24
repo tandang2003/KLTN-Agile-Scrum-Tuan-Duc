@@ -22,7 +22,7 @@ public class Role extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> roles;
 
-    public Role(RoleBuilder builder) {
+    public Role(RoleEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
         this.description = builder.description;
@@ -32,11 +32,11 @@ public class Role extends BaseEntity {
     public Role() {
     }
 
-    public static RoleBuilder builder() {
-        return new RoleBuilder();
+    public static RoleEntityBuilder builder() {
+        return new RoleEntityBuilder();
     }
 
-    public static class RoleBuilder extends BaseBuilder<Role, RoleBuilder> {
+    public static class RoleEntityBuilder extends BaseEntityBuilder<Role, RoleEntityBuilder> {
         private String name;
         private String description;
         private List<User> user;
@@ -47,21 +47,21 @@ public class Role extends BaseEntity {
 
 
         @Override
-        protected RoleBuilder self() {
+        protected RoleEntityBuilder self() {
             return this;
         }
 
-        public RoleBuilder name(String name) {
+        public RoleEntityBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public RoleBuilder description(String description) {
+        public RoleEntityBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public RoleBuilder user(List<User> user) {
+        public RoleEntityBuilder user(List<User> user) {
             this.user = user;
             return this;
         }
