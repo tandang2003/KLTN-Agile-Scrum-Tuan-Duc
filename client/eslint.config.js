@@ -21,7 +21,10 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true }
+      ],
       'prettier/prettier': [
         'warn',
         {
@@ -32,7 +35,7 @@ export default tseslint.config(
           endOfLine: 'auto',
           useTabs: false,
           singleQuote: true,
-          printWidth: 120,
+          printWidth: 80,
           jsxSingleQuote: true
         }
       ],

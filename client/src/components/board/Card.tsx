@@ -1,22 +1,32 @@
-import React from 'react'
-import { Card as CardUI, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { BaseCardProps } from '@/components/board/type'
+import {
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Card as CardUI
+} from '@/components/ui/card'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-type CardProps = {
-  id: string
-  name: string
-  columnId: string
-}
+type CardProps = BaseCardProps & {}
 
 const Card = ({ id, name, columnId }: CardProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({
     id,
     data: {
+      id,
       name,
       columnId
     }
   })
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -26,8 +36,10 @@ const Card = ({ id, name, columnId }: CardProps) => {
     borderRadius: '4px',
     cursor: 'grab',
     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-    opacity: isDragging ? 0.7 : undefined
+    opacity: isDragging ? 0.7 : undefined,
+    border: isDragging ? '1px solid red' : undefined
   }
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <CardUI className='round-xl'>
