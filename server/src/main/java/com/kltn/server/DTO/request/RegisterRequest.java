@@ -21,10 +21,6 @@ public record RegisterRequest(
         String password;
         String name;
 
-        public RegisterRequestBuilder(String uniId, String password, String name) {
-
-        }
-
         public RegisterRequestBuilder uniId(String uniId) {
             this.uniId = uniId;
             return this;
