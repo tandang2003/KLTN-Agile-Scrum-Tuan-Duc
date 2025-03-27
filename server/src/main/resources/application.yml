@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: server
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mysql_db
+    username: root
+    password: root
+  data:
+    mongodb:
+      database: mongo_db
+  jackson:
+    default-property-inclusion: non_null
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
