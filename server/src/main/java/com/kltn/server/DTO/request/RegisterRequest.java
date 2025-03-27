@@ -9,7 +9,8 @@ public record RegisterRequest(
         @NotBlank(message = "Please fill your student ID")
         @Size(min = 8, max = 8, message = "Please fill correct student ID") String uniId,
         @NotBlank(message = "Password is required") String password,
-        @NotBlank(message = "Please enter your full name") String name) {
+        @NotBlank(message = "Please enter your full name") String name
+) {
 
     private RegisterRequest(RegisterRequestBuilder builder) {
         this(builder.uniId, builder.password, builder.name);

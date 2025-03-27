@@ -4,8 +4,10 @@ import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.type.resource.ContentType;
 import com.kltn.server.model.type.resource.PlaceContent;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Table(name = "resources")
 public class Resource extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")

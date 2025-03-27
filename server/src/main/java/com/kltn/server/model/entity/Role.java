@@ -20,7 +20,7 @@ public class Role extends BaseEntity {
     @JoinTable(name = "roles_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private Set<Permission> roles;
+    private Set<Permission> permissions;
 
     public Role(RoleEntityBuilder builder) {
         super(builder);
