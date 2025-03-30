@@ -127,3 +127,6 @@
 .container {
   @apply max-w-[1440px] mx-auto;
 }
+.h2 {
+  @apply text-3xl font-bold leading-[1.67];
+}
