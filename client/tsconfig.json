@@ -9,6 +9,9 @@
     }
   ],
   "compilerOptions": {
+    "lib": [
+      "es2023"
+    ],
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {

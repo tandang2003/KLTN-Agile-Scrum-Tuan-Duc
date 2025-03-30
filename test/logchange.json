@@ -1,0 +1,14 @@
+[
+    {
+        "_id": "123123",
+        "entity_target": "tasks",
+        "id_ref": "1",
+        "dt_created": "2025-03-15T03:03:20+00:00",
+        "create_by": "21130320@st.hcmuaf.edu.vn",
+        "is_deleted": false,
+        "change": {
+            "from": {},
+            "to": {}
+        }
+    }
+]
