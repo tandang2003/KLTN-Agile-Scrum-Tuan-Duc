@@ -338,25 +338,19 @@ const Board = ({ columns: model }: BoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div
-        style={{
-          display: 'flex',
-          gap: '10px',
-          padding: '20px',
-          overflowX: 'auto'
-        }}
-      >
+      <div className='flex w-max gap-3'>
         {columns.map((col) => (
           <SortableContext
             key={col.id}
             items={col.items?.map((item) => item.id) ?? []}
           >
-            <div className='bg-gray-200 rounded'>
+            <div className='w-[400px] rounded bg-gray-200'>
               <Column
                 id={col.id}
                 name={col.name}
                 items={col.items}
                 itemsOrder={col.items.map((item) => item.id)}
+                container='px-3 py-2'
               />
             </div>
           </SortableContext>

@@ -1,9 +1,9 @@
+import React from 'react'
 import Board from '@/components/board/Board'
 import { BoardProps } from '@/components/board/type'
 import { BoardModelType } from '@/types/card.type'
-import React from 'react'
 
-const ProjectCards = () => {
+const ProjectCardTabs = () => {
   const boardDemo: BoardModelType = {
     process: {
       backlog: {
@@ -69,11 +69,7 @@ const ProjectCards = () => {
     }
   }
 
-  return (
-    <div>
-      <Board {...convert(boardDemo)} />
-    </div>
-  )
+  return <Board {...convert(boardDemo)} />
 }
 
-export default ProjectCards
+export default ProjectCardTabs

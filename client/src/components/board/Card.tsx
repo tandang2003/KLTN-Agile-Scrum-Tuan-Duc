@@ -8,7 +8,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-type CardProps = BaseCardProps & {}
+type CardProps = BaseCardProps
 
 const Card = ({ id, name, columnId }: CardProps) => {
   const {
@@ -32,7 +32,6 @@ const Card = ({ id, name, columnId }: CardProps) => {
     transition,
     padding: '10px',
     background: 'white',
-    marginBottom: '8px',
     borderRadius: '4px',
     cursor: 'grab',
     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
@@ -44,7 +43,7 @@ const Card = ({ id, name, columnId }: CardProps) => {
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <CardUI className='round-xl'>
         <CardHeader>
-          <CardTitle>{name}</CardTitle>
+          <CardTitle className='truncate leading-[1.67]'>{name}</CardTitle>
           <CardDescription>Card Description</CardDescription>
         </CardHeader>
         {/* <CardContent>
