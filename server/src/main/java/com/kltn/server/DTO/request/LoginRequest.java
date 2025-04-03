@@ -4,19 +4,19 @@ import com.kltn.server.model.base.BaseEntity;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
-        @NotBlank String email,
+        @NotBlank String uniId,
         @NotBlank(message = "Please fill your password") String password
 ) {
     public LoginRequest(LoginRequestBuilder loginRequestBuilder) {
-        this(loginRequestBuilder.email, loginRequestBuilder.password);
+        this(loginRequestBuilder.uniId, loginRequestBuilder.password);
     }
 
     public static class LoginRequestBuilder extends BaseEntity.BaseEntityBuilder<LoginRequest, LoginRequestBuilder> {
-        String email;
+        String uniId;
         String password;
 
-        public LoginRequestBuilder email(String email) {
-            this.email = email;
+        public LoginRequestBuilder uniId(String uniId) {
+            this.uniId = uniId;
             return this;
         }
 
@@ -34,5 +34,15 @@ public record LoginRequest(
         public LoginRequest build() {
             return new LoginRequest(this);
         }
+    }
+
+    @Override
+    public String uniId() {
+        return uniId;
+    }
+
+    @Override
+    public String password() {
+        return password;
     }
 }
