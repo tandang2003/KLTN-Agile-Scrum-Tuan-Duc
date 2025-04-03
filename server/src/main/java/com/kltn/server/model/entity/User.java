@@ -4,14 +4,19 @@ import com.kltn.server.model.base.BaseEntity;
 
 import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
     private String name;
     private String password;
     private String email;
@@ -32,6 +37,8 @@ public class User extends BaseEntity {
     // One user can review multiple tasks
     @OneToMany(mappedBy = "reviewer")
     private Set<Task> reviewedTasks;
+
+
 
 
     public User() {
@@ -144,8 +151,26 @@ public class User extends BaseEntity {
         this.name = name;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        // Convert role permissions to authorities
+        Collection<GrantedAuthority> authorities = new ArrayList<>(role.getPermissions().stream()
+                .map(p -> new SimpleGrantedAuthority(p.getName()))
+                .toList());
+
+        // Add role with "ROLE_" prefix
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
+        return authorities;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
     }
 
     public void setPassword(String password) {

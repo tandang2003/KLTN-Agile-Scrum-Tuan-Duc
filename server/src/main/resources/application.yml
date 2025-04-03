@@ -1,18 +1,35 @@
 spring:
   application:
     name: server
+    security:
+      access-token:
+        time-of-life: 15m
+        key:
+          private-key: key/access/private_key.pem
+          public-key: key/access/public_key.pem
+      refresh-token:
+        time-of-life: 120H
+        key:
+          private-key: key/refresh/private_key.pem
+          public-key: key/refresh/public_key.pem
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mysql_db
-    username: root
-    password: root
-  data:
-    mongodb:
-      database: mongo_db
   jackson:
     default-property-inclusion: non_null
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+server:
+  reactive:
+    session:
+      cookie:
+        max-age: 5
+
+
+
