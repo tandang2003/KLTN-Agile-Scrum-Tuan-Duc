@@ -249,3 +249,8 @@ eval "set -- $(
     )" '"$@"'
 
 exec "$JAVACMD" "$@"
+import java.security.KeyPairGenerator
+import java.security.KeyPair
+import java.util.Base64
+import java.io.File
+

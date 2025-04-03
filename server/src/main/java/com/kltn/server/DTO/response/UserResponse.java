@@ -33,6 +33,10 @@ public record UserResponse(String id, String name, String password, String email
         private Set<Task> assignedTasks;
         private Set<Task> reviewedTasks;
 
+        public UserResponseBuilder id() {
+            this.id = super.id;
+            return this;
+        }
 
         public UserResponseBuilder name(String name) {
             this.name = name;
