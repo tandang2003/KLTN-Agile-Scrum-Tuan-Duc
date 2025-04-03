@@ -24,19 +24,19 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final BasicAuthenticationProvider basicAuthencationProvider;
+    private final BasicAuthenticationProvider basicAuthenticationProvider;
     private final CookieUtils cookieUtils;
 
     @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, BasicAuthenticationProvider basicAuthencationProvider, CookieUtils cookieUtils) {
+    public AuthenticationController(AuthenticationService authenticationService, BasicAuthenticationProvider basicAuthenticationProvider, CookieUtils cookieUtils) {
         this.authenticationService = authenticationService;
-        this.basicAuthencationProvider = basicAuthencationProvider;
+        this.basicAuthenticationProvider = basicAuthenticationProvider;
         this.cookieUtils = cookieUtils;
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<AuthenticationResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
-        basicAuthencationProvider.authenticate(
+        basicAuthenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.uniId(), loginRequest.password()));
         AuthenticationResponse response = authenticationService.login();
         ResponseCookie accessCookie = cookieUtils.setAccessCookies(response.getAccessToken());

@@ -24,7 +24,7 @@ public class LoadUserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String ubiId) {
-        return userRepository.findByUniId(ubiId).orElseThrow(RuntimeException::new);
+    public UserDetails loadUserByUsername(String uniId) {
+        return userRepository.findByUniId(uniId).orElseThrow(RuntimeException::new);
     }
 }
