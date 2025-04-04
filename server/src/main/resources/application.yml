@@ -30,6 +30,9 @@ server:
     session:
       cookie:
         max-age: 5
-
-
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
 
