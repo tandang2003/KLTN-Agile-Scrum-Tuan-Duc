@@ -21,10 +21,12 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 springdoc:
-  api-docs:
-    enabled: false
   swagger-ui:
-    enabled: false
+    path: /swagger-ui.html
+    urls:
+      - name: OpenAPI YAML
+        url: /swagger.yml
+
 server:
   reactive:
     session:
@@ -34,5 +36,5 @@ logging:
   level:
     org:
       springframework:
-        security: debug
+        security: off
 
