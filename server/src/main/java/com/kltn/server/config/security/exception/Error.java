@@ -1,4 +1,4 @@
-package com.kltn.server.error;
+package com.kltn.server.config.security.exception;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -7,7 +7,7 @@ public enum Error {
     BAD_REQUEST(HttpServletResponse.SC_BAD_REQUEST, "Bad request"),
     UNAUTHORIZED(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access"),
     FORBIDDEN(HttpServletResponse.SC_FORBIDDEN, "Access denied"),
-    INVALID_CREDENTIALS(HttpServletResponse.SC_UNAUTHORIZED, "Invalid credentials"),
+    INVALID_CREDENTIALS(423, "Invalid credentials"),
     NOT_FOUND(HttpServletResponse.SC_NOT_FOUND, "Resource not found"),
     METHOD_NOT_ALLOWED(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "HTTP method not allowed"),
     CONFLICT(HttpServletResponse.SC_CONFLICT, "Conflict with existing data"),

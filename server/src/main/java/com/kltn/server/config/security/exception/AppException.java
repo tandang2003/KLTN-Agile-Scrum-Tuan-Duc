@@ -1,4 +1,4 @@
-package com.kltn.server.error;
+package com.kltn.server.config.security.exception;
 
 public class AppException extends RuntimeException {
     Error error;
