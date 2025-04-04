@@ -10,7 +10,27 @@ const ProjectCardTabs = () => {
         id: 'col-1',
         name: 'Backlog',
         items: [
-          { id: 'card-1', name: 'Phân tích data', tag: 'LT', point: 2 },
+          {
+            id: 'card-1',
+            name: 'Phân tích data',
+            tag: 'LT',
+            point: 2,
+            numAttach: 3,
+            numComment: 2,
+            assigners: [
+              {
+                name: 'Le Anh Duc'
+              },
+              {
+                name: 'Le Anh Duc',
+                avatar: 'https://github.com/shadcn.png'
+              },
+              {
+                name: 'Le Anh Duc',
+                avatar: 'https://github.com/shadcn.png'
+              }
+            ]
+          },
           { id: 'card-2', name: 'Phân tích nghiệp vụ', tag: 'LT', point: 3 },
           {
             id: 'card-3',
