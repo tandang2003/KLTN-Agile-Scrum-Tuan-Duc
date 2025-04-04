@@ -6,9 +6,10 @@ info:
 servers:
   - url: http://localhost:8080
     description: Local development server
-paths:
-#  423-> email exists
+components:
 
+paths:
+  #  423-> email exists
   /auth:
     post:
       summary: Authenticate user
@@ -20,19 +21,57 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                uniId:
                   type: string
                 password:
                   type: string
       responses:
-        '200':
+        200:
           description: Successful authentication
+          headers:
+            refresh-token:
+              description: The JWT token for refresh authentication
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  token:
+                  access-token:
                     type: string
-        '423':
+                    description: The JWT token for authentication
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: The user ID storing in the database
+                      uniId:
+                        type: string
+                        description: The university ID student or teacher of the user
+                      name:
+                        type: string
+                        description: The name of the user
+                      email:
+                        type: string
+                        description: The email student or teacher of the user
+                      role:
+                        type: string
+                        description: the user role name
+        401:
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                default:
+                    code: 423
+                    message: "Invalid credentials"
