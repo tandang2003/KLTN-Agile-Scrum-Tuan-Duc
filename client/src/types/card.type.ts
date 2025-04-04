@@ -3,6 +3,10 @@ export type CardModelType = {
   name: string
   tag: 'LT' | 'TH'
   point: number
+  thumbnail?: string
+  numComment?: number
+  numAttach?: number
+  assigners?: { name: string; avatar?: string }[]
 }
 export type ColumnModelType = {
   id: string

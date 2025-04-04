@@ -125,8 +125,19 @@
   }
 }
 .container {
-  @apply max-w-[1440px] mx-auto;
+  @apply mx-auto max-w-[1440px];
 }
 .h2 {
-  @apply text-3xl font-bold leading-[1.67];
+  @apply text-3xl leading-[1.67] font-bold;
+}
+.h3 {
+  @apply text-2xl leading-[1.67] font-bold;
+}
+
+.title {
+  @apply text-lg leading-[1.67];
+}
+
+.drop-shadow {
+  filter: drop-shadow(48px 27px 74px #081534);
 }

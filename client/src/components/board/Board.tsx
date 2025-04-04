@@ -344,7 +344,7 @@ const Board = ({ columns: model }: BoardProps) => {
             key={col.id}
             items={col.items?.map((item) => item.id) ?? []}
           >
-            <div className='w-[400px] rounded bg-gray-200'>
+            <div className='w-[350px]'>
               <Column
                 id={col.id}
                 name={col.name}

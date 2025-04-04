@@ -57,7 +57,7 @@ const ProjectPage = () => {
         </TabsContent>
         <TabsContent value='timelines'>Change your password here.</TabsContent>
         <TabsContent value='cards'>
-          <ScrollArea className='overflow-x-scroll whitespace-nowrap'>
+          <ScrollArea className='overflow-x-scroll bg-[F9F8FF] whitespace-nowrap'>
             <ProjectCardTabs />
             <ScrollBar orientation='horizontal' />
           </ScrollArea>

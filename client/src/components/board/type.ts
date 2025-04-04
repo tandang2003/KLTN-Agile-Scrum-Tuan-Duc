@@ -16,4 +16,14 @@ export type BaseCardProps = {
   id: Id
   columnId: Id
   name: string
+  thumbnail?: string
+  numComment?: number
+  numAttach?: number
+  assigners?: [CardAssignerProps, CardAssignerProps, CardAssignerProps]
+  numAssigner?: number
+}
+
+type CardAssignerProps = {
+  name: string
+  avatar?: string
 }
