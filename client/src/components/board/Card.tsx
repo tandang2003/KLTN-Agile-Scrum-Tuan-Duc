@@ -10,13 +10,11 @@ import {
   CardTitle,
   Card as CardUI
 } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { cn, uuid } from '@/lib/utils'
+import { getTagColor } from '@/types/tag.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-//plus.unsplash.com/premium_photo-1664304568964-ae7f81f395b8?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
-
-//https:
 type CardProps = BaseCardProps
 
 const Card = ({
@@ -27,7 +25,8 @@ const Card = ({
   numComment,
   numAssigner = 0,
   assigners,
-  thumbnail
+  thumbnail,
+  tags
 }: CardProps) => {
   const {
     attributes,
@@ -41,12 +40,18 @@ const Card = ({
     data: {
       id,
       name,
-      columnId
+      columnId,
+      numAttach,
+      numComment,
+      numAssigner,
+      assigners,
+      thumbnail,
+      tags
     }
   })
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     padding: '16px',
     background: 'white',
@@ -56,28 +61,38 @@ const Card = ({
     opacity: isDragging ? 0.7 : undefined,
     border: isDragging ? '1px solid red' : undefined
   }
-
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className='drop-shadow-xs'
+      className='transition-outline outline-0 drop-shadow-xs hover:outline-2 hover:outline-offset-0 hover:outline-green-300 hover:outline-solid'
     >
-      <CardUI className='gap-2.5 rounded-none border-none bg-white p-0 shadow-none'>
+      <CardUI className='rounded-none border-none bg-white p-0 shadow-none'>
         <CardHeader className='p-0'>
           <span className='flex'>
-            <Badge variant='default'>Badge</Badge>
-            <Badge variant='default' className='ml-3'>
-              Badge
-            </Badge>
+            {tags?.map(({ color, name }) => {
+              return (
+                <Badge
+                  key={uuid()}
+                  variant='default'
+                  className={cn('mr-3')}
+                  style={{
+                    background: getTagColor(color).background,
+                    color: getTagColor(color).text
+                  }}
+                >
+                  {name}
+                </Badge>
+              )
+            })}
           </span>
           <CardTitle className='line-clamp-2 overflow-hidden leading-[1.67] text-wrap text-ellipsis'>
             {name}
           </CardTitle>
         </CardHeader>
-        {thumbnail && (
+        {/* {thumbnail && (
           <CardContent className='p-0'>
             <AspectRatio ratio={16 / 9}>
               <img
@@ -88,7 +103,7 @@ const Card = ({
               />
             </AspectRatio>
           </CardContent>
-        )}
+        )} */}
         <CardFooter className='p-0'>
           <span className='flex items-center gap-1'>
             <Icon icon={'material-symbols:chat-outline'} size={20} />
@@ -100,22 +115,25 @@ const Card = ({
           </span>
           {assigners && (
             <span className='ml-auto flex items-center text-sm'>
-              Assigned to
-              <span className='ml-1 flex'>
-                {assigners?.map((item, index) => {
-                  return (
-                    <Avatar
-                      className={cn('size-6 border-2', !index && '-ml-2')}
-                    >
-                      <AvatarImage src={item.avatar} />
-                      <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  )
-                })}
-                {numAssigner && numAssigner > assigners.length && (
+              {/* <span className='text-nowrap'>Assigned to</span> */}
+              <span className={cn('flex', numAssigner != 0 && 'ml-3')}>
+                {numAssigner != 0 &&
+                  assigners?.map((item) => {
+                    return (
+                      <Avatar
+                        key={uuid()}
+                        className={cn('size-6 border-2', '-ml-2')}
+                      >
+                        <AvatarImage src={item.avatar} />
+                        <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    )
+                  })}
+                {/* Create more fallback*/}
+                {numAssigner != 0 && numAssigner > assigners.length && (
                   <Avatar className={cn('size-6 border-2', '-ml-2')}>
                     <AvatarFallback>
-                      {`+ ${numAssigner - assigners.length}`}
+                      {`${numAssigner - assigners.length}`}
                     </AvatarFallback>
                   </Avatar>
                 )}

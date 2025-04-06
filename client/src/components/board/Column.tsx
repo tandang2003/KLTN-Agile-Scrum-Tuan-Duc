@@ -1,7 +1,16 @@
 import Card from '@/components/board/Card'
 import { BaseCardProps, ColumnProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
+
 import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
 
@@ -9,7 +18,7 @@ const Column = ({
   id,
   name,
   items,
-  container = ''
+  container = undefined
 }: ColumnProps & {
   container?: string
 }) => {
@@ -35,3 +44,20 @@ const Column = ({
   )
 }
 export default Column
+
+type DropdownMenuColumnProps = {
+  trigger: React.ReactNode
+}
+
+const DropdownMenuColumn = ({ trigger }: DropdownMenuColumnProps) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>{trigger}</DropdownMenuTrigger>
+      <DropdownMenuContent side='bottom' align='end'>
+        <DropdownMenuItem className='hover:cursor-pointer'>
+          Thêm issue
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
