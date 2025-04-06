@@ -1,4 +1,5 @@
 import { Id } from '@/types/other.type'
+import { TagColorTypeOf } from '@/types/tag.type'
 
 export type BoardProps = {
   columns: ColumnProps[]
@@ -19,11 +20,18 @@ export type BaseCardProps = {
   thumbnail?: string
   numComment?: number
   numAttach?: number
-  assigners?: [CardAssignerProps, CardAssignerProps, CardAssignerProps]
+  assigners?: CardAssignerProps[]
   numAssigner?: number
+  category: string
+  tags?: CardTagProps[]
 }
 
 type CardAssignerProps = {
   name: string
   avatar?: string
+}
+
+type CardTagProps = {
+  name: string
+  color: TagColorTypeOf
 }

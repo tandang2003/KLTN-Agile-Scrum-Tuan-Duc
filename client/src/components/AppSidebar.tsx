@@ -1,15 +1,8 @@
 import * as React from 'react'
 
 import { NavRecent } from '@/components/sidebar/nav-recent'
-import { NavUser } from '@/components/sidebar/nav-user'
 import { TeamSwitcher } from '@/components/sidebar/team-switcher'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail
-} from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 
 import Icon from '@/components/Icon'
 import Logo from '@/components/Logo'

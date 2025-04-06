@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import ProjectCardTabs from '@/pages/manager/project/ProjectCardTabs'
+import BoardTab from '@/pages/manager/project/tabs/board'
 import ProjectHeader from '@/components/project/ProjectHeader'
+import clsx from 'clsx'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { ScrollBar } from '@/components/ui/scroll-area'
-import clsx from 'clsx'
 
 const ProjectPage = () => {
   const classNameTabsTrigger = useMemo(() => {
@@ -19,7 +19,7 @@ const ProjectPage = () => {
   }, [])
 
   return (
-    <section>
+    <section className='h-full'>
       <ProjectHeader
         className='pb-4'
         name='Project 1'
@@ -34,31 +34,29 @@ const ProjectPage = () => {
         ]}
       />
 
-      <Tabs defaultValue='cards'>
+      <Tabs defaultValue='board' className='h-full'>
         <TabsList className='flex gap-4 bg-transparent'>
           <TabsTrigger value='overview' className={classNameTabsTrigger}>
             Overview
           </TabsTrigger>
-          <TabsTrigger value='tasks' className={classNameTabsTrigger}>
-            Tasks
+          <TabsTrigger value='backlog' className={classNameTabsTrigger}>
+            Backlog
           </TabsTrigger>
           <TabsTrigger value='timelines' className={classNameTabsTrigger}>
             Timelines
           </TabsTrigger>
-          <TabsTrigger value='cards' className={classNameTabsTrigger}>
-            Cards
+          <TabsTrigger value='board' className={classNameTabsTrigger}>
+            Board
           </TabsTrigger>
         </TabsList>
         <TabsContent value='overview'>
           Make changes to your account here.
         </TabsContent>
-        <TabsContent value='tasks'>
-          Make changes to your account here.
-        </TabsContent>
+        <TabsContent value='backlog'>Backlog</TabsContent>
         <TabsContent value='timelines'>Change your password here.</TabsContent>
-        <TabsContent value='cards'>
+        <TabsContent className='bg-emerald-900' value='board'>
           <ScrollArea className='overflow-x-scroll bg-[F9F8FF] whitespace-nowrap'>
-            <ProjectCardTabs />
+            <BoardTab />
             <ScrollBar orientation='horizontal' />
           </ScrollArea>
         </TabsContent>

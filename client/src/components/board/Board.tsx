@@ -1,6 +1,7 @@
 import Card from '@/components/board/Card'
 import Column from '@/components/board/Column'
 import { BaseCardProps, BoardProps, ColumnProps } from '@/components/board/type'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Id } from '@/types/other.type'
 import {
   closestCorners,
@@ -82,6 +83,7 @@ const Board = ({ columns: model }: BoardProps) => {
     setActiveDragItemType(() => activeDragType)
 
     // Lấy data của card đang được kéo
+    console.log(event)
     setActiveDragItemData(() => {
       return event.active.data.current as BaseCardProps
     })

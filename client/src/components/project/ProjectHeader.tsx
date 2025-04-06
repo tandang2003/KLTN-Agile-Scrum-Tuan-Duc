@@ -7,6 +7,7 @@ import {
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { Slash } from 'lucide-react'
+import { uuid } from '@/lib/utils'
 
 type OverviewHeaderProps = {
   name: string
@@ -42,7 +43,7 @@ function BreadcrumbHeader({
         {breadcrumbs.map((item, index) => {
           if (index == 0)
             return (
-              <BreadcrumbItem>
+              <BreadcrumbItem key={uuid()}>
                 {item.href ? (
                   <BreadcrumbLink to={item.href}>{item.name}</BreadcrumbLink>
                 ) : (
@@ -52,7 +53,7 @@ function BreadcrumbHeader({
             )
           else
             return (
-              <>
+              <React.Fragment key={uuid()}>
                 <BreadcrumbSeparator>
                   <Slash />
                 </BreadcrumbSeparator>
@@ -63,7 +64,7 @@ function BreadcrumbHeader({
                     item.name
                   )}
                 </BreadcrumbItem>
-              </>
+              </React.Fragment>
             )
         })}
       </BreadcrumbList>
