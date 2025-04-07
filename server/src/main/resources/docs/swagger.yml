@@ -120,5 +120,3 @@ paths:
                   error: "EXISTED_DATA"
                   message: "Data already exists"
 
-
-
