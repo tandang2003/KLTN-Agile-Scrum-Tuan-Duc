@@ -15,7 +15,9 @@ import { getTagColor } from '@/types/tag.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-type CardProps = BaseCardProps
+type CardProps = BaseCardProps & {
+  container?: string
+}
 
 const Card = ({
   id,
@@ -26,7 +28,8 @@ const Card = ({
   numAssigner = 0,
   assigners,
   thumbnail,
-  tags
+  tags,
+  container
 }: CardProps) => {
   const {
     attributes,
@@ -53,13 +56,13 @@ const Card = ({
   const style = {
     transform: CSS.Translate.toString(transform),
     transition,
-    padding: '16px',
-    background: 'white',
-    borderRadius: '16px',
+    padding: '1rem',
+    borderRadius: '0.5rem',
     cursor: 'grab',
     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
     opacity: isDragging ? 0.7 : undefined,
-    border: isDragging ? '1px solid red' : undefined
+    border: isDragging ? '1px solid red' : undefined,
+    backgroundColor: 'var(--card)'
   }
   return (
     <div
@@ -67,9 +70,13 @@ const Card = ({
       style={style}
       {...attributes}
       {...listeners}
-      className='transition-outline outline-0 drop-shadow-xs hover:outline-2 hover:outline-offset-0 hover:outline-green-300 hover:outline-solid'
+      className={cn(
+        'transition-outline outline-0 drop-shadow-xs',
+        'transition-color hover:!bg-gray-100',
+        container
+      )}
     >
-      <CardUI className='rounded-none border-none bg-white p-0 shadow-none'>
+      <CardUI className='rounded-none border-none bg-transparent p-0 shadow-none'>
         <CardHeader className='p-0'>
           <span className='flex'>
             {tags?.map(({ color, name }) => {
@@ -92,8 +99,8 @@ const Card = ({
             {name}
           </CardTitle>
         </CardHeader>
-        {/* {thumbnail && (
-          <CardContent className='p-0'>
+        {thumbnail && (
+          <CardContent className='basis-[100px] p-0'>
             <AspectRatio ratio={16 / 9}>
               <img
                 loading='lazy'
@@ -103,7 +110,7 @@ const Card = ({
               />
             </AspectRatio>
           </CardContent>
-        )} */}
+        )}
         <CardFooter className='p-0'>
           <span className='flex items-center gap-1'>
             <Icon icon={'material-symbols:chat-outline'} size={20} />

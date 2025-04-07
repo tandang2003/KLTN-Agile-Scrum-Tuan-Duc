@@ -1,5 +1,6 @@
 import { Icon as IconLib, IconifyIconProps } from '@iconify-icon/react'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IconProps extends Omit<IconifyIconProps, 'ref'> {}
 
 export default function Icon({

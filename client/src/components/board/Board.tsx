@@ -1,7 +1,6 @@
 import Card from '@/components/board/Card'
 import Column from '@/components/board/Column'
 import { BaseCardProps, BoardProps, ColumnProps } from '@/components/board/type'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Id } from '@/types/other.type'
 import {
   closestCorners,
@@ -28,7 +27,20 @@ const ACTIVE_ITEM = {
   CARD: 'CARD'
 } as const
 
+type Flags = [boolean, boolean, boolean, boolean, boolean]
+
 const Board = ({ columns: model }: BoardProps) => {
+  const [flags, setFlags] = useState<Flags>([false, false, false, false, false])
+
+  const setColumnAddCard = (index: number | null) => {
+    console.log('index', index)
+    setFlags(() => {
+      const updatedFlags: Flags = Array(5).fill(false) as Flags // Create a shallow copy
+      if (index) updatedFlags[index] = true
+      return updatedFlags // Return the updated array
+    })
+  }
+
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10
@@ -83,7 +95,7 @@ const Board = ({ columns: model }: BoardProps) => {
     setActiveDragItemType(() => activeDragType)
 
     // Lấy data của card đang được kéo
-    console.log(event)
+    // console.log(event)
     setActiveDragItemData(() => {
       return event.active.data.current as BaseCardProps
     })
@@ -340,8 +352,8 @@ const Board = ({ columns: model }: BoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className='flex w-max gap-3'>
-        {columns.map((col) => (
+      <div className='flex gap-3 bg-white'>
+        {columns.map((col, index) => (
           <SortableContext
             key={col.id}
             items={col.items?.map((item) => item.id) ?? []}
@@ -352,7 +364,11 @@ const Board = ({ columns: model }: BoardProps) => {
                 name={col.name}
                 items={col.items}
                 itemsOrder={col.items.map((item) => item.id)}
-                container='px-3 py-2'
+                container='py-2 bg-column rounded-sm'
+                index={index}
+                isOpenCard={flags[index]}
+                setOpenCard={setColumnAddCard}
+                key={col.id}
               />
             </div>
           </SortableContext>
