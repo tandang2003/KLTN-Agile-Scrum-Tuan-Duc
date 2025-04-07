@@ -7,7 +7,7 @@ public enum Error {
     BAD_REQUEST(HttpServletResponse.SC_BAD_REQUEST, "Bad request"),
     UNAUTHORIZED(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access"),
     FORBIDDEN(HttpServletResponse.SC_FORBIDDEN, "Access denied"),
-    INVALID_CREDENTIALS(HttpServletResponse.SC_UNAUTHORIZED, "Invalid credentials"),
+    EXISTED_DATA(HttpServletResponse.SC_CONFLICT, "Data already exists"),
     NOT_FOUND(HttpServletResponse.SC_NOT_FOUND, "Resource not found"),
     METHOD_NOT_ALLOWED(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "HTTP method not allowed"),
     CONFLICT(HttpServletResponse.SC_CONFLICT, "Conflict with existing data"),
@@ -22,6 +22,7 @@ public enum Error {
     SESSION_EXPIRED(443, "User session has expired"),
 
     // 5xx Server Errors
+    SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error"),
     INTERNAL_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error"),
     NOT_IMPLEMENTED(HttpServletResponse.SC_NOT_IMPLEMENTED, "Feature not implemented"),
     BAD_GATEWAY(HttpServletResponse.SC_BAD_GATEWAY, "Bad gateway"),
@@ -51,4 +52,5 @@ public enum Error {
     public void setMessage(String message) {
         this.message = message;
     }
+
 }

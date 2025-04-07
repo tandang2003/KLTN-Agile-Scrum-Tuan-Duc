@@ -1,5 +1,7 @@
 package com.kltn.server.config.security;
 
+import com.kltn.server.config.security.exception.AuthenticationError;
+import com.kltn.server.config.security.exception.MyAuthenticationException;
 import com.kltn.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,6 @@ public class LoadUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String uniId) {
         return userRepository.findByUniId(uniId).orElseThrow(() ->
-                new UsernameNotFoundException("User not found with id+: " + uniId));
+                new MyAuthenticationException(AuthenticationError.AUTHENTICATED_FAILURE));
     }
 }

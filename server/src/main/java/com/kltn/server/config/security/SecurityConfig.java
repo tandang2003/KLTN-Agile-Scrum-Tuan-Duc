@@ -34,7 +34,7 @@ public class SecurityConfig {
     private CustomAccessDenyHandler customAccessDenyHandler;
 
     @Autowired
-    private CustomFailureHandler customFailureHandler;
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -44,7 +44,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-        customAuthenticationFilter.setAuthenticationFailureHandler(customFailureHandler);
+        customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         http.securityContext(contextConfig -> {
                     contextConfig.requireExplicitSave(false);
                 })
@@ -52,10 +52,6 @@ public class SecurityConfig {
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-//                .addFilterBefore(customAuthenticationFilter(), BearerTokenAuthenticationFilter.class)
-//                .requiresChannel(rcc -> {
-//                    rcc.anyRequest().requiresSecure();
-//                })
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests.requestMatchers("user/**").authenticated();
                     authorizeRequests.anyRequest().permitAll();
@@ -64,7 +60,6 @@ public class SecurityConfig {
                     oauth2.jwt(jwt -> {
                                 jwt.decoder(accessTokenDecoder);
                                 jwt.jwtAuthenticationConverter(new CustomConverterJwtToUser());
-
                             })
                             .authenticationEntryPoint(customAuthenticationEntryPoint);
                 })

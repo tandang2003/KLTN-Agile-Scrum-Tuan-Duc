@@ -48,8 +48,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Boolean> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        return new ResponseEntity<>(authenticationService.register(registerRequest), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        authenticationService.register(registerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 }
