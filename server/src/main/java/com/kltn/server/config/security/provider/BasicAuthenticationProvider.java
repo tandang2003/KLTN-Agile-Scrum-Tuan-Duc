@@ -1,6 +1,8 @@
 package com.kltn.server.config.security.provider;
 
 import com.kltn.server.config.security.LoadUserService;
+import com.kltn.server.config.security.exception.AuthenticationError;
+import com.kltn.server.config.security.exception.MyAuthenticationException;
 import com.kltn.server.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -36,10 +38,9 @@ public class BasicAuthenticationProvider implements AuthenticationProvider {
             authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
-        } else throw new BadCredentialsException("Your password is incorrect");
+        } else throw new MyAuthenticationException(AuthenticationError.AUTHENTICATED_FAILURE);
     }
 
-    //BearerAuthenticationFilter finding support method return BearerTokenAuthenticationToken in list Provider
     @Override
     public boolean supports(Class<?> authentication) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);

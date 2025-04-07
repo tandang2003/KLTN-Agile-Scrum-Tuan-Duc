@@ -1,6 +1,8 @@
 package com.kltn.server.config.security.filter;
 
 import com.kltn.server.DTO.request.LoginRequest;
+import com.kltn.server.config.security.exception.AuthenticationError;
+import com.kltn.server.config.security.exception.MyAuthenticationException;
 import com.nimbusds.jose.shaded.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,28 +46,19 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             Validator validator = factory.getValidator();
             Set<ConstraintViolation<LoginRequest>> violations = validator.validate(loginRequest);
 
-            if (!violations.isEmpty()) {
-                ConstraintViolation<LoginRequest> violation = violations.iterator().next();
-                String fieldName = violation.getPropertyPath().toString();
-                String errorMessage = violation.getMessage();
-                throw new BadCredentialsException(fieldName + ": " + errorMessage);
-            }
-            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-                    loginRequest.uniId(),
-                    loginRequest.password()
-            );
+            if (!violations.isEmpty()) throw new MyAuthenticationException(AuthenticationError.AUTHENTICATED_FAILURE);
+            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequest.uniId(), loginRequest.password());
             setDetails(request, authRequest);
             return this.getAuthenticationManager().authenticate(authRequest);
-        } catch (AuthenticationException e) {
+        } catch (MyAuthenticationException e) {
             throw e;
         } catch (IOException e) {
-            throw new AuthenticationServiceException(e.getMessage(), e);
+            throw new MyAuthenticationException(e.getMessage());
         }
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            jakarta.servlet.FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, jakarta.servlet.FilterChain chain, Authentication authResult) {
         try {
             SecurityContextHolder.getContext().setAuthentication(authResult);
             chain.doFilter(request, response);

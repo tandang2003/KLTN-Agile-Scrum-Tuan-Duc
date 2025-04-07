@@ -2,6 +2,8 @@ package com.kltn.server.service;
 
 import com.kltn.server.DTO.request.RegisterRequest;
 import com.kltn.server.DTO.response.AuthenticationResponse;
+import com.kltn.server.error.AppException;
+import com.kltn.server.error.Error;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
@@ -31,17 +33,19 @@ public class AuthenticationService {
         this.tokenUtils = tokenUtils;
     }
 
-    public boolean register(RegisterRequest registerRequest) {
+    public void register(RegisterRequest registerRequest) {
         User user = userMapper.toUser(registerRequest);
         boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
         if (!check) {
-            Role role = roleRepository.getByName("student").orElseThrow(() -> new RuntimeException("Default role not found"));
+            Role role = roleRepository.getByName("student").orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build());
             user.setPassword(pwEncoder.encode(user.getPassword()));
             user.setRole(role);
             userRepository.save(user);
-            return true;
+            return;
         }
-        return false;
+        throw AppException.builder()
+                .error(Error.EXISTED_DATA)
+                .build();
     }
 
     public AuthenticationResponse login() {

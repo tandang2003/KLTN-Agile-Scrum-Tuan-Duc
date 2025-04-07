@@ -21,7 +21,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        System.out.println(authException.getMessage());
         response.setContentType("application/json;charset=UTF-8");
         String errorMessage = Optional.ofNullable(authException.getCause())
                 .map(Throwable::getMessage)

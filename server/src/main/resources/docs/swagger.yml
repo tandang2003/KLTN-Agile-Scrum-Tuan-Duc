@@ -30,10 +30,13 @@ paths:
         200:
           description: Successful authentication
           headers:
-            refresh-token:
-              description: The JWT token for refresh authentication
-              schema:
-                type: string
+            headers:
+              Set-Cookie:
+                description: >
+                  Sets the `refresh-token` cookie with `HttpOnly` and `Max-Age` attributes.  
+                  Example: `refresh-token=abc.def.ghi; HttpOnly; Max-Age=432000 ; Path=/refresh`
+                schema:
+                  type: string
           content:
             application/json:
               schema:
@@ -65,16 +68,16 @@ paths:
                               role:
                                 type: string
                                 description: the user role name
-        401:
-          description: Invalid credentials
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ResponseApi'
-                default:
-                    statusCode: 401
-                    message: "Invalid credentials"
+        #        401:
+        #          description: Invalid credentials
+        #          content:
+        #            application/json:
+        #              schema:
+        #                allOf:
+        #                  - $ref: '#/components/schemas/ResponseApi'
+        #                default:
+        #                  statusCode: 401
+        #                  message: "Invalid credentials"
         422:
           description: Email or password invalid
           content:
@@ -85,3 +88,37 @@ paths:
                 default:
                   statusCode: 422
                   message: "Email or password invalid"
+  /auth/register:
+    post:
+      summary: Register student account
+      description: Authenticates a user and returns a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uniId:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+      responses:
+        201:
+          description: Successful Registration
+        409:
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseApi'
+                default:
+                  statusCode: 409
+                  error: "EXISTED_DATA"
+                  message: "Data already exists"
+
+
+

@@ -2,8 +2,6 @@ package com.kltn.server.error;
 
 public class AppException extends RuntimeException {
     Error error;
-
-
     private AppException(Error error) {
         this.error = error;
     }
