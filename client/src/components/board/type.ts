@@ -35,3 +35,9 @@ type CardTagProps = {
   name: string
   color: TagColorTypeOf
 }
+
+export type ButtonCreateCardProps = {
+  index: number
+  isOpenCard: boolean
+  setOpenCard: (index: number | null) => void
+}
