@@ -66,6 +66,18 @@ export const board: BoardModelType = {
           name: 'Tìm hiểu về công nghệ servlet',
           category: 'LT',
           point: 4
+        },
+        {
+          id: 'card-10',
+          name: 'Tìm hiểu về công nghệ servlet',
+          category: 'LT',
+          point: 4
+        },
+        {
+          id: 'card-11',
+          name: 'Tìm hiểu về công nghệ servlet',
+          category: 'LT',
+          point: 4
         }
       ]
     },

@@ -1,7 +1,7 @@
 import Card from '@/components/board/Card'
 import Column from '@/components/board/Column'
 import { BaseCardProps, BoardProps, ColumnProps } from '@/components/board/type'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import ClickOutsideProvider from '@/context/click/ClickOutsideProvider'
 import { Id } from '@/types/other.type'
 import {
   closestCorners,
@@ -83,7 +83,7 @@ const Board = ({ columns: model }: BoardProps) => {
     setActiveDragItemType(() => activeDragType)
 
     // Lấy data của card đang được kéo
-    console.log(event)
+    // console.log(event)
     setActiveDragItemData(() => {
       return event.active.data.current as BaseCardProps
     })
@@ -340,30 +340,33 @@ const Board = ({ columns: model }: BoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className='flex w-max gap-3'>
-        {columns.map((col) => (
-          <SortableContext
-            key={col.id}
-            items={col.items?.map((item) => item.id) ?? []}
-          >
-            <div className='w-[350px]'>
-              <Column
-                id={col.id}
-                name={col.name}
-                items={col.items}
-                itemsOrder={col.items.map((item) => item.id)}
-                container='px-3 py-2'
-              />
-            </div>
-          </SortableContext>
-        ))}
-        <DragOverlay dropAnimation={dropAnimation}>
-          {!activeDragItemType && null}
-          {activeDragItemType === ACTIVE_ITEM.CARD && activeDragItemData && (
-            <Card {...activeDragItemData} />
-          )}
-        </DragOverlay>
-      </div>
+      <ClickOutsideProvider>
+        <div className='flex gap-3 bg-white'>
+          {columns.map((col, index) => (
+            <SortableContext
+              key={col.id}
+              items={col.items?.map((item) => item.id) ?? []}
+            >
+              <div className='w-[350px]'>
+                <Column
+                  id={col.id}
+                  name={col.name}
+                  items={col.items}
+                  itemsOrder={col.items.map((item) => item.id)}
+                  container='py-2 bg-column rounded-sm'
+                  key={col.id}
+                />
+              </div>
+            </SortableContext>
+          ))}
+          <DragOverlay dropAnimation={dropAnimation}>
+            {!activeDragItemType && null}
+            {activeDragItemType === ACTIVE_ITEM.CARD && activeDragItemData && (
+              <Card {...activeDragItemData} />
+            )}
+          </DragOverlay>
+        </div>
+      </ClickOutsideProvider>
     </DndContext>
   )
 }
