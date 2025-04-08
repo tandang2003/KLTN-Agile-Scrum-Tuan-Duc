@@ -10,10 +10,10 @@ public class ApiResponse<T> {
     private String error;
 
     private ApiResponse(ApiResponseBuilder<T> tApiResponseBuilder) {
-        this.code = tApiResponseBuilder.code;
+        this.error = tApiResponseBuilder.error;
+        this.code = tApiResponseBuilder.code == 0 ? 200 : tApiResponseBuilder.code;
         this.message = tApiResponseBuilder.message;
         this.data = tApiResponseBuilder.data;
-        this.error = tApiResponseBuilder.error;
     }
 
     public static <T> ApiResponseBuilder<T> builder() {

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record UserResponse(String id, String name, String password, String email, String uniId, String uniPassword,
-                           Role role, List<Workspace> workspace, List<Project> projects, Set<Task> assignedTasks,
+public record UserResponse(String id, String name, String email, String uniId, String uniPassword,
+                           String role, List<Workspace> workspace, List<Project> projects, Set<Task> assignedTasks,
                            Set<Task> reviewedTasks) {
     public UserResponse(UserResponseBuilder b) {
-        this(b.id, b.name, b.password, b.email, b.uniId, b.uniPassword, b.role, b.workspace, b.projects, b.assignedTasks, b.reviewedTasks);
+        this(b.id, b.name, b.email, b.uniId, b.uniPassword, b.role, b.workspace, b.projects, b.assignedTasks, b.reviewedTasks);
     }
 
 
@@ -23,11 +23,10 @@ public record UserResponse(String id, String name, String password, String email
     public static class UserResponseBuilder extends BaseEntity.BaseEntityBuilder<UserResponse, UserResponseBuilder> {
         private String id;
         private String name;
-        private String password;
         private String email;
         private String uniId;
         private String uniPassword;
-        private Role role;
+        private String role;
         private List<Workspace> workspace;
         private List<Project> projects;
         private Set<Task> assignedTasks;
@@ -43,10 +42,6 @@ public record UserResponse(String id, String name, String password, String email
             return this;
         }
 
-        public UserResponseBuilder password(String password) {
-            this.password = password;
-            return this;
-        }
 
         public UserResponseBuilder email(String email) {
             this.email = email;
@@ -63,7 +58,7 @@ public record UserResponse(String id, String name, String password, String email
             return this;
         }
 
-        public UserResponseBuilder role(Role role) {
+        public UserResponseBuilder role(String role) {
             this.role = role;
             return this;
         }

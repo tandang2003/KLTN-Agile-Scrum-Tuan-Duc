@@ -4,8 +4,7 @@ import com.kltn.server.DTO.request.LoginRequest;
 import com.kltn.server.DTO.request.RegisterRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.AuthenticationResponse;
-import com.kltn.server.DTO.response.UserResponse;
-import com.kltn.server.config.provider.BasicAuthenticationProvider;
+import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
 import com.kltn.server.service.AuthenticationService;
 import com.kltn.server.util.CookieUtils;
 import jakarta.validation.Valid;
@@ -14,9 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,14 +33,10 @@ public class AuthenticationController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
-        basicAuthenticationProvider.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.uniId(), loginRequest.password()));
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> login() {
         AuthenticationResponse response = authenticationService.login();
-        ResponseCookie accessCookie = cookieUtils.setAccessCookies(response.getAccessToken());
         ResponseCookie refreshCookie = cookieUtils.setRefreshCookies(response.getRefreshToken());
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                 .body(
                         ApiResponse
@@ -54,8 +48,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Boolean> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        return new ResponseEntity<>(authenticationService.register(registerRequest), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        authenticationService.register(registerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 }
