@@ -38,7 +38,7 @@ const Column = ({
 
   return (
     <div ref={setNodeRef} className={(cn('h-fit rounded-xl p-2'), container)}>
-      <span className='mb-3.5 flex items-center border-b-1 pb-3.5'>
+      <span className='border-b-1 mb-3.5 flex items-center pb-3.5'>
         <Icon
           className='text-purple-700'
           icon={'icon-park-outline:dot'}
@@ -60,7 +60,7 @@ const Column = ({
           style={{
             '--card': 'white'
           }}
-          className='p-l4 flex flex-col gap-2 pr-4 pb-4 pl-2'
+          className='p-l4 flex flex-col gap-2 pb-4 pl-2 pr-4'
         >
           {items?.map((item: BaseCardProps) => (
             <Card key={item.id} {...item} container={cn('m-1 bg-white')} />
