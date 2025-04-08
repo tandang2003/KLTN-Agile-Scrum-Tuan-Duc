@@ -13,15 +13,13 @@ import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
 import { useEffect, useRef, useState } from 'react'
 import Card from '@/components/board/Card'
+import { useClickManager } from '@/context/click/click-manager-hook'
 
 const Column = ({
   id,
   name,
   items,
-  container = undefined,
-  index,
-  isOpenCard,
-  setOpenCard
+  container = undefined
 }: ColumnProps &
   ButtonCreateCardProps & {
     container?: string
@@ -68,11 +66,7 @@ const Column = ({
             <Card key={item.id} {...item} container={cn('m-1 bg-white')} />
           ))}
 
-          <ButtonCreateCard
-            index={index}
-            isOpenCard={isOpenCard}
-            setOpenCard={setOpenCard}
-          />
+          <ButtonCreateCard id={id as string} />
         </div>
         <ScrollBar orientation='vertical' />
       </ScrollArea>
@@ -81,24 +75,15 @@ const Column = ({
 }
 export default Column
 
-const ButtonCreateCard = ({
-  index,
-  isOpenCard,
-  setOpenCard
-}: ButtonCreateCardProps) => {
-  // console.log('isOpen', index, isOpenCard)
+const ButtonCreateCard = ({ id }: { id: string }) => {
+  const { setActiveId } = useClickManager()
   return (
     <>
-      <CardAdding
-        className={cn(isOpenCard ? '!block' : '!hidden')}
-        setHidden={() => {
-          setOpenCard(index)
-        }}
-      />
+      <CardAdding id={id} />
       <div className='m-1 w-full bg-gray-100 pr-2'>
         <Button
           onClick={() => {
-            setOpenCard(index)
+            setActiveId(id)
           }}
           className={
             'w-full justify-start border-none bg-inherit p-1 text-black'

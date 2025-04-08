@@ -1,32 +1,34 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import {
+  useClickHandler,
+  useClickManager
+} from '@/context/click/click-manager-hook'
 import { cn } from '@/lib/utils'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React from 'react'
 
 type CardAddingProps = React.HTMLProps<HTMLDivElement> & {
-  setHidden: () => void
+  id: string
 }
 
-const CardAdding = ({ className, setHidden }: CardAddingProps) => {
-  const divRef = useRef<HTMLDivElement | null>(null)
+const CardAdding = ({ id, className }: CardAddingProps) => {
+  const { activeId } = useClickManager()
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (divRef.current)
-        if (!divRef.current.contains(event.target as Node)) {
-          // setHidden()
-          console.log('Clicked OUTSIDE input')
-        } else {
-          console.log('Clicked INSIDE input')
-        }
+  const divRef = useClickHandler(
+    id,
+    () => {
+      console.log(`${id} Clicked inside Dropdown`)
+    },
+    () => {
+      console.log(`${id} Clicked outside Dropdown`)
     }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  )
 
   return (
-    <Card className={cn('p-1', className)} ref={divRef}>
+    <Card
+      className={cn('p-1', id == activeId ? 'block' : 'hidden', className)}
+      ref={divRef}
+    >
       <CardContent className='p-0'>
         <form>
           <Input />

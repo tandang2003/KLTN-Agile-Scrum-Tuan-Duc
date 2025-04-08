@@ -1,11 +1,11 @@
+import React from 'react'
 import Logo from '@/components/Logo'
 import { Button } from '@/components/ui/button'
-import React from 'react'
 
 const Header = () => {
   return (
     <header className='bg-white'>
-      <div className='container flex my-4'>
+      <div className='container my-4 flex'>
         <Logo nameBrand={true} />
         <Button className='ml-auto' variant={'ghost'}>
           Sign Up
