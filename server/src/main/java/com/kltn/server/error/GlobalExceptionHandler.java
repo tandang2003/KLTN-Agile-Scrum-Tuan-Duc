@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
                 : exception.getError().toString();
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .error(error)
-                .message(exception.getMessage())
+                .message(exception.getError().getMessage())
                 .code(statusCode)
 //                .stackTrace(stackTrace)
                 .build();

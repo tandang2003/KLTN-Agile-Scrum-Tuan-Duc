@@ -62,18 +62,18 @@ public class AuthenticationResponse {
     public static class UserDetailDTO {
         private String id;
         private String name;
-        private String password;
+//        private String password;
         private String email;
         private String uniId;
-        private String uniPassword;
+//        private String uniPassword;
         private String role;
 
-        public UserDetailDTO(String id, String name, String email, String uniId, String uniPassword, String role) {
+        public UserDetailDTO(String id, String name, String email, String uniId, String role) {
             this.id = id;
             this.name = name;
             this.email = email;
             this.uniId = uniId;
-            this.uniPassword = uniPassword;
+//            this.uniPassword = uniPassword;
             this.role = role;
         }
 
@@ -93,14 +93,6 @@ public class AuthenticationResponse {
             this.name = name;
         }
 
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
         public String getEmail() {
             return email;
         }
@@ -115,14 +107,6 @@ public class AuthenticationResponse {
 
         public void setUniId(String uniId) {
             this.uniId = uniId;
-        }
-
-        public String getUniPassword() {
-            return uniPassword;
-        }
-
-        public void setUniPassword(String uniPassword) {
-            this.uniPassword = uniPassword;
         }
 
         public String getRole() {
