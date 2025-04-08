@@ -36,7 +36,8 @@ export default tseslint.config(
           useTabs: false,
           singleQuote: true,
           printWidth: 80,
-          jsxSingleQuote: true
+          jsxSingleQuote: true,
+          plugins: ['prettier-plugin-tailwindcss']
         }
       ],
       '@typescript-eslint/no-empty-object-type': 'error'

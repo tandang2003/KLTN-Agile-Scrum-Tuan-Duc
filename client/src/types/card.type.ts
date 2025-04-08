@@ -1,9 +1,18 @@
+import { TagColorTypeOf as TagColorKey } from '@/types/tag.type'
+
 export type CardModelType = {
   id: string
   name: string
-  tag: 'LT' | 'TH'
+  category: 'LT' | 'TH'
   point: number
+  thumbnail?: string
+  numComment?: number
+  numAttach?: number
+  numAssigner?: number
+  assigners?: Assigner[]
+  tags?: { name: string; color: TagColorKey }[]
 }
+
 export type ColumnModelType = {
   id: string
   name: string
@@ -18,4 +27,9 @@ export type BoardModelType = {
     review: ColumnModelType
     done: ColumnModelType
   }
+}
+
+export type Assigner = {
+  name: string
+  avatar?: string
 }
