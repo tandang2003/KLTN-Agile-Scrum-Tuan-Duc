@@ -14,6 +14,7 @@ import { cn, uuid } from '@/lib/utils'
 import { getTagColor } from '@/types/tag.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { memo } from 'react'
 
 type CardProps = BaseCardProps & {
   container?: string
@@ -62,7 +63,7 @@ const Card = ({
     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
     opacity: isDragging ? 0.7 : undefined,
     border: isDragging ? '1px solid red' : undefined,
-    backgroundColor: 'var(--card)'
+    backgroundColor: isDragging ? 'red' : 'var(--card)'
   }
   return (
     <div
@@ -71,7 +72,7 @@ const Card = ({
       {...attributes}
       {...listeners}
       className={cn(
-        'transition-outline drop-shadow-xs outline-0',
+        'transition-outline outline-0 drop-shadow-xs',
         'transition-color hover:!bg-gray-100',
         container
       )}
@@ -95,11 +96,11 @@ const Card = ({
               )
             })}
           </span>
-          <CardTitle className='line-clamp-2 overflow-hidden text-ellipsis text-wrap leading-[1.67]'>
+          <CardTitle className='line-clamp-2 overflow-hidden leading-[1.67] text-wrap text-ellipsis'>
             {name}
           </CardTitle>
         </CardHeader>
-        {thumbnail && (
+        {/* {thumbnail && (
           <CardContent className='basis-[100px] p-0'>
             <AspectRatio ratio={16 / 9}>
               <img
@@ -110,7 +111,7 @@ const Card = ({
               />
             </AspectRatio>
           </CardContent>
-        )}
+        )} */}
         <CardFooter className='p-0'>
           <span className='flex items-center gap-1'>
             <Icon icon={'material-symbols:chat-outline'} size={20} />
@@ -153,4 +154,4 @@ const Card = ({
   )
 }
 
-export default Card
+export default memo(Card)

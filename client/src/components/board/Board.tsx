@@ -342,7 +342,7 @@ const Board = ({ columns: model }: BoardProps) => {
     >
       <ClickOutsideProvider>
         <div className='flex gap-3 bg-white'>
-          {columns.map((col, index) => (
+          {columns.map((col) => (
             <SortableContext
               key={col.id}
               items={col.items?.map((item) => item.id) ?? []}
