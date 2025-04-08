@@ -6,19 +6,24 @@ import {
   NavigationMenuLink
 } from '@/components/ui/navigation-menu'
 import { Link } from 'react-router-dom'
+import { Id } from '@/types/other.type'
 
-const ProjectNavigation = () => {
+type ProjectNavigationProps = {
+  id: Id
+}
+
+const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to='/manager/project/board'>Board</Link>
+            <Link to={`/manager/project/${id}/board`}>Board</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to='/manager/project/backlog'>Backlog</Link>
+            <Link to={`/manager/project/${id}/backlog`}>Backlog</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
