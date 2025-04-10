@@ -46,6 +46,7 @@ public class SecurityConfig {
         return new ProviderManager(List.of(basicAuthenticationProvider));
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());

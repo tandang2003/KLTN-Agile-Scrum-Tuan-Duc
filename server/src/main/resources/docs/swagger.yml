@@ -10,6 +10,14 @@ components:
   schemas:
     ResponseApi:
       $ref: "./components/response-api.yml"
+    UnauthorizedErrorApi:
+      $ref: "/components/unauthenticated-error-api.yml"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 paths:
   /auth:
     post:
