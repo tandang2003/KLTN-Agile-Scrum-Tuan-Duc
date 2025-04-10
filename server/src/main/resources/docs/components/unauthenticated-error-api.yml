@@ -1,0 +1,14 @@
+type: object
+required:
+  - statusCode
+properties:
+  statusCode:
+    type: integer
+  error:
+    type: string
+  message:
+    type: string
+default:
+  statusCode: 401
+  error: "Unauthorized"
+  message: "Unauthorized"
