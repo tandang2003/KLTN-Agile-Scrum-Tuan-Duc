@@ -1,8 +1,6 @@
 package com.kltn.server.error;
 
 import com.kltn.server.DTO.response.ApiResponse;
-import com.nimbusds.jose.shaded.gson.Gson;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -22,7 +20,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException exception) {
-        Gson gson = new Gson();
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         List<Map<String, String>> errors = fieldErrors.stream()
                 .map(fieldError -> {
@@ -37,7 +34,7 @@ public class GlobalExceptionHandler {
                 .message(INVALID_PARAMETER_REQUEST.getMessage())
                 .code(INVALID_PARAMETER_REQUEST.getCode())
                 .build();
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(INVALID_PARAMETER_REQUEST.getCode()).body(response);
     }
 
 
@@ -46,7 +43,6 @@ public class GlobalExceptionHandler {
         int statusCode = exception.getError() == null
                 ? HttpStatus.BAD_REQUEST.value()
                 : exception.getError().getCode();
-//        StackTraceElement[] stackTrace = getStackTraces(exception);
         String error = exception.getError() == null
                 ? exception.getMessage()
                 : exception.getError().toString();
@@ -54,10 +50,8 @@ public class GlobalExceptionHandler {
                 .error(error)
                 .message(exception.getError().getMessage())
                 .code(statusCode)
-//                .stackTrace(stackTrace)
                 .build();
-
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(statusCode).body(response);
     }
 
 }
