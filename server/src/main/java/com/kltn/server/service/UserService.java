@@ -1,7 +1,7 @@
 package com.kltn.server.service;
 
 import com.kltn.server.model.entity.User;
-import com.kltn.server.repository.UserRepository;
+import com.kltn.server.repository.entity.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
