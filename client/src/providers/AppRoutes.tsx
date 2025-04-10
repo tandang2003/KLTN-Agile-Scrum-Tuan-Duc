@@ -1,4 +1,4 @@
-import LoginPage from '@/pages/auth/LoginPage'
+import LoginPage from '@/pages/auth/login/page'
 import HomePage from '@/pages/home/HomePage'
 import ManagerLayout from '@/pages/manager/layout'
 import BacklogPage from '@/pages/manager/project/backlog/page'
@@ -7,6 +7,8 @@ import ProjectPage from '@/pages/manager/project/page'
 import NotFoundPage from '@/pages/not-found'
 import RootLayout from '@/pages/layout'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import RegisterPage from '@/pages/auth/register/page'
+import AuthLayout from '@/pages/auth/layout'
 
 const AppRoutes = () => {
   return (
@@ -21,8 +23,9 @@ const AppRoutes = () => {
               <Route path='backlog' element={<BacklogPage />} />
             </Route>
           </Route>
-          <Route path='auth'>
+          <Route path='auth' element={<AuthLayout />}>
             <Route path='login' index element={<LoginPage />} />
+            <Route path='register' element={<RegisterPage />} />
           </Route>
           <Route path='*' element={<NotFoundPage />} />
         </Route>

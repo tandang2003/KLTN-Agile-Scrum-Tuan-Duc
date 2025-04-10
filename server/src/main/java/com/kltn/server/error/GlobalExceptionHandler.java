@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiResponse<Void>> handleAppExceptions(AppException exception) {
         int statusCode = exception.getError() == null
@@ -29,5 +27,4 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
-
 }

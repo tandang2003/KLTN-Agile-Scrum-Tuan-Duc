@@ -106,10 +106,10 @@ paths:
                 name:
                   type: string
       responses:
-        201:
+        200:
           description: Successful Registration
         409:
-          description: User already exists
+          description: Account with uniId exist
           content:
             application/json:
               schema:
@@ -119,4 +119,3 @@ paths:
                   statusCode: 409
                   error: "EXISTED_DATA"
                   message: "Data already exists"
-
