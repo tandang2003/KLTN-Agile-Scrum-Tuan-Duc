@@ -3,12 +3,25 @@ package com.kltn.server.error;
 import com.kltn.server.DTO.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        String error = exception.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .error(error)
+                .message("Validation failed")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.badRequest().body(response);
+    }
 
 
     @ExceptionHandler(AppException.class)
