@@ -22,13 +22,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final BasicAuthenticationProvider basicAuthenticationProvider;
     private final CookieUtils cookieUtils;
 
     @Autowired
     public AuthenticationController(AuthenticationService authenticationService, BasicAuthenticationProvider basicAuthenticationProvider, CookieUtils cookieUtils) {
         this.authenticationService = authenticationService;
-        this.basicAuthenticationProvider = basicAuthenticationProvider;
         this.cookieUtils = cookieUtils;
     }
 
@@ -41,7 +39,6 @@ public class AuthenticationController {
                 .body(
                         ApiResponse
                                 .<AuthenticationResponse>builder()
-                                .code(HttpStatus.OK.value())
                                 .data(response)
                                 .build()
                 );
@@ -50,7 +47,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         authenticationService.register(registerRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok().body(ApiResponse.<Boolean>builder().build());
     }
 
     @PostMapping("/refresh")
