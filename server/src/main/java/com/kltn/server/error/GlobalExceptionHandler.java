@@ -1,8 +1,6 @@
 package com.kltn.server.error;
 
 import com.kltn.server.DTO.response.ApiResponse;
-import com.nimbusds.jose.shaded.gson.Gson;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -10,10 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.kltn.server.error.Error.INVALID_PARAMETER_REQUEST;
 
@@ -22,22 +17,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException exception) {
-        Gson gson = new Gson();
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-        List<Map<String, String>> errors = fieldErrors.stream()
-                .map(fieldError -> {
-                    Map<String, String> error = new HashMap<>();
-                    error.put("field", fieldError.getField());
-                    error.put("message", fieldError.getDefaultMessage());
-                    return error;
-                })
-                .collect(Collectors.toList());
+        List<String> errors = fieldErrors.stream()
+                .map(fieldError -> ((CustomFieldError) fieldError).toString())
+                .toList();
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .error(errors)
                 .message(INVALID_PARAMETER_REQUEST.getMessage())
                 .code(INVALID_PARAMETER_REQUEST.getCode())
                 .build();
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(INVALID_PARAMETER_REQUEST.getCode()).body(response);
     }
 
 
