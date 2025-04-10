@@ -53,4 +53,17 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> refresh(@CookieValue("refresh-token") String refreshToken) {
+        AuthenticationResponse response = authenticationService.refresh(refreshToken);
+        return ResponseEntity.ok()
+                .body(
+                        ApiResponse
+                                .<AuthenticationResponse>builder()
+                                .code(HttpStatus.OK.value())
+                                .data(response)
+                                .build()
+                );
+
+    }
 }
