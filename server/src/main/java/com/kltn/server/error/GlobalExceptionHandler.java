@@ -35,7 +35,6 @@ public class GlobalExceptionHandler {
         int statusCode = exception.getError() == null
                 ? HttpStatus.BAD_REQUEST.value()
                 : exception.getError().getCode();
-//        StackTraceElement[] stackTrace = getStackTraces(exception);
         String error = exception.getError() == null
                 ? exception.getMessage()
                 : exception.getError().toString();
@@ -45,7 +44,6 @@ public class GlobalExceptionHandler {
                 .code(statusCode)
 //                .stackTrace(stackTrace)
                 .build();
-
         return ResponseEntity.status(statusCode).body(response);
     }
 
