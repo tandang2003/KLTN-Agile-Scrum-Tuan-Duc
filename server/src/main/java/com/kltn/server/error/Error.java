@@ -14,6 +14,7 @@ public enum Error {
     PAYLOAD_TOO_LARGE(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Request payload too large"),
     UNSUPPORTED_MEDIA_TYPE(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Unsupported media type"),
     TOO_MANY_REQUESTS(429, "Too many requests, please try again later"),
+    INVALID_PARAMETER_REQUEST(422, "Invalid parameter request"),
 
     // Authentication & Token Errors
     TOKEN_EXPIRED(440, "Token has expired"),
