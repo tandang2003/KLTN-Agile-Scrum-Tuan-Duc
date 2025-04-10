@@ -8,7 +8,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.kltn.server.error.Error.INVALID_PARAMETER_REQUEST;
 
@@ -18,9 +21,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException exception) {
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-        List<String> errors = fieldErrors.stream()
-                .map(fieldError -> ((CustomFieldError) fieldError).toString())
-                .toList();
+        List<Map<String, String>> errors = fieldErrors.stream()
+                .map(fieldError -> {
+                    Map<String, String> error = new HashMap<>();
+                    error.put("field", fieldError.getField());
+                    error.put("message", fieldError.getDefaultMessage());
+                    return error;
+                })
+                .collect(Collectors.toList());
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .error(errors)
                 .message(INVALID_PARAMETER_REQUEST.getMessage())
@@ -42,7 +50,6 @@ public class GlobalExceptionHandler {
                 .error(error)
                 .message(exception.getError().getMessage())
                 .code(statusCode)
-//                .stackTrace(stackTrace)
                 .build();
         return ResponseEntity.status(statusCode).body(response);
     }
