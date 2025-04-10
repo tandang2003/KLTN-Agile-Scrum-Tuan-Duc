@@ -1,23 +1,55 @@
 openapi: 3.0.1
 info:
   title: My API
-  description: API documentation for my Spring Boot application
+  description: |
+    # Overview 
+    
+    API documentation for Spring Boot application
+    ## Rules about api response format
+    
+    ### Structure Base Api
+    
+    When a request sent to server, it always return a response has body like:
+    
+    ```json
+    {
+      "code": 401,
+      "message": "Login"
+      "data": Object
+    }
+    ```
+    - `error`: status code
+    - `message`: description about api
+    - `data`: data will return for client, data structure is general
+    
+    ### Validation Api
+    When a request failed because some field in body is missing, empty or not valid,
+    API will return a response with **status: 422 (Unprocessable entity)**
+    
+    ```json
+    {
+      "code": 422,
+      "message": "Validation Error",
+      "error": [
+        {
+          "field": "field target"
+          "message": "message"
+        },
+       {
+          "field": "field target"
+          "message": "message"
+        }
+      ]
+    }
+    ```
+    - `code`: status code
+    - `message`: description about api
+    - `error`: contain array present field and message error
   version: 1.0.0
 servers:
   - url: http://localhost:8080
     description: Local development server
-components:
-  schemas:
-    ResponseApi:
-      $ref: "./components/response-api.yml"
-    UnauthorizedErrorApi:
-      $ref: "/components/unauthenticated-error-api.yml"
 
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 paths:
   /auth:
     post:
@@ -50,7 +82,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/ResponseApi'
+                  - $ref: "#/components/schemas/ResponseApi"
                   - type: object
                     properties:
                       data:
@@ -92,7 +124,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ResponseApi'
+                  - $ref: "#/components/schemas/ResponseApi"
                 default:
                   statusCode: 422
                   message: "Email or password invalid"
@@ -122,8 +154,22 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ResponseApi'
+                  - $ref: "#/components/schemas/ResponseApi"
                 default:
                   statusCode: 409
                   error: "EXISTED_DATA"
                   message: "Data already exists"
+
+components:
+  schemas:
+    ResponseApi:
+      $ref: "./components/response-api.yml"
+    ValidationErrorApi:
+      $ref: "./components/validation-error.yml"
+    UnauthorizedErrorApi:
+      $ref: "/components/unauthenticated-error-api.yml"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

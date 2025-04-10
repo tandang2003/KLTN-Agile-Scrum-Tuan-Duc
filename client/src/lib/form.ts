@@ -16,21 +16,20 @@ export function handleErrorApi({
   if (error instanceof ValidationError && setError) {
     const errors = error.error as {
       field: string
-      error: string
+      message: string
     }[]
 
-    errors.forEach(({ field, error }) => {
+    errors.forEach(({ field, message }) => {
       setError(field, {
         type: 'server',
-        message: error
+        message: message
       })
     })
   } else {
-    console.log('toast error')
-    toast.error(error?.error ?? 'Lỗi không xác định', {
+    toast.error(error?.error ?? 'Can not define', {
       duration: duration,
       action: {
-        label: 'Lỗi',
+        label: 'Error',
         onClick: () => {}
       }
     })

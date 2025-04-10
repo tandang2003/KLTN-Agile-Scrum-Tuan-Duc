@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,12 +9,47 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useForm } from 'react-hook-form'
+import { LoginSchema, LoginsSchemaType } from '@/types/schema/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form'
+import { Link } from 'react-router-dom'
+import { loginThunk } from '@/feature/auth/auth.slice'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { handleErrorApi } from '@/lib/form'
+import { ValidationError } from '@/types/http.type'
 
 const LoginForm = ({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
+  const dispatch = useAppDispatch()
+  const selector = useAppSelector((state) => state.authSlice)
+  const form = useForm<LoginsSchemaType>({
+    resolver: zodResolver(LoginSchema)
+  })
+
+  const handleSubmit = (value: LoginsSchemaType) => {
+    dispatch(loginThunk(value))
+  }
+
+  useEffect(() => {
+    if (selector.error)
+      handleErrorApi({
+        error: new ValidationError({
+          error: [selector.error]
+        }),
+        setError: form.setError
+      })
+  }, [selector])
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -25,43 +60,57 @@ const LoginForm = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className='flex flex-col gap-6'>
-              <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
-                <Input
-                  id='email'
-                  type='email'
-                  placeholder='m@example.com'
-                  required
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)}>
+              <div className='flex flex-col gap-6'>
+                <FormField
+                  control={form.control}
+                  name='uniId'
+                  render={({ field }) => (
+                    <FormItem className='grid gap-2'>
+                      <FormLabel>University Id</FormLabel>
+                      <FormControl>
+                        <Input type='text' placeholder='2113xxxx' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
+                <FormField
+                  control={form.control}
+                  name='password'
+                  render={({ field }) => (
+                    <FormItem className='grid gap-2'>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type='password' {...field} />
+                      </FormControl>
+                      <FormMessage></FormMessage>
+                    </FormItem>
+                  )}
+                />
+                <a
+                  href='#'
+                  className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
+                >
+                  Forgot your password?
+                </a>
+                <Button type='submit' className='w-full'>
+                  Login
+                </Button>
               </div>
-              <div className='grid gap-2'>
-                <div className='flex items-center'>
-                  <Label htmlFor='password'>Password</Label>
-                  <a
-                    href='#'
-                    className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id='password' type='password' required />
+
+              <div className='mt-4 text-center text-sm'>
+                Don&apos;t have an account?{' '}
+                <Link
+                  to='/auth/register'
+                  className='underline underline-offset-4'
+                >
+                  Sign up
+                </Link>
               </div>
-              <Button type='submit' className='w-full'>
-                Login
-              </Button>
-              <Button variant='outline' className='w-full'>
-                Login with Google
-              </Button>
-            </div>
-            <div className='mt-4 text-center text-sm'>
-              Don&apos;t have an account?{' '}
-              <a href='#' className='underline underline-offset-4'>
-                Sign up
-              </a>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

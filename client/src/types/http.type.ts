@@ -18,7 +18,7 @@ export type ResponseApiError = {
 
 export type FieldError = {
   field: string
-  error: string
+  message: string
 }
 
 export class ValidationError extends Error {

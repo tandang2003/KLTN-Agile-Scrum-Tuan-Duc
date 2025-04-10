@@ -20,8 +20,15 @@ const RegisterSchema = z
     message: 'Passwords do not match',
     path: ['confirm-password']
   })
-
 type RegisterSchemaType = z.infer<typeof RegisterSchema>
 
-export { RegisterSchema }
-export type { RegisterSchemaType }
+const LoginSchema = z
+  .object({
+    uniId: z.string(),
+    password: z.string()
+  })
+  .strict()
+type LoginsSchemaType = z.infer<typeof LoginSchema>
+
+export { RegisterSchema, LoginSchema }
+export type { RegisterSchemaType, LoginsSchemaType }

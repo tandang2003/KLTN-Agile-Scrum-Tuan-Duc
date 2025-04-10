@@ -30,7 +30,8 @@ public class AuthenticationService {
     private final JwtDecoder refreshTokenDecoder;
 
     @Autowired
-    public AuthenticationService(PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository, RoleRepository roleRepository, TokenUtils tokenUtils, JwtDecoder refreshTokenDecoder) {
+    public AuthenticationService(PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository,
+            RoleRepository roleRepository, TokenUtils tokenUtils, JwtDecoder refreshTokenDecoder) {
         this.pwEncoder = pwEncoder;
         this.userMapper = userMapper;
         this.userRepository = userRepository;
@@ -43,7 +44,8 @@ public class AuthenticationService {
         User user = userMapper.toUser(registerRequest);
         boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
         if (!check) {
-            Role role = roleRepository.getByName("student").orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build());
+            Role role = roleRepository.getByName("student")
+                    .orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build());
             user.setPassword(pwEncoder.encode(user.getPassword()));
             user.setRole(role);
             userRepository.save(user);

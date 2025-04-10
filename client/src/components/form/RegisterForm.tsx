@@ -19,6 +19,7 @@ import { HttpStatusCode } from 'axios'
 import { ValidationError } from '@/types/http.type'
 import { handleErrorApi } from '@/lib/form'
 import { toast } from 'sonner'
+import { redirect } from 'react-router-dom'
 
 const RegisterForm = ({
   className,
@@ -36,8 +37,16 @@ const RegisterForm = ({
         password: value.password
       })
       if (data) {
-        // save access token
+        toast.success('Go to login', {
+          action: {
+            label: 'Success',
+            onClick: () => {
+              redirect('/auth/login')
+            }
+          }
+        })
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e instanceof ValidationError) {
         handleErrorApi({
@@ -46,13 +55,13 @@ const RegisterForm = ({
         })
         return
       }
-      if (e.status === HttpStatusCode.BadRequest) {
+      if (e.status === HttpStatusCode.Conflict) {
         handleErrorApi({
           error: new ValidationError({
             error: [
               {
                 field: 'uniId',
-                error: 'Account with university id is exits'
+                message: 'Account with university id is exits'
               }
             ]
           }),
