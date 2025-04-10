@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
 //                .stackTrace(stackTrace)
                 .build();
 
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(statusCode).body(response);
     }
 
 }
