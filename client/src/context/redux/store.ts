@@ -1,10 +1,12 @@
+import authReducer from '@/feature/auth/auth.slice'
 import boardApi from '@/feature/board/board.api'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 export const store = configureStore({
   reducer: {
-    [boardApi.reducerPath]: boardApi.reducer
+    [boardApi.reducerPath]: boardApi.reducer,
+    authSlice: authReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(boardApi.middleware)
