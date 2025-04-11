@@ -61,7 +61,7 @@ const RegisterForm = ({
             error: [
               {
                 field: 'uniId',
-                message: 'Account with university id is exits'
+                message: 'Account with university id exits'
               }
             ]
           }),
@@ -139,7 +139,7 @@ const RegisterForm = ({
           </Button>
 
           <div className='mt-4 text-center text-sm'>
-            If you has account?{' '}
+            Already have an account?{' '}
             <NavLink to='/auth/login' className='underline underline-offset-4'>
               Login
             </NavLink>

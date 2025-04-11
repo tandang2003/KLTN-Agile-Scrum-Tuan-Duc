@@ -47,7 +47,7 @@ appAxios.interceptors.response.use(
     // Do something with response error
     console.info('Interceptor axios response error: ', err)
     // Check Error 422 (Error validation form)
-    if (err.status === HttpStatusCode.UnprocessableEntity) {
+    if (err.response?.status === HttpStatusCode.UnprocessableEntity) {
       const error = err as AxiosError<ResponseApiError>
 
       const code: number =
@@ -57,8 +57,8 @@ appAxios.interceptors.response.use(
         error.response?.data.error.map(
           (e) =>
             ({
-              field: e.error,
-              error: e.field
+              field: e.field,
+              message: e.message
             }) as FieldError
         ) ?? []
       return Promise.reject(
