@@ -28,5 +28,9 @@ type LoginRes = {
   }
 }
 
+type LogoutReq = {
+  accessToken: string
+}
+
 type LoginReq = Omit<RegisterReq, 'name'>
-export type { RegisterReq, LoginRes, LoginReq, AuthState }
+export type { RegisterReq, LoginRes, LoginReq, AuthState, LogoutReq }

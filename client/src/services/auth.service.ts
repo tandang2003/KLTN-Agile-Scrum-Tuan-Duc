@@ -1,5 +1,5 @@
 import httpService from '@/services/http.service'
-import { LoginReq, LoginRes, RegisterReq } from '@/types/auth.type'
+import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
 import { ResponseApi } from '@/types/http.type'
 
 const authService = {
@@ -17,6 +17,9 @@ const authService = {
       req
     )
     return res.data
+  },
+  logout: async (req: LogoutReq) => {
+    await httpService.post<ResponseApi<void>, LogoutReq>('auth/logout', req)
   }
 }
 

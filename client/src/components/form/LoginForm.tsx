@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,11 +20,13 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
-import { Link } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { loginThunk } from '@/feature/auth/auth.slice'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { handleErrorApi } from '@/lib/form'
 import { ValidationError } from '@/types/http.type'
+import { HOME_PATH } from '@/lib/const'
+import { toast } from 'sonner'
 
 const LoginForm = ({
   className,
@@ -32,23 +34,31 @@ const LoginForm = ({
 }: React.ComponentPropsWithoutRef<'div'>) => {
   const dispatch = useAppDispatch()
   const selector = useAppSelector((state) => state.authSlice)
+  const navigate = useNavigate()
   const form = useForm<LoginsSchemaType>({
-    resolver: zodResolver(LoginSchema)
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      uniId: '',
+      password: ''
+    }
   })
 
-  const handleSubmit = (value: LoginsSchemaType) => {
-    dispatch(loginThunk(value))
+  const handleSubmit = async (value: LoginsSchemaType) => {
+    const resultAction = await dispatch(loginThunk(value))
+    if (loginThunk.rejected.match(resultAction)) {
+      if (selector.error)
+        handleErrorApi({
+          error: new ValidationError({
+            error: [selector.error]
+          }),
+          setError: form.setError
+        })
+    }
+    if (loginThunk.fulfilled.match(resultAction)) {
+      toast.success('Login success, welcome to TaskFlow')
+      navigate(HOME_PATH)
+    }
   }
-
-  useEffect(() => {
-    if (selector.error)
-      handleErrorApi({
-        error: new ValidationError({
-          error: [selector.error]
-        }),
-        setError: form.setError
-      })
-  }, [selector])
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -102,12 +112,12 @@ const LoginForm = ({
 
               <div className='mt-4 text-center text-sm'>
                 Don&apos;t have an account?{' '}
-                <Link
+                <NavLink
                   to='/auth/register'
                   className='underline underline-offset-4'
                 >
                   Sign up
-                </Link>
+                </NavLink>
               </div>
             </form>
           </Form>

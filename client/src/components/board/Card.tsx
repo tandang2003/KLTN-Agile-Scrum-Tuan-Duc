@@ -1,10 +1,8 @@
 import { BaseCardProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import {
-  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,

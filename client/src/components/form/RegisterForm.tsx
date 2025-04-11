@@ -19,7 +19,7 @@ import { HttpStatusCode } from 'axios'
 import { ValidationError } from '@/types/http.type'
 import { handleErrorApi } from '@/lib/form'
 import { toast } from 'sonner'
-import { redirect } from 'react-router-dom'
+import { NavLink, redirect } from 'react-router-dom'
 
 const RegisterForm = ({
   className,
@@ -37,7 +37,7 @@ const RegisterForm = ({
         password: value.password
       })
       if (data) {
-        toast.success('Go to login', {
+        toast.success('Register success, please login', {
           action: {
             label: 'Success',
             onClick: () => {
@@ -137,6 +137,13 @@ const RegisterForm = ({
           <Button className='mt-4 w-full' type='submit'>
             Submit
           </Button>
+
+          <div className='mt-4 text-center text-sm'>
+            If you has account?{' '}
+            <NavLink to='/auth/login' className='underline underline-offset-4'>
+              Login
+            </NavLink>
+          </div>
         </form>
       </Form>
     </div>

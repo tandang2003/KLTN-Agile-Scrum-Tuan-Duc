@@ -63,3 +63,8 @@ export enum HttpStatusCode {
   NotExtended = 510,
   NetworkAuthenticationRequired = 511
 }
+
+export enum StorageItem {
+  AccessToken = 'accessToken'
+}
+export const HOME_PATH = '/'

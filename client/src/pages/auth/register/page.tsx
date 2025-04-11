@@ -3,9 +3,7 @@ import React from 'react'
 
 const RegisterPage = () => {
   return (
-    <div>
-      <RegisterForm />
-    </div>
+    <RegisterForm className='animate-fade-down animate-once animation-duration-1000 animate-ease-linear' />
   )
 }
 
