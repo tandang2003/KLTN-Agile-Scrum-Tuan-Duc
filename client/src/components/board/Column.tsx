@@ -1,8 +1,4 @@
-import {
-  BaseCardProps,
-  ButtonCreateCardProps,
-  ColumnProps
-} from '@/components/board/type'
+import { BaseCardProps, ColumnProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
 
 import { Button } from '@/components/ui/button'
