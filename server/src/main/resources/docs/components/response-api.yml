@@ -1,8 +1,8 @@
 type: object
 required:
-  - statusCode
+  - code
 properties:
-  statusCode:
+  code:
     type: integer
   error:
     type: string
