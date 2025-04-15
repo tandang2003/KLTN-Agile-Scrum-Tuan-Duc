@@ -58,4 +58,3 @@ logging:
     org:
       springframework:
         security: off
-
