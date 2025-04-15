@@ -53,7 +53,6 @@ server:
     session:
       cookie:
         max-age: 5
-  port: 8081
 logging:
   level:
     org:
