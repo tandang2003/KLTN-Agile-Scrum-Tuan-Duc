@@ -26,7 +26,6 @@ public class UserService {
         return ApiResponse.<List<UserResponse>>builder().code(200)
                 .message("Get all users successfully")
                 .data(userMapper.toUserResponseList(userRepository.findAll()))
-                .logData(MyLog.builder().str("1223").build())
                 .build();
     }
 }
