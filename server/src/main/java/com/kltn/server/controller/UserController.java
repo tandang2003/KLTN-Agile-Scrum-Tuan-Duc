@@ -2,6 +2,7 @@ package com.kltn.server.controller;
 
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.UserResponse;
+import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.service.UserService;
@@ -18,18 +19,13 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @Autowired
     public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
-
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
-        return ResponseEntity.ok().body(ApiResponse.<List<UserResponse>>builder().data(userMapper.toUserResponseList(userService.getAllUsers())).build());
-
-
+        return ResponseEntity.ok().body((ApiResponse<List<UserResponse>>) userService.getAllUsers());
     }
 }
