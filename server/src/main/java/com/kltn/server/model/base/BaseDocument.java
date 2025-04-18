@@ -1,18 +1,19 @@
 package com.kltn.server.model.base;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Id;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
-abstract public class BaseDocument {
-    @Id
-    protected String id;
+public abstract class BaseDocument {
+    @MongoId
+    protected ObjectId id;
+
     @CreatedDate
     @Field(name = "dt_created")
     protected Instant DTCreated;
@@ -35,8 +36,6 @@ abstract public class BaseDocument {
         this.deletedBy = builder.deletedBy;
     }
 
-    public BaseDocument() {
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -50,7 +49,7 @@ abstract public class BaseDocument {
     }
 
     abstract static protected class BaseDocumentBuilder<T, R extends BaseDocument.BaseDocumentBuilder<T, R>> {
-        protected String id;
+        protected ObjectId id;
         protected Instant DTCreated;
         protected Instant DTDeleted;
         protected boolean deleted;
@@ -60,7 +59,7 @@ abstract public class BaseDocument {
         protected BaseDocumentBuilder() {
         }
 
-        public R id(String id) {
+        public R id(ObjectId id) {
             this.id = id;
             return self();
         }
@@ -97,11 +96,11 @@ abstract public class BaseDocument {
 
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

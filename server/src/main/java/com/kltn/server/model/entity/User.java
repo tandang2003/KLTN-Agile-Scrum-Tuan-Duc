@@ -1,12 +1,12 @@
 package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
-
 import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,8 +37,8 @@ public class User extends BaseEntity implements UserDetails {
     // One user can review multiple tasks
     @OneToMany(mappedBy = "reviewer")
     private Set<Task> reviewedTasks;
-
-
+    @Transient
+    private boolean alive;
 
 
     public User() {
@@ -155,9 +155,11 @@ public class User extends BaseEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         // Convert role permissions to authorities
-        Collection<GrantedAuthority> authorities = new ArrayList<>(role.getPermissions().stream()
-                .map(p -> new SimpleGrantedAuthority(p.getName()))
-                .toList());
+        Collection<GrantedAuthority> authorities = new ArrayList<>(
+                role.getPermissions().stream()
+                        .map(p -> new SimpleGrantedAuthority(p.getName()))
+                        .toList()
+        );
 
         // Add role with "ROLE_" prefix
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
