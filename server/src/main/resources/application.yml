@@ -3,7 +3,7 @@ spring:
     name: server
     security:
       access-token:
-        time-of-life: 1m
+        time-of-life: 15m
         key:
           private-key: key/access/private_key.pem
           public-key: key/access/public_key.pem
@@ -53,9 +53,27 @@ server:
     session:
       cookie:
         max-age: 5
-  port: 8081
 logging:
   level:
     org:
       springframework:
         security: off
+
+kafka:
+    topic:
+      send-object-customer:
+        name: send_object_customer
+        partitions: 3
+        replication-factor: 3
+      send-object-order:
+        name: send_object_order
+        partitions: 3
+        replication-factor: 3
+      send-object-product:
+        name: send_object_product
+        partitions: 3
+        replication-factor: 3
+      send-object-user:
+        name: send_object_user
+        partitions: 3
+        replication-factor: 3
