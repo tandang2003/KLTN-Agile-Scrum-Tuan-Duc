@@ -2,16 +2,17 @@ package com.kltn.server.error;
 
 public class AppException extends RuntimeException {
     Error error;
-
-
     private AppException(Error error) {
         this.error = error;
+    }
+
+    public void message(String message) {
+        this.error.setMessage(message);
     }
 
     public static AppExceptionBuilder builder() {
         return new AppExceptionBuilder();
     }
-
 
 
     public static class AppExceptionBuilder {

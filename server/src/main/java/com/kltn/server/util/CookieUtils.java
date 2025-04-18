@@ -18,7 +18,6 @@ public class CookieUtils {
         return ResponseCookie.from(ACCESS_TOKEN_NAME, accessToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/")
                 .maxAge(tokenUtils.getAccessTokenExpiration()) // Access token live 15 minutes
                 .sameSite("Strict")
                 .build();
@@ -28,7 +27,7 @@ public class CookieUtils {
         return ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/")
+                .path("/auth/refresh")
                 .maxAge(tokenUtils.getRefreshTokenExpiration()) // Refresh token live 5 days
                 .sameSite("Strict")
                 .build();

@@ -1,8 +1,4 @@
-import {
-  BaseCardProps,
-  ButtonCreateCardProps,
-  ColumnProps
-} from '@/components/board/type'
+import { BaseCardProps, ColumnProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
 
 import { Button } from '@/components/ui/button'
@@ -20,10 +16,9 @@ const Column = ({
   name,
   items,
   container = undefined
-}: ColumnProps &
-  ButtonCreateCardProps & {
-    container?: string
-  }) => {
+}: ColumnProps & {
+  container?: string
+}) => {
   const { setNodeRef } = useDroppable({ id })
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const [heightToBottom, setHeightToBottom] = useState<number>(0)
@@ -38,7 +33,7 @@ const Column = ({
 
   return (
     <div ref={setNodeRef} className={(cn('h-fit rounded-xl p-2'), container)}>
-      <span className='border-b-1 mb-3.5 flex items-center pb-3.5'>
+      <span className='mb-3.5 flex items-center border-b-1 pb-3.5'>
         <Icon
           className='text-purple-700'
           icon={'icon-park-outline:dot'}
@@ -60,7 +55,7 @@ const Column = ({
           style={{
             '--card': 'white'
           }}
-          className='p-l4 flex flex-col gap-2 pb-4 pl-2 pr-4'
+          className='p-l4 flex flex-col pr-4 pb-4 pl-2'
         >
           {items?.map((item: BaseCardProps) => (
             <Card key={item.id} {...item} container={cn('m-1 bg-white')} />

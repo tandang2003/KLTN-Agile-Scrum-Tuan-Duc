@@ -9,6 +9,7 @@ export const board: BoardModelType = {
       id: 'col-1',
       name: 'Backlog',
       items: [
+        { id: 'card-2', name: 'Phân tích nghiệp vụ', category: 'LT', point: 3 },
         {
           id: 'card-1',
           name: 'Phân tích data',
@@ -42,7 +43,7 @@ export const board: BoardModelType = {
             }
           ]
         },
-        { id: 'card-2', name: 'Phân tích nghiệp vụ', category: 'LT', point: 3 },
+
         {
           id: 'card-3',
           name: 'Phân tích cấu trúc dự án',

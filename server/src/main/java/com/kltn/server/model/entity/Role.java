@@ -9,9 +9,6 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 public class Role extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
     private String name;
     private String description;
     @OneToMany(mappedBy = "role")

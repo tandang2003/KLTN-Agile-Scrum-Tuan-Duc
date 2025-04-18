@@ -7,13 +7,13 @@ public class ApiResponse<T> {
     private int code;
     private String message;
     private T data;
-    private String error;
+    private Object error;
 
     private ApiResponse(ApiResponseBuilder<T> tApiResponseBuilder) {
-        this.code = tApiResponseBuilder.code;
+        this.error = tApiResponseBuilder.error;
+        this.code = tApiResponseBuilder.code == 0 ? 200 : tApiResponseBuilder.code;
         this.message = tApiResponseBuilder.message;
         this.data = tApiResponseBuilder.data;
-        this.error = tApiResponseBuilder.error;
     }
 
     public static <T> ApiResponseBuilder<T> builder() {
@@ -24,7 +24,7 @@ public class ApiResponse<T> {
         private int code;
         private String message;
         private T data;
-        private String error;
+        private Object error;
 
         public ApiResponseBuilder<T> code(int code) {
             this.code = code;
@@ -45,7 +45,7 @@ public class ApiResponse<T> {
             return new ApiResponse<T>(this);
         }
 
-        public ApiResponseBuilder<T> error(String error) {
+        public ApiResponseBuilder<T> error(Object error) {
             this.error = error;
             return this;
         }
@@ -75,7 +75,7 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    public String getError() {
+    public Object getError() {
         return error;
     }
 

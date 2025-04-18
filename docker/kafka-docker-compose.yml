@@ -1,4 +1,4 @@
-# docker compose -f kafka-db-docker-compose.yml --env-file kafka.env up -d
+# docker compose -f kafka-docker-compose.yml --env-file kafka.env up -d
 version: "3.8"
 
 services:
@@ -23,7 +23,7 @@ services:
       - "29092:29092"
     environment:
       KAFKA_BROKER_ID: ${KAFKA_BROKER_1_ID}
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_CLIENT_PORT}
       KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:29092,EXTERNAL://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}

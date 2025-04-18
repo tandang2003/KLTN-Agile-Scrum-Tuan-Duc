@@ -1,44 +1,42 @@
 package com.kltn.server.model.collection;
 
 import com.kltn.server.model.base.BaseDocument;
+import com.kltn.server.model.collection.model.Tag;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.List;
-import java.util.Objects;
-
-//@Document(collection = "projects")
+@Document
 public class Project extends BaseDocument {
-    //    private String id;
-//    @Field(name = "nk_project_id")
-    private String projectId;
-    private List<Tag> tags;
+    @Field("nk_project_id")
+    private String nkProjectId;
+    @Field("description")
+    private String description;
+    @Field("tags")
+    private Tag[] tags;
 
-
-    public ProjectBuilder builder() {
-        return new ProjectBuilder();
+    public Project(ProjectBuilder builder) {
+        super(builder);
+        this.nkProjectId = builder.nkProjectId;
+        this.description = builder.description;
+        this.tags = builder.tags;
     }
 
-    public Project(ProjectBuilder projectBuilder) {
-        super(projectBuilder);
-        this.projectId = projectBuilder.projectId;
-        this.tags = projectBuilder.tags;
-    }
+    public static class ProjectBuilder extends BaseDocument.BaseDocumentBuilder<Project, ProjectBuilder> {
+        private String nkProjectId;
+        private String description;
+        private Tag[] tags;
 
-    public static class ProjectBuilder extends BaseDocumentBuilder<Project, ProjectBuilder> {
-
-        private String projectId;
-        private List<Tag> tags;
-
-        public ProjectBuilder() {
-        }
-
-        public ProjectBuilder projectId(String projectId) {
-            this.projectId = projectId;
+        public ProjectBuilder nkProjectId(String nkProjectId) {
+            this.nkProjectId = nkProjectId;
             return this;
         }
 
-        public ProjectBuilder tags(List<Tag> tags) {
+        public ProjectBuilder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public ProjectBuilder tags(Tag[] tags) {
             this.tags = tags;
             return this;
         }
@@ -48,38 +46,36 @@ public class Project extends BaseDocument {
             return this;
         }
 
-        @Override
         public Project build() {
             return new Project(this);
         }
     }
 
-    public List<Tag> getTags() {
+    public static ProjectBuilder builder() {
+        return new ProjectBuilder();
+    }
+
+    public String getNkProjectId() {
+        return nkProjectId;
+    }
+
+    public void setNkProjectId(String nkProjectId) {
+        this.nkProjectId = nkProjectId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Tag[] getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Tag[] tags) {
         this.tags = tags;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Project project)) return false;
-        if (!super.equals(o)) return false;
-        return Objects.equals(projectId, project.projectId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), projectId);
-    }
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
 }
