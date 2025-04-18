@@ -1,4 +1,4 @@
-# docker compose -f db-docker-compose.yml --env-file db.env up -dc
+# docker-compose -f db-docker-compose.yml --env-file db.env up -dc
 
 services:
   mongodb:
