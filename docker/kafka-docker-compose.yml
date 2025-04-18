@@ -1,4 +1,4 @@
-# docker compose -f kafka-docker-compose.yml --env-file kafka.env up -d
+# docker-compose -f kafka-docker-compose.yml --env-file kafka.env up -d
 version: "3.8"
 
 services:
@@ -30,7 +30,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
     volumes:
-      - kafka_data1:/var/lib/kafka/data
+      #      - kafka_data1:/var/lib/kafka/data
+      - kafka_data1:/kafka/kafka-logs
 
   kafka2:
     image: confluentinc/cp-kafka:latest
@@ -50,7 +51,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
     volumes:
-      - kafka_data2:/var/lib/kafka/data
+#      - kafka_data2:/var/lib/kafka/data
+      - kafka_data2:/kafka/kafka-logs
 
   kafka3:
     image: confluentinc/cp-kafka:latest
@@ -70,7 +72,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
     volumes:
-      - kafka_data3:/var/lib/kafka/data
+      #      - kafka_data3:/var/lib/kafka/data
+      - kafka_data3:/kafka/kafka-logs
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
