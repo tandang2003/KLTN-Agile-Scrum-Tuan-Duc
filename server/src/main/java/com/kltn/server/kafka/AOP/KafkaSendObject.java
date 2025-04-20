@@ -19,7 +19,7 @@ import java.util.concurrent.CompletionStage;
 
 @Aspect
 @Component
-public class KafkaSendObject <T>{
+public class KafkaSendObject<T> {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
