@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class CheckingAllFilter implements CommandLineRunner {
-    @Autowired
+//    @Autowired
     SecurityFilterChain filterChain;
 //
     @Override
