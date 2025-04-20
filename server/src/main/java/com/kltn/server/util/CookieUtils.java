@@ -14,14 +14,14 @@ public class CookieUtils {
     @Autowired
     private TokenUtils tokenUtils;
 
-    public ResponseCookie setAccessCookies(String accessToken) {
-        return ResponseCookie.from(ACCESS_TOKEN_NAME, accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .maxAge(tokenUtils.getAccessTokenExpiration()) // Access token live 15 minutes
-                .sameSite("Strict")
-                .build();
-    }
+//    public ResponseCookie setAccessCookies(String accessToken) {
+//        return ResponseCookie.from(ACCESS_TOKEN_NAME, accessToken)
+//                .httpOnly(true)
+//                .secure(true)
+//                .maxAge(tokenUtils.getAccessTokenExpiration()) // Access token live 15 minutes
+//                .sameSite("Strict")
+//                .build();
+//    }
 
     public ResponseCookie setRefreshCookies(String refreshToken) {
         return ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
@@ -36,14 +36,14 @@ public class CookieUtils {
     public ResponseEntity<String> setJwtCookies(HttpServletResponse response,
                                                 String accessToken,
                                                 String refreshToken) {
-        // Tạo HttpOnly cookie cho Access Token (ngắn hạn)
-        ResponseCookie accessCookie = ResponseCookie.from(ACCESS_TOKEN_NAME, accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(tokenUtils.getAccessTokenExpiration()) // Access token live 15 minutes
-                .sameSite("Strict")
-                .build();
+//        // Tạo HttpOnly cookie cho Access Token (ngắn hạn)
+//        ResponseCookie accessCookie = ResponseCookie.from(ACCESS_TOKEN_NAME, accessToken)
+//                .httpOnly(true)
+//                .secure(true)
+//                .path("/")
+//                .maxAge(tokenUtils.getAccessTokenExpiration()) // Access token live 15 minutes
+//                .sameSite("Strict")
+//                .build();
 
         // Tạo HttpOnly cookie cho Refresh Token (dài hạn)
         ResponseCookie refreshCookie = ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
@@ -55,7 +55,7 @@ public class CookieUtils {
                 .build();
 
         // Thêm cookies vào response header
-        response.addHeader("Set-Cookie", accessCookie.toString());
+//        response.addHeader("Set-Cookie", accessCookie.toString());
         response.addHeader("Set-Cookie", refreshCookie.toString());
 
         return ResponseEntity.ok("Tokens set successfully in cookies!");

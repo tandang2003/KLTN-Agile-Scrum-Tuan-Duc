@@ -8,6 +8,8 @@ spring:
   data:
     mongodb:
       uri: #REQUIRED
+    redis:
+      url: #REQUIRED
 springdoc:
   api-docs:
     enabled: #OPTIONAL
