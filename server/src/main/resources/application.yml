@@ -60,10 +60,10 @@ logging:
         security: off
 cache:
   redis:
-    refresh-token:
-      tti: 432000
-      key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
-      value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+#    refresh-token:
+#      tti: 432000
+#      key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+#      value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
 #      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
 #      hash-value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
     task:
