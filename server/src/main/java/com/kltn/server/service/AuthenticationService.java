@@ -12,12 +12,15 @@ import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class AuthenticationService {
@@ -26,18 +29,19 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private TokenUtils tokenUtils;
-    @Qualifier("refreshTokenDecoder")
     private final JwtDecoder refreshTokenDecoder;
+    private final RedisTemplate<?, ?> redisTemplate;
 
     @Autowired
     public AuthenticationService(PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository,
-            RoleRepository roleRepository, TokenUtils tokenUtils, JwtDecoder refreshTokenDecoder) {
+                                 RoleRepository roleRepository, TokenUtils tokenUtils, @Qualifier("refreshTokenDecoder") JwtDecoder refreshTokenDecoder, Map<String, RedisTemplate<?, ?>> redisTemplateMap) {
         this.pwEncoder = pwEncoder;
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.tokenUtils = tokenUtils;
         this.refreshTokenDecoder = refreshTokenDecoder;
+        this.redisTemplate = redisTemplateMap.get("refreshToken");
     }
 
     public void register(RegisterRequest registerRequest) {
@@ -69,18 +73,20 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse refresh(String refreshToken) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw AppException.builder()
                     .error(Error.TOKEN_MISSING)
                     .build();
         }
         Jwt jwt = refreshTokenDecoder.decode(refreshToken);
-        String accessToken = tokenUtils.generateAccessToken(authentication);
-        User user = (User) authentication.getPrincipal();
+        User user = userRepository.findByUniId(jwt.getClaim("uniId")).orElseThrow(() -> AppException.builder().error(Error.TOKEN_INVALID).build());
+        String accessToken = tokenUtils.generateAccessToken(user);
+//        User user = (User) authentication.getPrincipal();
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .userResponse(userMapper.toUserDetailDTO(user))
                 .build();
+//        return null;
     }
 }

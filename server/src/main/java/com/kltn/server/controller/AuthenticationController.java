@@ -51,7 +51,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> refresh(@CookieValue("refresh-token") String refreshToken) {
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> refresh(@CookieValue("refresh_token") String refreshToken) {
         AuthenticationResponse response = authenticationService.refresh(refreshToken);
         return ResponseEntity.ok()
                 .body(
