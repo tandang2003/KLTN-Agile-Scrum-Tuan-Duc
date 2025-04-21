@@ -45,6 +45,7 @@ public class TokenUtils {
                 .expiresAt(now.plus(getAccessTokenExpiration(), ChronoUnit.SECONDS))
                 .subject(subject)
                 .claim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .claim("uniId", ((User) userDetails).getUniId())
                 .build();
 
         return accessJwtEncoder

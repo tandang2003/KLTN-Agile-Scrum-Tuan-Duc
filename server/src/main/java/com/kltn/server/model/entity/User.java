@@ -21,6 +21,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
     private String email;
     private String uniId;
+    private String className;
     private String uniPassword;
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -53,6 +54,7 @@ public class User extends BaseEntity implements UserDetails {
     private User(UserEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
+        this.className = builder.className;
         this.password = builder.password;
         this.email = builder.email;
         this.uniId = builder.uniId;
@@ -66,6 +68,7 @@ public class User extends BaseEntity implements UserDetails {
 
     public static class UserEntityBuilder extends BaseEntityBuilder<User, UserEntityBuilder> {
         private String name;
+        private String className;
         private String password;
         private String email;
         private String uniId;
@@ -94,6 +97,11 @@ public class User extends BaseEntity implements UserDetails {
 
         public UserEntityBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public UserEntityBuilder className(String className) {
+            this.className = className;
             return this;
         }
 
@@ -239,7 +247,32 @@ public class User extends BaseEntity implements UserDetails {
         return reviewedTasks;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
     public void setReviewedTasks(Set<Task> reviewedTasks) {
+
         this.reviewedTasks = reviewedTasks;
     }
 }
