@@ -40,6 +40,8 @@ public class SecurityConfig {
 
     @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    @Autowired
+    private CustomConverterJwtToUser customConverterJwtToUser;
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -55,6 +57,7 @@ public class SecurityConfig {
                     contextConfig.requireExplicitSave(false);
                 })
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -65,7 +68,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {
                                 jwt.decoder(accessTokenDecoder);
-                                jwt.jwtAuthenticationConverter(new CustomConverterJwtToUser());
+                                jwt.jwtAuthenticationConverter(customConverterJwtToUser);
                             })
                             .authenticationEntryPoint(customAuthenticationEntryPoint);
                 })
@@ -77,7 +80,7 @@ public class SecurityConfig {
 
 
         http.httpBasic(AbstractHttpConfigurer::disable);
-        http.formLogin(c->c.disable());
+        http.formLogin(c -> c.disable());
         return http.build();
     }
 
