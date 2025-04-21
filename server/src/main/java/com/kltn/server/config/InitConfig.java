@@ -1,6 +1,5 @@
 package com.kltn.server.config;
 
-import com.kltn.server.config.security.CustomJWTDecoder;
 import com.kltn.server.config.security.CustomJWTValidation;
 import com.kltn.server.util.TokenKeyUtils;
 import com.nimbusds.jose.jwk.JWK;
@@ -80,7 +79,6 @@ public class InitConfig {
     JwtDecoder refreshTokenDecoder() {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getRefreshPublicKey()).build();
         decoder.setJwtValidator(tokenValidator());
-
         return decoder;
     }
 }
