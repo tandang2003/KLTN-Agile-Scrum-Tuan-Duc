@@ -27,6 +27,11 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<UserResponse>> getUser() {
-        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().data(userService.getCurrUser()).build());
+        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info user").data(userService.getCurrUser()).build());
+    }
+
+    @GetMapping("/workspace")
+    public ResponseEntity<ApiResponse<UserResponse>> userWorkspace() {
+        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info user").data(userService.getCurrUser()).build());
     }
 }
