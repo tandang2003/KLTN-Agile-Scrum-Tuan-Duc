@@ -11,6 +11,7 @@ const RestoreToken = ({ children }: RestoreTokenProps) => {
   useEffect(() => {
     dispatch(restoreSessionThunk())
   }, [dispatch])
+
   return children
 }
 

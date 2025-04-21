@@ -20,6 +20,7 @@ const CardAdding = ({ id, className }: CardAddingProps) => {
       console.log(`${id} Clicked inside Dropdown`)
     },
     () => {
+      // Add card into card
       console.log(`${id} Clicked outside Dropdown`)
     }
   )

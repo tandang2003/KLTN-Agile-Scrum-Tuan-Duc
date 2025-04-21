@@ -1,11 +1,12 @@
 import React from 'react'
 import Header from '@/components/Header'
+import Container from '@/components/Container'
 
 const HomePage = () => {
   return (
     <>
       <Header />
-      <div>Home page</div>
+      <Container>Home page</Container>
     </>
   )
 }

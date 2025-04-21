@@ -18,12 +18,12 @@ const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to={`/manager/project/${id}/board`}>Board</Link>
+            <Link to={`/manager/workspace/project/${id}/board`}>Board</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to={`/manager/project/${id}/backlog`}>Backlog</Link>
+            <Link to={`/manager/workspace/project/${id}/backlog`}>Backlog</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
