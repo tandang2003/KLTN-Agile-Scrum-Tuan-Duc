@@ -4,22 +4,32 @@ import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 
+type Mode = 'hide' | 'home'
+
 type GuestOnlyProps = {
   children: React.ReactNode
-  nav?: boolean
+  mode?: Mode
 }
 
-const GuestOnly = ({ children, nav = false }: GuestOnlyProps) => {
-  const user = useAppSelector((state) => state.authSlice.accessToken)
+const GuestOnly = ({ children, mode = 'hide' }: GuestOnlyProps) => {
+  const { isAuth, loading: isLoading } = useAppSelector(
+    (state) => state.authSlice
+  )
   const location = useLocation()
 
-  if (user) {
-    // redirect to login, keep current location for after login redirect
-    if (nav) {
+  // Special use case because need handle navigate
+  if (mode == 'home') {
+    if (isLoading && typeof isAuth === 'boolean' && isAuth) {
       toast.warning('You are logged in')
       return <Navigate to={HOME_PATH} state={{ from: location }} replace />
     }
-    return null
+  }
+
+  if (isAuth) {
+    switch (mode) {
+      case 'hide':
+        return null
+    }
   }
 
   return children

@@ -1,5 +1,9 @@
 type ProjectParams = {
-  id: string
+  projectId: string
 }
 
-export type { ProjectParams }
+type WorkspaceParams = {
+  workspaceId: string
+}
+
+export type { ProjectParams, WorkspaceParams }

@@ -20,21 +20,26 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { loginThunk } from '@/feature/auth/auth.slice'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { useAppDispatch } from '@/context/redux/hook'
 import { handleErrorApi } from '@/lib/form'
 import { ValidationError } from '@/types/http.type'
 import { HOME_PATH } from '@/lib/const'
 import { toast } from 'sonner'
+import { store } from '@/context/redux/store'
 
 const LoginForm = ({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
   const dispatch = useAppDispatch()
-  const selector = useAppSelector((state) => state.authSlice)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // fallback path if no previous location
+  const from = location.state?.from?.pathname || HOME_PATH
+
   const form = useForm<LoginsSchemaType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -46,17 +51,19 @@ const LoginForm = ({
   const handleSubmit = async (value: LoginsSchemaType) => {
     const resultAction = await dispatch(loginThunk(value))
     if (loginThunk.rejected.match(resultAction)) {
-      if (selector.error)
+      const error = store.getState().authSlice.error
+      if (error) {
         handleErrorApi({
           error: new ValidationError({
-            error: [selector.error]
+            error: [error]
           }),
           setError: form.setError
         })
+      }
     }
     if (loginThunk.fulfilled.match(resultAction)) {
       toast.success('Login success, welcome to TaskFlow')
-      navigate(HOME_PATH)
+      navigate(from, { replace: true })
     }
   }
 

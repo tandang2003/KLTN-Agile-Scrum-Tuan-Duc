@@ -1,15 +1,19 @@
 import authReducer from '@/feature/auth/auth.slice'
 import boardApi from '@/feature/board/board.api'
+import workspaceApi from '@/feature/workspace/workspace.api'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 export const store = configureStore({
   reducer: {
     [boardApi.reducerPath]: boardApi.reducer,
+    [workspaceApi.reducerPath]: workspaceApi.reducer,
     authSlice: authReducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(boardApi.middleware)
+    getDefaultMiddleware()
+      .concat(boardApi.middleware)
+      .concat(workspaceApi.middleware)
 })
 
 setupListeners(store.dispatch)

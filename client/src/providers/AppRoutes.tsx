@@ -1,33 +1,32 @@
 import LoginPage from '@/pages/auth/login/page'
 import HomePage from '@/pages/home/page'
-import ManagerLayout from '@/pages/manager/layout'
-import BacklogPage from '@/pages/manager/project/backlog/page'
-import BoardPage from '@/pages/manager/project/board/page'
-import ProjectPage from '@/pages/manager/project/page'
 import NotFoundPage from '@/pages/not-found'
 import RootLayout from '@/pages/layout'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import RegisterPage from '@/pages/auth/register/page'
 import AuthLayout from '@/pages/auth/layout'
 import GuestOnly from '@/components/wrapper/GuestOnly'
+import WorkspacePage from '@/pages/manager/workspace/page'
+import ManagerPage from '@/pages/manager/page'
+import ManagerLayout from '@/pages/manager/layout'
+import ProjectPage from '@/pages/manager/workspace/project/page'
+import BoardPage from '@/pages/manager/workspace/project/board/page'
+import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
+import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
+
+// http://localhost:3000/manager/workspace
+// http://localhost:3000/manager/workspace/project/1
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<RootLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path='manager' element={<ManagerLayout />}>
-            <Route path='project/:id' element={<ProjectPage />}>
-              <Route index element={<BoardPage />} />
-              <Route path='board' index element={<BoardPage />} />
-              <Route path='backlog' element={<BacklogPage />} />
-            </Route>
-          </Route>
           <Route
             path='auth'
             element={
-              <GuestOnly nav>
+              <GuestOnly mode='home'>
                 <AuthLayout />
               </GuestOnly>
             }
@@ -35,6 +34,38 @@ const AppRoutes = () => {
             <Route path='login' index element={<LoginPage />} />
             <Route path='register' element={<RegisterPage />} />
           </Route>
+          <Route index element={<HomePage />} />
+          <Route path='home' element={<HomePage />} />
+
+          <Route
+            path='manager'
+            element={
+              <RequiredAuth mode='login'>
+                <ManagerLayout />
+              </RequiredAuth>
+            }
+          >
+            {/* http://localhost:3000/manager */}
+            <Route index element={<ManagerPage />} />
+            {/* http://localhost:3000/manager/workspace */}
+            <Route path='workspace' element={<WorkspacePage />} />
+            {/* http://localhost:3000/manager/workspace/1 */}
+            <Route
+              path='workspace/:workspaceId'
+              element={<WorkspaceDetailPage />}
+            />
+            {/* http://localhost:3000/manager/workspace/project/1 */}
+            <Route
+              path='workspace/project/:projectId'
+              element={<ProjectPage />}
+            >
+              <Route index element={<BoardPage />} />
+              {/* http://localhost:3000/manager/workspace/project/1/board */}
+              <Route path='board' index element={<BoardPage />} />
+              <Route path='backlog' element={<BacklogPage />} />
+            </Route>
+          </Route>
+
           <Route path='*' element={<NotFoundPage />} />
         </Route>
       </Routes>

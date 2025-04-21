@@ -22,7 +22,7 @@ const data = {
     items: [
       {
         title: 'Overview',
-        url: '#',
+        url: '/manager',
         isActive: true,
         icon: <Icon icon={'lucide:album'} />,
         items: [
@@ -42,12 +42,12 @@ const data = {
       },
       {
         title: 'Workspaces',
-        url: '#',
+        url: '/manager/workspace',
         icon: <Icon icon={'carbon:workspace'} />
       },
       {
-        title: 'Projects',
-        url: '#',
+        title: 'Project',
+        url: '/manager/project',
         icon: <Icon icon={'ant-design:project-twotone'} />
       }
     ]

@@ -8,14 +8,13 @@ import { ProjectParams } from '@/types/route.type'
 import { useParams } from 'react-router-dom'
 
 const BoardPage = () => {
-  const { id } = useParams<ProjectParams>()
-  const { data, isFetching } = useGetBoardByProjectIdQuery(id as Id, {
-    skip: !id
+  const { projectId } = useParams<ProjectParams>()
+  const { data, isFetching } = useGetBoardByProjectIdQuery(projectId as Id, {
+    skip: !projectId
   })
 
   return (
     <>
-      <span></span>
       {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
       {!isFetching && data && (
         <ScrollArea>
