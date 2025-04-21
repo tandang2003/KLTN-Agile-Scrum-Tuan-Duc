@@ -32,7 +32,7 @@ const GuestOnly = ({ children, mode = 'hide' }: GuestOnlyProps) => {
     }
   }
 
-  return children
+  return <>{children}</>
 }
 
 export default GuestOnly

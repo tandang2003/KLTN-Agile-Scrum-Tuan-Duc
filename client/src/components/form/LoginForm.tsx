@@ -48,23 +48,25 @@ const LoginForm = ({
     }
   })
 
-  const handleSubmit = async (value: LoginsSchemaType) => {
-    const resultAction = await dispatch(loginThunk(value))
-    if (loginThunk.rejected.match(resultAction)) {
-      const error = store.getState().authSlice.error
-      if (error) {
-        handleErrorApi({
-          error: new ValidationError({
-            error: [error]
-          }),
-          setError: form.setError
-        })
-      }
-    }
-    if (loginThunk.fulfilled.match(resultAction)) {
-      toast.success('Login success, welcome to TaskFlow')
-      navigate(from, { replace: true })
-    }
+  const handleSubmit = (value: LoginsSchemaType) => {
+    dispatch(loginThunk(value))
+      .then(() => {
+        console.log('success')
+        toast.success('Login success, welcome to TaskFlow')
+        navigate(from, { replace: true })
+      })
+      .catch(() => {
+        console.log('error')
+        const error = store.getState().authSlice.error
+        if (error) {
+          handleErrorApi({
+            error: new ValidationError({
+              error: [error]
+            }),
+            setError: form.setError
+          })
+        }
+      })
   }
 
   return (
@@ -112,7 +114,11 @@ const LoginForm = ({
                 >
                   Forgot your password?
                 </a>
-                <Button type='submit' className='w-full'>
+                <Button
+                  type='submit'
+                  className='w-full'
+                  loading={form.formState.isSubmitting}
+                >
                   Login
                 </Button>
               </div>

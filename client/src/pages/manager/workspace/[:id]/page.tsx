@@ -1,12 +1,30 @@
+import workspaceService from '@/services/workspace.service'
 import { WorkspaceParams } from '@/types/route.type'
-import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams<WorkspaceParams>()
-  if (!workspaceId) {
-    return null
-  }
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!workspaceId) {
+      navigate('/404', { replace: true })
+      return
+    }
+
+    const fetchData = async () => {
+      try {
+        const data = await workspaceService.getWorkSpace(workspaceId)
+        console.log(data)
+      } catch (_error) {
+        navigate('/404', { replace: true })
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return <div>{workspaceId}</div>
 }
 
