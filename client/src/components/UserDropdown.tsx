@@ -14,14 +14,9 @@ import {
 import { SidebarMenuButton } from '@/components/ui/sidebar'
 import { useAppSelector } from '@/context/redux/hook'
 import { cn } from '@/lib/utils'
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  Sparkles
-} from 'lucide-react'
+import { BadgeCheck, Bell, ChevronsUpDown, CreditCard } from 'lucide-react'
 import { ComponentProps } from 'react'
+import { NavLink } from 'react-router-dom'
 
 type UserDropdownProps = {
   insideSidebar?: boolean
@@ -86,9 +81,8 @@ const UserDropdown = ({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Sparkles />
-            Upgrade to Pro
+          <DropdownMenuItem asChild>
+            <NavLink to={'/manager'}>Workspaces</NavLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

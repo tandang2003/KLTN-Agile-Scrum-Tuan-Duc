@@ -1,4 +1,5 @@
 import WorkspaceCard from '@/components/card/WorkspaceCard'
+import Container from '@/components/Container'
 import ListView from '@/components/ListView'
 import { useGetListWorkSpaceQuery } from '@/feature/workspace/workspace.api'
 import { WorkspaceCardResponse } from '@/types/workspace.type'
@@ -7,8 +8,8 @@ const WorkspacePage = () => {
   const { data, isFetching } = useGetListWorkSpaceQuery()
 
   return (
-    <div>
-      <div>Work Spaces</div>
+    <Container inSidebar>
+      <h2 className='h2'>Work Spaces</h2>
       <ListView<WorkspaceCardResponse>
         data={data}
         loading={isFetching}
@@ -23,7 +24,7 @@ const WorkspacePage = () => {
           />
         )}
       />
-    </div>
+    </Container>
   )
 }
 

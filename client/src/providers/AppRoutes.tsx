@@ -66,6 +66,7 @@ const AppRoutes = () => {
             </Route>
           </Route>
 
+          <Route path='/404' element={<NotFoundPage />} />
           <Route path='*' element={<NotFoundPage />} />
         </Route>
       </Routes>
