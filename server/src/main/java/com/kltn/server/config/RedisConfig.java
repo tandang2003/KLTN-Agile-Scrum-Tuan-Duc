@@ -18,20 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableRedisRepositories(basePackages="com.kltn.server.repository.redis")
 public class RedisConfig {
     @Bean
     public RedisConnectionFactory connectionFactory() {
         return new LettuceConnectionFactory();
     }
-
-    //    @Bean
-//    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-//
-//        RedisTemplate<byte[], byte[]> template = new RedisTemplate<byte[], byte[]>();
-//        template.setConnectionFactory(redisConnectionFactory);
-//        return template;
-//    }
     @Bean
     public Map<String, RedisTemplate<?, ?>> redisTemplates(RedisConnectionFactory connectionFactory,
                                                            CacheProperties cacheProperties) {

@@ -7,25 +7,19 @@ import com.kltn.server.error.Error;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
-import com.kltn.server.model.redis.UserToken;
 import com.kltn.server.repository.entity.RoleRepository;
 import com.kltn.server.repository.entity.UserRepository;
-import com.kltn.server.repository.redis.UserTokenRepository;
 import com.kltn.server.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.Map;
 
 @Service
@@ -37,10 +31,9 @@ public class AuthenticationService {
     private TokenUtils tokenUtils;
     private final JwtDecoder refreshTokenDecoder;
     private final RedisTemplate<?, ?> redisTemplate;
-    private final UserTokenRepository userTokenRepository;
 
     @Autowired
-    public AuthenticationService(UserTokenRepository userTokenRepository, PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository,
+    public AuthenticationService(PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository,
                                  RoleRepository roleRepository, TokenUtils tokenUtils, @Qualifier("refreshTokenDecoder") JwtDecoder refreshTokenDecoder, Map<String, RedisTemplate<?, ?>> redisTemplateMap) {
         this.pwEncoder = pwEncoder;
         this.userMapper = userMapper;
@@ -49,7 +42,6 @@ public class AuthenticationService {
         this.tokenUtils = tokenUtils;
         this.refreshTokenDecoder = refreshTokenDecoder;
         this.redisTemplate = redisTemplateMap.get("refreshToken");
-        this.userTokenRepository = userTokenRepository;
     }
 
     public void register(RegisterRequest registerRequest) {

@@ -1,7 +1,6 @@
 package com.kltn.server.config.properties;
 
 public class CacheModel {
-    private String tti;
     private String keySerializer;
     private String valueSerializer;
     private String hashKeySerializer;
@@ -11,7 +10,6 @@ public class CacheModel {
     }
 
     private CacheModel(CacheModelBuilder builder) {
-        this.tti = builder.tti;
         this.keySerializer = builder.keySerializer;
         this.valueSerializer = builder.valueSerializer;
         this.hashKeySerializer = builder.hashKeySerializer;
@@ -23,16 +21,10 @@ public class CacheModel {
     }
 
     public static class CacheModelBuilder {
-        private String tti;
         private String keySerializer;
         private String valueSerializer;
         private String hashKeySerializer;
         private String hashValueSerializer;
-
-        public CacheModelBuilder tti(String tti) {
-            this.tti = tti;
-            return this;
-        }
 
         public CacheModelBuilder keySerializer(String keySerializer) {
             this.keySerializer = keySerializer;
@@ -59,13 +51,6 @@ public class CacheModel {
         }
     }
 
-    public String getTti() {
-        return tti;
-    }
-
-    public void setTti(String tti) {
-        this.tti = tti;
-    }
 
     public String getKeySerializer() {
         return keySerializer;
