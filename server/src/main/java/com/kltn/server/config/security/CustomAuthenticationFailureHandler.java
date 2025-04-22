@@ -17,7 +17,7 @@ import java.util.Optional;
 
 
 @Component
-public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class   CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Autowired
     ObjectMapper mapper;
 

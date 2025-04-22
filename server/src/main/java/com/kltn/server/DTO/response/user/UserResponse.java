@@ -1,4 +1,4 @@
-package com.kltn.server.DTO.response;
+package com.kltn.server.DTO.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.model.base.BaseEntity;
@@ -8,20 +8,21 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record UserResponse(String id, String name, String email, String uniId, String uniPassword,
+public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
                            String role, List<Workspace> workspace, List<Project> projects, Set<Task> assignedTasks,
                            Set<Task> reviewedTasks) {
     public UserResponse(UserResponseBuilder b) {
-        this(b.id, b.name, b.email, b.uniId, b.uniPassword, b.role, b.workspace, b.projects, b.assignedTasks, b.reviewedTasks);
+        this(b.id, b.name, b.email, b.uniId, b.uniPassword, b.className, b.role, b.workspace, b.projects, b.assignedTasks, b.reviewedTasks);
     }
 
 
-    public UserResponseBuilder builder() {
+    public static UserResponseBuilder builder() {
         return new UserResponseBuilder();
     }
 
     public static class UserResponseBuilder extends BaseEntity.BaseEntityBuilder<UserResponse, UserResponseBuilder> {
         private String id;
+        private String className;
         private String name;
         private String email;
         private String uniId;
@@ -32,8 +33,8 @@ public record UserResponse(String id, String name, String email, String uniId, S
         private Set<Task> assignedTasks;
         private Set<Task> reviewedTasks;
 
-        public UserResponseBuilder id() {
-            this.id = super.id;
+        public UserResponseBuilder id(String id) {
+            this.id = id;
             return this;
         }
 
@@ -50,6 +51,10 @@ public record UserResponse(String id, String name, String email, String uniId, S
 
         public UserResponseBuilder uniId(String uniId) {
             this.uniId = uniId;
+            return this;
+        }
+        public UserResponseBuilder className(String className) {
+            this.className = className;
             return this;
         }
 

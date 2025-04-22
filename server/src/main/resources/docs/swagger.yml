@@ -168,6 +168,16 @@ paths:
     get:
       summary: Get info user
       description: Get info user when after login, return info to view in user card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access-token:
+                  type: string
+                  description: bearer user access token
       responses:
         200:
           description: Success

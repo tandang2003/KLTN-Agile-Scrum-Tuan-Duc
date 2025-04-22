@@ -11,6 +11,7 @@ public class UserTokenService {
     @Value("${cache.redis.refresh-token.ttl}")
     private long refreshTokenTtl;
 
+
     public UserTokenService(Map<String, RedisTemplate<?, ?>> redisTemplate) {
         this.redisTemplate = (RedisTemplate<String, String>) redisTemplate.get("refreshToken");
     }
