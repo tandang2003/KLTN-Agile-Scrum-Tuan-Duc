@@ -1,4 +1,3 @@
-import { Editor } from '@/components/blocks/editor-x/editor'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithRange } from '@/components/ui/date-picker'
 import {
@@ -16,7 +15,6 @@ import {
 } from '@/types/workspace.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
-import { SerializedEditorState } from 'lexical'
 import { ReactNode, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -34,8 +32,6 @@ const CreateWorkspaceForm = () => {
       }
     }
   })
-
-  const [editorState, setEditorState] = useState<SerializedEditorState>()
 
   const onSubmit = (values: CreateWorkspaceSchemaType) => {
     console.log(values)
@@ -64,12 +60,7 @@ const CreateWorkspaceForm = () => {
               <FormItem className='mt-4'>
                 <FormLabel>Description</FormLabel>
 
-                <FormControl>
-                  <Editor
-                    editorSerializedState={editorState}
-                    onSerializedChange={(value) => setEditorState(value)}
-                  />
-                </FormControl>
+                <FormControl></FormControl>
                 <FormMessage />
               </FormItem>
             )}

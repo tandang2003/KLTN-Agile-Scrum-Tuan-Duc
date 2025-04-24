@@ -41,7 +41,7 @@ const WorkspacePage = () => {
       />
       <DialogCreateWorkspace
         open={openCreatedDialog}
-        setOpen={(open) => setOpenCreatedDialog(open)}
+        onOpen={(open) => setOpenCreatedDialog(open)}
       />
     </Container>
   )
