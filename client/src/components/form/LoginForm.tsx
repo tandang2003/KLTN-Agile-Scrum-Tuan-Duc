@@ -50,13 +50,13 @@ const LoginForm = ({
 
   const handleSubmit = (value: LoginsSchemaType) => {
     dispatch(loginThunk(value))
-      .then(() => {
-        console.log('success')
+      .unwrap()
+      .then((response) => {
+        console.log(response)
         toast.success('Login success, welcome to TaskFlow')
         navigate(from, { replace: true })
       })
       .catch(() => {
-        console.log('error')
         const error = store.getState().authSlice.error
         if (error) {
           handleErrorApi({
@@ -75,7 +75,7 @@ const LoginForm = ({
         <CardHeader>
           <CardTitle className='text-2xl'>Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your university id below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
