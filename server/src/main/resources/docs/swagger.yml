@@ -336,21 +336,27 @@ paths:
                 name:
                   type: string
                   description: workspace name
+                  validation: not empty
                 description:
                   type: string
                   description: workspace description
+                  validation: not empty
                 numSprint:
                   type: integer
                   description: quantity of sprints
+                  minimum: 1
                 timePerSprint:
                   type: number
-                  description: time for 1 sprint
+                  description: time for 1 sprint unit is day
+                  maximum: 1
                 start:
-                  type: number
+                  type: string
                   description: time start workspace
+                  format: yyyy-MM-dd'T'HH:mm:ss.SSSX
                 end:
-                  type: number
+                  type: string
                   description: time estimate end workspace
+                  format: yyyy-MM-dd'T'HH:mm:ss.SSSX
               example:
                 name: "workspace-LTW"
                 description: "Workspace for student in lab LTW NLU"

@@ -1,4 +1,4 @@
-package com.kltn.server.util;
+package com.kltn.server.util.token;
 
 import com.kltn.server.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,7 @@ public class TokenUtils {
                 .subject(subject)
                 .claim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .claim("uniId", ((User) userDetails).getUniId())
+
                 .build();
 
         return accessJwtEncoder
