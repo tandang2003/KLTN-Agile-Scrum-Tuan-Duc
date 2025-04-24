@@ -1,21 +1,18 @@
-package com.kltn.server.service;
+package com.kltn.server.service.entity;
 
-import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.entity.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Service
+@RequestScope
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -26,18 +23,22 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    @SendKafkaEvent(topic = "user-topic")
-    public ApiResponse<List<UserResponse>> getAllUsers() {
-        return ApiResponse.<List<UserResponse>>builder().code(200)
-                .message("Get all users successfully")
-                .data(userMapper.toUserResponseList(userRepository.findAll()))
-                .build();
+    public User getCurrentUser() {
+        String uniId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        return userRepository.findByUniId(uniId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     }
 
     public UserResponse getCurrUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
-        UserResponse userResponse = UserResponse.builder().id(user.getId()).uniId(user.getUniId()).name(user.getName()).className(user.getClassName()).build();
+
+//        UserResponse userResponse = UserResponse.builder().id(user.getId()).uniId(user.getUniId()).name(user.getName()).className(user.getClassName()).build();
+        UserResponse userResponse = userMapper.toUserResponse(getCurrentUser());
+        return userResponse;
+    }
+
+    public UserResponse getUserWorkspaces() {
+//        User user = (User) auth.getPrincipal();
+//        UserResponse userResponse = UserResponse.builder().id(user.getId()).uniId(user.getUniId()).name(user.getName()).className(user.getClassName()).build();
+        UserResponse userResponse = userMapper.toUserWorkspaceResponse(getCurrentUser());
         return userResponse;
     }
 

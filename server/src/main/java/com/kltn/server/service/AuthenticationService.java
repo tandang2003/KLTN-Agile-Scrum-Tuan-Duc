@@ -9,7 +9,7 @@ import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.entity.RoleRepository;
 import com.kltn.server.repository.entity.UserRepository;
-import com.kltn.server.util.TokenUtils;
+import com.kltn.server.util.token.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
