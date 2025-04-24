@@ -39,4 +39,10 @@ public class WorkspaceService {
         }
         return workspaceMapper.toWorkspaceCreationResponse(workspace);
     }
+
+    public WorkspaceResponse getWorkspaceById(String workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(
+                () -> AppException.builder().error(Error.NOT_FOUND).build());
+        return workspaceMapper.toWorkspaceResponseById(workspace);
+    }
 }

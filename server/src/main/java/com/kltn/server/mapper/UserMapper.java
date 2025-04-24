@@ -49,8 +49,6 @@ public interface UserMapper {
             @Mapping(target = "workspace", source = "workspace", qualifiedByName = "workspaceToWorkspaceResponse"
             ),
 
-//            @Mapping(target = "assignedTasks", source = "assignedTasks"),
-//            @Mapping(target = "reviewedTasks", source = "reviewedTasks")
     })
     @BeanMapping(ignoreByDefault = true)
     UserResponse toUserWorkspaceResponse(User user);

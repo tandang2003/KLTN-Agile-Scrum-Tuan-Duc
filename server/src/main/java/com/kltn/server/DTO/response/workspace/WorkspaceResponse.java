@@ -1,13 +1,16 @@
 package com.kltn.server.DTO.response.workspace;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
+import org.mapstruct.BeanMapping;
 
 import java.time.Instant;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record WorkspaceResponse(String id, String name, String description, int sprintNum, int timePerSprint,
-                                UserResponse user, Instant start, Instant end/*, List<ProjectResponse> project*/) {
+                                UserResponse user, Instant start, Instant end, List<ProjectResponse> projects) {
     public static WorkspaceResponseBuilder builder() {
         return new WorkspaceResponseBuilder();
     }
@@ -21,7 +24,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
         Instant start;
         Instant end;
         UserResponse user;
-        /* List<ProjectResponse> project;*/
+        List<ProjectResponse> projects;
 
         public WorkspaceResponseBuilder id(String id) {
             this.id = id;
@@ -64,8 +67,13 @@ public record WorkspaceResponse(String id, String name, String description, int 
             return this;
         }
 
+        public WorkspaceResponseBuilder projects(List<ProjectResponse> projects) {
+            this.projects = projects;
+            return this;
+        }
+
         public WorkspaceResponse build() {
-            return new WorkspaceResponse(id, name, description,  sprintNum, timePerSprint, user,start, end);
+            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, user, start, end, projects);
         }
     }
 
