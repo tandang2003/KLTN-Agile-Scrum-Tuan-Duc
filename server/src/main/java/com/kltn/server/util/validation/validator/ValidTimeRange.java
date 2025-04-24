@@ -37,60 +37,40 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
             switch (this.constraint) {
                 case AFTER -> {
                     flag = mainTime.isAfter(dependencyTime);
-                    if (flag) {
+                    if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(
-                                        String.format("Start time [%s] must be after end time [%s]", mainTime, dependencyTime)
-                                )
-                                .addPropertyNode(this.mainField)
-                                .addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be after [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
                 case BEFORE -> {
                     flag = mainTime.isBefore(dependencyTime);
-                    if (flag) {
+                    if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(
-                                        String.format("Start time [%s] must be before end time [%s]", mainTime, dependencyTime)
-                                )
-                                .addPropertyNode(this.mainField)
-                                .addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be before [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
                 case EQUAL -> {
                     flag = mainTime.equals(dependencyTime);
-                    if (flag) {
+                    if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(
-                                        String.format("Start time [%s] must be equal to end time [%s]", mainTime, dependencyTime)
-                                )
-                                .addPropertyNode(this.mainField)
-                                .addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be equal to [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
                 case AFTER_OR_EQUAL -> {
                     flag = mainTime.isAfter(dependencyTime) || mainTime.equals(dependencyTime);
-                    if (flag) {
+                    if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(
-                                        String.format("Start time [%s] must be after or equal to end time [%s]", mainTime, dependencyTime)
-                                )
-                                .addPropertyNode(this.mainField)
-                                .addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be after or equal to [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                 }
                 case BEFORE_OR_EQUAL -> {
                     flag = mainTime.isBefore(dependencyTime) || mainTime.equals(dependencyTime);
-                    if (flag) {
+                    if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(
-                                        String.format("Start time [%s] must be before or equal to end time [%s]", mainTime, dependencyTime)
-                                )
-                                .addPropertyNode(this.mainField)
-                                .addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be before or equal to [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
@@ -98,8 +78,10 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
             }
             return flag;
 
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
             throw AppException.builder().error(Error.INTERNAL_SERVER_ERROR).build();
+        } catch (IllegalAccessException e) {
+            throw AppException.builder().error(Error.NOT_FOUND).build();
         }
     }
 
