@@ -1,6 +1,6 @@
 import { TagColorTypeOf as TagColorKey } from '@/types/tag.type'
 
-export type CardModelType = {
+type CardModelType = {
   id: string
   name: string
   category: 'LT' | 'TH'
@@ -13,13 +13,13 @@ export type CardModelType = {
   tags?: { name: string; color: TagColorKey }[]
 }
 
-export type ColumnModelType = {
+type ColumnModelType = {
   id: string
   name: string
   items: CardModelType[]
 }
 
-export type BoardModelType = {
+type BoardModelType = {
   process: {
     backlog: ColumnModelType
     todo: ColumnModelType
@@ -29,7 +29,21 @@ export type BoardModelType = {
   }
 }
 
-export type Assigner = {
+type Assigner = {
   name: string
   avatar?: string
+}
+
+type CreateCardReqType = {
+  workspaceId: string
+  projectId: string
+  sprintId: string
+}
+
+export type {
+  CardModelType,
+  ColumnModelType,
+  BoardModelType,
+  Assigner,
+  CreateCardReqType
 }

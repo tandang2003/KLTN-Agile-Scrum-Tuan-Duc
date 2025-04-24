@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { logoutThunk } from '@/feature/auth/auth.slice'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-const LogoutButton = () => {
+
+type LogoutButtonProps = ComponentProps<typeof Button>
+
+const LogoutButton = ({ ...props }: LogoutButtonProps) => {
   const accessToken: string = useAppSelector(
     (state) => state.authSlice.accessToken || ''
   )
@@ -14,7 +17,7 @@ const LogoutButton = () => {
     })
   }
   return (
-    <Button className='ml-auto' onClick={handleLogout}>
+    <Button {...props} onClick={handleLogout}>
       Logout
     </Button>
   )

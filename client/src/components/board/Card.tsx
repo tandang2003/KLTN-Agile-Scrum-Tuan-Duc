@@ -70,7 +70,7 @@ const Card = ({
       {...attributes}
       {...listeners}
       className={cn(
-        'transition-outline outline-0 drop-shadow-xs',
+        'transition-outline drop-shadow-xs outline-0',
         'transition-color hover:!bg-gray-100',
         container
       )}
@@ -94,7 +94,7 @@ const Card = ({
               )
             })}
           </span>
-          <CardTitle className='line-clamp-2 overflow-hidden leading-[1.67] text-wrap text-ellipsis'>
+          <CardTitle className='line-clamp-2 overflow-hidden text-ellipsis text-wrap leading-[1.67]'>
             {name}
           </CardTitle>
         </CardHeader>
