@@ -27,7 +27,7 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
     @OneToMany(mappedBy = "owner")
-    private List<Workspace> workspace;
+    private List<Workspace> workspaces;
     @ManyToMany
     @JoinTable(name = "users_projects",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -63,7 +63,7 @@ public class User extends BaseEntity implements UserDetails {
         this.projects = builder.projects;
         this.assignedTasks = builder.assignedTasks;
         this.reviewedTasks = builder.reviewedTasks;
-        this.workspace = builder.workspace;
+        this.workspaces = builder.workspaces;
     }
 
     public static class UserEntityBuilder extends BaseEntityBuilder<User, UserEntityBuilder> {
@@ -75,7 +75,7 @@ public class User extends BaseEntity implements UserDetails {
         private String uniPassword;
         private Role role;
         private List<Project> projects;
-        private List<Workspace> workspace;
+        private List<Workspace> workspaces;
         private Set<Task> assignedTasks;
         // One user can review multiple tasks
         private Set<Task> reviewedTasks;
@@ -145,8 +145,8 @@ public class User extends BaseEntity implements UserDetails {
             return this;
         }
 
-        public UserEntityBuilder workspace(List<Workspace> workspace) {
-            this.workspace = workspace;
+        public UserEntityBuilder workspaces(List<Workspace> workspaces) {
+            this.workspaces = workspaces;
             return this;
         }
     }
@@ -220,11 +220,11 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     public List<Workspace> getWorkspace() {
-        return workspace;
+        return workspaces;
     }
 
-    public void setWorkspace(List<Workspace> workspace) {
-        this.workspace = workspace;
+    public void setWorkspace(List<Workspace> workspaces) {
+        this.workspaces = workspaces;
     }
 
     public List<Project> getProject() {

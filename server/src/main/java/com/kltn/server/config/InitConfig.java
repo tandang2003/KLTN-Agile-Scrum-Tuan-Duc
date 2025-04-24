@@ -1,7 +1,7 @@
 package com.kltn.server.config;
 
 import com.kltn.server.config.security.CustomJWTValidation;
-import com.kltn.server.util.TokenKeyUtils;
+import com.kltn.server.util.token.TokenKeyUtils;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
