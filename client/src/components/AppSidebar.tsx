@@ -1,9 +1,8 @@
 import * as React from 'react'
 
 import { NavRecent } from '@/components/sidebar/nav-recent'
-import { NavUser } from '@/components/sidebar/nav-user'
 import { TeamSwitcher } from '@/components/sidebar/team-switcher'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 
 import Icon from '@/components/Icon'
 import Logo from '@/components/Logo'
@@ -65,7 +64,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible='icon' {...props}>
+    <Sidebar collapsible='icon' {...props} className=''>
       <SidebarHeader>
         <TeamSwitcher team={data.header} />
       </SidebarHeader>
@@ -73,10 +72,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain.items} />
         <NavRecent items={data.recent.items} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }

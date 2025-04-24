@@ -1,0 +1,96 @@
+spring:
+  application:
+    name: server
+    security:
+      access-token:
+        time-of-life: 15m
+        key:
+          private-key: key/access/private_key.pem
+          public-key: key/access/public_key.pem
+      refresh-token:
+        time-of-life: 120H
+        key:
+          private-key: key/refresh/private_key.pem
+          public-key: key/refresh/public_key.pem
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jackson:
+    default-property-inclusion: non_null
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+#  kafka:
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#    #      properties:
+#    #        spring:
+#    #          json:
+#    #            type:
+#    #              mapping:
+#    #                  "send_object_customer: com.example.kafkaspringexample.data.Customer"
+#    consumer:
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#    #      properties:
+#    #        spring:
+#    #          json:
+#    #            trusted:
+#    #              packages: "send_object_customer"
+#    #            type:
+#    #              mapping: "send_object_customer: com.example.springkafkaconsumerexample.data.Customer"
+#    bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: OpenAPI YAML
+        url: /swagger.yml
+
+server:
+  reactive:
+    session:
+      cookie:
+        max-age: 5
+logging:
+  level:
+    org:
+      springframework:
+        security: off
+cache:
+  redis:
+    refresh-token:
+      ttl: 432000
+      key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+      value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+#      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+#      hash-value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+    task:
+      ttl: 600
+      key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+      value-serializer: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+#      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+#      hash-value-serializer: org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
+
+
+
+
+kafka:
+    topic:
+      send-object-customer:
+        name: send_object_customer
+        partitions: 3
+        replication-factor: 3
+      send-object-order:
+        name: send_object_order
+        partitions: 3
+        replication-factor: 3
+      send-object-product:
+        name: send_object_product
+        partitions: 3
+        replication-factor: 3
+      send-object-user:
+        name: send_object_user
+        partitions: 3
+        replication-factor: 3

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
+@import 'tailwindcss-animated';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -38,6 +39,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  --column: '#F8F8F8';
 }
 
 .dark {
@@ -73,6 +76,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  --column: '#F8F8F8';
 }
 
 @theme inline {
@@ -114,6 +119,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   --font-plus-jakarta-sans: 'Plus Jakarta Sans', sans-serif;
+
+  --color-column: var(--color-gray-100);
 }
 
 @layer base {
@@ -125,5 +132,19 @@
   }
 }
 .container {
-  @apply max-w-[1440px] mx-auto;
+  @apply mx-auto max-w-[1440px];
+}
+.h2 {
+  @apply text-3xl leading-[1.67] font-bold;
+}
+.h3 {
+  @apply text-2xl leading-[1.67] font-bold;
+}
+
+.title {
+  @apply text-lg leading-[1.67];
+}
+
+.drop-shadow {
+  filter: drop-shadow(48px 27px 74px #081534);
 }

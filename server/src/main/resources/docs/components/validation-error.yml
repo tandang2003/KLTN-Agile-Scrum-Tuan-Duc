@@ -1,0 +1,19 @@
+type: object
+required:
+  - code
+properties:
+  code:
+    type: integer
+  error:
+    type: array
+    items:
+      type: object
+      properties:
+        field:
+          type: string
+          description: "field in body is error"
+        message:
+          type: string
+          description: "message from server"
+  message:
+    type: string

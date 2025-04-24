@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import eslintPluginPrettier from 'eslint-plugin-prettier'
+import unusedImports from 'eslint-plugin-unused-imports'
 
 export default tseslint.config(
   { ignores: ['dist', 'vite.config.ts'] },
@@ -17,11 +18,29 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      prettier: eslintPluginPrettier
+      prettier: eslintPluginPrettier,
+      'unused-imports': unusedImports
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'unused-imports/no-unused-imports': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }
+      ],
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_'
+        }
+      ],
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true }
+      ],
       'prettier/prettier': [
         'warn',
         {
@@ -32,8 +51,9 @@ export default tseslint.config(
           endOfLine: 'auto',
           useTabs: false,
           singleQuote: true,
-          printWidth: 120,
-          jsxSingleQuote: true
+          printWidth: 80,
+          jsxSingleQuote: true,
+          plugins: ['prettier-plugin-tailwindcss']
         }
       ],
       '@typescript-eslint/no-empty-object-type': 'error'

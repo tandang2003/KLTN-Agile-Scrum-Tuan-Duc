@@ -1,0 +1,895 @@
+openapi: 3.0.1
+info:
+  title: My API
+  description: |
+    # Overview 
+    
+    API documentation for Spring Boot application
+    ## Structure api response format
+    
+    ### Base Api
+    
+    When a request sent to server, it always return a response has body like:
+    
+    ```json
+    {
+      "code": 401,
+      "message": "Login"
+      "data": Object
+    }
+    ```
+    - `error`: status code
+    - `message`: description about api
+    - `data`: data will return for client, data structure is general
+    
+    ### Validation Api
+    When a request failed because some field in body is missing, empty or not valid,
+    API will return a response with **status: 422 (Unprocessable entity)**
+    
+    ```json
+    {
+      "code": 422,
+      "message": "Validation Error",
+      "error": [
+        {
+          "field": "field target"
+          "message": "message"
+        },
+       {
+          "field": "field target"
+          "message": "message"
+        }
+      ]
+    }
+    ```
+    - `code`: status code
+    - `message`: description about api
+    - `error`: contain array present field and message error
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /auth:
+    post:
+      summary: Authenticate user
+      description: Authenticates a user and returns a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uniId:
+                  type: string
+                password:
+                  type: string
+            example:
+              uniId: 21130320
+              password: 123456Duc@.
+      responses:
+        200:
+          description: Successful authentication
+          headers:
+            Set-Cookie:
+              description: >
+                Sets the `refresh-token` cookie with `HttpOnly` and `Max-Age` attributes.  
+                Example: `refresh-token=abc.def.ghi; HttpOnly; Max-Age=432000 ; Path=/refresh`
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          access-token:
+                            type: string
+                            description: The JWT token for authentication
+                          user:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: The user ID storing in the database
+                              uniId:
+                                type: string
+                                description: The university ID student or teacher of the user
+                              name:
+                                type: string
+                                description: The name of the user
+                              email:
+                                type: string
+                                description: The email student or teacher of the user
+                              role:
+                                type: string
+                                description: "the user role name, has 4 role: admin, teacher, team leader and student"
+                    example:
+                      code: 200
+                      message: "Login"
+                      data:
+                        access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        user:
+                          id: "user-001"
+                          uniId: "21130320"
+                          name: "Le Anh Duc"
+                          email: "21139329@st.hcmuaf.edu.vn"
+                          role: "student"
+        422:
+          description: Email or password invalid
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                default:
+                  code: 422
+                  message: "Email or password invalid"
+  # -----------------------------------------------
+  /auth/register:
+    post:
+      summary: Register student account
+      description: Authenticates a user and returns a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uniId:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+      responses:
+        200:
+          description: Successful Registration
+        409:
+          description: Account with uniId exist
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                default:
+                  code: 409
+                  error: "EXISTED_DATA"
+                  message: "Data already exists"
+  #  ----------------------------------------------
+  /user:
+    get:
+      summary: Get info user
+      description: Get info user when after login, return info to view in user card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access-token:
+                  type: string
+                  description: bearer user access token
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            required: true
+                            type: string
+                            description: user id
+                          name:
+                            required: true
+                            type: string
+                            description: user id
+                          uniId:
+                            required: true
+                            type: string
+                            description: university id
+                          className:
+                            required: false
+                            type: string
+                            description: class room id
+                          avatar:
+                            required: false
+                    example:
+                      code: 200
+                      message: "get info user"
+                      data:
+                        id: "0978-999-111"
+                        name: "Le Anh Duc"
+                        uniId: "21130320"
+                        className: "DH21DTX"
+                        avatar: "https://res.cloudinary.com/yourstyle/image/upload/c_scale/q_auto/f_auto/v1/product_img/4/Screenshot%202024-03-24%20170336.png"
+  # -----------------------------------------------
+  /user/workspace:
+    get:
+      summary: Get info user
+      description: Get info user when after login, return info to view in user card and list workspace
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            required: true
+                            type: string
+                            description: user id
+                          name:
+                            required: true
+                            type: string
+                            description: user id
+                          uniId:
+                            required: true
+                            type: string
+                            description: university id
+                          className:
+                            required: false
+                            type: string
+                            description: class room id
+                          avatar:
+                            required: false
+                          projects:
+                            type: array
+                            items:
+                              type: string
+                            description: list workspace id owner by user
+                    example:
+                      code: 200
+                      message: "get info user"
+                      data:
+                        id: "0978-999-111"
+                        name: "Le Anh Duc"
+                        uniId: "21130320"
+                        className: "DH21DTX"
+                        avatar: "https://res.cloudinary.com/yourstyle/image/upload/c_scale/q_auto/f_auto/v1/product_img/4/Screenshot%202024-03-24%20170336.png"
+  # -----------------------------------------------
+  /workspace/{id}:
+    get:
+      summary: Get information workspace
+      description: Get information workspace and list project id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: project id
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            type: string
+                            description: workspace id
+                          name:
+                            type: string
+                            description: name workspace
+                          projects:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: project id
+                                name:
+                                  type: string
+                                  description: project name
+                    example:
+                      code: 200
+                      message: "Workspace and project info retrieved successfully"
+                      data:
+                        id: "workspace-1"
+                        name: "LTW"
+                        projects:
+                          - id: "project-1"
+                            name: "Project A"
+                          - id: "project-2"
+                            name: "Project B"
+  # -----------------------------------------------
+  /workspace:
+    post:
+      summary: Create a workspace
+      description: Create workspace, identify quantity of sprints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: workspace name
+                description:
+                  type: string
+                  description: workspace description
+                numSprint:
+                  type: integer
+                  description: quantity of sprints
+                timePerSprint:
+                  type: number
+                  description: time for 1 sprint
+                start:
+                  type: number
+                  description: time start workspace
+                end:
+                  type: number
+                  description: time estimate end workspace
+              example:
+                name: "workspace-LTW"
+                description: "Workspace for student in lab LTW NLU"
+                numSprint: 10
+                timePerSprint: 1
+                start: "1/1/2025"
+                end: "15/3/2025"
+      responses:
+        201:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            type: string
+                            description: workspace id
+                          numSprint:
+                            type: integer
+                            description: quantity of sprints
+                          timePerSprint:
+                            type: number
+                            description: time for 1 sprint, unit is week
+                          start:
+                            type: number
+                            description: time start workspace
+                          end:
+                            type: number
+                            description: time estimate end workspace
+                    example:
+                      code: 201
+                      message: "Create workspace success"
+                      data:
+                        id: "workspace-001"
+                        numSprint: 10
+                        timePerSprint: 1
+                        start: "1/1/2025"
+                        end: "15/3/2025"
+  # -----------------------------------------------
+  /workspace/invite:
+    post:
+      summary: Invite student to workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: workspace id
+                  required: true
+                studentIds:
+                  type: array
+                  items:
+                    type: string
+                  description: array contains student id
+                  required: true
+            example:
+              id: "workspace-001"
+              studentIds:
+                - "student-001"
+                - "student-002"
+                - "student-003"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+              example:
+                code: 200
+                message: "Invite student to workspace"
+        409:
+          description: "At least 1 student is exist in workspace"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+                        description: array contains student id exist in workspace
+                    example:
+                      code: 409
+                      message: "Invite student to workspace"
+                      data:
+                        - "student-003"
+  # -----------------------------------------------
+  /project/{id}:
+    get:
+      summary: Get information project
+      description: Get information project and list of sprint
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: project id
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            type: string
+                            description: project id
+                          name:
+                            type: string
+                            description: name project
+                          description:
+                            type: string
+                            description: description project
+                          createAt:
+                            type: string
+                            description: timestamp create a project
+                          updateAt:
+                            type: string
+                            description: timestamp update a project
+                          tags:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: name tag
+                                color:
+                                  type: string
+                                  description: color tag
+                                workspace:
+                                  type: string
+                                  description: workspace id
+                          sprints:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: sprint id
+                                #                                predict:
+                                #                                  type: boolean
+                                #                                  description: status sprint predict before
+                                process:
+                                  type: object
+                                  properties:
+                                    planning:
+                                      type: string
+                                      description: date planning
+                                    preview:
+                                      type: string
+                                      description: date preview
+                                dtStart:
+                                  type: string
+                                  description: date time start sprint
+                                dtEnd:
+                                  type: string
+                                  description: date time end sprint
+                    example:
+                      code: 200
+                      message: "project info retrieved successfully"
+                      data:
+                        id: "project-001"
+                        name: "Nhom 01"
+                        description: ""
+                        createAt: "2025-04-14T10:02:01+0000"
+                        updateAt: "2025-04-14T10:02:01+0000"
+                        tags:
+                          - name: "UX/UI"
+                            color: "red"
+                          - name: "Java"
+                            color: "pink"
+                        sprints:
+                          - id: "sprint-001"
+                            process:
+                              planning: "2025-04-14T10:02:01+0000"
+                              preview: "2025-04-14T10:02:01+0000"
+                            dtStart: "2025-04-14T10:02:01+0000"
+                            dtEnd: "2025-04-14T10:02:01+0000"
+                          - id: "sprint-002"
+                            process:
+                              planning: "2025-04-14T10:02:01+0000"
+                              preview: "2025-04-14T10:02:01+0000"
+                            dtStart: "2025-04-14T10:02:01+0000"
+                            dtEnd: "2025-04-14T10:02:01+0000"
+  # -----------------------------------------------
+  /project/{project_id}/sprint:
+    get:
+      summary: Get information sprint
+      description: Get information sprint by project id and sprint id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the project
+
+        - name: sprint_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of the sprint
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            type: string
+                            description: sprint id
+                          name:
+                            type: string
+                            description: name sprint
+                          description:
+                            type: string
+                            description: description sprint
+                          tags:
+                            type: array
+                            items:
+                              type: string
+                              description: id tag get from project
+                          subTasks:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: sub task id
+                                name:
+                                  type: string
+                                  description: name sub task
+                                check:
+                                  type: boolean
+                                  description: is finish or no ?
+                    example:
+                      code: 200
+                      id: "sprint-001"
+                      name: "Sprint-001"
+                      description:
+                      tag:
+                        - "tag-UX/UI"
+                        - "tag-Java"
+                      subTasks:
+                        - id: "sub-task-001"
+                          name: "task 001"
+                          check: true
+                        - id: "sub-task-002"
+                          name: "task 002"
+                          check: false
+  # -----------------------------------------------
+  /project/issue:
+    post:
+      summary: create issue
+      description: create issue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: issue name
+                sprint:
+                  type: string
+                  description: sprint id
+                project:
+                  type: string
+                  description: project id
+                workspace:
+                  type: string
+                  description: workspace id
+                currentStatus:
+                  allOf:
+                  - $ref: "#/components/schemas/Status"
+                  description: current status
+                changeStatus:
+                  allOf:
+                    - $ref: "#/components/schemas/Status"
+                  description: next status
+                position:
+                  type: number
+                  description: "position of issue, 
+                                this is calculate in front-end and sent to server,
+                                position = (prevPosition + nextPosition) / 2 = (2000 + 1000) /2"
+                createAt:
+                  type: string
+                  description: update at in task, prevent race condition
+            example:
+              name: "Design database"
+              sprint: "sprint-001"
+              project: "project-001"
+              workspace: "workspace-001"
+              currentStatus: "Backlog"
+              changeStatus: "In Process"
+              position: 1200
+              createAt: ""
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+              example:
+                code: 200
+                message: "Create issue"
+    patch:
+      summary: change status issue
+      description: change position of issue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: sprint id
+                currentStatus:
+                  allOf:
+                    - $ref: "#/components/schemas/Status"
+                  type: string
+                  description: current status of issue
+                changeStatus:
+                  allOf:
+                    - $ref: "#/components/schemas/Status"
+                  type: string
+                  description: next status of issue
+                position:
+                  type: number
+                  description: "position of issue, 
+                                this is calculate in front-end and sent to server,
+                                newPosition = (2000 + 3000) / 2 = 2500"
+                updateAt:
+                  type: string
+                  description: update at in task, prevent race condition
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+              example:
+                code: 200
+                message: "Update status and position"
+  # -----------------------------------------------
+  /sprint/issue/teacher:
+    post:
+      summary: create issue
+      description: create issue by teacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workspace:
+                  type: string
+                  description: workspace id
+                project:
+                  type: string
+                  description: project id
+                sprint:
+                  type: string
+                  description: sprint id
+                name:
+                  type: string
+                  description: issue name
+                  required: true
+                status:
+                  type: string
+                  description: value allow in Backlog, Todo, In Process, Review, Done
+                  required: true
+              example:
+                workspace: "workspace-001"
+                project: "project-001"
+                sprint: "sprint-001"
+                name: "issue 1"
+                status: "Backlog"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            type: string
+                            description: issue id
+                          name:
+                            type: string
+                            description: issue name
+                          status:
+                            type: string
+                            description: current status of issue
+                    example:
+                      code: 200
+                      message: "Create issue"
+                      data:
+                        id: "issue-001"
+                        name: "issue 001"
+                        status: "Backlog"
+
+    put:
+      summary: update issue
+      description: update issue by teacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: issue id
+                  required: true
+                name:
+                  type: string
+                  description: issue name
+                  required: true
+                description:
+                  type: string
+                  description: issue description
+                  required: true
+                status:
+                  $ref: "#/components/schemas/Status"
+                storyPoint:
+                  type: integer
+                  description: story point assigned to issue
+                  required: true
+                priority:
+                  type: string
+                  description: value allow in Critical, Major, Minor, Trivial, Blocked
+                  required: false
+                  default: Critical
+                start:
+                  type: number
+                  description: date time start issue
+                  required: true
+                end:
+                  type: number
+                  description: date time end issue
+                  required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+
+              example:
+                code: 200
+                message: "Update Issue"
+                data:
+                  id: "project-001"
+                  name: "project-001"
+                  description: "..."
+                  storyPoint: 10
+                  priority: Critical
+components:
+  schemas:
+    ResponseApi:
+      $ref: "./components/response-api.yml"
+    ValidationErrorApi:
+      $ref: "./components/validation-error.yml"
+    UnauthorizedErrorApi:
+      $ref: "/components/unauthenticated-error-api.yml"
+    Status:
+      type: string
+      description: status issue, it will be a column name that contain issue
+      default: Backlog
+      enum:
+        - Backlog
+        - Todo
+        - In Process
+        - Review
+        - Done
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
