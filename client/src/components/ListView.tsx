@@ -8,6 +8,11 @@ type ListViewProps<T> = {
   loading?: boolean
   loadingComponent?: ReactNode
   orientation?: 'vertical' | 'horizontal'
+  display?: 'flex' | 'grid'
+  loadingItems?: {
+    items: number
+    loadingComponent?: ReactNode
+  }
 } & React.ComponentProps<'div'>
 
 const ListView = <T,>({
@@ -16,9 +21,11 @@ const ListView = <T,>({
   loading,
   loadingComponent,
   orientation,
+  display = 'flex',
+  loadingItems,
   className
 }: ListViewProps<T>) => {
-  if (loading) {
+  if (loading && !loadingItems) {
     return loadingComponent ? (
       loadingComponent
     ) : (
@@ -28,10 +35,21 @@ const ListView = <T,>({
   return (
     <div
       className={cn(
+        display,
         orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',
         className
       )}
     >
+      {loading &&
+        loadingItems &&
+        Array(loadingItems.items)
+          .fill(null)
+          .map(
+            (_) =>
+              loadingItems.loadingComponent ?? (
+                <Skeleton className='h-[100px] w-full' />
+              )
+          )}
       {data && data.map((item, index) => render(item, index))}
     </div>
   )
