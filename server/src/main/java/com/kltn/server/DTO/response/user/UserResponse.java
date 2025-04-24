@@ -16,8 +16,6 @@ public record UserResponse(String id, String name, String email, String uniId, S
     public UserResponse(UserResponseBuilder b) {
         this(b.getId(), b.name, b.email, b.uniId, b.uniPassword, b.className, b.role, b.workspace, b.projects, b.assignedTasks, b.reviewedTasks);
     }
-
-
     public static UserResponseBuilder builder() {
         return new UserResponseBuilder();
     }
