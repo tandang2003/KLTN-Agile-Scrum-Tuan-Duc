@@ -5,6 +5,7 @@ import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,6 +14,10 @@ import java.util.Objects;
 public class Workspace extends BaseEntity {
     private String name;
     private String description;
+    private int sprintNum;
+    private int timePerSprint;
+    private Instant start;
+    private Instant end;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -25,7 +30,11 @@ public class Workspace extends BaseEntity {
         this.name = workspaceBuilder.name;
         this.description = workspaceBuilder.description;
         this.owner = workspaceBuilder.owner;
+        this.sprintNum = workspaceBuilder.sprintNum;
+        this.timePerSprint = workspaceBuilder.timePerSprint;
         this.projects = workspaceBuilder.projects;
+        this.start = workspaceBuilder.start;
+        this.end = workspaceBuilder.end;
     }
 
     public Workspace() {
@@ -35,18 +44,22 @@ public class Workspace extends BaseEntity {
     public boolean equals(Object o) {
         if (!(o instanceof Workspace workspace)) return false;
         if (!super.equals(o)) return false;
-        return Objects.equals(name, workspace.name) && Objects.equals(description, workspace.description) && Objects.equals(owner, workspace.owner);
+        return Objects.equals(name, workspace.name) && Objects.equals(description, workspace.description) && Objects.equals(start, workspace.start) && Objects.equals(end, workspace.end) && Objects.equals(owner, workspace.owner);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, description, owner);
+        return Objects.hash(super.hashCode(), name, description, start, end, owner);
     }
 
     public static class WorkspaceEntityBuilder extends BaseEntityBuilder<Workspace, WorkspaceEntityBuilder> {
         private String name;
         private String description;
         private User owner;
+        private int sprintNum;
+        private int timePerSprint;
+        private Instant start;
+        private Instant end;
         private List<Project> projects;
 
         @Override
@@ -64,6 +77,16 @@ public class Workspace extends BaseEntity {
             return this;
         }
 
+        public WorkspaceEntityBuilder sprintNum(int sprintNum) {
+            this.sprintNum = sprintNum;
+            return this;
+        }
+
+        public WorkspaceEntityBuilder timePerSprint(int timePerSprint) {
+            this.timePerSprint = timePerSprint;
+            return this;
+        }
+
         public WorkspaceEntityBuilder description(String description) {
             this.description = description;
             return this;
@@ -71,6 +94,21 @@ public class Workspace extends BaseEntity {
 
         public WorkspaceEntityBuilder owner(User owner) {
             this.owner = owner;
+            return this;
+        }
+
+        public WorkspaceEntityBuilder start(Instant start) {
+            this.start = start;
+            return this;
+        }
+
+        public WorkspaceEntityBuilder end(Instant end) {
+            this.end = end;
+            return this;
+        }
+
+        public WorkspaceEntityBuilder projects(List<Project> projects) {
+            this.projects = projects;
             return this;
         }
 
@@ -106,5 +144,37 @@ public class Workspace extends BaseEntity {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    public int getSprintNum() {
+        return sprintNum;
+    }
+
+    public void setSprintNum(int sprintNum) {
+        this.sprintNum = sprintNum;
+    }
+
+    public int getTimePerSprint() {
+        return timePerSprint;
+    }
+
+    public void setTimePerSprint(int timePerSprint) {
+        this.timePerSprint = timePerSprint;
+    }
+
+    public Instant getStart() {
+        return start;
+    }
+
+    public void setStart(Instant start) {
+        this.start = start;
+    }
+
+    public Instant getEnd() {
+        return end;
+    }
+
+    public void setEnd(Instant end) {
+        this.end = end;
     }
 }

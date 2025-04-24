@@ -3,9 +3,8 @@ package com.kltn.server.controller;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.mapper.UserMapper;
-import com.kltn.server.service.UserService;
+import com.kltn.server.service.entity.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +31,8 @@ public class UserController {
 
     @GetMapping("/workspace")
     public ResponseEntity<ApiResponse<UserResponse>> userWorkspace() {
-        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info user").data(userService.getCurrUser()).build());
+        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info workspace of user").data(userService.getUserWorkspaces()).build());
     }
+
+
 }

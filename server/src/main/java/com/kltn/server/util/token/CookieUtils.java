@@ -1,4 +1,4 @@
-package com.kltn.server.util;
+package com.kltn.server.util.token;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
