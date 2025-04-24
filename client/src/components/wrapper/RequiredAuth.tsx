@@ -1,23 +1,40 @@
 import { useAppSelector } from '@/context/redux/hook'
-import { HOME_PATH } from '@/lib/const'
+import { HOME_PATH, LOGIN_PATH } from '@/lib/const'
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
+type Mode = 'hide' | 'home' | 'login'
+
 type RequiredAuthProps = {
   children: React.ReactNode
-  nav?: boolean
+  mode?: Mode
 }
-const RequiredAuth = ({ children, nav = false }: RequiredAuthProps) => {
-  const accessToken = useAppSelector((state) => state.authSlice.accessToken) // adjust this to your state
+const RequiredAuth = ({ children, mode = 'hide' }: RequiredAuthProps) => {
+  const { isAuth, loading: isLoading } = useAppSelector(
+    (state) => state.authSlice
+  )
   const location = useLocation()
 
-  if (!accessToken) {
-    // redirect to login, keep current location for after login redirect
-    if (nav)
-      return <Navigate to={HOME_PATH} state={{ from: location }} replace />
-    return null
+  if (mode === 'home' || mode === 'login') {
+    console.log(isLoading, isAuth)
+    console.log('isLoading', isLoading == false, !isAuth)
+    if (isLoading == false && typeof isAuth === 'boolean' && !isAuth) {
+      return (
+        <Navigate
+          to={mode === 'home' ? HOME_PATH : LOGIN_PATH}
+          state={{ from: location }}
+          replace
+        />
+      )
+    }
   }
 
+  if (!isAuth) {
+    switch (mode) {
+      case 'hide':
+        return null
+    }
+  }
   return children
 }
 

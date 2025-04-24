@@ -15,8 +15,8 @@ const RegisterSchema = z
   .object({
     uniId: z.string().min(8),
     name: z.string().min(5),
-    password: z.string(),
-    'confirm-password': z.string()
+    password: passwordSchema(),
+    'confirm-password': passwordSchema()
   })
   .strict()
   .refine((data) => data.password === data['confirm-password'], {

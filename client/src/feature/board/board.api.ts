@@ -9,18 +9,9 @@ const boardApi = createApi({
   endpoints: (builder) => ({
     getBoardByProjectId: builder.query<BoardModelType, Id>({
       async queryFn(projectId) {
-        try {
-          const data = await boardService.getData(projectId)
-          return {
-            data: data
-          }
-        } catch (error) {
-          return {
-            error: {
-              status: error?.status || 500,
-              data: error?.message || 'Unknown error'
-            }
-          }
+        const data = await boardService.getData(projectId)
+        return {
+          data: data
         }
       }
     })

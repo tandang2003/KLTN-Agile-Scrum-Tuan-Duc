@@ -1,15 +1,16 @@
 import ProjectHeader from '@/components/project/ProjectHeader'
-import ProjectNavigation from '@/pages/manager/project/navigation'
+import SectionContainer from '@/components/wrapper/SectionContainer'
+import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { ProjectParams } from '@/types/route.type'
 import { Outlet, useParams } from 'react-router-dom'
 
 const ProjectPage = () => {
-  const { id } = useParams<ProjectParams>()
-  if (!id) {
+  const { projectId } = useParams<ProjectParams>()
+  if (!projectId) {
     return null
   }
   return (
-    <section className='h-full px-4'>
+    <SectionContainer>
       <ProjectHeader
         className='pb-4'
         name='Project 1'
@@ -23,9 +24,9 @@ const ProjectPage = () => {
           }
         ]}
       />
-      <ProjectNavigation id={id} />
+      <ProjectNavigation id={projectId} />
       <Outlet />
-    </section>
+    </SectionContainer>
   )
 }
 

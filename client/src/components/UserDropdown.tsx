@@ -1,4 +1,7 @@
+import { currentUser } from '@/assets/user.data'
+import LogoutButton from '@/components/LogoutButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,44 +12,54 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { SidebarMenuButton } from '@/components/ui/sidebar'
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles
-} from 'lucide-react'
-import React from 'react'
+import { useAppSelector } from '@/context/redux/hook'
+import { cn } from '@/lib/utils'
+import { BadgeCheck, Bell, ChevronsUpDown, CreditCard } from 'lucide-react'
+import { ComponentProps } from 'react'
+import { NavLink } from 'react-router-dom'
 
-type ManagerHeaderProps = {
-  user: {
-    name: string
-    email: string
-    avatar: string
+type UserDropdownProps = {
+  insideSidebar?: boolean
+} & ComponentProps<typeof SidebarMenuButton> &
+  ComponentProps<typeof Button>
+
+const UserDropdown = ({
+  insideSidebar = false,
+  className,
+  ...props
+}: UserDropdownProps) => {
+  let { user } = useAppSelector((state) => state.authSlice)
+  if (!user) {
+    user = {
+      ...currentUser
+    }
+    // throw Error('Can not load component because user not found')
   }
-}
-
-const ManagerHeader = ({ user }: ManagerHeaderProps) => {
+  const Comp = insideSidebar ? SidebarMenuButton : Button
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuButton
+        <Comp
           size='lg'
-          className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer'
+          className={cn(
+            Comp === SidebarMenuButton &&
+              'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer',
+            className
+          )}
+          {...props}
         >
           <Avatar className='h-8 w-8 rounded-lg'>
-            <AvatarImage src={user.avatar} alt={user.name} />
+            <AvatarImage alt={user.name} />
             <AvatarFallback className='rounded-lg'>
               {user.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className='grid flex-1 text-left text-sm leading-tight'>
             <span className='truncate font-medium'>{user.name}</span>
-            <span className='truncate text-xs'>{user.email}</span>
+            <span className='truncate text-xs'>#{user.uniId}</span>
           </div>
           <ChevronsUpDown className='ml-auto size-4' />
-        </SidebarMenuButton>
+        </Comp>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
@@ -57,20 +70,19 @@ const ManagerHeader = ({ user }: ManagerHeaderProps) => {
         <DropdownMenuLabel className='p-0 font-normal'>
           <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
             <Avatar className='h-8 w-8 rounded-lg'>
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage alt={user.name} />
               <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
             </Avatar>
             <div className='grid flex-1 text-left text-sm leading-tight'>
               <span className='truncate font-medium'>{user.name}</span>
-              <span className='truncate text-xs'>{user.email}</span>
+              <span className='truncate text-xs'>#{user.uniId}</span>
             </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Sparkles />
-            Upgrade to Pro
+          <DropdownMenuItem asChild>
+            <NavLink to={'/manager'}>Workspaces</NavLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -89,13 +101,12 @@ const ManagerHeader = ({ user }: ManagerHeaderProps) => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut />
-          Log out
+        <DropdownMenuItem asChild>
+          <LogoutButton className='w-full' />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-export default ManagerHeader
+export default UserDropdown

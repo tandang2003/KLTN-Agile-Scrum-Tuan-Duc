@@ -1,5 +1,5 @@
 import { AppSidebar } from '@/components/AppSidebar'
-import ManagerHeader from '@/components/manager/ManagerHeader'
+import UserDropdown from '@/components/UserDropdown'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
@@ -20,13 +20,7 @@ const ManagerLayout = () => {
               <Separator orientation='vertical' className='mr-2 h-4' />
               <span className='flex-1'>Search</span>
               <span>
-                <ManagerHeader
-                  user={{
-                    avatar: '',
-                    email: 'ducvui2003',
-                    name: 'Le Anh Duc'
-                  }}
-                />
+                <UserDropdown insideSidebar />
               </span>
             </div>
           </header>

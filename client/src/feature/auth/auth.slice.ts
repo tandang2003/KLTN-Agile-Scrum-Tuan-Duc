@@ -1,7 +1,8 @@
 import { StorageItem } from '@/lib/const'
 import authService from '@/services/auth.service'
-import { AuthState, LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
-import { ValidationError } from '@/types/http.type'
+import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
+import { FieldError } from '@/types/http.type'
+import { Id } from '@/types/other.type'
 import {
   createAsyncThunk,
   createSlice,
@@ -11,9 +12,23 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
+type AuthState = {
+  loading: boolean
+  isAuth?: boolean
+  error?: FieldError
+  accessToken?: string
+  user?: {
+    id: Id
+    name: string
+    uniId: string
+    role: string
+  }
+}
+
 const initialState: AuthState = {
   loading: false,
   accessToken: undefined,
+  isAuth: undefined,
   user: undefined,
   error: undefined
 }
@@ -24,9 +39,8 @@ const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
     try {
       const data = await authService.login(req)
       return data.data
-    } catch (e) {
-      if (e instanceof ValidationError) return rejectWithValue(e.message)
-      return rejectWithValue('Can not handle')
+    } catch (_) {
+      return rejectWithValue('Email or password not right')
     }
   }
 )
@@ -74,6 +88,7 @@ const authSlice = createSlice({
       (state: AuthState, action: PayloadAction<LoginRes>) => {
         state.accessToken = action.payload.access_token
         state.user = action.payload.user
+        state.isAuth = true
         sessionStorage.setItem(
           StorageItem.AccessToken,
           action.payload.access_token
@@ -83,6 +98,7 @@ const authSlice = createSlice({
     builder.addCase(loginThunk.rejected, (state: AuthState, action) => {
       state.accessToken = undefined
       state.user = undefined
+      state.isAuth = false
       state.error = action.payload
         ? { field: 'password', message: action.payload as string }
         : { field: 'password', message: 'Email or password not valid' }
@@ -99,14 +115,23 @@ const authSlice = createSlice({
         state.accessToken = action.payload.accessToken
         state.user = undefined
         state.error = undefined
+        state.isAuth = true
       }
     )
+    builder.addCase(restoreSessionThunk.rejected, (state: AuthState) => {
+      state.accessToken = undefined
+      state.user = undefined
+      state.error = undefined
+      state.isAuth = false
+    })
+    // logout
     builder.addMatcher(
       (action) =>
         action.type === logoutThunk.rejected.type ||
         action.type === logoutThunk.fulfilled.type,
       (state) => {
         state.accessToken = undefined
+        state.isAuth = false
         sessionStorage.removeItem(StorageItem.AccessToken)
       }
     )
