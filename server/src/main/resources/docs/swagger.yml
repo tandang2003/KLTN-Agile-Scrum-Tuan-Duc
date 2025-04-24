@@ -335,12 +335,10 @@ paths:
               properties:
                 name:
                   type: string
-                  description: workspace name
-                  validation: not empty
+                  description: workspace name, must not empty
                 description:
                   type: string
-                  description: workspace description
-                  validation: not empty
+                  description: workspace description, must not empty
                 numSprint:
                   type: integer
                   description: quantity of sprints
@@ -351,11 +349,11 @@ paths:
                   maximum: 1
                 start:
                   type: string
-                  description: time start workspace
+                  description: time start workspace, must end start
                   format: yyyy-MM-dd'T'HH:mm:ss.SSSX
                 end:
                   type: string
-                  description: time estimate end workspace
+                  description: time estimate end workspace, must after start
                   format: yyyy-MM-dd'T'HH:mm:ss.SSSX
               example:
                 name: "workspace-LTW"
@@ -669,7 +667,7 @@ paths:
                   description: workspace id
                 currentStatus:
                   allOf:
-                  - $ref: "#/components/schemas/Status"
+                    - $ref: "#/components/schemas/Status"
                   description: current status
                 changeStatus:
                   allOf:
