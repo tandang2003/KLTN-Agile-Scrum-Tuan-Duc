@@ -21,12 +21,13 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
     private String email;
     private String uniId;
+    private String className;
     private String uniPassword;
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
     @OneToMany(mappedBy = "owner")
-    private List<Workspace> workspace;
+    private List<Workspace> workspaces;
     @ManyToMany
     @JoinTable(name = "users_projects",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -53,6 +54,7 @@ public class User extends BaseEntity implements UserDetails {
     private User(UserEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
+        this.className = builder.className;
         this.password = builder.password;
         this.email = builder.email;
         this.uniId = builder.uniId;
@@ -61,18 +63,19 @@ public class User extends BaseEntity implements UserDetails {
         this.projects = builder.projects;
         this.assignedTasks = builder.assignedTasks;
         this.reviewedTasks = builder.reviewedTasks;
-        this.workspace = builder.workspace;
+        this.workspaces = builder.workspaces;
     }
 
     public static class UserEntityBuilder extends BaseEntityBuilder<User, UserEntityBuilder> {
         private String name;
+        private String className;
         private String password;
         private String email;
         private String uniId;
         private String uniPassword;
         private Role role;
         private List<Project> projects;
-        private List<Workspace> workspace;
+        private List<Workspace> workspaces;
         private Set<Task> assignedTasks;
         // One user can review multiple tasks
         private Set<Task> reviewedTasks;
@@ -94,6 +97,11 @@ public class User extends BaseEntity implements UserDetails {
 
         public UserEntityBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public UserEntityBuilder className(String className) {
+            this.className = className;
             return this;
         }
 
@@ -137,8 +145,8 @@ public class User extends BaseEntity implements UserDetails {
             return this;
         }
 
-        public UserEntityBuilder workspace(List<Workspace> workspace) {
-            this.workspace = workspace;
+        public UserEntityBuilder workspaces(List<Workspace> workspaces) {
+            this.workspaces = workspaces;
             return this;
         }
     }
@@ -212,11 +220,11 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     public List<Workspace> getWorkspace() {
-        return workspace;
+        return workspaces;
     }
 
-    public void setWorkspace(List<Workspace> workspace) {
-        this.workspace = workspace;
+    public void setWorkspace(List<Workspace> workspaces) {
+        this.workspaces = workspaces;
     }
 
     public List<Project> getProject() {
@@ -239,7 +247,32 @@ public class User extends BaseEntity implements UserDetails {
         return reviewedTasks;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
     public void setReviewedTasks(Set<Task> reviewedTasks) {
+
         this.reviewedTasks = reviewedTasks;
     }
 }

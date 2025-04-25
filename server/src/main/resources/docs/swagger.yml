@@ -168,6 +168,16 @@ paths:
     get:
       summary: Get info user
       description: Get info user when after login, return info to view in user card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access-token:
+                  type: string
+                  description: bearer user access token
       responses:
         200:
           description: Success
@@ -325,22 +335,26 @@ paths:
               properties:
                 name:
                   type: string
-                  description: workspace name
+                  description: workspace name, must not empty
                 description:
                   type: string
-                  description: workspace description
+                  description: workspace description, must not empty
                 numSprint:
                   type: integer
                   description: quantity of sprints
+                  minimum: 1
                 timePerSprint:
                   type: number
-                  description: time for 1 sprint
+                  description: time for 1 sprint unit is day
+                  maximum: 1
                 start:
-                  type: number
-                  description: time start workspace
+                  type: string
+                  description: time start workspace, must end start
+                  format: yyyy-MM-dd'T'HH:mm:ss.SSSX
                 end:
-                  type: number
-                  description: time estimate end workspace
+                  type: string
+                  description: time estimate end workspace, must after start
+                  format: yyyy-MM-dd'T'HH:mm:ss.SSSX
               example:
                 name: "workspace-LTW"
                 description: "Workspace for student in lab LTW NLU"
@@ -653,7 +667,7 @@ paths:
                   description: workspace id
                 currentStatus:
                   allOf:
-                  - $ref: "#/components/schemas/Status"
+                    - $ref: "#/components/schemas/Status"
                   description: current status
                 changeStatus:
                   allOf:

@@ -1,8 +1,7 @@
 package com.kltn.server.config;
 
-import com.kltn.server.config.security.CustomJWTDecoder;
 import com.kltn.server.config.security.CustomJWTValidation;
-import com.kltn.server.util.TokenKeyUtils;
+import com.kltn.server.util.token.TokenKeyUtils;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
 
 @Configuration
+@EnableAspectJAutoProxy
 @EnableJpaAuditing
 public class InitConfig {
     //    @Bean
@@ -78,7 +79,6 @@ public class InitConfig {
     JwtDecoder refreshTokenDecoder() {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getRefreshPublicKey()).build();
         decoder.setJwtValidator(tokenValidator());
-
         return decoder;
     }
 }

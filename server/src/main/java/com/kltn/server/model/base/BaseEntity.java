@@ -10,8 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.Objects;
-
-
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
@@ -187,9 +185,50 @@ public abstract class BaseEntity {
             return self();
         }
 
+        public String getId() {
+            return id;
+        }
+
+        public Instant getDTStart() {
+            return DTStart;
+        }
+
+        public Instant getDTEnd() {
+            return DTEnd;
+        }
+
+        public Instant getDTCreated() {
+            return DTCreated;
+        }
+
+        public Instant getDTModified() {
+            return DTModified;
+        }
+
+        public Instant getDTDeleted() {
+            return DTDeleted;
+        }
+
+        public boolean isDeleted() {
+            return deleted;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public String getModifiedBy() {
+            return modifiedBy;
+        }
+
+        public String getDeletedBy() {
+            return deletedBy;
+        }
+
         public R deleted(boolean deleted) {
             this.deleted = deleted;
             return self();
+
         }
 
         protected abstract R self();

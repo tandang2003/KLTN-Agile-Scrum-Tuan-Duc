@@ -1,0 +1,18 @@
+server:
+  port: #REQUIRED
+spring:
+  application:
+    name: #OPTIONAL
+  datasource:
+    url: #REQUIRED
+  data:
+    mongodb:
+      uri: #REQUIRED
+    redis:
+      url: #REQUIRED
+springdoc:
+  api-docs:
+    enabled: #OPTIONAL
+  swagger-ui:
+    enabled: #OPTIONAL
+    url: #REQUIRED

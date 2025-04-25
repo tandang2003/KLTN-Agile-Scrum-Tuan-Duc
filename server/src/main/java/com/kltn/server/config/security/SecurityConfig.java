@@ -9,10 +9,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
     @Autowired
@@ -40,6 +39,8 @@ public class SecurityConfig {
 
     @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    @Autowired
+    private CustomConverterJwtToUser customConverterJwtToUser;
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -65,7 +66,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {
                                 jwt.decoder(accessTokenDecoder);
-                                jwt.jwtAuthenticationConverter(new CustomConverterJwtToUser());
+                                jwt.jwtAuthenticationConverter(customConverterJwtToUser);
                             })
                             .authenticationEntryPoint(customAuthenticationEntryPoint);
                 })
@@ -77,7 +78,7 @@ public class SecurityConfig {
 
 
         http.httpBasic(AbstractHttpConfigurer::disable);
-        http.formLogin(c->c.disable());
+        http.formLogin(c -> c.disable());
         return http.build();
     }
 

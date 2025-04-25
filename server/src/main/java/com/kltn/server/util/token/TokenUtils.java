@@ -1,5 +1,6 @@
-package com.kltn.server.util;
+package com.kltn.server.util.token;
 
+import com.kltn.server.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,8 +31,12 @@ public class TokenUtils {
     @Qualifier("refreshTokenEncoder")
     private JwtEncoder refreshJwtEncoder;
 
-    public String generateAccessToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    public String generateAccessToken(Object authentication) {
+        UserDetails userDetails;
+        if (authentication instanceof Authentication)
+            userDetails = (UserDetails) ((Authentication) authentication).getPrincipal();
+        else userDetails
+                = (UserDetails) authentication;
         String subject = userDetails.getUsername();
         Instant now = Instant.now();
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
@@ -40,6 +45,8 @@ public class TokenUtils {
                 .expiresAt(now.plus(getAccessTokenExpiration(), ChronoUnit.SECONDS))
                 .subject(subject)
                 .claim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .claim("uniId", ((User) userDetails).getUniId())
+
                 .build();
 
         return accessJwtEncoder
@@ -55,6 +62,7 @@ public class TokenUtils {
                 .issuedAt(now)
                 .expiresAt(now.plus(getRefreshTokenExpiration(), ChronoUnit.SECONDS))
                 .subject(user.getUsername())
+                .claim("uniId", ((User) user).getUniId())
                 .build();
 
         return refreshJwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
