@@ -1,6 +1,5 @@
 import { Separator } from '@/components/ui/separator'
 import SectionContainer from '@/components/wrapper/SectionContainer'
-import React from 'react'
 
 const ManagerPage = () => {
   return (

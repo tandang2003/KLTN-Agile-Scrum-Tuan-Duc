@@ -57,8 +57,8 @@ const workspaceService = {
       id: id,
       name: req.name,
       description: req.description,
-      dtStart: req.start,
-      dtEnd: req.end,
+      dtStart: req.date.from,
+      dtEnd: req.date.to,
       owner: currentUser,
       numSprint: req.numSprint,
       timePerSprint: req.timePerSprint
@@ -67,8 +67,8 @@ const workspaceService = {
     return {
       id: id,
       name: req.name,
-      dtStart: req.start,
-      dtEnd: req.end,
+      dtStart: req.date.from,
+      dtEnd: req.date.to,
       numSprint: req.numSprint,
       timePerSprint: req.timePerSprint
     }

@@ -52,9 +52,11 @@ const Column = ({
         ref={scrollRef}
       >
         <div
-          style={{
-            '--card': 'white'
-          }}
+          style={
+            {
+              // '--card': 'white'
+            }
+          }
           className='p-l4 flex flex-col pr-4 pb-4 pl-2'
         >
           {items?.map((item: BaseCardProps) => (

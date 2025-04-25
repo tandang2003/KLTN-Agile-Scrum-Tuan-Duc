@@ -16,12 +16,7 @@ import {
 } from '@/types/workspace.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
-import { ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
-
-type CreateWorkspaceFormProps = {
-  children?: ReactNode
-}
 
 const CreateWorkspaceForm = () => {
   const form = useForm<CreateWorkspaceSchemaType>({
@@ -41,75 +36,100 @@ const CreateWorkspaceForm = () => {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input type='text' placeholder='2113xxxx' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='description'
-            render={({ field }) => (
-              <FormItem className='mt-4'>
-                <FormLabel>Description</FormLabel>
-                <Editor />
-                <FormControl></FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='numSprint'
-            render={({ field }) => (
-              <FormItem className='mt-4'>
-                <FormLabel>Number Sprint</FormLabel>
-                <FormControl>
-                  <Input type='number' {...field} />
-                </FormControl>
+          <div className='grid grid-cols-3'></div>
+          <div>
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input type='text' placeholder='2113xxxx' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='numSprint'
+              render={({ field }) => (
+                <FormItem className='mt-4'>
+                  <FormLabel>Number Sprint</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='number'
+                      {...field}
+                      onChange={(event) =>
+                        form.setValue('numSprint', event.target.valueAsNumber)
+                      }
+                    />
+                  </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='timePerSprint'
-            render={({ field }) => (
-              <FormItem className='mt-4'>
-                <FormLabel>Time per sprint</FormLabel>
-                <FormControl>
-                  <Input type='number' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='date'
-            render={({ field }) => (
-              <FormItem className='mt-4'>
-                <FormLabel>Confirm Password</FormLabel>
-                <DatePickerWithRange
-                  date={{
-                    from: field.value.from,
-                    to: field.value.to
-                  }}
-                  setDate={field.onChange}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='timePerSprint'
+              render={({ field }) => (
+                <FormItem className='mt-4'>
+                  <FormLabel>Time per sprint</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='number'
+                      {...field}
+                      onChange={(event) =>
+                        form.setValue(
+                          'timePerSprint',
+                          event.target.valueAsNumber
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='date'
+              render={({ field }) => (
+                <FormItem className='mt-4'>
+                  <FormLabel>Time start - end</FormLabel>
+                  <DatePickerWithRange
+                    date={{
+                      from: field.value.from,
+                      to: field.value.to
+                    }}
+                    setDate={field.onChange}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='mt-4'>
+                  <FormLabel>Description</FormLabel>
+
+                  <FormControl>
+                    <Editor
+                      markdown=''
+                      {...field}
+                      classNameContainer='h-[200px]'
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className='col-span-2'></div>
 
           <Button className='mt-4 w-full' type='submit'>
             Submit

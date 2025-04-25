@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
@@ -5,7 +6,6 @@ import {
   linkPlugin,
   markdownShortcutPlugin,
   MDXEditor,
-  MDXEditorMethods,
   UndoRedo
 } from '@mdxeditor/editor'
 import {
@@ -17,17 +17,16 @@ import {
 } from '@mdxeditor/editor'
 
 import '@mdxeditor/editor/style.css'
-import { useRef } from 'react'
 
-const Editor = () => {
-  const ref = useRef<MDXEditorMethods>(null)
+type EditorProps = { classNameContainer?: string } & React.ComponentProps<
+  typeof MDXEditor
+>
 
+const Editor = ({ classNameContainer, ref, ...props }: EditorProps) => {
   return (
-    <div>
+    <div className={cn('overflow-y-auto', classNameContainer)}>
       <MDXEditor
         ref={ref}
-        onChange={() => console.log(ref.current?.getMarkdown())}
-        markdown={'# Hello World'}
         contentEditableClassName='prose'
         plugins={[
           headingsPlugin(),
@@ -47,6 +46,7 @@ const Editor = () => {
             )
           })
         ]}
+        {...props}
       />
     </div>
   )

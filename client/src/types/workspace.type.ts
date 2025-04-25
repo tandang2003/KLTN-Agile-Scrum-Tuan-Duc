@@ -3,23 +3,9 @@ import { z } from 'zod'
 
 const CreateWorkspaceSchema = z.object({
   name: z.string(),
-  description: z.string(),
-  numSprint: z
-    .string()
-    .refine(
-      (val) => !Number.isNaN(parseInt(val, 10) && parseInt(val, 10) > 0),
-      {
-        message: 'Expected number, received a string'
-      }
-    ),
-  timePerSprint: z
-    .string()
-    .refine(
-      (val) => !Number.isNaN(parseInt(val, 10) && parseInt(val, 10) > 0),
-      {
-        message: 'Expected number, received a string'
-      }
-    ),
+  description: z.string().optional(),
+  numSprint: z.number(),
+  timePerSprint: z.number(),
   date: z
     .object({
       from: z.date(),

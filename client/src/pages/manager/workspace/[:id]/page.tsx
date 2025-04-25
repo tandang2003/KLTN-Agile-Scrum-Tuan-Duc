@@ -23,7 +23,7 @@ const WorkspaceDetailPage = () => {
     }
 
     fetchData()
-  }, [])
+  }, [navigate, workspaceId])
 
   return <div>{workspaceId}</div>
 }

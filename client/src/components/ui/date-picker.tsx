@@ -15,8 +15,8 @@ import {
 import { cn } from '@/lib/utils'
 
 type DatePickerWithRangeProps = {
-  date: DateRange
-  setDate: (date: DateRange | undefined) => void
+  date?: DateRange
+  setDate?: (date: DateRange | undefined) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
 export function DatePickerWithRange({
@@ -24,11 +24,6 @@ export function DatePickerWithRange({
   setDate,
   className
 }: DatePickerWithRangeProps) {
-  // const [date, setDate] = React.useState<DateRange | undefined>({
-  //   from: new Date(2022, 0, 20),
-  //   to: addDays(new Date(2022, 0, 20), 20)
-  // })
-
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>

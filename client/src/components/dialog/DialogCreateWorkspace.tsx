@@ -17,7 +17,7 @@ const DialogCreateWorkspace = ({
 }: DialogCreateWorkspaceProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpen}>
-      <DialogContent>
+      <DialogContent className='sm:max-w-[70vw]'>
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>

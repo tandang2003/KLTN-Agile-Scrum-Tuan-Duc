@@ -4,6 +4,7 @@ import { Id } from '@/types/other.type'
 
 const boardService = {
   getData: (projectId: Id): Promise<BoardModelType> => {
+    console.log(projectId)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(board)
