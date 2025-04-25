@@ -1,3 +1,4 @@
+import Editor from '@/components/Editor'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithRange } from '@/components/ui/date-picker'
 import {
@@ -15,7 +16,7 @@ import {
 } from '@/types/workspace.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 
 type CreateWorkspaceFormProps = {
@@ -59,7 +60,7 @@ const CreateWorkspaceForm = () => {
             render={({ field }) => (
               <FormItem className='mt-4'>
                 <FormLabel>Description</FormLabel>
-
+                <Editor />
                 <FormControl></FormControl>
                 <FormMessage />
               </FormItem>
