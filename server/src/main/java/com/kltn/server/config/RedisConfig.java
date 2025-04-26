@@ -38,41 +38,6 @@ public class RedisConfig {
         return redisTemplates;
     }
 
-
-    //    cache manager bean
-//    @Bean
-//    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-//        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration
-//                .defaultCacheConfig()
-//                .enableTimeToIdle()
-//                .disableCachingNullValues();
-//
-//        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
-//        cacheProperties.getRedis().forEach((k, v) -> {
-//            RedisSerializationContext.SerializationPair<String> keySerializer =
-//                    (RedisSerializationContext.SerializationPair<String>)
-//                            RedisSerializationContext.SerializationPair
-//                                    .fromSerializer(createSerializer(v.getKeySerializer(), true)
-//                                    );
-//            RedisCacheConfiguration config = defaultConfig
-//                    .serializeKeysWith(keySerializer)
-//                    .serializeValuesWith(
-//                            RedisSerializationContext
-//                                    .SerializationPair
-//                                    .fromSerializer(
-//                                            createSerializer(v.getValueSerializer(), false)
-//                                    )
-//                    )
-//                    .entryTtl(Duration.ofSeconds(Long.parseLong(v.getTti())));
-//            cacheConfigurations.put(k, config);
-//        });
-//        return RedisCacheManager.builder(connectionFactory)
-//                .cacheDefaults(defaultConfig)
-//                .transactionAware()
-//                .withInitialCacheConfigurations(cacheConfigurations)
-//                .build();
-//    }
-//
     private RedisSerializer<?> createSerializer(String className, boolean isKey) {
         if (className == null || className.isBlank())
             return isKey ? new StringRedisSerializer() : new Jackson2JsonRedisSerializer<>(Object.class);

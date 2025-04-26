@@ -2,6 +2,8 @@ package com.kltn.server.config.security;
 
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,7 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     @Autowired
     private JwtDecoder accessTokenDecoder;
 
@@ -52,8 +55,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+
         http.securityContext(contextConfig -> {
                     contextConfig.requireExplicitSave(false);
+                })
+                .logout(logoutConfig -> {
+                    logoutConfig
+//                            TODO Custome logout handler
+//                            .addLogoutHandler()
+                            .deleteCookies("refresh-token");
                 })
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

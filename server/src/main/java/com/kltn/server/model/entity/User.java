@@ -40,8 +40,14 @@ public class User extends BaseEntity implements UserDetails {
     private Set<Task> reviewedTasks;
     @Transient
     private boolean alive;
-
-
+    @Transient
+    private long totalProject;
+    @Transient
+    private long totalWorkspace;
+    @Transient
+    private long totalTask;
+    @Transient
+    private long totalPageWorkspace;
     public User() {
         super();
     }
@@ -219,11 +225,11 @@ public class User extends BaseEntity implements UserDetails {
         this.role = role;
     }
 
-    public List<Workspace> getWorkspace() {
+    public List<Workspace> getWorkspaces() {
         return workspaces;
     }
 
-    public void setWorkspace(List<Workspace> workspaces) {
+    public void setWorkspaces(List<Workspace> workspaces) {
         this.workspaces = workspaces;
     }
 
@@ -274,6 +280,36 @@ public class User extends BaseEntity implements UserDetails {
     public void setReviewedTasks(Set<Task> reviewedTasks) {
 
         this.reviewedTasks = reviewedTasks;
+    }
+
+    public long getTotalProject() {
+        return totalProject;
+    }
+
+    public void setTotalProject(long totalProject) {
+        this.totalProject = totalProject;
+    }
+
+    public long getTotalWorkspace() {
+        return totalWorkspace;
+    }
+
+    public void setTotalWorkspace(long totalWorkspace) {
+        this.totalWorkspace = totalWorkspace;
+    }
+
+    public long getTotalTask() {
+        return totalTask;
+    }
+
+    public void setTotalTask(long totalTask) {
+        this.totalTask = totalTask;
+    }
+    public long getTotalPageWorkspace() {
+        return totalPageWorkspace;
+    }
+    public void setTotalPageWorkspace(long totalPageWorkspace) {
+        this.totalPageWorkspace = totalPageWorkspace;
     }
 }
 

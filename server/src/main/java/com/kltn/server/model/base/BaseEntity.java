@@ -18,12 +18,12 @@ public abstract class BaseEntity {
     protected String id;
     @CreatedDate
     @Column(name = "dt_created", nullable = false, updatable = false)
-    protected Instant DTCreated;
+    protected Instant dtCreated;
     @LastModifiedDate
     @Column(name = "dt_modified")
-    protected Instant DTModified;
+    protected Instant dtModified;
     @Column(name = "dt_deleted")
-    protected Instant DTDeleted;
+    protected Instant dtDeleted;
     @Column(name = "is_deleted")
     protected boolean deleted;
     @CreatedBy
@@ -41,19 +41,19 @@ public abstract class BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof BaseEntity that)) return false;
-        return deleted == that.deleted && Objects.equals(id, that.id) && Objects.equals(DTCreated, that.DTCreated) && Objects.equals(DTModified, that.DTModified) && Objects.equals(DTDeleted, that.DTDeleted) && Objects.equals(createdBy, that.createdBy) && Objects.equals(modifiedBy, that.modifiedBy) && Objects.equals(deletedBy, that.deletedBy);
+        return deleted == that.deleted && Objects.equals(id, that.id) && Objects.equals(dtCreated, that.dtCreated) && Objects.equals(dtModified, that.dtModified) && Objects.equals(dtDeleted, that.dtDeleted) && Objects.equals(createdBy, that.createdBy) && Objects.equals(modifiedBy, that.modifiedBy) && Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, DTCreated, DTModified, DTDeleted, deleted, createdBy, modifiedBy, deletedBy);
+        return Objects.hash(id, dtCreated, dtModified, dtDeleted, deleted, createdBy, modifiedBy, deletedBy);
     }
 
     protected BaseEntity(BaseEntityBuilder<?, ?> builder) {
         this.id = builder.id;
-        this.DTCreated = builder.DTCreated;
-        this.DTModified = builder.DTModified;
-        this.DTDeleted = builder.DTDeleted;
+        this.dtCreated = builder.dtCreated;
+        this.dtModified = builder.dtModified;
+        this.dtDeleted = builder.dtDeleted;
         this.deleted = builder.deleted;
         this.createdBy = builder.createdBy;
         this.modifiedBy = builder.modifiedBy;
@@ -69,28 +69,28 @@ public abstract class BaseEntity {
         this.id = id;
     }
 
-    public Instant getDTCreated() {
-        return DTCreated;
+    public Instant getDtCreated() {
+        return dtCreated;
     }
 
-    public void setDTCreated(Instant DTCreated) {
-        this.DTCreated = DTCreated;
+    public void setDtCreated(Instant dtCreated) {
+        this.dtCreated = dtCreated;
     }
 
-    public Instant getDTModified() {
-        return DTModified;
+    public Instant getDtModified() {
+        return dtModified;
     }
 
-    public void setDTModified(Instant DTModified) {
-        this.DTModified = DTModified;
+    public void setDtModified(Instant dtModified) {
+        this.dtModified = dtModified;
     }
 
-    public Instant getDTDeleted() {
-        return DTDeleted;
+    public Instant getDtDeleted() {
+        return dtDeleted;
     }
 
-    public void setDTDeleted(Instant DTDeleted) {
-        this.DTDeleted = DTDeleted;
+    public void setDtDeleted(Instant dtDeleted) {
+        this.dtDeleted = dtDeleted;
     }
 
     public boolean isDeleted() {
@@ -127,11 +127,11 @@ public abstract class BaseEntity {
 
     public abstract static class BaseEntityBuilder<T, R extends BaseEntityBuilder<T, R>> {
         protected String id;
-        protected Instant DTStart;
-        protected Instant DTEnd;
-        protected Instant DTCreated;
-        protected Instant DTModified;
-        protected Instant DTDeleted;
+        protected Instant dtStart;
+        protected Instant dtEnd;
+        protected Instant dtCreated;
+        protected Instant dtModified;
+        protected Instant dtDeleted;
         protected boolean deleted;
         protected String createdBy;
         protected String modifiedBy;
@@ -145,28 +145,28 @@ public abstract class BaseEntity {
             return self();
         }
 
-        public R DTStart(Instant DTStart) {
-            this.DTStart = DTStart;
+        public R dtStart(Instant dtStart) {
+            this.dtStart = dtStart;
             return self();
         }
 
-        public R DTEnd(Instant DTEnd) {
-            this.DTEnd = DTEnd;
+        public R dtEnd(Instant dtEnd) {
+            this.dtEnd = dtEnd;
             return self();
         }
 
-        public R DTCreated(Instant DTCreated) {
-            this.DTCreated = DTCreated;
+        public R dtCreated(Instant dtCreated) {
+            this.dtCreated = dtCreated;
             return self();
         }
 
-        public R DTModified(Instant DTModified) {
-            this.DTModified = DTModified;
+        public R dtModified(Instant dtModified) {
+            this.dtModified = dtModified;
             return self();
         }
 
-        public R DTDeleted(Instant DTDeleted) {
-            this.DTDeleted = DTDeleted;
+        public R dtDeleted(Instant dtDeleted) {
+            this.dtDeleted = dtDeleted;
             return self();
         }
 
@@ -189,24 +189,24 @@ public abstract class BaseEntity {
             return id;
         }
 
-        public Instant getDTStart() {
-            return DTStart;
+        public Instant getDtStart() {
+            return dtStart;
         }
 
-        public Instant getDTEnd() {
-            return DTEnd;
+        public Instant getDtEnd() {
+            return dtEnd;
         }
 
-        public Instant getDTCreated() {
-            return DTCreated;
+        public Instant getDtCreated() {
+            return dtCreated;
         }
 
-        public Instant getDTModified() {
-            return DTModified;
+        public Instant getDtModified() {
+            return dtModified;
         }
 
-        public Instant getDTDeleted() {
-            return DTDeleted;
+        public Instant getDtDeleted() {
+            return dtDeleted;
         }
 
         public boolean isDeleted() {

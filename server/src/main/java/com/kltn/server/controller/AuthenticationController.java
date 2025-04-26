@@ -4,7 +4,10 @@ import com.kltn.server.DTO.request.RegisterRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.AuthenticationResponse;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
+import com.kltn.server.error.AppException;
+import com.kltn.server.error.Error;
 import com.kltn.server.service.AuthenticationService;
+import com.kltn.server.service.redis.UserTokenService;
 import com.kltn.server.util.token.CookieUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,11 +24,13 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final CookieUtils cookieUtils;
+    private final UserTokenService userTokenService;
 
     @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, BasicAuthenticationProvider basicAuthenticationProvider, CookieUtils cookieUtils) {
+    public AuthenticationController(AuthenticationService authenticationService, UserTokenService userTokenService, BasicAuthenticationProvider basicAuthenticationProvider, CookieUtils cookieUtils) {
         this.authenticationService = authenticationService;
         this.cookieUtils = cookieUtils;
+        this.userTokenService = userTokenService;
     }
 
     @PostMapping
@@ -49,7 +55,12 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<AuthenticationResponse>> refresh(@CookieValue("refresh_token") String refreshToken) {
+        if (!userTokenService.isRefreshTokenExpired(refreshToken + SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
+            throw AppException.builder().error(Error.TOKEN_INVALID).build();
+        }
+
         AuthenticationResponse response = authenticationService.refresh(refreshToken);
+
         return ResponseEntity.ok()
                 .body(
                         ApiResponse
