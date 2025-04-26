@@ -54,10 +54,6 @@ public class WorkspaceService {
         User user = userRepository.findByUniId((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).orElseThrow(
                 () -> AppException.builder().error(Error.NOT_FOUND).build());
         Page<Workspace> workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT));
-//        if (page != 0 && workspaces.isEmpty()) {
-//            throw AppException.builder().error(Error.NOT_FOUND).build();
-//        }
-//        return null;
         return workspaceMapper.toListWorkspaceResponse(workspaces.get().toList());
     }
 }
