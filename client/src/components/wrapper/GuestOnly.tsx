@@ -24,7 +24,6 @@ const GuestOnly = ({ children, mode = 'hide' }: GuestOnlyProps) => {
       return <Navigate to={HOME_PATH} state={{ from: location }} replace />
     }
   }
-
   if (isAuth) {
     switch (mode) {
       case 'hide':
