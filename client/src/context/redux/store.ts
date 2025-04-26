@@ -1,6 +1,7 @@
 import authReducer from '@/feature/auth/auth.slice'
 import boardApi from '@/feature/board/board.api'
 import workspaceApi from '@/feature/workspace/workspace.api'
+import { workspaceReducer } from '@/feature/workspace/workspace.slice'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
@@ -8,7 +9,8 @@ export const store = configureStore({
   reducer: {
     [boardApi.reducerPath]: boardApi.reducer,
     [workspaceApi.reducerPath]: workspaceApi.reducer,
-    authSlice: authReducer
+    authSlice: authReducer,
+    workspaceSlice: workspaceReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

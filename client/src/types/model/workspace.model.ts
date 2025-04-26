@@ -5,7 +5,7 @@ type WorkSpaceModel = {
   id: UniqueIdentifier
   name: string
   owner: UserModel
-  description: string
+  description?: string
   numSprint: number
   timePerSprint: number
   dtStart: Date

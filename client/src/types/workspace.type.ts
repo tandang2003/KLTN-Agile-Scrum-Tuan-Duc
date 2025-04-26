@@ -1,22 +1,28 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { z } from 'zod'
 
-const CreateWorkspaceForm = z
-  .object({
-    name: z.string(),
-    description: z.string(),
-    numSprint: z.number().positive(),
-    timePerSprint: z.number().positive(),
-    start: z.date(),
-    end: z.date()
-  })
-  .refine((data) => data.end >= data.start, {
-    message: 'Date end need after date start',
-    path: ['end']
-  })
-type CreateWorkspaceFormType = z.infer<typeof CreateWorkspaceForm>
+const CreateWorkspaceSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  sprintNum: z.number().positive(),
+  timePerSprint: z.number().positive(),
+  date: z
+    .object({
+      from: z.date(),
+      to: z.date()
+    })
+    .refine((data) => data.from <= data.to, {
+      message: 'Date end need after date start',
+      path: ['end']
+    })
+})
 
-type CreateWorkspaceReqType = CreateWorkspaceFormType
+type CreateWorkspaceSchemaType = z.infer<typeof CreateWorkspaceSchema>
+
+type CreateWorkspaceReqType = Omit<CreateWorkspaceSchemaType, 'date'> & {
+  start: Date
+  end: Date
+}
 
 type WorkspaceResponse = {
   id: UniqueIdentifier
@@ -35,9 +41,9 @@ type WorkspaceCardResponse = {
 
 export type {
   CreateWorkspaceReqType,
-  CreateWorkspaceFormType,
+  CreateWorkspaceSchemaType,
   WorkspaceResponse,
   WorkspaceCardResponse
 }
 
-export { CreateWorkspaceForm }
+export { CreateWorkspaceSchema }
