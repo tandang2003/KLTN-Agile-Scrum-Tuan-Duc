@@ -157,3 +157,7 @@
 .drop-shadow {
   filter: drop-shadow(48px 27px 74px #081534);
 }
+
+[class*='popupContainer'] {
+  z-index: 2000 !important;
+}

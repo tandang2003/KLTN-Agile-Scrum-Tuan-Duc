@@ -10,6 +10,10 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { RootState } from '@/context/redux/store'
+import { useCreateWorkspaceMutation } from '@/feature/workspace/workspace.api'
+import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
 import {
   CreateWorkspaceSchema,
   CreateWorkspaceSchemaType
@@ -17,8 +21,15 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 const CreateWorkspaceForm = () => {
+  const [createWorkspace] = useCreateWorkspaceMutation()
+  const state = useAppSelector(
+    (state: RootState) => state.workspaceSlice.isDialogCreateOpen
+  )
+  const dispatch = useAppDispatch()
+
   const form = useForm<CreateWorkspaceSchemaType>({
     resolver: zodResolver(CreateWorkspaceSchema),
     defaultValues: {
@@ -29,15 +40,30 @@ const CreateWorkspaceForm = () => {
     }
   })
 
-  const onSubmit = (values: CreateWorkspaceSchemaType) => {
-    console.log(values)
+  const handleSubmit = (values: CreateWorkspaceSchemaType) => {
+    createWorkspace({
+      ...values,
+      start: values.date.from,
+      end: values.date.to
+    })
+      .unwrap()
+      .then((response) =>
+        toast.success('Create workspace successful', {
+          description: `Workspace #${response.id} - ${response.name}`
+        })
+      )
+      .then(() => {
+        dispatch(setStateDialogWorkspace(!state))
+      })
+      .catch(() => {
+        toast.error('Create workspace failed')
+      })
   }
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className='grid grid-cols-3'></div>
-          <div>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <div className='[&>*:not(:first-element)]:mt-3'>
             <FormField
               control={form.control}
               name='name'
@@ -51,65 +77,72 @@ const CreateWorkspaceForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='numSprint'
-              render={({ field }) => (
-                <FormItem className='mt-4'>
-                  <FormLabel>Number Sprint</FormLabel>
-                  <FormControl>
-                    <Input
-                      type='number'
-                      {...field}
-                      onChange={(event) =>
-                        form.setValue('numSprint', event.target.valueAsNumber)
-                      }
+            <div className='flex gap-5 [&>*]:flex-1'>
+              <FormField
+                control={form.control}
+                name='date'
+                render={({ field }) => (
+                  <FormItem className='mt-4'>
+                    <FormLabel>Time start - end</FormLabel>
+                    <DatePickerWithRange
+                      date={{
+                        from: field.value.from,
+                        to: field.value.to
+                      }}
+                      setDate={field.onChange}
                     />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='timePerSprint'
-              render={({ field }) => (
-                <FormItem className='mt-4'>
-                  <FormLabel>Time per sprint</FormLabel>
-                  <FormControl>
-                    <Input
-                      type='number'
-                      {...field}
-                      onChange={(event) =>
-                        form.setValue(
-                          'timePerSprint',
-                          event.target.valueAsNumber
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='date'
-              render={({ field }) => (
-                <FormItem className='mt-4'>
-                  <FormLabel>Time start - end</FormLabel>
-                  <DatePickerWithRange
-                    date={{
-                      from: field.value.from,
-                      to: field.value.to
-                    }}
-                    setDate={field.onChange}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <div className='h-[20px]'>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='sprintNum'
+                render={({ field }) => (
+                  <FormItem className='mt-4'>
+                    <FormLabel>Number Sprint</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        {...field}
+                        onChange={(event) =>
+                          form.setValue('sprintNum', event.target.valueAsNumber)
+                        }
+                      />
+                    </FormControl>
+                    <div className='h-[20px]'>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='timePerSprint'
+                render={({ field }) => (
+                  <FormItem className='mt-4'>
+                    <FormLabel>Time per sprint</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        {...field}
+                        onChange={(event) =>
+                          form.setValue(
+                            'timePerSprint',
+                            event.target.valueAsNumber
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <div className='h-[20px]'>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -122,17 +155,20 @@ const CreateWorkspaceForm = () => {
                     <Editor
                       markdown=''
                       {...field}
-                      classNameContainer='h-[200px]'
+                      classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
-          <div className='col-span-2'></div>
 
-          <Button className='mt-4 w-full' type='submit'>
-            Submit
+          <Button
+            className='mt-4 w-full'
+            type='submit'
+            loading={form.formState.isSubmitting}
+          >
+            Create
           </Button>
         </form>
       </Form>

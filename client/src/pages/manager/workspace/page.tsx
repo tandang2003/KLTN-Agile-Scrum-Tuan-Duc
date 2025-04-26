@@ -4,20 +4,25 @@ import DialogCreateWorkspace from '@/components/dialog/DialogCreateWorkspace'
 import Icon from '@/components/Icon'
 import ListView from '@/components/ListView'
 import { Button } from '@/components/ui/button'
-import { useGetListWorkSpaceQuery } from '@/feature/workspace/workspace.api'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { RootState } from '@/context/redux/store'
+import { useGetListWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
 import { WorkspaceCardResponse } from '@/types/workspace.type'
-import { useState } from 'react'
 
 const WorkspacePage = () => {
-  const { data, isFetching } = useGetListWorkSpaceQuery()
-  const [openCreatedDialog, setOpenCreatedDialog] = useState<boolean>(false)
+  const { data, isFetching } = useGetListWorkspaceQuery()
+  const isDialogCreateOpen = useAppSelector(
+    (state: RootState) => state.workspaceSlice.isDialogCreateOpen
+  )
+  const dispatch = useAppDispatch()
   return (
     <Container inSidebar>
       <div className='flex justify-between pt-2 pb-4'>
         <h2 className='h2'>Work Spaces</h2>
         <Button
           variant={'ghost'}
-          onClick={() => setOpenCreatedDialog(!openCreatedDialog)}
+          onClick={() => dispatch(setStateDialogWorkspace(!isDialogCreateOpen))}
         >
           <Icon icon={'lucide:plus'} />
         </Button>
@@ -40,8 +45,8 @@ const WorkspacePage = () => {
         )}
       />
       <DialogCreateWorkspace
-        open={openCreatedDialog}
-        onOpen={(open) => setOpenCreatedDialog(open)}
+        open={isDialogCreateOpen}
+        onOpen={(open) => dispatch(setStateDialogWorkspace(open))}
       />
     </Container>
   )

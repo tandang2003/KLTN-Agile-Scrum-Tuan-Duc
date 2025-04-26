@@ -4,8 +4,8 @@ import { z } from 'zod'
 const CreateWorkspaceSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  numSprint: z.number(),
-  timePerSprint: z.number(),
+  sprintNum: z.number().positive(),
+  timePerSprint: z.number().positive(),
   date: z
     .object({
       from: z.date(),
@@ -19,7 +19,10 @@ const CreateWorkspaceSchema = z.object({
 
 type CreateWorkspaceSchemaType = z.infer<typeof CreateWorkspaceSchema>
 
-type CreateWorkspaceReqType = CreateWorkspaceSchemaType
+type CreateWorkspaceReqType = Omit<CreateWorkspaceSchemaType, 'date'> & {
+  start: Date
+  end: Date
+}
 
 type WorkspaceResponse = {
   id: UniqueIdentifier

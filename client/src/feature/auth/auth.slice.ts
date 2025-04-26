@@ -1,3 +1,4 @@
+import { setAuthorization } from '@/configuration/http.config'
 import { StorageItem } from '@/lib/const'
 import authService from '@/services/auth.service'
 import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
@@ -51,12 +52,9 @@ const restoreSessionThunk = createAsyncThunk<
   },
   void
 >('auth/restoreSession', async (_, thunkAPI) => {
-  const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
-  if (!accessToken) return thunkAPI.rejectWithValue('No token')
-
-  // Optional: call backend to fetch user info
   try {
-    // const user = await api.getCurrentUser(token)
+    const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
+    if (!accessToken) return thunkAPI.rejectWithValue('No token')
     return { accessToken: accessToken }
   } catch (_) {
     return thunkAPI.rejectWithValue('Token invalid')
@@ -86,13 +84,11 @@ const authSlice = createSlice({
     builder.addCase(
       loginThunk.fulfilled,
       (state: AuthState, action: PayloadAction<LoginRes>) => {
-        state.accessToken = action.payload.access_token
+        const { access_token } = action.payload
         state.user = action.payload.user
         state.isAuth = true
-        sessionStorage.setItem(
-          StorageItem.AccessToken,
-          action.payload.access_token
-        )
+        sessionStorage.setItem(StorageItem.AccessToken, access_token)
+        setAuthorization(access_token)
       }
     )
     builder.addCase(loginThunk.rejected, (state: AuthState, action) => {
@@ -102,7 +98,6 @@ const authSlice = createSlice({
       state.error = action.payload
         ? { field: 'password', message: action.payload as string }
         : { field: 'password', message: 'Email or password not valid' }
-      sessionStorage.removeItem(StorageItem.AccessToken)
     })
     builder.addCase(
       restoreSessionThunk.fulfilled,
@@ -112,10 +107,11 @@ const authSlice = createSlice({
           accessToken: string
         }>
       ) => {
-        state.accessToken = action.payload.accessToken
+        const { accessToken } = action.payload
         state.user = undefined
         state.error = undefined
         state.isAuth = true
+        setAuthorization(accessToken)
       }
     )
     builder.addCase(restoreSessionThunk.rejected, (state: AuthState) => {
@@ -133,6 +129,7 @@ const authSlice = createSlice({
         state.accessToken = undefined
         state.isAuth = false
         sessionStorage.removeItem(StorageItem.AccessToken)
+        setAuthorization(undefined)
       }
     )
     builder.addMatcher(isPending, (state) => {

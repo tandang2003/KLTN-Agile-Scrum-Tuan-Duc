@@ -6,25 +6,20 @@ import {
 } from '@/types/http.type'
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from 'axios'
 
-const accessToken = ''
-
-const getAccessToken = (): string => {
-  return accessToken
-}
-
 const appAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
   timeout: 1000,
   withCredentials: true
 })
 
+const setAuthorization = (accessToken?: string) => {
+  appAxios.defaults.headers.common.Authorization = accessToken
+    ? `Bearer ${accessToken}`
+    : undefined
+}
+
 appAxios.interceptors.request.use(
   (config) => {
-    const accessToken = getAccessToken()
-    config.headers.Authorization = accessToken
-      ? `Bearer ${accessToken}`
-      : undefined
-
     return config
   },
   (error) => {
@@ -72,5 +67,5 @@ appAxios.interceptors.response.use(
 
 const manualAxios = axios.create()
 
-export { manualAxios }
+export { manualAxios, setAuthorization }
 export default appAxios

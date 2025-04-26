@@ -19,7 +19,7 @@ const DialogCreateWorkspace = ({
     <Dialog open={open} onOpenChange={onOpen}>
       <DialogContent className='sm:max-w-[70vw]'>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>Create workspace</DialogTitle>
           <DialogDescription>
             This action cannot be undone. This will permanently delete your
             account and remove your data from our servers.

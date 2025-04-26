@@ -16,8 +16,6 @@ const RequiredAuth = ({ children, mode = 'hide' }: RequiredAuthProps) => {
   const location = useLocation()
 
   if (mode === 'home' || mode === 'login') {
-    console.log(isLoading, isAuth)
-    console.log('isLoading', isLoading == false, !isAuth)
     if (isLoading == false && typeof isAuth === 'boolean' && !isAuth) {
       return (
         <Navigate
