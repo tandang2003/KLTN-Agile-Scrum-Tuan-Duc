@@ -1,4 +1,3 @@
-import { currentUser } from '@/assets/user.data'
 import LogoutButton from '@/components/LogoutButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -28,13 +27,8 @@ const UserDropdown = ({
   className,
   ...props
 }: UserDropdownProps) => {
-  let { user } = useAppSelector((state) => state.authSlice)
-  if (!user) {
-    user = {
-      ...currentUser
-    }
-    // throw Error('Can not load component because user not found')
-  }
+  const { user } = useAppSelector((state) => state.authSlice)
+
   const Comp = insideSidebar ? SidebarMenuButton : Button
   return (
     <DropdownMenu>
@@ -49,14 +43,14 @@ const UserDropdown = ({
           {...props}
         >
           <Avatar className='h-8 w-8 rounded-lg'>
-            <AvatarImage alt={user.name} />
+            <AvatarImage alt={user?.name ?? ''} />
             <AvatarFallback className='rounded-lg'>
-              {user.name.charAt(0)}
+              {user?.name.charAt(0) ?? ''}
             </AvatarFallback>
           </Avatar>
           <div className='grid flex-1 text-left text-sm leading-tight'>
-            <span className='truncate font-medium'>{user.name}</span>
-            <span className='truncate text-xs'>#{user.uniId}</span>
+            <span className='truncate font-medium'>{user?.name ?? ''}</span>
+            <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
           </div>
           <ChevronsUpDown className='ml-auto size-4' />
         </Comp>
@@ -70,12 +64,12 @@ const UserDropdown = ({
         <DropdownMenuLabel className='p-0 font-normal'>
           <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
             <Avatar className='h-8 w-8 rounded-lg'>
-              <AvatarImage alt={user.name} />
+              <AvatarImage alt={user?.name ?? ''} />
               <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
             </Avatar>
             <div className='grid flex-1 text-left text-sm leading-tight'>
-              <span className='truncate font-medium'>{user.name}</span>
-              <span className='truncate text-xs'>#{user.uniId}</span>
+              <span className='truncate font-medium'>{user?.name ?? ''}</span>
+              <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
             </div>
           </div>
         </DropdownMenuLabel>

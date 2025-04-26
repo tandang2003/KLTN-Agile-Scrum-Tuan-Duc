@@ -1,3 +1,4 @@
+import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { z } from 'zod'
 
@@ -39,11 +40,14 @@ type WorkspaceCardResponse = {
   owner: string
 }
 
+type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
+
 export type {
   CreateWorkspaceReqType,
   CreateWorkspaceSchemaType,
   WorkspaceResponse,
-  WorkspaceCardResponse
+  WorkspaceCardResponse,
+  WorkspaceSideBar
 }
 
 export { CreateWorkspaceSchema }

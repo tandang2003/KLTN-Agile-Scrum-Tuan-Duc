@@ -1,3 +1,4 @@
+import envConfig from '@/configuration/env.config'
 import httpService from '@/services/http.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
 import { ResponseApi } from '@/types/http.type'
@@ -20,6 +21,19 @@ const authService = {
   },
   logout: async (req: LogoutReq) => {
     await httpService.post<ResponseApi<void>, LogoutReq>('auth/logout', req)
+  },
+  refresh: async (): Promise<ResponseApi<LoginRes>> => {
+    const response = await fetch(`${envConfig.BACKEND_URL}/auth/refresh`, {
+      method: 'POST'
+      // body: JSON.stringify({
+      //   retry: 1
+      // })
+    })
+
+    if (!response.ok) throw new Error('UnAuthorization')
+
+    const body: ResponseApi<LoginRes> = await response.json()
+    return body
   }
 }
 
