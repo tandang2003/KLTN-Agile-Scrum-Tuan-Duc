@@ -12,8 +12,12 @@ import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WorkspaceService {
@@ -44,5 +48,16 @@ public class WorkspaceService {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(
                 () -> AppException.builder().error(Error.NOT_FOUND).build());
         return workspaceMapper.toWorkspaceResponseById(workspace);
+    }
+
+    public List<WorkspaceResponse> getWorkspaceByOwnerIdPaging(int page, int size) {
+        User user = userRepository.findByUniId((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).orElseThrow(
+                () -> AppException.builder().error(Error.NOT_FOUND).build());
+        Page<Workspace> workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT));
+//        if (page != 0 && workspaces.isEmpty()) {
+//            throw AppException.builder().error(Error.NOT_FOUND).build();
+//        }
+//        return null;
+        return workspaceMapper.toListWorkspaceResponse(workspaces.get().toList());
     }
 }

@@ -46,9 +46,9 @@ public interface UserMapper {
             @Mapping(target = "uniId", source = "uniId"),
 //            @Mapping(target = "uniPassword", source = "uniPassword"),
             @Mapping(target = "className", source = "className"),
-            @Mapping(target = "workspace", source = "workspace", qualifiedByName = "workspaceToWorkspaceResponse"
-            ),
-
+            @Mapping(target = "workspace", source = "workspaces", qualifiedByName = "workspaceToWorkspaceResponse"),
+            @Mapping(target = "totalWorkspace", source = "totalWorkspace"),
+            @Mapping(target = "totalPageWorkspace", source = "totalPageWorkspace")
     })
     @BeanMapping(ignoreByDefault = true)
     UserResponse toUserWorkspaceResponse(User user);
@@ -56,9 +56,10 @@ public interface UserMapper {
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
+            @Mapping(target = "createdAt", source = "dtCreated"),
     })
-    @Named("workspaceToWorkspaceResponse")
     @BeanMapping(ignoreByDefault = true)
+    @Named("workspaceToWorkspaceResponse")
     WorkspaceResponse workspaceToWorkspaceResponse(Workspace workspace);
 
 }

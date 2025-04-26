@@ -5,22 +5,31 @@ import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.model.entity.User;
+import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.repository.entity.UserRepository;
+import com.kltn.server.repository.entity.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.List;
 
 @Service
 @RequestScope
 public class UserService {
     private final UserRepository userRepository;
+    private final WorkspaceRepository workspaceRepository;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, WorkspaceRepository workspaceRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.workspaceRepository = workspaceRepository;
     }
 
     public User getCurrentUser() {
@@ -29,20 +38,19 @@ public class UserService {
     }
 
     public UserResponse getCurrUser() {
-
-//        UserResponse userResponse = UserResponse.builder().id(user.getId()).uniId(user.getUniId()).name(user.getName()).className(user.getClassName()).build();
         UserResponse userResponse = userMapper.toUserResponse(getCurrentUser());
         return userResponse;
     }
 
     public UserResponse getUserWorkspaces() {
 //        User user = (User) auth.getPrincipal();
-//        UserResponse userResponse = UserResponse.builder().id(user.getId()).uniId(user.getUniId()).name(user.getName()).className(user.getClassName()).build();
-        UserResponse userResponse = userMapper.toUserWorkspaceResponse(getCurrentUser());
+        User user = getCurrentUser();
+        Page<Workspace> w = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(0, 10, WorkspaceRepository.DEFAULT_SORT));
+        user.setWorkspaces(w.get().toList());
+        user.setTotalWorkspace(w.getTotalElements());
+        user.setTotalPageWorkspace(w.getTotalPages());
+        UserResponse userResponse = userMapper.toUserWorkspaceResponse(user);
         return userResponse;
     }
 
-    public User findByUniID(String uniId) {
-        return userRepository.findByUniId(uniId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-    }
 }

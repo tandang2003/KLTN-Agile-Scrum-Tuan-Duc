@@ -8,9 +8,10 @@ import org.mapstruct.BeanMapping;
 import java.time.Instant;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public record WorkspaceResponse(String id, String name, String description, int sprintNum, int timePerSprint,
-                                UserResponse user, Instant start, Instant end, List<ProjectResponse> projects) {
+                                UserResponse user, Instant start, Instant end, List<ProjectResponse> projects,
+                                Instant createdAt) {
     public static WorkspaceResponseBuilder builder() {
         return new WorkspaceResponseBuilder();
     }
@@ -25,6 +26,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
         Instant end;
         UserResponse user;
         List<ProjectResponse> projects;
+        Instant createdAt;
 
         public WorkspaceResponseBuilder id(String id) {
             this.id = id;
@@ -33,6 +35,11 @@ public record WorkspaceResponse(String id, String name, String description, int 
 
         public WorkspaceResponseBuilder start(Instant start) {
             this.start = start;
+            return this;
+        }
+
+        public WorkspaceResponseBuilder createdAt(Instant createdAt) {
+            this.createdAt = createdAt;
             return this;
         }
 
@@ -73,7 +80,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
         }
 
         public WorkspaceResponse build() {
-            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, user, start, end, projects);
+            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, user, start, end, projects, createdAt);
         }
     }
 

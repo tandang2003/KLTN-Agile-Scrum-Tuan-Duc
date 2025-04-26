@@ -39,7 +39,7 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
                     flag = mainTime.isAfter(dependencyTime);
                     if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be after [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("%s field must be after %s field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
@@ -47,7 +47,7 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
                     flag = mainTime.isBefore(dependencyTime);
                     if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be before [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("%s field must be before %s field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
@@ -55,7 +55,7 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
                     flag = mainTime.equals(dependencyTime);
                     if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be equal to [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("%s field must be equal to %s field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }
@@ -63,14 +63,14 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
                     flag = mainTime.isAfter(dependencyTime) || mainTime.equals(dependencyTime);
                     if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be after or equal to [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("%s field must be after or equal to %s field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                 }
                 case BEFORE_OR_EQUAL -> {
                     flag = mainTime.isBefore(dependencyTime) || mainTime.equals(dependencyTime);
                     if (!flag) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate(String.format("[%s] field must be before or equal to [%s] field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
+                        context.buildConstraintViolationWithTemplate(String.format("%s field must be before or equal to %s field", this.mainField, this.dependencyField)).addPropertyNode(this.mainField).addConstraintViolation();
                     }
                     break;
                 }

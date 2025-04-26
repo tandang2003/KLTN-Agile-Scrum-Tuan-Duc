@@ -7,11 +7,16 @@ import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.validation.Valid;
 import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.parser.Entity;
+import java.util.List;
 
 @RestController
 @RequestMapping("/workspace")
@@ -40,6 +45,16 @@ public class WorkspaceController {
                 ApiResponse.<WorkspaceResponse>builder()
                         .message("get workspace success")
                         .data(workspaceService.getWorkspaceById(workspaceId))
+                        .build());
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<List<WorkspaceResponse>>> listWorkspaces(@RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok().body(
+                ApiResponse.<List<WorkspaceResponse>>builder()
+                        .message("get list workspaces success")
+                        .data(workspaceService.getWorkspaceByOwnerIdPaging(page,size))
                         .build());
     }
 
