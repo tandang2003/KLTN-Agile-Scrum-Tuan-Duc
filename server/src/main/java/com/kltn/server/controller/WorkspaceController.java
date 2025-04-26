@@ -24,7 +24,8 @@ public class WorkspaceController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<WorkspaceResponse>> createWorkspace(@Valid @RequestBody WorkspaceCreationRequest workspaceCreationRequest) {
+    public ResponseEntity<ApiResponse<WorkspaceResponse>> createWorkspace(
+            @Valid @RequestBody WorkspaceCreationRequest workspaceCreationRequest) {
         return ResponseEntity.ok().body(
                 ApiResponse.<WorkspaceResponse>builder()
                         .code(HttpStatus.CREATED.value())
@@ -37,7 +38,7 @@ public class WorkspaceController {
     public ResponseEntity<ApiResponse<WorkspaceResponse>> getWorkspace(@PathVariable String workspaceId) {
         return ResponseEntity.ok().body(
                 ApiResponse.<WorkspaceResponse>builder()
-                        .message("Create workspace success")
+                        .message("get workspace success")
                         .data(workspaceService.getWorkspaceById(workspaceId))
                         .build());
     }

@@ -82,7 +82,7 @@ const UserDropdown = ({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <NavLink to={'/manager'}>Workspaces</NavLink>
+            <NavLink to={'/manager/workspace'}>Workspaces</NavLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

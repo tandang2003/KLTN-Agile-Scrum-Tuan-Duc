@@ -1,7 +1,7 @@
-import React, { ComponentProps } from 'react'
+import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { logoutThunk } from '@/feature/auth/auth.slice'
-import { Button } from '@/components/ui/button'
+import { ComponentProps } from 'react'
 import { toast } from 'sonner'
 
 type LogoutButtonProps = ComponentProps<typeof Button>
