@@ -1,18 +1,18 @@
 import { AppSidebar } from '@/components/AppSidebar'
-import UserDropdown from '@/components/UserDropdown'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger
 } from '@/components/ui/sidebar'
+import UserDropdown from '@/components/UserDropdown'
 import { Outlet } from 'react-router-dom'
 
 const ManagerLayout = () => {
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
-      <SidebarInset className='overflow-x-hidden'>
+      <SidebarInset>
         <div className='flex flex-col'>
           <header className='flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
             <div className='flex w-full items-center justify-between gap-2 px-4'>

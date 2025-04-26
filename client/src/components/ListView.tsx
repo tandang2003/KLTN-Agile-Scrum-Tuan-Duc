@@ -45,9 +45,9 @@ const ListView = <T,>({
         Array(loadingItems.items)
           .fill(null)
           .map(
-            (_) =>
+            (_, index) =>
               loadingItems.loadingComponent ?? (
-                <Skeleton className='h-[100px] w-full' />
+                <Skeleton key={index} className='h-[100px] w-full' />
               )
           )}
       {data && data.map((item, index) => render(item, index))}
