@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Component
 public class TokenUtils {
@@ -46,6 +47,7 @@ public class TokenUtils {
                 .subject(subject)
                 .claim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .claim("uniId", ((User) userDetails).getUniId())
+                .claim("sail", UUID.randomUUID().toString())
 
                 .build();
 
@@ -63,6 +65,7 @@ public class TokenUtils {
                 .expiresAt(now.plus(getRefreshTokenExpiration(), ChronoUnit.SECONDS))
                 .subject(user.getUsername())
                 .claim("uniId", ((User) user).getUniId())
+                .claim("sail", UUID.randomUUID().toString())
                 .build();
 
         return refreshJwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
