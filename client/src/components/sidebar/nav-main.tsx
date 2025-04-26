@@ -40,7 +40,7 @@ export function NavMain({ items }: NavMainType) {
           if (item.items) {
             return (
               <Collapsible
-                key={item.title}
+                key={item.url}
                 asChild
                 defaultOpen={item.isActive}
                 className='group/collapsible'

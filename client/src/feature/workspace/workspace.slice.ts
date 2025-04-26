@@ -1,11 +1,39 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { setUser } from '@/feature/auth/auth.slice'
+import userService from '@/services/user.service'
+import { WorkSpaceModel } from '@/types/model/workspace.model'
+import { WorkspaceSideBar } from '@/types/workspace.type'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type WorkspaceState = {
   isDialogCreateOpen: boolean
+  listItemSideBar?: Pick<WorkSpaceModel, 'id' | 'name'>[]
 }
 const initialState: WorkspaceState = {
-  isDialogCreateOpen: false
+  isDialogCreateOpen: false,
+  listItemSideBar: undefined
 }
+
+const getUserWorkspaceThunk = createAsyncThunk<WorkspaceSideBar[], void>(
+  'workspace/user',
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const data = await userService.getWorkspaces()
+      const { id, name, role, uniId } = data.data
+      dispatch(
+        setUser({
+          id,
+          name,
+          role,
+          uniId
+        })
+      )
+      return data.data.workspaces
+    } catch (_) {
+      return rejectWithValue('Get user workspace failed')
+    }
+  }
+)
+
 const workspaceSlice = createSlice({
   name: 'workspace',
   initialState: initialState,
@@ -16,9 +44,21 @@ const workspaceSlice = createSlice({
     ) {
       state.isDialogCreateOpen = action.payload
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(
+      getUserWorkspaceThunk.fulfilled,
+      (state: WorkspaceState, action: PayloadAction<WorkspaceSideBar[]>) => {
+        state.listItemSideBar = action.payload.map((item) => ({
+          id: item.id,
+          name: item.name
+        }))
+      }
+    )
   }
 })
 
+export { getUserWorkspaceThunk }
 export const { setStateDialogWorkspace } = workspaceSlice.actions
 export const workspaceReducer = workspaceSlice.reducer
 export default workspaceSlice

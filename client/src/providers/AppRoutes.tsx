@@ -23,6 +23,8 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<RootLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path='home' element={<HomePage />} />
           <Route
             path='auth'
             element={
@@ -34,8 +36,6 @@ const AppRoutes = () => {
             <Route path='login' index element={<LoginPage />} />
             <Route path='register' element={<RegisterPage />} />
           </Route>
-          <Route index element={<HomePage />} />
-          <Route path='home' element={<HomePage />} />
 
           <Route
             path='manager'
