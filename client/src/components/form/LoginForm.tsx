@@ -51,8 +51,7 @@ const LoginForm = ({
   const handleSubmit = (value: LoginsSchemaType) => {
     dispatch(loginThunk(value))
       .unwrap()
-      .then((response) => {
-        console.log(response)
+      .then(() => {
         toast.success('Login success, welcome to TaskFlow')
         navigate(from, { replace: true })
       })
