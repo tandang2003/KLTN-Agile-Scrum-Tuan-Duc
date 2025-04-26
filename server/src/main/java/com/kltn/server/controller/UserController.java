@@ -5,10 +5,10 @@ import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.service.entity.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -29,10 +29,14 @@ public class UserController {
         return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info user").data(userService.getCurrUser()).build());
     }
 
-    @GetMapping("/workspace")
+    @GetMapping(value = "/workspace")
     public ResponseEntity<ApiResponse<UserResponse>> userWorkspace() {
         return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info workspace of user").data(userService.getUserWorkspaces()).build());
     }
+//    @GetMapping(value = "/workspace")
+//    public ResponseEntity<ApiResponse<UserResponse>> userWorkspaceToPaging(@PageableDefault( ) Pageable pageable) {
+//        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info workspace of user").data(userService.getUserWorkspaces()).build());
+//    }
 
 
 }

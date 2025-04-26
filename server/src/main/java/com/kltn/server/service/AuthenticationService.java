@@ -73,7 +73,6 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse refresh(String refreshToken) {
-
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw AppException.builder()
                     .error(Error.TOKEN_MISSING)
