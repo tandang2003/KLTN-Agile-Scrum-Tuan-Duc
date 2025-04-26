@@ -66,7 +66,7 @@ cache:
       value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
 #      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
 #      hash-value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
-    task:
+    access-token:
       ttl: 600
       key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
       value-serializer: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
