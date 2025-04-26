@@ -44,6 +44,11 @@ public class SecurityConfig {
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     @Autowired
     private CustomConverterJwtToUser customConverterJwtToUser;
+    @Autowired
+    private CustomLogoutHandler customLogoutHandler;
+    @Autowired
+    private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -55,15 +60,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
-
         http.securityContext(contextConfig -> {
                     contextConfig.requireExplicitSave(false);
                 })
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logoutConfig -> {
                     logoutConfig
-//                            TODO Custome logout handler
-//                            .addLogoutHandler()
-                            .deleteCookies("refresh-token");
+                            .addLogoutHandler(customLogoutHandler)
+                            .logoutSuccessHandler(customLogoutSuccessHandler)
+                            .deleteCookies("refresh_token");
                 })
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -87,8 +93,6 @@ public class SecurityConfig {
         ;
 
 
-        http.httpBasic(AbstractHttpConfigurer::disable);
-        http.formLogin(c -> c.disable());
         return http.build();
     }
 
