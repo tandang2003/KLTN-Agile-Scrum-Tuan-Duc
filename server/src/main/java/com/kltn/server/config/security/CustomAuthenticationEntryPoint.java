@@ -2,6 +2,7 @@ package com.kltn.server.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.config.security.exception.MyAuthenticationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
+        MyAuthenticationException myAuthenticationException = (MyAuthenticationException) authException;
+        response.setStatus(myAuthenticationException.getError().getCode());
         String errorMessage = Optional.ofNullable(authException.getCause())
                 .map(Throwable::getMessage)
                 .orElse(authException.getMessage());
