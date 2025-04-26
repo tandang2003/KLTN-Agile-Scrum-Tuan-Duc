@@ -1,3 +1,5 @@
+import { HttpStatusCode } from 'axios'
+
 export type ResponseApi<T> = {
   code: number
   data: T & {
@@ -34,6 +36,19 @@ export class ValidationError extends Error {
     this.code = code
     this.message = message
     this.error = error
+
+    // Restore prototype chain
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class UnauthorizedError extends Error {
+  code: number
+  message: string
+  constructor() {
+    super('Unauthorized')
+    this.code = HttpStatusCode.Unauthorized
+    this.message = 'Unauthorized'
 
     // Restore prototype chain
     Object.setPrototypeOf(this, new.target.prototype)

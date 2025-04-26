@@ -1,4 +1,5 @@
 import { setAuthorization } from '@/configuration/http.config'
+import { getUserWorkspaceThunk } from '@/feature/workspace/workspace.slice'
 import { StorageItem } from '@/lib/const'
 import authService from '@/services/auth.service'
 import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
@@ -18,12 +19,14 @@ type AuthState = {
   isAuth?: boolean
   error?: FieldError
   accessToken?: string
-  user?: {
-    id: Id
-    name: string
-    uniId: string
-    role: string
-  }
+  user?: UserAuthType
+}
+
+type UserAuthType = {
+  id: Id
+  name: string
+  uniId: string
+  role: string
 }
 
 const initialState: AuthState = {
@@ -51,13 +54,15 @@ const restoreSessionThunk = createAsyncThunk<
     accessToken: string
   },
   void
->('auth/restoreSession', async (_, thunkAPI) => {
+>('auth/restoreSession', async (_, { rejectWithValue, dispatch }) => {
   try {
     const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
-    if (!accessToken) return thunkAPI.rejectWithValue('No token')
+    if (!accessToken) return rejectWithValue('No token')
+    setAuthorization(accessToken)
+    dispatch(getUserWorkspaceThunk())
     return { accessToken: accessToken }
   } catch (_) {
-    return thunkAPI.rejectWithValue('Token invalid')
+    return rejectWithValue('Token invalid')
   }
 })
 
@@ -75,7 +80,11 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setUser: (state: AuthState, action: PayloadAction<UserAuthType>) => {
+      state.user = action.payload
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(loginThunk.pending, (state: AuthState) => {
       state.loading = true
@@ -108,10 +117,10 @@ const authSlice = createSlice({
         }>
       ) => {
         const { accessToken } = action.payload
+        state.accessToken = accessToken
         state.user = undefined
         state.error = undefined
         state.isAuth = true
-        setAuthorization(accessToken)
       }
     )
     builder.addCase(restoreSessionThunk.rejected, (state: AuthState) => {
@@ -128,6 +137,8 @@ const authSlice = createSlice({
       (state) => {
         state.accessToken = undefined
         state.isAuth = false
+        state.user = undefined
+        state.error = undefined
         sessionStorage.removeItem(StorageItem.AccessToken)
         setAuthorization(undefined)
       }
@@ -143,6 +154,7 @@ const authSlice = createSlice({
     })
   }
 })
-export { loginThunk, restoreSessionThunk, logoutThunk }
 const authReducer = authSlice.reducer
+const { setUser } = authSlice.actions
+export { loginThunk, restoreSessionThunk, logoutThunk, setUser }
 export default authReducer

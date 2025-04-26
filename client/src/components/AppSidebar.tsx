@@ -7,8 +7,19 @@ import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 import Icon from '@/components/Icon'
 import Logo from '@/components/Logo'
 import { NavMain } from '@/components/sidebar/nav-main'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { getUserWorkspaceThunk } from '@/feature/workspace/workspace.slice'
+import { RootState } from '@/context/redux/store'
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const dispatch = useAppDispatch()
+  const state = useAppSelector(
+    (state: RootState) => state.workspaceSlice.listItemSideBar
+  )
+  React.useEffect(() => {
+    if (!state) dispatch(getUserWorkspaceThunk())
+  }, [dispatch, state])
+
   const data = React.useMemo(() => {
     return {
       header: {
@@ -40,7 +51,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: 'Workspaces',
             url: '/manager/workspace',
-            icon: <Icon icon={'carbon:workspace'} />
+            icon: <Icon icon={'carbon:workspace'} />,
+            items:
+              state?.map((item) => ({
+                title: item.name,
+                url: `/manager/workspace/project/${item.id}`
+              })) ?? []
           },
           {
             title: 'Project',
@@ -58,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ]
       }
     }
-  }, [])
+  }, [state])
 
   return (
     <Sidebar collapsible='icon' {...props}>
@@ -72,3 +88,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
+
+export default React.memo(AppSidebar)

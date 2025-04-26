@@ -8,7 +8,7 @@ type LogoutButtonProps = ComponentProps<typeof Button>
 
 const LogoutButton = ({ ...props }: LogoutButtonProps) => {
   const accessToken: string = useAppSelector(
-    (state) => state.authSlice.accessToken || ''
+    (state) => state.authSlice.accessToken ?? ''
   )
   const dispatch = useAppDispatch()
   const handleLogout = () => {
