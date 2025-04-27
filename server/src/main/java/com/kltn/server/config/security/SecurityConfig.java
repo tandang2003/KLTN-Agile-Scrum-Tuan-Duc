@@ -49,24 +49,23 @@ public class SecurityConfig {
     @Autowired
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
-
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(List.of(basicAuthenticationProvider));
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         http.securityContext(contextConfig -> {
-                    contextConfig.requireExplicitSave(false);
-                })
+            contextConfig.requireExplicitSave(false);
+        })
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logoutConfig -> {
                     logoutConfig
+                            .logoutUrl("/auth/logout")
                             .addLogoutHandler(customLogoutHandler)
                             .logoutSuccessHandler(customLogoutSuccessHandler)
                             .deleteCookies("refresh_token");
@@ -81,17 +80,15 @@ public class SecurityConfig {
                 })
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {
-                                jwt.decoder(accessTokenDecoder);
-                                jwt.jwtAuthenticationConverter(customConverterJwtToUser);
-                            })
+                        jwt.decoder(accessTokenDecoder);
+                        jwt.jwtAuthenticationConverter(customConverterJwtToUser);
+                    })
                             .authenticationEntryPoint(customAuthenticationEntryPoint);
                 })
                 .exceptionHandling(exc -> {
                     exc.accessDeniedHandler(customAccessDenyHandler);
                     exc.authenticationEntryPoint(customAuthenticationEntryPoint);
-                })
-        ;
-
+                });
 
         return http.build();
     }

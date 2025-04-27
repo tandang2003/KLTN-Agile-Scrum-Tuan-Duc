@@ -25,9 +25,6 @@ const authService = {
   refresh: async (): Promise<ResponseApi<LoginRes>> => {
     const response = await fetch(`${envConfig.BACKEND_URL}/auth/refresh`, {
       method: 'POST'
-      // body: JSON.stringify({
-      //   retry: 1
-      // })
     })
 
     if (!response.ok) throw new Error('UnAuthorization')

@@ -13,12 +13,17 @@ import { RootState } from '@/context/redux/store'
 
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useAppDispatch()
-  const state = useAppSelector(
-    (state: RootState) => state.workspaceSlice.listItemSideBar
+  const { listItemSideBar, isFetched } = useAppSelector(
+    (state: RootState) => state.workspaceSlice
   )
   React.useEffect(() => {
-    if (!state) dispatch(getUserWorkspaceThunk())
-  }, [dispatch, state])
+    if (!isFetched) {
+      const promise = dispatch(getUserWorkspaceThunk())
+      return () => {
+        promise.abort()
+      }
+    }
+  }, [dispatch, isFetched])
 
   const data = React.useMemo(() => {
     return {
@@ -53,7 +58,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: '/manager/workspace',
             icon: <Icon icon={'carbon:workspace'} />,
             items:
-              state?.map((item) => ({
+              listItemSideBar?.map((item) => ({
                 title: item.name,
                 url: `/manager/workspace/project/${item.id}`
               })) ?? []
@@ -74,7 +79,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ]
       }
     }
-  }, [state])
+  }, [listItemSideBar])
 
   return (
     <Sidebar collapsible='icon' {...props}>

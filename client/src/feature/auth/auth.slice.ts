@@ -42,6 +42,9 @@ const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
   async (req, { rejectWithValue }) => {
     try {
       const data = await authService.login(req)
+      const { access_token } = data.data
+      sessionStorage.setItem(StorageItem.AccessToken, access_token)
+      setAuthorization(access_token)
       return data.data
     } catch (_) {
       return rejectWithValue('Email or password not right')
@@ -71,6 +74,8 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
   async (req, thunkAPI) => {
     try {
       await authService.logout(req)
+      sessionStorage.removeItem(StorageItem.AccessToken)
+      setAuthorization(undefined)
     } catch (_) {
       return thunkAPI.rejectWithValue('Token invalid')
     }
@@ -93,11 +98,9 @@ const authSlice = createSlice({
     builder.addCase(
       loginThunk.fulfilled,
       (state: AuthState, action: PayloadAction<LoginRes>) => {
-        const { access_token } = action.payload
-        state.user = action.payload.user
+        const { user } = action.payload
+        state.user = user
         state.isAuth = true
-        sessionStorage.setItem(StorageItem.AccessToken, access_token)
-        setAuthorization(access_token)
       }
     )
     builder.addCase(loginThunk.rejected, (state: AuthState, action) => {
@@ -139,8 +142,6 @@ const authSlice = createSlice({
         state.isAuth = false
         state.user = undefined
         state.error = undefined
-        sessionStorage.removeItem(StorageItem.AccessToken)
-        setAuthorization(undefined)
       }
     )
     builder.addMatcher(isPending, (state) => {
