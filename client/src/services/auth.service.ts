@@ -4,6 +4,7 @@ import { StorageItem } from '@/lib/const'
 import httpService from '@/services/http.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
 import { ResponseApi } from '@/types/http.type'
+import { toast } from 'sonner'
 
 const authService = {
   // Handle Error in view
@@ -23,6 +24,7 @@ const authService = {
     return res.data
   },
   logout: async (req: LogoutReq) => {
+    removeTokenLocal()
     await httpService.post<ResponseApi<void>, LogoutReq>('auth/logout', req)
   },
   refresh: async (): Promise<ResponseApi<LoginRes>> => {
@@ -50,6 +52,7 @@ const setTokenLocal = (token: string) => {
 const removeTokenLocal = () => {
   sessionStorage.removeItem(StorageItem.AccessToken)
   setAuthorization(undefined)
+  toast.error('Token expired')
 }
 
 const restoreTokenLocal = (): string | null => {

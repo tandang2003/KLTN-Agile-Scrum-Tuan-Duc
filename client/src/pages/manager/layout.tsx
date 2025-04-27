@@ -20,7 +20,7 @@ const ManagerLayout = () => {
               <Separator orientation='vertical' className='mr-2 h-4' />
               <span className='flex-1'>Search</span>
               <span>
-                <UserDropdown insideSidebar />
+                <UserDropdown className='bg-gray-100 text-black hover:text-white' />
               </span>
             </div>
           </header>

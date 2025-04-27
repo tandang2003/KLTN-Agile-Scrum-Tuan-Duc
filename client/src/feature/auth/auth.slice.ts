@@ -1,6 +1,4 @@
-import { setAuthorization } from '@/configuration/http.config'
 import { getUserWorkspaceThunk } from '@/feature/workspace/workspace.slice'
-import { StorageItem } from '@/lib/const'
 import authService, { restoreTokenLocal } from '@/services/auth.service'
 import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
 import { FieldError } from '@/types/http.type'
@@ -70,8 +68,6 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
   async (req, thunkAPI) => {
     try {
       await authService.logout(req)
-      sessionStorage.removeItem(StorageItem.AccessToken)
-      setAuthorization(undefined)
     } catch (_) {
       return thunkAPI.rejectWithValue('Token invalid')
     }
