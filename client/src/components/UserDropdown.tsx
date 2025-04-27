@@ -17,34 +17,26 @@ import { BadgeCheck, Bell, ChevronsUpDown, CreditCard } from 'lucide-react'
 import { ComponentProps } from 'react'
 import { NavLink } from 'react-router-dom'
 
-type UserDropdownProps = {
-  insideSidebar?: boolean
-} & ComponentProps<typeof SidebarMenuButton> &
+type UserDropdownProps = {} & ComponentProps<typeof SidebarMenuButton> &
   ComponentProps<typeof Button>
 
-const UserDropdown = ({
-  insideSidebar = false,
-  className,
-  ...props
-}: UserDropdownProps) => {
+const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
   const { user } = useAppSelector((state) => state.authSlice)
 
-  const Comp = insideSidebar ? SidebarMenuButton : Button
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Comp
+        <Button
           size='lg'
           className={cn(
-            Comp === SidebarMenuButton &&
-              'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer',
+            'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer',
             className
           )}
           {...props}
         >
           <Avatar className='h-8 w-8 rounded-lg'>
             <AvatarImage alt={user?.name ?? ''} />
-            <AvatarFallback className='rounded-lg'>
+            <AvatarFallback className='rounded-lg bg-gray-300'>
               {user?.name.charAt(0) ?? ''}
             </AvatarFallback>
           </Avatar>
@@ -53,7 +45,7 @@ const UserDropdown = ({
             <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
           </div>
           <ChevronsUpDown className='ml-auto size-4' />
-        </Comp>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
