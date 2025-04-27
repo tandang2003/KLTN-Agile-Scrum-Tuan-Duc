@@ -1,7 +1,7 @@
 package com.kltn.server.service.entity;
 
-import com.kltn.server.DTO.request.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
@@ -11,7 +11,6 @@ import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,10 +49,19 @@ public class WorkspaceService {
         return workspaceMapper.toWorkspaceResponseById(workspace);
     }
 
-    public List<WorkspaceResponse> getWorkspaceByOwnerIdPaging(int page, int size) {
+    public ApiPaging<WorkspaceResponse> getWorkspaceByOwnerIdPaging(int page, int size) {
         User user = userRepository.findByUniId((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).orElseThrow(
                 () -> AppException.builder().error(Error.NOT_FOUND).build());
         Page<Workspace> workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT));
-        return workspaceMapper.toListWorkspaceResponse(workspaces.get().toList());
+        return ApiPaging
+                .<WorkspaceResponse>builder()
+                .items(workspaces
+                        .get()
+                        .map(workspaceMapper::toWorkspaceResponseById).toList())
+                .totalItems(workspaces.getTotalElements())
+                .totalPages(workspaces.getTotalPages())
+                .currentPage(workspaces.getNumber())
+                .build()
+                ;
     }
 }

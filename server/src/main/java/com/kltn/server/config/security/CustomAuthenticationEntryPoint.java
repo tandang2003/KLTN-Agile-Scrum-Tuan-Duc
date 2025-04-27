@@ -17,8 +17,14 @@ import java.util.Optional;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    @Autowired
     ObjectMapper mapper;
+
+    @Autowired
+    public CustomAuthenticationEntryPoint(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
+
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

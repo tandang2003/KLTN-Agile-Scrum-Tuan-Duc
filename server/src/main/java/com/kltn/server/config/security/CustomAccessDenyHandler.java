@@ -18,8 +18,12 @@ import java.util.Optional;
 
 @Component
 public class CustomAccessDenyHandler implements AccessDeniedHandler {
-    @Autowired
-    ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    public CustomAccessDenyHandler(ObjectMapper jacksonObjectMapper) {
+        this.mapper = jacksonObjectMapper;
+    }
+
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

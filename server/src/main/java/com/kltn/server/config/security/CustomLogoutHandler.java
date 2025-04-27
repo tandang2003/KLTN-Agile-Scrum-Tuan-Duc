@@ -14,11 +14,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CustomLogoutHandler implements LogoutHandler {
-    @Autowired
     UserTokenService userTokenService;
-    @Autowired
-    @Qualifier("refreshTokenDecoder")
     JwtDecoder refreshDecoder;
+
+    @Autowired
+    public CustomLogoutHandler(UserTokenService userTokenService, @Qualifier("refreshTokenDecoder") JwtDecoder refreshDecoder) {
+        this.userTokenService = userTokenService;
+        this.refreshDecoder = refreshDecoder;
+    }
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

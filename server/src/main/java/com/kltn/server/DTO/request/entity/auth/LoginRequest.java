@@ -1,4 +1,4 @@
-package com.kltn.server.DTO.request;
+package com.kltn.server.DTO.request.entity.auth;
 
 import com.kltn.server.model.base.BaseEntity;
 import jakarta.validation.constraints.NotBlank;

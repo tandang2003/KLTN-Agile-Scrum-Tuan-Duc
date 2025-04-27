@@ -1,21 +1,16 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.validation.Valid;
-import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @RestController
@@ -49,10 +44,10 @@ public class WorkspaceController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<WorkspaceResponse>>> listWorkspaces(@RequestParam(defaultValue = "0") int page,
-                                                                               @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ApiResponse<ApiPaging<WorkspaceResponse>>> listWorkspaces(@RequestParam(defaultValue = "0") int page,
+                                                                                    @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok().body(
-                ApiResponse.<List<WorkspaceResponse>>builder()
+                ApiResponse.<ApiPaging<WorkspaceResponse>>builder()
                         .message("get list workspaces success")
                         .data(workspaceService.getWorkspaceByOwnerIdPaging(page,size))
                         .build());
