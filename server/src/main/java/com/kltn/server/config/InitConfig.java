@@ -24,10 +24,7 @@ import org.springframework.security.oauth2.jwt.*;
 @EnableAspectJAutoProxy
 @EnableJpaAuditing
 public class InitConfig {
-    //    @Bean
-//    public AuditorAware<User> auditorConfig() {
-//        return new AuditorConfig();
-//    }
+
     private TokenKeyUtils tokenKeyUtils;
 
     @Autowired

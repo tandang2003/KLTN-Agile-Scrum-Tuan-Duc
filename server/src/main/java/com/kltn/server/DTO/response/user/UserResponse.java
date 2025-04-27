@@ -3,9 +3,8 @@ package com.kltn.server.DTO.response.user;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.base.BaseEntity;
-import com.kltn.server.model.entity.*;
-import jakarta.persistence.Transient;
-import org.springframework.data.domain.Page;
+import com.kltn.server.model.entity.Project;
+import com.kltn.server.model.entity.Task;
 
 import java.util.List;
 import java.util.Set;
@@ -137,86 +136,5 @@ public record UserResponse(String id, String name, String email, String uniId, S
         public UserResponse build() {
             return new UserResponse(this);
         }
-    }
-
-
-    @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public String email() {
-        return email;
-    }
-
-    @Override
-    public String uniId() {
-        return uniId;
-    }
-
-    @Override
-    public String uniPassword() {
-        return uniPassword;
-    }
-
-    @Override
-    public String className() {
-        return className;
-    }
-
-    @Override
-    public String role() {
-        return role;
-    }
-
-    @Override
-    public List<WorkspaceResponse> workspaces() {
-        return workspaces;
-    }
-
-    @Override
-    public List<Project> projects() {
-        return projects;
-    }
-
-    @Override
-    public Set<Task> assignedTasks() {
-        return assignedTasks;
-    }
-
-    @Override
-    public Set<Task> reviewedTasks() {
-        return reviewedTasks;
-    }
-
-    @Override
-    public Boolean alive() {
-        return alive;
-    }
-
-    @Override
-    public Long totalProject() {
-        return totalProject;
-    }
-
-    @Override
-    public Long totalWorkspace() {
-        return totalWorkspace;
-    }
-
-    @Override
-    public Long totalTask() {
-        return totalTask;
-    }
-
-    @Override
-    public Long totalPageWorkspace() {
-        return totalPageWorkspace;
     }
 }

@@ -1,7 +1,6 @@
 package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
@@ -11,7 +10,6 @@ import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;

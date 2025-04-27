@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kltn.server.model.base.BaseEntity;
-import com.kltn.server.model.entity.Role;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationResponse {
@@ -62,10 +59,8 @@ public class AuthenticationResponse {
     public static class UserDetailDTO {
         private String id;
         private String name;
-//        private String password;
         private String email;
         private String uniId;
-//        private String uniPassword;
         private String role;
 
         public UserDetailDTO(String id, String name, String email, String uniId, String role) {
@@ -73,7 +68,6 @@ public class AuthenticationResponse {
             this.name = name;
             this.email = email;
             this.uniId = uniId;
-//            this.uniPassword = uniPassword;
             this.role = role;
         }
 
@@ -81,52 +75,6 @@ public class AuthenticationResponse {
             return id;
         }
 
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getUniId() {
-            return uniId;
-        }
-
-        public void setUniId(String uniId) {
-            this.uniId = uniId;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public UserDetailDTO getUserResponse() {
-        return userResponse;
-    }
 }

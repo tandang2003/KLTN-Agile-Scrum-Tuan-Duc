@@ -1,21 +1,9 @@
 package com.kltn.server.kafka.AOP;
 
-import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.kafka.SendKafkaEvent;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
-import java.util.concurrent.CompletionStage;
 
 @Aspect
 @Component

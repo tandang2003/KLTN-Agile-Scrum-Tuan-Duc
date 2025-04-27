@@ -3,7 +3,6 @@ package com.kltn.server.controller;
 import com.kltn.server.DTO.request.RegisterRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.AuthenticationResponse;
-import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.service.AuthenticationService;
@@ -12,7 +11,6 @@ import com.kltn.server.util.token.CookieUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -21,8 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -68,7 +64,6 @@ public class AuthenticationController {
             throw AppException.builder().error(Error.TOKEN_INVALID).build();
         }
         AuthenticationResponse response = authenticationService.refresh(refreshToken);
-
         return ResponseEntity.ok()
                 .body(
                         ApiResponse
