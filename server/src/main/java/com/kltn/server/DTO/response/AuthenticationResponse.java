@@ -77,4 +77,15 @@ public class AuthenticationResponse {
 
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public UserDetailDTO getUserResponse() {
+        return userResponse;
+    }
 }

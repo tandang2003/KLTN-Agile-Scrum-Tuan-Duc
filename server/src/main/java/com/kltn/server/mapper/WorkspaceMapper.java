@@ -1,6 +1,6 @@
 package com.kltn.server.mapper;
 
-import com.kltn.server.DTO.request.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Project;
@@ -14,7 +14,9 @@ import org.mapstruct.IterableMapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring",
+        unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE,
+        unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface WorkspaceMapper {
 
     @Mappings({

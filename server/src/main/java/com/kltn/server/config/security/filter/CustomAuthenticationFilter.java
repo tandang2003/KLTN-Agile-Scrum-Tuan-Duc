@@ -1,6 +1,6 @@
 package com.kltn.server.config.security.filter;
 
-import com.kltn.server.DTO.request.LoginRequest;
+import com.kltn.server.DTO.request.entity.auth.LoginRequest;
 import com.kltn.server.config.security.exception.AuthenticationError;
 import com.kltn.server.config.security.exception.MyAuthenticationException;
 import com.nimbusds.jose.shaded.gson.Gson;

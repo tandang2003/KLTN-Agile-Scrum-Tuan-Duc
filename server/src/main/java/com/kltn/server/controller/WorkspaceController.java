@@ -1,6 +1,7 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.service.entity.WorkspaceService;
@@ -43,10 +44,10 @@ public class WorkspaceController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<WorkspaceResponse>>> listWorkspaces(@RequestParam(defaultValue = "0") int page,
-                                                                               @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ApiResponse<ApiPaging<WorkspaceResponse>>> listWorkspaces(@RequestParam(defaultValue = "0") int page,
+                                                                                    @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok().body(
-                ApiResponse.<List<WorkspaceResponse>>builder()
+                ApiResponse.<ApiPaging<WorkspaceResponse>>builder()
                         .message("get list workspaces success")
                         .data(workspaceService.getWorkspaceByOwnerIdPaging(page,size))
                         .build());
