@@ -1,6 +1,7 @@
 package com.kltn.server.DTO.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.Project;
@@ -10,18 +11,16 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
-                           String role, List<WorkspaceResponse> workspaces, List<Project> projects,
-                           Set<Task> assignedTasks,
-                           Set<Task> reviewedTasks,
-                           Boolean alive,
-                           Long totalProject,
-                           Long totalWorkspace,
-                           Long totalTask,
-                           Long totalPageWorkspace) {
+    public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
+                               String role, List<Project> projects,
+                               Set<Task> assignedTasks,
+                               Set<Task> reviewedTasks,
+                               Boolean alive,
+                               ApiPaging<WorkspaceResponse> workspaces
+    ) {
     public UserResponse(UserResponseBuilder b) {
-        this(b.getId(), b.name, b.email, b.uniId, b.uniPassword, b.className, b.role, b.workspace,
-                b.projects, b.assignedTasks, b.reviewedTasks, b.alive, b.totalProject, b.totalWorkspace, b.totalTask, b.totalPageWorkspace);
+        this(b.getId(), b.name, b.email, b.uniId, b.uniPassword, b.className, b.role,
+                b.projects, b.assignedTasks, b.reviewedTasks, b.alive, b.workspaces);
     }
 
     public static UserResponseBuilder builder() {
@@ -35,15 +34,11 @@ public record UserResponse(String id, String name, String email, String uniId, S
         private String uniId;
         private String uniPassword;
         private String role;
-        private List<WorkspaceResponse> workspace;
         private List<Project> projects;
         private Set<Task> assignedTasks;
         private Set<Task> reviewedTasks;
         private Boolean alive;
-        private Long totalProject;
-        private Long totalWorkspace;
-        private Long totalTask;
-        private Long totalPageWorkspace;
+        private ApiPaging<WorkspaceResponse> workspaces;
 
         public UserResponseBuilder id(String id) {
             this.id = id;
@@ -52,6 +47,11 @@ public record UserResponse(String id, String name, String email, String uniId, S
 
         public UserResponseBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public UserResponseBuilder workspaces(ApiPaging<WorkspaceResponse> uniPassword) {
+            this.workspaces = workspaces;
             return this;
         }
 
@@ -96,8 +96,8 @@ public record UserResponse(String id, String name, String email, String uniId, S
             return this;
         }
 
-        public UserResponseBuilder workspace(List<WorkspaceResponse> workspace) {
-            this.workspace = workspace;
+        public UserResponseBuilder workspace( ApiPaging<WorkspaceResponse> workspaces) {
+            this.workspaces = workspaces;
             return this;
         }
 
@@ -105,27 +105,6 @@ public record UserResponse(String id, String name, String email, String uniId, S
             this.alive = alive;
             return this;
         }
-
-        public UserResponseBuilder totalProject(Long totalProject) {
-            this.totalProject = totalProject;
-            return this;
-        }
-
-        public UserResponseBuilder totalWorkspace(Long totalWorkspace) {
-            this.totalWorkspace = totalWorkspace;
-            return this;
-        }
-
-        public UserResponseBuilder totalTask(Long totalTask) {
-            this.totalTask = totalTask;
-            return this;
-        }
-
-        public UserResponseBuilder totalPageWorkspace(Long totalPageWorkspace) {
-            this.totalPageWorkspace = totalPageWorkspace;
-            return this;
-        }
-
 
         @Override
         protected UserResponseBuilder self() {

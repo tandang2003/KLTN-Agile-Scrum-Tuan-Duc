@@ -1,16 +1,15 @@
 package com.kltn.server.mapper;
 
-import com.kltn.server.DTO.request.RegisterRequest;
+import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
+import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.AuthenticationResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",
@@ -44,23 +43,21 @@ public interface UserMapper {
     UserResponse toUserResponse(User user);
 
     @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "email", source = "email"),
-            @Mapping(target = "uniId", source = "uniId"),
-//            @Mapping(target = "uniPassword", source = "uniPassword"),
-            @Mapping(target = "className", source = "className"),
-            @Mapping(target = "workspace", source = "workspaces", qualifiedByName = "workspaceToWorkspaceResponse"),
-            @Mapping(target = "totalWorkspace", source = "totalWorkspace"),
-            @Mapping(target = "totalPageWorkspace", source = "totalPageWorkspace")
+            @Mapping(target = "id", source = "user.id"),
+            @Mapping(target = "name", source = "user.name"),
+            @Mapping(target = "email", source = "user.email"),
+            @Mapping(target = "uniId", source = "user.uniId"),
+            @Mapping(target = "className", source = "user.className"),
+            @Mapping(target = "workspace", source = "page"),
+
     })
     @BeanMapping(ignoreByDefault = true)
-    UserResponse toUserWorkspaceResponse(User user);
+    UserResponse toUserWorkspaceResponse(User user, ApiPaging<WorkspaceResponse> page);
+
 
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
-            @Mapping(target = "createdAt", source = "dtCreated"),
     })
     @BeanMapping(ignoreByDefault = true)
     @Named("workspaceToWorkspaceResponse")

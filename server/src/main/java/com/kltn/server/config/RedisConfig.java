@@ -1,6 +1,7 @@
 package com.kltn.server.config;
 
 import com.kltn.server.config.properties.CacheProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,9 +20,10 @@ public class RedisConfig {
     public RedisConnectionFactory connectionFactory() {
         return new LettuceConnectionFactory();
     }
+
     @Bean
     public Map<String, RedisTemplate<?, ?>> redisTemplates(RedisConnectionFactory connectionFactory,
-                                                           CacheProperties cacheProperties) {
+                                                           @Autowired CacheProperties cacheProperties) {
         Map<String, RedisTemplate<?, ?>> redisTemplates = new HashMap<>();
         cacheProperties.getRedis().forEach((k, v) -> {
             RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();

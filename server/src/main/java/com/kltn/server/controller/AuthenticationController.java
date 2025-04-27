@@ -1,6 +1,6 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.RegisterRequest;
+import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.AuthenticationResponse;
 import com.kltn.server.error.AppException;

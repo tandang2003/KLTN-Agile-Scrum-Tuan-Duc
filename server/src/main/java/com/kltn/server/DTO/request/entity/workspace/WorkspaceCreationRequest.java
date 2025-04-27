@@ -1,4 +1,4 @@
-package com.kltn.server.DTO.request.workspace;
+package com.kltn.server.DTO.request.entity.workspace;
 
 import com.kltn.server.util.constant.DateConstraint;
 import com.kltn.server.util.validation.ValidTimeRangeValidator;

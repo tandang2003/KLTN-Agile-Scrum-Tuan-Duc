@@ -1,5 +1,6 @@
 package com.kltn.server.config;
 
+import com.kltn.server.config.properties.CacheProperties;
 import com.kltn.server.config.security.CustomJWTValidation;
 import com.kltn.server.util.token.TokenKeyUtils;
 import com.nimbusds.jose.jwk.JWK;
@@ -10,6 +11,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
