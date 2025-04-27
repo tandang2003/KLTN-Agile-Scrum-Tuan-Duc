@@ -48,7 +48,6 @@ public class TokenUtils {
                 .claim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .claim("uniId", ((User) userDetails).getUniId())
                 .claim("sail", UUID.randomUUID().toString())
-
                 .build();
 
         return accessJwtEncoder

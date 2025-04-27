@@ -2,7 +2,6 @@ package com.kltn.server.model.collection;
 
 import com.kltn.server.model.base.BaseDocument;
 import com.kltn.server.model.collection.model.ILog;
-import com.kltn.server.model.collection.model.SubTag;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class ChangeLog extends BaseDocument {
