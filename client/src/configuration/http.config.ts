@@ -77,15 +77,13 @@ appAxios.interceptors.response.use(
       }
 
       case HttpStatusCode.Unauthorized: {
+        console.log('Token expired')
         const response = await authService.refresh()
-        console.log('response', response)
         if (response.code >= 400) {
           toast.error('Refresh token is expired')
           return Promise.reject(err)
         } else {
           const newToken = response.data.access_token
-          console.log('error in 401', err)
-          setAuthorization(newToken)
 
           if (!err.config) {
             return Promise.reject(err)

@@ -1,7 +1,7 @@
 import { setAuthorization } from '@/configuration/http.config'
 import { getUserWorkspaceThunk } from '@/feature/workspace/workspace.slice'
 import { StorageItem } from '@/lib/const'
-import authService from '@/services/auth.service'
+import authService, { restoreTokenLocal } from '@/services/auth.service'
 import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
 import { FieldError } from '@/types/http.type'
 import { Id } from '@/types/other.type'
@@ -42,9 +42,6 @@ const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
   async (req, { rejectWithValue }) => {
     try {
       const data = await authService.login(req)
-      const { access_token } = data.data
-      sessionStorage.setItem(StorageItem.AccessToken, access_token)
-      setAuthorization(access_token)
       return data.data
     } catch (_) {
       return rejectWithValue('Email or password not right')
@@ -59,9 +56,8 @@ const restoreSessionThunk = createAsyncThunk<
   void
 >('auth/restoreSession', async (_, { rejectWithValue, dispatch }) => {
   try {
-    const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
+    const accessToken = restoreTokenLocal()
     if (!accessToken) return rejectWithValue('No token')
-    setAuthorization(accessToken)
     dispatch(getUserWorkspaceThunk())
     return { accessToken: accessToken }
   } catch (_) {
