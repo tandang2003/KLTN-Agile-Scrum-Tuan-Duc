@@ -2,7 +2,6 @@ package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Set;

@@ -28,7 +28,6 @@ public class CookieUtils {
         return ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                // .path("/auth/refresh")
                 .maxAge(tokenUtils.getRefreshTokenExpiration())
                 .sameSite("None")
                 .build();
@@ -52,7 +51,7 @@ public class CookieUtils {
         ResponseCookie refreshCookie = ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/")
+//                .path("/")
                 .maxAge(tokenUtils.getRefreshTokenExpiration()) // Refresh token live 5 days
                 .sameSite("Strict")
                 .build();

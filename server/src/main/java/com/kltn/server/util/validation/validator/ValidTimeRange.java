@@ -1,6 +1,5 @@
 package com.kltn.server.util.validation.validator;
 
-import com.kltn.server.DTO.request.workspace.WorkspaceCreationRequest;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.util.constant.DateConstraint;
