@@ -1,6 +1,5 @@
 package com.kltn.server.model.base;
 
-import jakarta.persistence.Id;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

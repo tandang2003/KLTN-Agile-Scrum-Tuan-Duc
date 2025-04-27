@@ -3,7 +3,6 @@ package com.kltn.server.DTO.request;
 import com.kltn.server.model.base.BaseEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.ws.soap.server.SmartSoapEndpointInterceptor;
 
 public record RegisterRequest(
         @NotBlank(message = "Please fill your student ID")

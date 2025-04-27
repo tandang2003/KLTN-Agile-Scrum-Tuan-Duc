@@ -1,8 +1,6 @@
 package com.kltn.server.config.security;
 
 
-import com.kltn.server.service.entity.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,8 +15,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class CustomConverterJwtToUser implements Converter<Jwt, UsernamePasswordAuthenticationToken> {
-    @Autowired
-    private UserService userService;
 
     @Override
     public UsernamePasswordAuthenticationToken convert(Jwt source) {

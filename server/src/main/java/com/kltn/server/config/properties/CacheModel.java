@@ -6,9 +6,6 @@ public class CacheModel {
     private String hashKeySerializer;
     private String hashValueSerializer;
 
-    public CacheModel() {
-    }
-
     private CacheModel(CacheModelBuilder builder) {
         this.keySerializer = builder.keySerializer;
         this.valueSerializer = builder.valueSerializer;

@@ -14,8 +14,12 @@ import java.io.IOException;
 
 @Component
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
-    @Autowired
     ObjectMapper mapper;
+
+    @Autowired
+    public CustomLogoutSuccessHandler(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
