@@ -1,7 +1,5 @@
-import { setAuthorization } from '@/configuration/http.config'
 import { getUserWorkspaceThunk } from '@/feature/workspace/workspace.slice'
-import { StorageItem } from '@/lib/const'
-import authService from '@/services/auth.service'
+import authService, { restoreTokenLocal } from '@/services/auth.service'
 import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
 import { FieldError } from '@/types/http.type'
 import { Id } from '@/types/other.type'
@@ -56,9 +54,8 @@ const restoreSessionThunk = createAsyncThunk<
   void
 >('auth/restoreSession', async (_, { rejectWithValue, dispatch }) => {
   try {
-    const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
+    const accessToken = restoreTokenLocal()
     if (!accessToken) return rejectWithValue('No token')
-    setAuthorization(accessToken)
     dispatch(getUserWorkspaceThunk())
     return { accessToken: accessToken }
   } catch (_) {
@@ -93,11 +90,9 @@ const authSlice = createSlice({
     builder.addCase(
       loginThunk.fulfilled,
       (state: AuthState, action: PayloadAction<LoginRes>) => {
-        const { access_token } = action.payload
-        state.user = action.payload.user
+        const { user } = action.payload
+        state.user = user
         state.isAuth = true
-        sessionStorage.setItem(StorageItem.AccessToken, access_token)
-        setAuthorization(access_token)
       }
     )
     builder.addCase(loginThunk.rejected, (state: AuthState, action) => {
@@ -139,8 +134,6 @@ const authSlice = createSlice({
         state.isAuth = false
         state.user = undefined
         state.error = undefined
-        sessionStorage.removeItem(StorageItem.AccessToken)
-        setAuthorization(undefined)
       }
     )
     builder.addMatcher(isPending, (state) => {
