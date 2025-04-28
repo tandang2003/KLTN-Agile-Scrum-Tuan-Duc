@@ -31,10 +31,10 @@ public class LogTasks implements ILog {
     private Instant dtPredictComplete;
     @Field
     private int complexDescription;
-    @Field("tags")
-    private Tag[] tags;
+    @Field("topics")
+    private Topic[] topics;
     @Field("subTags")
-    private SubTag[] subTags;
+    private SubTask[] subTags;
     @Field("attachments")
     private Attachment[] attachment;
     @Field("comments")
@@ -54,7 +54,7 @@ public class LogTasks implements ILog {
         this.dtPlanning = builder.dtPlanning;
         this.dtPredictComplete = builder.dtPredictComplete;
         this.complexDescription = builder.complexDescription;
-        this.tags = builder.tags;
+        this.topics = builder.topics;
         this.subTags = builder.subTags;
         this.attachment = builder.attachment;
         this.comments = builder.comments;
@@ -78,8 +78,8 @@ public class LogTasks implements ILog {
         private Instant dtPlanning;
         private Instant dtPredictComplete;
         private int complexDescription;
-        private Tag[] tags;
-        private SubTag[] subTags;
+        private Topic[] topics;
+        private SubTask[] subTags;
         private Attachment[] attachment;
         private Comment[] comments;
 
@@ -149,12 +149,12 @@ public class LogTasks implements ILog {
             return this;
         }
 
-        public LogTasksBuilder setTags(Tag[] tags) {
-            this.tags = tags;
+        public LogTasksBuilder setTags(Topic[] topics) {
+            this.topics = topics;
             return this;
         }
 
-        public LogTasksBuilder setSubTags(SubTag[] subTags) {
+        public LogTasksBuilder setSubTags(SubTask[] subTags) {
             this.subTags = subTags;
             return this;
         }
@@ -278,19 +278,19 @@ public class LogTasks implements ILog {
         this.complexDescription = complexDescription;
     }
 
-    public Tag[] getTags() {
-        return tags;
+    public Topic[] getTags() {
+        return topics;
     }
 
-    public void setTags(Tag[] tags) {
-        this.tags = tags;
+    public void setTags(Topic[] topics) {
+        this.topics = topics;
     }
 
-    public SubTag[] getSubTags() {
+    public SubTask[] getSubTags() {
         return subTags;
     }
 
-    public void setSubTags(SubTag[] subTags) {
+    public void setSubTags(SubTask[] subTags) {
         this.subTags = subTags;
     }
 

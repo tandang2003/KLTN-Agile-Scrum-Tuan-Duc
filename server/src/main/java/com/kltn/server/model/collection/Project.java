@@ -1,7 +1,7 @@
 package com.kltn.server.model.collection;
 
 import com.kltn.server.model.base.BaseDocument;
-import com.kltn.server.model.collection.model.Tag;
+import com.kltn.server.model.collection.model.Topic;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -11,20 +11,20 @@ public class Project extends BaseDocument {
     private String nkProjectId;
     @Field("description")
     private String description;
-    @Field("tags")
-    private Tag[] tags;
+    @Field("topics")
+    private Topic[] topics;
 
     public Project(ProjectBuilder builder) {
         super(builder);
         this.nkProjectId = builder.nkProjectId;
         this.description = builder.description;
-        this.tags = builder.tags;
+        this.topics = builder.topics;
     }
 
     public static class ProjectBuilder extends BaseDocument.BaseDocumentBuilder<Project, ProjectBuilder> {
         private String nkProjectId;
         private String description;
-        private Tag[] tags;
+        private Topic[] topics;
 
         public ProjectBuilder nkProjectId(String nkProjectId) {
             this.nkProjectId = nkProjectId;
@@ -36,8 +36,8 @@ public class Project extends BaseDocument {
             return this;
         }
 
-        public ProjectBuilder tags(Tag[] tags) {
-            this.tags = tags;
+        public ProjectBuilder topics(Topic[] topics) {
+            this.topics = topics;
             return this;
         }
 
@@ -71,11 +71,11 @@ public class Project extends BaseDocument {
         this.description = description;
     }
 
-    public Tag[] getTags() {
-        return tags;
+    public Topic[] getTags() {
+        return topics;
     }
 
-    public void setTags(Tag[] tags) {
-        this.tags = tags;
+    public void setTags(Topic[] topics) {
+        this.topics = topics;
     }
 }

@@ -1,12 +1,12 @@
 package com.kltn.server.DTO.response.project;
 
-public record ProjectResponse(int id, String name) {
+public record ProjectResponse(String id, String name) {
 
     public static class ProjectResponseBuilder {
-        private int id;
+        private String id;
         private String name;
 
-        public ProjectResponseBuilder id(int id) {
+        public ProjectResponseBuilder id(String id) {
             this.id = id;
             return this;
         }

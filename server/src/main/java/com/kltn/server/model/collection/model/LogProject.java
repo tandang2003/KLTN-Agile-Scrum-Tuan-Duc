@@ -8,7 +8,7 @@ public class LogProject implements ILog {
     @Field("description")
     private String description;
     @Field("tags")
-    private Tag[] tags;
+    private Topic[] tags;
 
     private LogProject(LogProjectBuilder builder) {
         this.nkProjectId = builder.nkProjectId;
@@ -24,7 +24,7 @@ public class LogProject implements ILog {
     public static class LogProjectBuilder {
         private String nkProjectId;
         private String description;
-        private Tag[] tags;
+        private Topic[] tags;
 
         public LogProjectBuilder setNkProjectId(String nkProjectId) {
             this.nkProjectId = nkProjectId;
@@ -36,7 +36,7 @@ public class LogProject implements ILog {
             return this;
         }
 
-        public LogProjectBuilder setTags(Tag[] tags) {
+        public LogProjectBuilder setTags(Topic[] tags) {
             this.tags = tags;
             return this;
         }
@@ -62,11 +62,11 @@ public class LogProject implements ILog {
         this.description = description;
     }
 
-    public Tag[] getTags() {
+    public Topic[] getTags() {
         return tags;
     }
 
-    public void setTags(Tag[] tags) {
+    public void setTags(Topic[] tags) {
         this.tags = tags;
     }
 }
