@@ -60,7 +60,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             items:
               listItemSideBar?.map((item) => ({
                 title: item.name,
-                url: `/manager/workspace/project/${item.id}`
+                url: `/manager/workspace/${item.id}`
               })) ?? []
           },
           {

@@ -567,6 +567,75 @@ paths:
                             dtStart: "2025-04-14T10:02:01+0000"
                             dtEnd: "2025-04-14T10:02:01+0000"
   # -----------------------------------------------
+  /project:
+    post:
+      summary: Create a project
+      description: Create project, identify team  member, creater is team leader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: project name, must not empty
+                description:
+                  type: string
+                  description: project description, must not empty
+                teamMember:
+                  type: array
+                  items:
+                    type: string
+                  description: array contains student id
+                  required: true
+                workspace:
+                  type: string
+                  description: workspace id, must not empty
+                  required: true
+                tags:
+                  type: array
+                  items:
+                    - $ref: "./components/tag-object.yml"
+              example:
+                name: "workspace-LTW"
+                description: "Workspace for student in lab LTW NLU"
+                teamMember: [ 21130171, 21130172, 21130173 ]
+                workspace: 1
+                tags: [ { "name": backend,"color": "#c8dcff" },{ "name": backend,"color": "#c8dcff" } ]
+      responses:
+        201:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          id:
+                            type: string
+                            description: project id
+                          name:
+                            type: string
+                            description: project name
+                          tags:
+                            type: object
+                            $ref: "./components/tag-object.yml"
+                            description: lis of tag project
+                    example:
+                      code: 201
+                      message: "Create project success"
+                      data:
+                        id: "project-001"
+                        name: 10
+                        tags: [ { "name": backend,"color": "#c8dcff" },{ "name": backend,"color": "#c8dcff" } ]
+  # -----------------------------------------------
+
   /project/{project_id}/sprint:
     get:
       summary: Get information sprint
@@ -875,7 +944,10 @@ paths:
                   storyPoint: 10
                   priority: Critical
 components:
+
   schemas:
+    TagObject:
+      $ref: "./components/tag-object.yml"
     ResponseApi:
       $ref: "./components/response-api.yml"
     ValidationErrorApi:
@@ -892,6 +964,7 @@ components:
         - In Process
         - Review
         - Done
+
   securitySchemes:
     BearerAuth:
       type: http

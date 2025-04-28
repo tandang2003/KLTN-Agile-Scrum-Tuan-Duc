@@ -1,6 +1,8 @@
 package com.kltn.server.service.entity;
 
+import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.UserMapper;
@@ -11,12 +13,9 @@ import com.kltn.server.repository.entity.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
-
-import java.util.List;
 
 @Service
 @RequestScope
@@ -43,14 +42,16 @@ public class UserService {
     }
 
     public UserResponse getUserWorkspaces() {
-//        User user = (User) auth.getPrincipal();
         User user = getCurrentUser();
         Page<Workspace> w = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(0, 10, WorkspaceRepository.DEFAULT_SORT));
-        user.setWorkspaces(w.get().toList());
-        user.setTotalWorkspace(w.getTotalElements());
-        user.setTotalPageWorkspace(w.getTotalPages());
-        UserResponse userResponse = userMapper.toUserWorkspaceResponse(user);
-        return userResponse;
+        ApiPaging<WorkspaceResponse> workspaceResponseApiPaging = ApiPaging
+                .<WorkspaceResponse>builder()
+                .totalItems(w.getTotalElements())
+                .currentPage(w.getNumber())
+                .totalPages(w.getTotalPages())
+                .items(w.get().map(userMapper::workspaceToWorkspaceResponse).toList())
+                .build();
+        return userMapper.toUserWorkspaceResponse(user, workspaceResponseApiPaging);
     }
 
 }

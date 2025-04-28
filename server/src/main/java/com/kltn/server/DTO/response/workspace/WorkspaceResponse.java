@@ -3,7 +3,6 @@ package com.kltn.server.DTO.response.workspace;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
-import org.mapstruct.BeanMapping;
 
 import java.time.Instant;
 import java.util.List;
