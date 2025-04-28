@@ -1,4 +1,5 @@
 import workspaceService from '@/services/workspace.service'
+import { Page } from '@/types/http.type'
 import {
   CreateWorkspaceReqType,
   WorkspaceCardResponse,
@@ -12,20 +13,21 @@ const workspaceApi = createApi({
   baseQuery: () => ({ data: {} }),
   tagTypes: ['Workspaces'],
   endpoints: (builder) => ({
-    getListWorkspace: builder.query<WorkspaceCardResponse[], void>({
+    getListWorkspace: builder.query<Page<WorkspaceCardResponse>, void>({
       async queryFn() {
         try {
-          const data: WorkspaceCardResponse[] =
+          const data: Page<WorkspaceCardResponse> =
             await workspaceService.getListWorkSpace()
           return { data: data }
         } catch (error) {
+          console.log('error workspace api ', error)
           return { error }
         }
       },
-      providesTags(result, error, arg, meta) {
+      providesTags(result) {
         if (result) {
           const final = [
-            ...result.map((item) => ({
+            ...result.items.map((item) => ({
               type: 'Workspaces' as const,
               id: item.id
             })),
@@ -69,7 +71,7 @@ const workspaceApi = createApi({
           return { error }
         }
       },
-      invalidatesTags: (result, error, arg, meta) => {
+      invalidatesTags: () => {
         return [{ type: 'Workspaces', id: 'LIST' }]
       }
     })

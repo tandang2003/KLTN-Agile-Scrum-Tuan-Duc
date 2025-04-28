@@ -1,3 +1,4 @@
+import PageDemo from '@/components/datatable/project/Page'
 import workspaceService from '@/services/workspace.service'
 import { WorkspaceParams } from '@/types/route.type'
 import { useEffect } from 'react'
@@ -13,19 +14,24 @@ const WorkspaceDetailPage = () => {
       return
     }
 
-    const fetchData = async () => {
-      try {
-        const data = await workspaceService.getWorkSpace(workspaceId)
-        console.log(data)
-      } catch (_error) {
-        navigate('/404', { replace: true })
-      }
-    }
+    // const fetchData = async () => {
+    //   try {
+    //     const data = await workspaceService.getWorkSpace(workspaceId)
+    //     console.log(data)
+    //   } catch (_error) {
+    //     navigate('/404', { replace: true })
+    //   }
+    // }
 
-    fetchData()
+    // fetchData()
   }, [navigate, workspaceId])
 
-  return <div>{workspaceId}</div>
+  return (
+    <div>
+      {workspaceId}
+      <PageDemo />
+    </div>
+  )
 }
 
 export default WorkspaceDetailPage
