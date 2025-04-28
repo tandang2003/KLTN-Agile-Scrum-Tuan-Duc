@@ -12,10 +12,10 @@ import { WorkspaceCardResponse } from '@/types/workspace.type'
 
 const WorkspacePage = () => {
   const { data, isFetching } = useGetListWorkspaceQuery()
+  const dispatch = useAppDispatch()
   const isDialogCreateOpen = useAppSelector(
     (state: RootState) => state.workspaceSlice.isDialogCreateOpen
   )
-  const dispatch = useAppDispatch()
   return (
     <Container inSidebar>
       <div className='flex justify-between pt-2 pb-4'>
@@ -28,7 +28,7 @@ const WorkspacePage = () => {
         </Button>
       </div>
       <ListView<WorkspaceCardResponse>
-        data={data}
+        data={data?.items}
         loading={isFetching}
         loadingItems={{
           items: 10

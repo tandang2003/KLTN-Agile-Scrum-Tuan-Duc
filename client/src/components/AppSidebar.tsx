@@ -18,10 +18,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   )
   React.useEffect(() => {
     if (!isFetched) {
-      const promise = dispatch(getUserWorkspaceThunk())
-      return () => {
-        promise.abort()
-      }
+      dispatch(getUserWorkspaceThunk())
     }
   }, [dispatch, isFetched])
 

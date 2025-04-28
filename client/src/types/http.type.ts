@@ -23,6 +23,13 @@ export type FieldError = {
   message: string
 }
 
+export type Page<T> = {
+  items: T[]
+  currentPage: number
+  totalPages: number
+  totalItems: number
+}
+
 export class ValidationError extends Error {
   code: number
   message: string
