@@ -1,9 +1,11 @@
 package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.error.AppException;
+import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.WorkspaceMapper;
 import com.kltn.server.model.entity.User;
@@ -16,7 +18,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WorkspaceService {
@@ -63,5 +68,20 @@ public class WorkspaceService {
                 .currentPage(workspaces.getNumber())
                 .build()
                 ;
+    }
+
+    public WorkspaceResponse updateWorkspace(String workspaceId, WorkspaceUpdationRequest workspaceUpdationRequest) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() ->
+                AppException.builder().error(Error.NOT_FOUND).build());
+        if (workspaceUpdationRequest.end().isBefore(workspace.getStart())) {
+            Map<String, String> error = new HashMap<>();
+            error.put("end", "End date must be after start date");
+            List<Map<String, String>> errors = new ArrayList<>();
+            errors.add(error);
+            throw AppMethodArgumentNotValidException.builder().error(errors).build();
+        }
+        workspace = workspaceMapper.updateWorkspace(workspace, workspaceUpdationRequest);
+        workspaceRepository.save(workspace);
+        return workspaceMapper.toWorkspaceResponseById(workspace);
     }
 }

@@ -1,6 +1,7 @@
 package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/workspace")
@@ -49,8 +48,20 @@ public class WorkspaceController {
         return ResponseEntity.ok().body(
                 ApiResponse.<ApiPaging<WorkspaceResponse>>builder()
                         .message("get list workspaces success")
-                        .data(workspaceService.getWorkspaceByOwnerIdPaging(page,size))
+                        .data(workspaceService.getWorkspaceByOwnerIdPaging(page, size))
                         .build());
     }
+
+    @PutMapping("/{workspaceId}")
+    public ResponseEntity<ApiResponse<WorkspaceResponse>> updateWorkspace(@PathVariable String workspaceId,
+                                                                          @Valid @RequestBody WorkspaceUpdationRequest workspaceUpdationRequest
+    ) {
+        return ResponseEntity.ok().body(
+                ApiResponse.<WorkspaceResponse>builder()
+                        .message("Workspace and project info retrieved successfully")
+                        .data(workspaceService.updateWorkspace(workspaceId, workspaceUpdationRequest))
+                        .build());
+    }
+
 
 }

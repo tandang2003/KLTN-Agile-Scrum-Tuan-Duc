@@ -3,7 +3,7 @@ package com.kltn.server.model.collection;
 import com.kltn.server.model.base.BaseDocument;
 import com.kltn.server.model.collection.model.Attachment;
 import com.kltn.server.model.collection.model.Comment;
-import com.kltn.server.model.collection.model.SubTag;
+import com.kltn.server.model.collection.model.SubTask;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,10 +13,10 @@ public class Task extends BaseDocument {
     private String nkTaskId;
     @Field
     private String description;
-    @Field("tags")
-    private String[] tags;
-    @Field("subTags")
-    private SubTag[] subTags;
+    @Field("Topics")
+    private String[] Topics;
+    @Field("subTasks")
+    private SubTask[] subTasks;
     @Field("attachments")
     private Attachment[] attachment;
     @Field("comments")
@@ -26,9 +26,9 @@ public class Task extends BaseDocument {
         super(taskBuilder);
         this.nkTaskId = taskBuilder.nkTaskId;
         this.description = taskBuilder.description;
-        this.tags = taskBuilder.tags;
+        this.Topics = taskBuilder.Topics;
         this.attachment = taskBuilder.attachment;
-        this.subTags = taskBuilder.subTags;
+        this.subTasks = taskBuilder.subTasks;
         this.comments = taskBuilder.comment;
     }
 
@@ -39,10 +39,10 @@ public class Task extends BaseDocument {
     public static class TaskBuilder extends BaseDocumentBuilder<Task, TaskBuilder> {
         private String nkTaskId;
         private String description;
-        private String[] tags;
+        private String[] Topics;
         private Attachment[] attachment;
         private Comment[] comment;
-        private SubTag[] subTags;
+        private SubTask[] subTasks;
 
         public TaskBuilder setNkTaskId(String nkTaskId) {
             this.nkTaskId = nkTaskId;
@@ -54,8 +54,8 @@ public class Task extends BaseDocument {
             return this;
         }
 
-        public TaskBuilder setTags(String[] tags) {
-            this.tags = tags;
+        public TaskBuilder setTags(String[] Topics) {
+            this.Topics = Topics;
             return this;
         }
 
@@ -69,8 +69,8 @@ public class Task extends BaseDocument {
             return this;
         }
 
-        public TaskBuilder setSubTags(SubTag[] subTags) {
-            this.subTags = subTags;
+        public TaskBuilder setSubTags(SubTask[] subTasks) {
+            this.subTasks = subTasks;
             return this;
         }
 

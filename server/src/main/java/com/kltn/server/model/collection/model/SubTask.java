@@ -2,7 +2,7 @@ package com.kltn.server.model.collection.model;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class SubTag {
+public class SubTask {
     @Field
     private String name;
     @Field
@@ -10,7 +10,7 @@ public class SubTag {
     @Field
     private boolean checked;
 
-    private SubTag(SubTagBuilder builder) {
+    private SubTask(SubTagBuilder builder) {
         this.name = builder.name;
         this.order = builder.order;
         this.checked = builder.checked;
@@ -41,8 +41,8 @@ public class SubTag {
             return this;
         }
 
-        public SubTag build() {
-            return new SubTag(this);
+        public SubTask build() {
+            return new SubTask(this);
         }
     }
 
