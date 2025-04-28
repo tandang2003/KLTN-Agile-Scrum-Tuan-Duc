@@ -2,7 +2,7 @@ package com.kltn.server.model.collection.model;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class Tag {
+public class Topic {
     @Field("_id")
     private String id;
     @Field
@@ -10,7 +10,7 @@ public class Tag {
     @Field
     private String color;
 
-    private Tag(TagBuilder builder) {
+    private Topic(TagBuilder builder) {
         this.name = builder.name;
         this.color = builder.color;
     }
@@ -33,8 +33,8 @@ public class Tag {
             return this;
         }
 
-        public Tag build() {
-            return new Tag(this);
+        public Topic build() {
+            return new Topic(this);
         }
     }
 
