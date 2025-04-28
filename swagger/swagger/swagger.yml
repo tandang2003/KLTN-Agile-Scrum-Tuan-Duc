@@ -3,14 +3,14 @@ info:
   title: My API
   description: |
     # Overview 
-    
+
     API documentation for Spring Boot application
     ## Structure api response format
-    
+
     ### Base Api
-    
+
     When a request sent to server, it always return a response has body like:
-    
+
     ```json
     {
       "code": 401,
@@ -21,11 +21,11 @@ info:
     - `error`: status code
     - `message`: description about api
     - `data`: data will return for client, data structure is general
-    
+
     ### Validation Api
     When a request failed because some field in body is missing, empty or not valid,
     API will return a response with **status: 422 (Unprocessable entity)**
-    
+
     ```json
     {
       "code": 422,
@@ -274,7 +274,7 @@ paths:
       summary: Create a workspace
       description: |
         Used by: Teacher
-        
+
         Identify:
         - Name
         - Description
@@ -479,86 +479,86 @@ paths:
   # -----------------------------------------------
   /workspace/student:
     get:
-     summary: Paging student (both leader) inside workspace
-     description: |
-       Used by: 
-       - Teacher, that is owner of this workspace
-       Sort by id
-     parameters:
-       - name: page
-         required: false
-         allowEmptyValue: true
-         in: query
-       - name: size
-         required: false
-         allowEmptyValue: true
-         in: query
-     responses:
-       200:
-         description: success
-         content:
-           application/json:
-             schema:
-               type: object
-               allOf:
-                 - $ref: "#/components/schemas/ResponseApi"
-                 - type: object
-                   properties:
-                     data:
-                       allOf:
-                         - $ref: "#/components/schemas/ApiPaging"
-                         - type: object
-                           properties:
-                             items:
-                               properties:
-                                 id:
-                                   type: string
-                                   description: student id
-                                 name:
-                                   type: string
-                                   description: student name
-                                 role:
+      summary: Paging student (both leader) inside workspace
+      description: |
+        Used by: 
+        - Teacher, that is owner of this workspace
+        Sort by id
+      parameters:
+        - name: page
+          required: false
+          allowEmptyValue: true
+          in: query
+        - name: size
+          required: false
+          allowEmptyValue: true
+          in: query
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: "#/components/schemas/ApiPaging"
+                          - type: object
+                            properties:
+                              items:
+                                properties:
+                                  id:
+                                    type: string
+                                    description: student id
+                                  name:
+                                    type: string
+                                    description: student name
+                                  role:
                                     type: string
                                     description: name role (student or leader)
-                                 className:
-                                   type: string
-                                   description: student class
-                                 project:
-                                   type: object
-                                   properties: 
-                                     id:
-                                       type: string
-                                       description: project id in workspace user joined
-                                     name:
-                                       type: string
-                                       description: project id in workspace user join
-                   example:
-                     code: 200
-                     message: "Create project success"
-                     data:
-                       items:
-                         - id: "user-001"
-                           name: Le Anh Duc
-                           className: "DH21DTB"
-                           role: "student"
-                           project:
-                             id: "project-001"
-                             name: "Sell clothes"
-                         - id: "user-002"
-                           name: Dang Minh Tan
-                           className: "DH21DTA"
-                           role: "leader"
-                           project:
-                             id: "project-002"
-                             name: "Sell estate"
-                       currentPage: 1
-                       totalPages: 2
-                       totalItems: 4
+                                  className:
+                                    type: string
+                                    description: student class
+                                  project:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                        description: project id in workspace user joined
+                                      name:
+                                        type: string
+                                        description: project id in workspace user join
+                    example:
+                      code: 200
+                      message: "Create project success"
+                      data:
+                        items:
+                          - id: "user-001"
+                            name: Le Anh Duc
+                            className: "DH21DTB"
+                            role: "student"
+                            project:
+                              id: "project-001"
+                              name: "Sell clothes"
+                          - id: "user-002"
+                            name: Dang Minh Tan
+                            className: "DH21DTA"
+                            role: "leader"
+                            project:
+                              id: "project-002"
+                              name: "Sell estate"
+                        currentPage: 1
+                        totalPages: 2
+                        totalItems: 4
     post:
       summary: Add student to workspace
       description: |
         Used by: Teacher
-        
+
         Force add student to workspace
       requestBody:
         required: true
@@ -649,8 +649,8 @@ paths:
                           - $ref: "#/components/schemas/ApiPaging"
                           - type: object
                             properties:
-                              items: 
-                                properties: 
+                              items:
+                                properties:
                                   id:
                                     type: string
                                     description: project id
@@ -682,7 +682,7 @@ paths:
         Used by: 
         - Teacher
         - Leader and student inside project
-        
+
         Get information project and list of sprint
       parameters:
         - in: path
@@ -789,7 +789,7 @@ paths:
       summary: Create a project
       description: |
         Used by: Student 
-        
+
         Student that created project will become Leader (assign role)
       requestBody:
         required: true
@@ -821,9 +821,13 @@ paths:
               example:
                 name: "workspace-LTW"
                 description: "Workspace for student in lab LTW NLU"
-                teamMember: [ 21130171, 21130172, 21130173 ]
+                teamMember: [21130171, 21130172, 21130173]
                 workspace: 1
-                tags: [ { "name": backend,"color": "#c8dcff" },{ "name": backend,"color": "#c8dcff" } ]
+                tags:
+                  [
+                    { "name": backend, "color": "#c8dcff" },
+                    { "name": backend, "color": "#c8dcff" },
+                  ]
       responses:
         201:
           description: success
@@ -853,7 +857,11 @@ paths:
                       data:
                         id: "project-001"
                         name: 10
-                        tags: [ { "name": backend,"color": "#c8dcff" },{ "name": backend,"color": "#c8dcff" } ]
+                        tags:
+                          [
+                            { "name": backend, "color": "#c8dcff" },
+                            { "name": backend, "color": "#c8dcff" },
+                          ]
   # -----------------------------------------------
   /project/invite:
     post:
@@ -894,7 +902,7 @@ paths:
                 allOf:
                   - $ref: "#/components/schemas/ResponseApi"
                   - type: object
-  
+
   /project/{project_id}/sprint:
     get:
       summary: Get information sprint
@@ -1003,9 +1011,9 @@ paths:
                   description: next status
                 position:
                   type: number
-                  description: "position of issue, 
-                                this is calculate in front-end and sent to server,
-                                position = (prevPosition + nextPosition) / 2 = (2000 + 1000) /2"
+                  description: "position of issue,
+                    this is calculate in front-end and sent to server,
+                    position = (prevPosition + nextPosition) / 2 = (2000 + 1000) /2"
                 createAt:
                   type: string
                   description: update at in task, prevent race condition
@@ -1057,9 +1065,9 @@ paths:
                   description: next status of issue
                 position:
                   type: number
-                  description: "position of issue, 
-                                this is calculate in front-end and sent to server,
-                                newPosition = (2000 + 3000) / 2 = 2500"
+                  description: "position of issue,
+                    this is calculate in front-end and sent to server,
+                    newPosition = (2000 + 3000) / 2 = 2500"
                 updateAt:
                   type: string
                   description: update at in task, prevent race condition
@@ -1203,7 +1211,6 @@ paths:
                   storyPoint: 10
                   priority: Critical
 components:
-
   schemas:
     TagObject:
       $ref: "./components/tag-object.yml"
@@ -1212,7 +1219,7 @@ components:
     ValidationErrorApi:
       $ref: "./components/validation-error.yml"
     UnauthorizedErrorApi:
-      $ref: "/components/unauthenticated-error-api.yml"
+      $ref: "./components/unauthenticated-error-api.yml"
     Status:
       type: string
       description: status issue, it will be a column name that contain issue
