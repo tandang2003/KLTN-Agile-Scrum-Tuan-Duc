@@ -23,6 +23,8 @@ type UserDropdownProps = {} & ComponentProps<typeof SidebarMenuButton> &
 const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
   const { user } = useAppSelector((state) => state.authSlice)
 
+  if (!user) return null
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,7 +39,7 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
           <Avatar className='h-8 w-8 rounded-lg'>
             <AvatarImage alt={user?.name ?? ''} />
             <AvatarFallback className='rounded-lg bg-gray-300'>
-              {user?.name.charAt(0) ?? ''}
+              {user.name.charAt(0) ?? ''}
             </AvatarFallback>
           </Avatar>
           <div className='grid flex-1 text-left text-sm leading-tight'>

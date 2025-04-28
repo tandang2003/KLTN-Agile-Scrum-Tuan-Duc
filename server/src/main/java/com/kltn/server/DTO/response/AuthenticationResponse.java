@@ -24,7 +24,8 @@ public class AuthenticationResponse {
         return new AuthenticationResponseBuilder();
     }
 
-    public static class AuthenticationResponseBuilder extends BaseEntity.BaseEntityBuilder<AuthenticationResponse, AuthenticationResponseBuilder> {
+    public static class AuthenticationResponseBuilder
+            extends BaseEntity.BaseEntityBuilder<AuthenticationResponse, AuthenticationResponseBuilder> {
         public String accessToken;
         private String refreshToken;
         private UserDetailDTO userResponse;
@@ -43,7 +44,6 @@ public class AuthenticationResponse {
             this.userResponse = userResponse;
             return this;
         }
-
 
         @Override
         protected AuthenticationResponseBuilder self() {
@@ -73,6 +73,22 @@ public class AuthenticationResponse {
 
         public String getId() {
             return id;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public String getUniId() {
+            return uniId;
         }
 
     }

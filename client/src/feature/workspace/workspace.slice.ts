@@ -26,11 +26,9 @@ const initialState: WorkspaceState = {
 
 const getUserWorkspaceThunk = createAsyncThunk<WorkspaceSideBar[], void>(
   'workspace/user',
-  async (_, { rejectWithValue, dispatch, signal }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
-      const data = await userService.getWorkspaces({
-        signal: signal
-      })
+      const data = await userService.getWorkspaces()
       const { id, name, role, uniId } = data.data
       dispatch(
         setUser({
@@ -40,7 +38,7 @@ const getUserWorkspaceThunk = createAsyncThunk<WorkspaceSideBar[], void>(
           uniId
         })
       )
-      return data.data.workspaces
+      return data.data.workspaces.items
     } catch (_) {
       return rejectWithValue('Get user workspace failed')
     }
