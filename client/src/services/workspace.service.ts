@@ -1,5 +1,5 @@
-import { workSpacesData } from '@/assets/workspace.data'
 import httpService from '@/services/http.service'
+import { Page, ResponseApi } from '@/types/http.type'
 import {
   CreateWorkspaceReqType,
   WorkspaceCardResponse,
@@ -8,17 +8,13 @@ import {
 import { UniqueIdentifier } from '@dnd-kit/core'
 
 const workspaceService = {
-  getListWorkSpace: async (): Promise<WorkspaceCardResponse[]> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const data: WorkspaceCardResponse[] = workSpacesData.map((item) => ({
-          id: item.id,
-          name: item.name,
-          owner: item.owner.name
-        }))
-        resolve(data)
-      }, 1000)
-    })
+  getListWorkSpace: async (): Promise<Page<WorkspaceCardResponse>> => {
+    const response =
+      await httpService.get<ResponseApi<Page<WorkspaceCardResponse>>>(
+        `/workspace/list`
+      )
+    console.log('response', response)
+    return response.data.data
   },
 
   getWorkSpace: async (id: UniqueIdentifier): Promise<WorkspaceResponse> => {

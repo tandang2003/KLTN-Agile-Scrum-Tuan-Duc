@@ -19,7 +19,7 @@ const manualAxios = axios.create({
   withCredentials: true
 })
 
-const whiteList = ['/auth/refresh']
+// const whiteList = ['/auth/refresh']
 
 const setAuthorization = (accessToken?: string) => {
   appAxios.defaults.headers.common.Authorization = accessToken
@@ -27,12 +27,17 @@ const setAuthorization = (accessToken?: string) => {
     : undefined
 }
 
+const getAuthorization = () => {
+  return appAxios.defaults.headers.common.Authorization
+}
+
 appAxios.interceptors.request.use(
   (config) => {
-    const url = config.url
-    const tempToken = config.headers.Authorization
-    const isInWhiteList = whiteList.some((item) => url?.endsWith(item))
-    config.headers.Authorization = isInWhiteList ? undefined : tempToken
+    // const url = config.url
+    // const tempToken = config.headers.Authorization
+    // console.log(url, getAuthorization)
+    // const isInWhiteList = whiteList.some((item) => url?.endsWith(item))
+    // config.headers.Authorization = isInWhiteList ? undefined : tempToken
     return config
   },
   (error) => {
@@ -107,5 +112,5 @@ appAxios.interceptors.response.use(
   }
 )
 
-export { manualAxios, setAuthorization }
+export { manualAxios, setAuthorization, getAuthorization }
 export default appAxios

@@ -72,7 +72,7 @@ export function NavMain({ items }: NavMainType) {
           } else {
             return (
               <SidebarMenuButton key={item.title} tooltip={item.title} asChild>
-                <Link to={item.url}>
+                <Link to={item.url} key={item.url}>
                   {item.icon}
                   <span>{item.title}</span>
                 </Link>
