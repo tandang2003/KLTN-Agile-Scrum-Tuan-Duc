@@ -1,0 +1,9 @@
+{
+    "watch": [
+        "swagger",
+        "server.js",
+        "swagger.yml"
+    ],
+    "ext": "js,yml",
+    "exec": "node index.js"
+}
