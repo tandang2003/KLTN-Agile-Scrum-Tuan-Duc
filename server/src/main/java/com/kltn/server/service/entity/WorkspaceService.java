@@ -87,16 +87,15 @@ public class WorkspaceService {
         int curPage = page > 0 ? page : 1;
         int curSize = size > 0 ? size : 10;
         ApiPaging<UserResponse> res = ApiPaging.<UserResponse>builder().items(new ArrayList<UserResponse>()).build();
-        AtomicInteger start = new AtomicInteger((curPage - 1) * curSize);
-        AtomicInteger end = new AtomicInteger(curPage * curSize);
+        int start = (curPage - 1) * curSize;
+        int end = curPage * curSize;
+        int currentIndex = 0;
         workspace.getProjects().forEach(project -> {
-            project.getMember().stream().forEach(member -> {
-                start.getAndDecrement();
-                end.getAndDecrement();
-                if (start.get() <= 0 && end.get() >= 0) {
+            project.getMember().forEach(member -> {
+                if (currentIndex >= start && currentIndex < end) {
                     res.getItems().add(userMapper.toWorkspaceStudentResponse(member));
                 }
-            });
+                currentIndex++;
         });
 
         workspace.getProjects().forEach(project -> {
