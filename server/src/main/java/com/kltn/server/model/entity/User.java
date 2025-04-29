@@ -27,10 +27,17 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "owner")
     private List<Workspace> workspaces;
     @ManyToMany
-    @JoinTable(name = "users_projects",
+    @JoinTable(name = "workspaces_users_projects",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects;
+
+    @ManyToMany(mappedBy = "members")
+//    @JoinTable(name = "workspaces_users_projects",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "project_id"))
+    private List<Workspace> workspacesJoined;
+
     @OneToMany(mappedBy = "assigner")
     private Set<Task> assignedTasks;
     // One user can review multiple tasks
