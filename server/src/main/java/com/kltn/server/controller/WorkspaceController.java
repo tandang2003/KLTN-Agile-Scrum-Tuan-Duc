@@ -4,9 +4,12 @@ import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
+import com.kltn.server.service.entity.UserService;
 import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.validation.Valid;
+import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +19,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/workspace")
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
+    private final UserService userService;
 
     @Autowired
-    public WorkspaceController(WorkspaceService workspaceService) {
+    public WorkspaceController(WorkspaceService workspaceService, UserService userService) {
         this.workspaceService = workspaceService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -60,6 +65,16 @@ public class WorkspaceController {
                 ApiResponse.<WorkspaceResponse>builder()
                         .message("Workspace and project info retrieved successfully")
                         .data(workspaceService.updateWorkspace(workspaceId, workspaceUpdationRequest))
+                        .build());
+    }
+
+    @GetMapping("/{workspaceId}/student")
+    public ResponseEntity<ApiResponse<ApiPaging<UserResponse>>> getStudentInWorkspace(@PathVariable String workspaceId, @RequestParam(defaultValue = "0") int page,
+                                                                                      @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok().body(
+                ApiResponse.<ApiPaging<UserResponse>>builder()
+                        .message("get student in workspace success")
+                        .data(workspaceService.getStudentInWorkspace(workspaceId, page , size ))
                         .build());
     }
 
