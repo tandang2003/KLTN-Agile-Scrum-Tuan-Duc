@@ -1,16 +1,12 @@
 package com.kltn.server.mapper;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Workspace;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.Named;
-import org.mapstruct.IterableMapping;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -59,6 +55,14 @@ public interface WorkspaceMapper {
     ProjectResponse projectToProjectResponse(Project project);
 
     @BeanMapping(ignoreByDefault = true)
-    @IterableMapping(qualifiedByName =  "toWorkspaceCreationResponse")
+    @IterableMapping(qualifiedByName = "toWorkspaceCreationResponse")
     List<WorkspaceResponse> toListWorkspaceResponse(List<Workspace> workspaces);
+
+
+    @Mappings({
+            @Mapping(target = "sprintNum", source = "workspaceUpdationRequest.sprintNum"),
+            @Mapping(target = "description", source = "workspaceUpdationRequest.description"),
+            @Mapping(target = "end", source = "workspaceUpdationRequest.end")
+    })
+    Workspace updateWorkspace(Workspace workspace, WorkspaceUpdationRequest workspaceUpdationRequest);
 }
