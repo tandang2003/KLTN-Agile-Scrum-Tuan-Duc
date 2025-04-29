@@ -477,7 +477,7 @@ paths:
                           - id: "project-2"
                             name: "Project B"
   # -----------------------------------------------
-  /workspace/student:
+  /workspace/{workspace_id}/student:
     get:
       summary: Paging student (both leader) inside workspace
       description: |
@@ -485,6 +485,10 @@ paths:
         - Teacher, that is owner of this workspace
         Sort by id
       parameters:
+        - name: workspace_id
+          description: workspace_id
+          in: path
+          required: true
         - name: page
           required: false
           allowEmptyValue: true
@@ -617,7 +621,7 @@ paths:
                       data:
                         - "student-003"
   # -----------------------------------------------
-  /workspace/project:
+  /workspace/{workspace_id}/project:
     get:
       summary: Paging project inside workspace
       description: |
@@ -625,6 +629,10 @@ paths:
         - Teacher, that is owner of this workspace
         Sort by id
       parameters:
+        - name: workspace_id
+          required: true
+          description: workspace id
+          in: path
         - name: page
           required: false
           allowEmptyValue: true
