@@ -3,6 +3,7 @@ package com.kltn.server.error;
 import com.kltn.server.DTO.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,15 @@ import static com.kltn.server.error.Error.INVALID_PARAMETER_REQUEST;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthorizationDeniedException(AuthorizationDeniedException exception) {
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .error(exception.getMessage())
+                .message(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .code(HttpStatus.FORBIDDEN.value())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException exception) {
@@ -35,6 +45,16 @@ public class GlobalExceptionHandler {
                 .code(INVALID_PARAMETER_REQUEST.getCode())
                 .build();
         return ResponseEntity.status(INVALID_PARAMETER_REQUEST.getCode()).body(response);
+    }
+
+    @ExceptionHandler(AppListArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleListArgumentExceptions(AppListArgumentNotValidException exception) {
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .error(exception.getErrors())
+                .message(exception.message)
+                .code(exception.status)
+                .build();
+        return ResponseEntity.status(exception.status).body(response);
     }
 
     @ExceptionHandler(AppMethodArgumentNotValidException.class)
