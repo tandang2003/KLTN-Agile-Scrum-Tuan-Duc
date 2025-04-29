@@ -51,7 +51,7 @@ public record UserResponse(String id, String name, String email, String uniId, S
             return this;
         }
 
-        public UserResponseBuilder workspaces(ApiPaging<WorkspaceResponse> uniPassword) {
+        public UserResponseBuilder workspaces(ApiPaging<WorkspaceResponse> workspaces) {
             this.workspaces = workspaces;
             return this;
         }
