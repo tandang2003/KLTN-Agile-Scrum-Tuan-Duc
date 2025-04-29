@@ -1,6 +1,16 @@
 server:
   port: #REQUIRED
 spring:
+  mail:
+    host: #REQUIRED
+    port: #REQUIRED
+    username: #REQUIRED
+    password: #REQUIRED
+    properties:
+      mail.smtp:
+      auth: #REQUIRED
+      starttls.enable: #REQUIRED
+      ssl.trust: #REQUIRED
   application:
     name: #OPTIONAL
   datasource:

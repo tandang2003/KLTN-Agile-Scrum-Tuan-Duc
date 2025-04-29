@@ -14,7 +14,7 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",
         unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE,
-        unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
+        unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE, uses = {WorkspaceMapper.class})
 public interface UserMapper {
     User toUser(RegisterRequest registerRequest);
 
@@ -42,6 +42,18 @@ public interface UserMapper {
     @BeanMapping(ignoreByDefault = true)
     UserResponse toUserResponse(User user);
 
+
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "className", source = "className"),
+            @Mapping(target = "role", source = "role.name"),
+            @Mapping(target = "project", source = "project", qualifiedByName = "projectToProjectResponse"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+    UserResponse toWorkspaceStudentResponse(User user);
+
+
     @Mappings({
             @Mapping(target = "id", source = "user.id"),
             @Mapping(target = "name", source = "user.name"),
@@ -49,7 +61,6 @@ public interface UserMapper {
             @Mapping(target = "uniId", source = "user.uniId"),
             @Mapping(target = "className", source = "user.className"),
             @Mapping(target = "workspace", source = "page"),
-
     })
     @BeanMapping(ignoreByDefault = true)
     UserResponse toUserWorkspaceResponse(User user, ApiPaging<WorkspaceResponse> page);
