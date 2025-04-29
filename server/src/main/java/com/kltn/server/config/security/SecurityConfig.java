@@ -1,10 +1,9 @@
 package com.kltn.server.config.security;
 
 import com.kltn.server.config.properties.AppProperties;
+import com.kltn.server.config.properties.ApplicationProps;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +26,8 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+    private final AppProperties appProperties;
+
     @Autowired
     private JwtDecoder accessTokenDecoder;
 
@@ -48,7 +49,11 @@ public class SecurityConfig {
     @Autowired
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
     @Autowired
-    private AppProperties appProperties;
+    private ApplicationProps applicationProps;
+
+    SecurityConfig(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -76,7 +81,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers((appProperties.getSecurity().getWhiteList().toArray(new String[0]))).permitAll();
+                    authorizeRequests
+                            .requestMatchers((appProperties.getSecurity().getWhiteList().toArray(new String[0])))
+                            .permitAll();
                     authorizeRequests.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> {

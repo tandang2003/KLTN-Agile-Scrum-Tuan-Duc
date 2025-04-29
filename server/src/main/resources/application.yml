@@ -42,11 +42,6 @@ spring:
 #    #              mapping: "send_object_customer: com.example.springkafkaconsumerexample.data.Customer"
 #    bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
 
-app:
-  security:
-    whiteList:
-      - /refresh
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -78,6 +73,14 @@ cache:
       value-serializer: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 #      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
 #      hash-value-serializer: org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
+
+app:
+  whitelist:
+    - auth
+    - auth/register
+    - /v3/api-docs
+    - /v3/api-docs/**
+    - /swagger-ui/**
 
 kafka:
   topic:
