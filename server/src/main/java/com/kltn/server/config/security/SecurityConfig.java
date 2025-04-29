@@ -1,5 +1,6 @@
 package com.kltn.server.config.security;
 
+import com.kltn.server.config.properties.AppProperties;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
 import org.slf4j.Logger;
@@ -46,6 +47,8 @@ public class SecurityConfig {
     private CustomLogoutHandler customLogoutHandler;
     @Autowired
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    @Autowired
+    private AppProperties appProperties;
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -73,8 +76,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers("user/**").authenticated();
-                    authorizeRequests.anyRequest().permitAll();
+                    authorizeRequests.requestMatchers((appProperties.getSecurity().getWhiteList().toArray(new String[0]))).permitAll();
+                    authorizeRequests.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {

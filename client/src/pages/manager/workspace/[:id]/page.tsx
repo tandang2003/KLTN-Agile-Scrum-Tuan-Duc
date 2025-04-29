@@ -1,4 +1,4 @@
-import PageDemo from '@/components/datatable/project/Page'
+import ProjectTable from '@/components/datatable/project'
 import workspaceService from '@/services/workspace.service'
 import { WorkspaceParams } from '@/types/route.type'
 import { useEffect } from 'react'
@@ -29,7 +29,7 @@ const WorkspaceDetailPage = () => {
   return (
     <div>
       {workspaceId}
-      <PageDemo />
+      <ProjectTable className='container mx-auto py-10' />
     </div>
   )
 }
