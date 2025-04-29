@@ -89,13 +89,14 @@ public class WorkspaceService {
         ApiPaging<UserResponse> res = ApiPaging.<UserResponse>builder().items(new ArrayList<UserResponse>()).build();
         int start = (curPage - 1) * curSize;
         int end = curPage * curSize;
-        int currentIndex = 0;
+        final int[] currentIndex = {0};
         workspace.getProjects().forEach(project -> {
             project.getMember().forEach(member -> {
-                if (currentIndex >= start && currentIndex < end) {
+                if (currentIndex[0] >= start && currentIndex[0] < end) {
                     res.getItems().add(userMapper.toWorkspaceStudentResponse(member));
                 }
-                currentIndex++;
+                currentIndex[0]++;
+            });
         });
 
         workspace.getProjects().forEach(project -> {
