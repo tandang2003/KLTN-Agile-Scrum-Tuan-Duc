@@ -94,11 +94,7 @@ public class WorkspaceService {
     @Transactional
     public ApiPaging<UserResponse> getStudentInWorkspace(String workspaceId, int page, int size) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Page<User> users = new PageImpl<>(workspace.getMembers().stream().toList(),
-                PageRequest.of(page, size, userRepository.DEFAULT_SORT),
-                workspace.getMembers().size());
-        if (page * size >= workspace.getMembers().size())
-            users = new PageImpl<>(new ArrayList<>());
+        Page<User> users = userRepository.findAllByWorkspacesId(workspaceId, PageRequest.of(page, size, UserRepository.DEFAULT_SORT));
         return ApiPaging.<UserResponse>builder()
                 .items(users.get().map(userMapper::toWorkspaceStudentResponse).toList())
                 .totalItems(users.getTotalElements())
@@ -127,7 +123,6 @@ public class WorkspaceService {
                     "Invite student to workspace"
             ).error(uniIdsList).build();
         }
-        workspaceRepository.save(workspace);
     }
 
 }
