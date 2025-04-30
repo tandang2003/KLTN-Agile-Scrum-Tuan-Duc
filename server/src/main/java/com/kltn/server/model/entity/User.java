@@ -31,6 +31,8 @@ public class User extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects;
+    @OneToMany(mappedBy = "owner")
+    private Set<Project> projectOwned;
 
     @ManyToMany(mappedBy = "members")
     private List<Workspace> workspacesJoined;

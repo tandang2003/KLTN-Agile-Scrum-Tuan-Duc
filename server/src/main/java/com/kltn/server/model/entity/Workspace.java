@@ -14,6 +14,7 @@ import java.util.Set;
 @Table(name = "workspaces")
 public class Workspace extends BaseEntity {
     private String name;
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
     private int sprintNum;
     private int timePerSprint;

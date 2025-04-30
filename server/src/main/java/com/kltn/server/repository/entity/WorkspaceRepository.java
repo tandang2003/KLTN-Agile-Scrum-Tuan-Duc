@@ -1,7 +1,9 @@
 package com.kltn.server.repository.entity;
 
+import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
