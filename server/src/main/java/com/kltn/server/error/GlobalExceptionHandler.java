@@ -88,6 +88,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAppExceptions(Exception exception) {
         ApiResponse<Void> response = ApiResponse.<Void>builder()
 //                .error(exception.getStackTrace())
+                .error(exception.getMessage())
                 .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .code(500)
                 .build();

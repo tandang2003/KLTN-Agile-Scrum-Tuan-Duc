@@ -11,13 +11,13 @@ import com.kltn.server.model.entity.Task;
 import java.util.List;
 import java.util.Set;
 
-@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
                            String role, List<ProjectResponse> projects,
                            Set<Task> assignedTasks,
                            Set<Task> reviewedTasks,
                            Boolean alive,
-                           ApiPaging<WorkspaceResponse> workspaces
+                           List<WorkspaceResponse> workspaces
 ) {
     public UserResponse(UserResponseBuilder b) {
         this(b.getId(), b.name, b.email, b.uniId, b.uniPassword, b.className, b.role,
@@ -39,7 +39,7 @@ public record UserResponse(String id, String name, String email, String uniId, S
         private Set<Task> assignedTasks;
         private Set<Task> reviewedTasks;
         private Boolean alive;
-        private ApiPaging<WorkspaceResponse> workspaces;
+        private List<WorkspaceResponse> workspaces;
 
         public UserResponseBuilder id(String id) {
             this.id = id;
@@ -51,7 +51,7 @@ public record UserResponse(String id, String name, String email, String uniId, S
             return this;
         }
 
-        public UserResponseBuilder workspaces(ApiPaging<WorkspaceResponse> workspaces) {
+        public UserResponseBuilder workspaces(List<WorkspaceResponse> workspaces) {
             this.workspaces = workspaces;
             return this;
         }
@@ -97,7 +97,7 @@ public record UserResponse(String id, String name, String email, String uniId, S
             return this;
         }
 
-        public UserResponseBuilder workspace(ApiPaging<WorkspaceResponse> workspaces) {
+        public UserResponseBuilder workspace(List<WorkspaceResponse> workspaces) {
             this.workspaces = workspaces;
             return this;
         }
@@ -174,7 +174,7 @@ public record UserResponse(String id, String name, String email, String uniId, S
     }
 
     @Override
-    public ApiPaging<WorkspaceResponse> workspaces() {
+    public List<WorkspaceResponse> workspaces() {
         return workspaces;
     }
 }
