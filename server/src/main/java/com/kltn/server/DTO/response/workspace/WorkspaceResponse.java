@@ -7,7 +7,7 @@ import com.kltn.server.DTO.response.user.UserResponse;
 import java.time.Instant;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record WorkspaceResponse(String id, String name, String description, int sprintNum, int timePerSprint,
                                 UserResponse user, Instant start, Instant end, List<ProjectResponse> projects,
                                 Instant createdAt) {
@@ -82,5 +82,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
             return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, user, start, end, projects, createdAt);
         }
     }
+
+
 
 }

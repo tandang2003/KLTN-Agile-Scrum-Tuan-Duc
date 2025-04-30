@@ -5,8 +5,10 @@ import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "workspaces")
@@ -20,6 +22,11 @@ public class Workspace extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+    @ManyToMany
+    @JoinTable(name = "workspaces_users",
+            joinColumns = @JoinColumn(name = "workspace_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> members;
 
     @OneToMany(mappedBy = "workspace")
     private List<Project> projects;
@@ -34,6 +41,7 @@ public class Workspace extends BaseEntity {
         this.projects = workspaceBuilder.projects;
         this.start = workspaceBuilder.start;
         this.end = workspaceBuilder.end;
+        this.members = workspaceBuilder.members;
     }
 
     public Workspace() {
@@ -60,7 +68,7 @@ public class Workspace extends BaseEntity {
         private Instant start;
         private Instant end;
         private List<Project> projects;
-
+        private Set<User> members;
         @Override
         protected WorkspaceEntityBuilder self() {
             return this;
@@ -73,6 +81,10 @@ public class Workspace extends BaseEntity {
 
         public WorkspaceEntityBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+        public WorkspaceEntityBuilder members(Set<User> members) {
+            this.members = members;
             return this;
         }
 
@@ -112,7 +124,7 @@ public class Workspace extends BaseEntity {
         }
 
     }
-
+//getter/setter section
     public String getName() {
         return name;
     }
@@ -175,5 +187,13 @@ public class Workspace extends BaseEntity {
 
     public void setEnd(Instant end) {
         this.end = end;
+    }
+
+    public Set<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<User> members) {
+        this.members = members;
     }
 }

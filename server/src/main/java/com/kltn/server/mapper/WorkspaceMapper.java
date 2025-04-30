@@ -41,6 +41,13 @@ public interface WorkspaceMapper {
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+    WorkspaceResponse toWorkspaceResponseByIdWithoutProject(Workspace workspace);
+
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
             @Mapping(target = "projects", source = "projects", qualifiedByName = "projectToProjectResponse"),
     })
     @BeanMapping(ignoreByDefault = true)

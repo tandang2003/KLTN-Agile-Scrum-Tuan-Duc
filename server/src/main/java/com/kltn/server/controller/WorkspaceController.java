@@ -2,6 +2,7 @@ package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +29,7 @@ public class WorkspaceController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('create_workspace')")
     public ResponseEntity<ApiResponse<WorkspaceResponse>> createWorkspace(
             @Valid @RequestBody WorkspaceCreationRequest workspaceCreationRequest) {
         return ResponseEntity.ok().body(
@@ -57,6 +60,7 @@ public class WorkspaceController {
     }
 
     @PutMapping("/{workspaceId}")
+    @PreAuthorize("hasAuthority('update_workspace')")
     public ResponseEntity<ApiResponse<WorkspaceResponse>> updateWorkspace(@PathVariable String workspaceId,
                                                                           @Valid @RequestBody WorkspaceUpdationRequest workspaceUpdationRequest
     ) {
@@ -68,14 +72,30 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{workspaceId}/student")
-    public ResponseEntity<ApiResponse<ApiPaging<UserResponse>>> getStudentInWorkspace(@PathVariable String workspaceId, @RequestParam(defaultValue = "0") int page,
-                                                                                      @RequestParam(defaultValue = "10") int size) {
+//    @PreAuthorize("hasAuthority('manage_workspace_members')")
+    public ResponseEntity<ApiResponse<ApiPaging<UserResponse>>> getStudentInWorkspace(
+            @PathVariable String workspaceId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok().body(
                 ApiResponse.<ApiPaging<UserResponse>>builder()
                         .message("get student in workspace success")
-                        .data(workspaceService.getStudentInWorkspace(workspaceId, page , size ))
+                        .data(workspaceService.getStudentInWorkspace(workspaceId, page, size))
                         .build());
     }
 
+    @PostMapping("/{workspaceId}/student")
+    @PreAuthorize("hasAuthority('manage_workspace_members')")
+    public ResponseEntity<ApiResponse<Void>> addStudentToWorkspace(@PathVariable String workspaceId,
+                                                                   @Valid @RequestBody
+                                                                   WorkspaceUserAdditionRequest
+                                                                           workspaceUserAdditionRequest) {
+        workspaceService.addStudentToWorkspace(workspaceId, workspaceUserAdditionRequest.studentIds());
+
+        return ResponseEntity.ok().body(
+                ApiResponse.<Void>builder()
+                        .message("Invite student to workspace")
+                        .build());
+    }
 
 }
