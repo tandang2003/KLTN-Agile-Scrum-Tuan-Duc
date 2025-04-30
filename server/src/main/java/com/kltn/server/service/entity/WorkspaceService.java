@@ -127,7 +127,6 @@ public class WorkspaceService {
                     "Invite student to workspace"
             ).error(uniIdsList).build();
         }
-        workspaceRepository.save(workspace);
     }
 
 }
