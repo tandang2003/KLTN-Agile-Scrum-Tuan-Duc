@@ -10,59 +10,59 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring",
-        unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE,
-        unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface WorkspaceMapper {
 
-    @Mappings({
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "description", source = "description"),
-            @Mapping(target = "sprintNum", source = "sprintNum"),
-            @Mapping(target = "timePerSprint", source = "timePerSprint"),
-            @Mapping(target = "start", source = "start"),
-            @Mapping(target = "end", source = "end")
-    })
-    @BeanMapping(ignoreByDefault = true)
-    Workspace toWorkspace(WorkspaceCreationRequest workspace);
+        @Mappings({
+                        @Mapping(target = "name", source = "name"),
+                        @Mapping(target = "description", source = "description"),
+                        @Mapping(target = "sprintNum", source = "sprintNum"),
+                        @Mapping(target = "timePerSprint", source = "timePerSprint"),
+                        @Mapping(target = "start", source = "start"),
+                        @Mapping(target = "end", source = "end")
+        })
+        @BeanMapping(ignoreByDefault = true)
+        Workspace toWorkspace(WorkspaceCreationRequest workspace);
 
-    @Named("toWorkspaceCreationResponse")
-    @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "sprintNum", source = "sprintNum"),
-            @Mapping(target = "timePerSprint", source = "timePerSprint"),
-            @Mapping(target = "start", source = "start"),
-            @Mapping(target = "end", source = "end"),
-    })
-    @BeanMapping(ignoreByDefault = true)
-    WorkspaceResponse toWorkspaceCreationResponse(Workspace workspace);
+        @Named("toWorkspaceCreationResponse")
+        @Mappings({
+                        @Mapping(target = "id", source = "id"),
+                        @Mapping(target = "name", source = "name"),
+                        @Mapping(target = "sprintNum", source = "sprintNum"),
+                        @Mapping(target = "timePerSprint", source = "timePerSprint"),
+                        @Mapping(target = "start", source = "start"),
+                        @Mapping(target = "end", source = "end"),
+        })
+        @BeanMapping(ignoreByDefault = true)
+        WorkspaceResponse toWorkspaceCreationResponse(Workspace workspace);
 
-    @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "projects", source = "projects", qualifiedByName = "projectToProjectResponse"),
-    })
-    @BeanMapping(ignoreByDefault = true)
-    WorkspaceResponse toWorkspaceResponseById(Workspace workspace);
+        @Mappings({
+                        @Mapping(target = "id", source = "id"),
+                        @Mapping(target = "name", source = "name"),
+                        @Mapping(target = "start", source = "start"),
+                        @Mapping(target = "description", source = "description"),
+                        @Mapping(target = "end", source = "end"),
+                        @Mapping(target = "projects", source = "projects", qualifiedByName = "projectToProjectResponse"),
+        })
+        @BeanMapping(ignoreByDefault = true)
+        WorkspaceResponse toWorkspaceResponseById(Workspace workspace);
 
-    @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name")
-    })
-    @BeanMapping(ignoreByDefault = true)
-    @Named("projectToProjectResponse")
-    ProjectResponse projectToProjectResponse(Project project);
+        @Mappings({
+                        @Mapping(target = "id", source = "id"),
+                        @Mapping(target = "name", source = "name")
+        })
+        @BeanMapping(ignoreByDefault = true)
+        @Named("projectToProjectResponse")
+        ProjectResponse projectToProjectResponse(Project project);
 
-    @BeanMapping(ignoreByDefault = true)
-    @IterableMapping(qualifiedByName = "toWorkspaceCreationResponse")
-    List<WorkspaceResponse> toListWorkspaceResponse(List<Workspace> workspaces);
+        @BeanMapping(ignoreByDefault = true)
+        @IterableMapping(qualifiedByName = "toWorkspaceCreationResponse")
+        List<WorkspaceResponse> toListWorkspaceResponse(List<Workspace> workspaces);
 
-
-    @Mappings({
-            @Mapping(target = "sprintNum", source = "workspaceUpdationRequest.sprintNum"),
-            @Mapping(target = "description", source = "workspaceUpdationRequest.description"),
-            @Mapping(target = "end", source = "workspaceUpdationRequest.end")
-    })
-    Workspace updateWorkspace(Workspace workspace, WorkspaceUpdationRequest workspaceUpdationRequest);
+        @Mappings({
+                        @Mapping(target = "sprintNum", source = "workspaceUpdationRequest.sprintNum"),
+                        @Mapping(target = "description", source = "workspaceUpdationRequest.description"),
+                        @Mapping(target = "end", source = "workspaceUpdationRequest.end")
+        })
+        Workspace updateWorkspace(Workspace workspace, WorkspaceUpdationRequest workspaceUpdationRequest);
 }

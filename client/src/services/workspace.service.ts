@@ -1,7 +1,10 @@
+import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { Page, ResponseApi } from '@/types/http.type'
 import {
   CreateWorkspaceReqType,
+  ListStudentWorkspaceReq,
+  StudentWorkspaceDataTable,
   WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
@@ -13,15 +16,14 @@ const workspaceService = {
       await httpService.get<ResponseApi<Page<WorkspaceCardResponse>>>(
         `/workspace/list`
       )
-    console.log('response', response)
     return response.data.data
   },
 
   getWorkSpace: async (id: UniqueIdentifier): Promise<WorkspaceResponse> => {
-    const response = await httpService.get<WorkspaceResponse>(
+    const response = await httpService.get<ResponseApi<WorkspaceResponse>>(
       `/workspace/${id}`
     )
-    return response.data
+    return response.data.data
   },
   createWorkspace: async (
     req: CreateWorkspaceReqType
@@ -31,6 +33,15 @@ const workspaceService = {
       CreateWorkspaceReqType
     >('/workspace', req)
     return response.data
+  },
+  getListStudent: async (
+    req: ListStudentWorkspaceReq
+  ): Promise<Page<StudentWorkspaceDataTable>> => {
+    const queryString = req.page ? toQueryString(req.page) : ''
+    const response = await httpService.get<
+      ResponseApi<Page<StudentWorkspaceDataTable>>
+    >(`/workspace/${req.id}/student?${queryString}`)
+    return response.data.data
   }
 }
 
