@@ -5,6 +5,7 @@ import com.kltn.server.model.base.BaseEntity;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class Workspace extends BaseEntity {
     @JoinColumn(name = "owner_id")
     private User owner;
     @ManyToMany
-    @JoinTable(name = "workspaces_users_projects",
+    @JoinTable(name = "workspaces_users",
             joinColumns = @JoinColumn(name = "workspace_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> members;

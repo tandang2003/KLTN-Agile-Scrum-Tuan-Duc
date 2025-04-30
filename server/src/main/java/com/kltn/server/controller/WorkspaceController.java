@@ -72,9 +72,11 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{workspaceId}/student")
-    @PreAuthorize("hasAuthority('manage_workspace_members')")
-    public ResponseEntity<ApiResponse<ApiPaging<UserResponse>>> getStudentInWorkspace(@PathVariable String workspaceId, @RequestParam(defaultValue = "0") int page,
-                                                                                      @RequestParam(defaultValue = "10") int size) {
+//    @PreAuthorize("hasAuthority('manage_workspace_members')")
+    public ResponseEntity<ApiResponse<ApiPaging<UserResponse>>> getStudentInWorkspace(
+            @PathVariable String workspaceId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok().body(
                 ApiResponse.<ApiPaging<UserResponse>>builder()
                         .message("get student in workspace success")
@@ -85,7 +87,9 @@ public class WorkspaceController {
     @PostMapping("/{workspaceId}/student")
     @PreAuthorize("hasAuthority('manage_workspace_members')")
     public ResponseEntity<ApiResponse<Void>> addStudentToWorkspace(@PathVariable String workspaceId,
-                                                                                      @RequestBody WorkspaceUserAdditionRequest workspaceUserAdditionRequest) {
+                                                                   @Valid @RequestBody
+                                                                   WorkspaceUserAdditionRequest
+                                                                           workspaceUserAdditionRequest) {
         workspaceService.addStudentToWorkspace(workspaceId, workspaceUserAdditionRequest.studentIds());
 
         return ResponseEntity.ok().body(

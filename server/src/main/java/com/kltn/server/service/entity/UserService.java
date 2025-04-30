@@ -12,10 +12,15 @@ import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequestScope
@@ -43,15 +48,21 @@ public class UserService {
 
     public UserResponse getUserWorkspaces() {
         User user = getCurrentUser();
-        Page<Workspace> w = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(0, 10, WorkspaceRepository.DEFAULT_SORT));
-        ApiPaging<WorkspaceResponse> workspaceResponseApiPaging = ApiPaging
-                .<WorkspaceResponse>builder()
-                .totalItems(w.getTotalElements())
-                .currentPage(w.getNumber())
-                .totalPages(w.getTotalPages())
-                .items(w.get().map(userMapper::workspaceToWorkspaceResponse).toList())
-                .build();
-        return userMapper.toUserWorkspaceResponse(user, workspaceResponseApiPaging);
+        List<Workspace> workspaces;
+        if (user.getRole().getName().equals("teacher")) {
+            workspaces = user.getWorkspaces();
+        } else if (user.getRole().getName().equals("student")) {
+            workspaces = user.getWorkspacesJoined();
+        } else {
+            workspaces = new ArrayList<>();
+        }
+        int subListSize = Math.min(workspaces.size(), 5);
+        workspaces = workspaces.stream()
+                .sorted(Comparator.comparing(Workspace::getDtCreated))
+                .toList().subList(0, subListSize);
+        user.setWorkspaces(workspaces);
+        UserResponse userResponse = userMapper.toUserWorkspaceResponse(user);
+        return userResponse;
     }
 
 }

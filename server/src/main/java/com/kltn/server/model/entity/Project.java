@@ -14,7 +14,8 @@ public class Project extends BaseEntity {
     //    @ManyToOne
 //    @JoinColumn(name = "workspace_id")
 //    @ManyToMany(mappedBy = "projects")
-    @ManyToOne
+    @ManyToOne()
+    @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
     @ManyToMany(mappedBy = "projects")
     private Set<User> users;

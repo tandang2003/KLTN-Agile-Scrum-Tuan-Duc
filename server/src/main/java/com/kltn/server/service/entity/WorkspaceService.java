@@ -11,12 +11,14 @@ import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.UserMapper;
 import com.kltn.server.mapper.WorkspaceMapper;
+import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -52,13 +54,24 @@ public class WorkspaceService {
         return workspaceMapper.toWorkspaceCreationResponse(workspace);
     }
 
+    //
     public WorkspaceResponse getWorkspaceById(String workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+//        int maxSublistSize = Math.min(workspace.getProjects().size(), 5);
+        workspace.getProjects().sort(Comparator.comparing(Project::getDtCreated));
+//        List<Project> subList = workspace.getProjects().subList(0, maxSublistSize);
+//        workspace.setProjects(subList);
         return workspaceMapper.toWorkspaceResponseById(workspace);
     }
 
     public ApiPaging<WorkspaceResponse> getWorkspaceByOwnerIdPaging(int page, int size) {
-        User user = userRepository.findByUniId((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+
+        User user = userRepository.findByUniId((String)
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal()
+        ).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         Page<Workspace> workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT));
         return ApiPaging.<WorkspaceResponse>builder().items(workspaces.get().map(workspaceMapper::toWorkspaceResponseByIdWithoutProject).toList()).totalItems(workspaces.getTotalElements()).totalPages(workspaces.getTotalPages()).currentPage(workspaces.getNumber()).build();
     }
@@ -81,52 +94,38 @@ public class WorkspaceService {
     @Transactional
     public ApiPaging<UserResponse> getStudentInWorkspace(String workspaceId, int page, int size) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        int curPage = page > 0 ? page : 1;
-        int curSize = size > 0 ? size : 10;
-        ApiPaging<UserResponse> res = ApiPaging.<UserResponse>builder().items(new ArrayList<UserResponse>()).build();
-        int start = (curPage - 1) * curSize;
-        int end = curPage * curSize;
-        AtomicInteger currentIndex = new AtomicInteger();
-        workspace.getProjects().forEach(project -> {
-            project.getMember().forEach(member -> {
-                if (currentIndex.get() >= start && currentIndex.get() < end) {
-                    res.getItems().add(userMapper.toWorkspaceStudentResponse(member));
-                }
-                currentIndex.getAndIncrement();
-            });
-        });
-
-        workspace.getProjects().forEach(project -> {
-            res.setTotalItems(res.getTotalItems() + project.getMember().size());
-        });
-        if (res.getTotalItems() < curSize) {
-            res.setTotalPages(1);
-        } else
-            res.setTotalPages((int) (res.getTotalItems() % curSize == 0 ? res.getTotalItems() / curSize : res.getTotalItems() / curSize + 1));
-
-        res.setCurrentPage(page);
-
-        return res;
+        Page<User> users = new PageImpl<>(workspace.getMembers().stream().toList(),
+                PageRequest.of(page, size, userRepository.DEFAULT_SORT),
+                workspace.getMembers().size());
+        if (page * size >= workspace.getMembers().size())
+            users = new PageImpl<>(new ArrayList<>());
+        return ApiPaging.<UserResponse>builder()
+                .items(users.get().map(userMapper::toWorkspaceStudentResponse).toList())
+                .totalItems(users.getTotalElements())
+                .totalPages(users.getTotalPages())
+                .currentPage(page)
+                .build();
     }
 
 
     public void addStudentToWorkspace(String workspaceId, String[] uniIds) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Iterator<String> iterator = Arrays.asList(uniIds).iterator();
-        while (iterator.hasNext()) {
-            String uniId = iterator.next();
-            User user = userRepository.findByUniId(uniId).orElse(null);
-            if (user != null) {
-                workspace.getProjects().forEach(p -> {
-                    p.getMember().add(user);
-                });
-                iterator.remove();
+        List<String> removedUniIds = new ArrayList<>();
+        List<String> uniIdsList = Arrays.stream(uniIds).toList();
+        for (String uniId : uniIds) {
+            Optional<User> user = userRepository.findByUniId(uniId);
+            if (user.isPresent()) {
+                workspace.getMembers().add(user.get());
+                removedUniIds.add(user.get().getUniId());
             }
         }
-        if (uniIds.length != 0) {
+        if (!removedUniIds.isEmpty()) workspaceRepository.save(workspace);
+        if (removedUniIds.size() < uniIdsList.size()) {
+            uniIdsList = uniIdsList.stream().filter(uniId -> !removedUniIds.contains(uniId)).toList();
+
             throw AppListArgumentNotValidException.builder().message(
                     "Invite student to workspace"
-            ).error(Arrays.stream(uniIds).toList()).build();
+            ).error(uniIdsList).build();
         }
         workspaceRepository.save(workspace);
     }
