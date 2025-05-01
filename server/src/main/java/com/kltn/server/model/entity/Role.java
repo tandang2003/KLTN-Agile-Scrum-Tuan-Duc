@@ -10,6 +10,7 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role extends BaseEntity {
     private String name;
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
     @OneToMany(mappedBy = "role")
     private List<User> user;

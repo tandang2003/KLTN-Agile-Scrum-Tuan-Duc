@@ -5,8 +5,10 @@ import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
+import com.kltn.server.model.entity.Project;
 import com.kltn.server.service.entity.UserService;
 import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.validation.Valid;
@@ -97,5 +99,14 @@ public class WorkspaceController {
                         .message("Invite student to workspace")
                         .build());
     }
+
+//    @GetMapping("/{workspaceId}/project")
+//    public ResponseEntity<ApiResponse<ProjectResponse>> getProjectInWorkspace(@PathVariable String workspaceId) {
+//        return ResponseEntity.ok().body(
+//                ApiResponse.<WorkspaceResponse>builder()
+//                        .message("get project in workspace success")
+//                        .data(workspaceService.getProjectInWorkspace(workspaceId))
+//                        .build());
+//    }
 
 }

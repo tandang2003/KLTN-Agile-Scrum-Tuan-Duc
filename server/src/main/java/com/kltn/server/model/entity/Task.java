@@ -27,7 +27,6 @@ public class Task extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "reviewer")
     private User reviewer;
-
     private String title;
     @Enumerated(EnumType.STRING)
     private TaskStatus type;
