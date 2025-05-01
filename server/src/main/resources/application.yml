@@ -73,7 +73,13 @@ cache:
 #      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
 #      hash-value-serializer: org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 
-
+app:
+  whitelist:
+    - auth
+    - auth/register
+    - /v3/api-docs
+    - /v3/api-docs/**
+    - /swagger-ui/**
 
 
 kafka:

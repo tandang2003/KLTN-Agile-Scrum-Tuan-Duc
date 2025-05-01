@@ -30,24 +30,8 @@ public class UserTokenService {
     }
 
     public boolean isRefreshTokenExpired(String key) {
-//        sout all in redis
-        System.out.println(refreshTemplate.hasKey(key));
         return refreshTemplate.hasKey(key);
     }
 
-    public String getRefreshToken(String key) {
-        return refreshTemplate.opsForValue().get(key);
-    }
 
-    public void saveAccessTokenExpired(String accessToken, String uniId) {
-        accessTemplate.opsForValue().set(accessToken + uniId, accessToken, accessTokenTtl);
-    }
-
-    public boolean isAccessTokenExpired(String key) {
-        return accessTemplate.hasKey(key);
-    }
-
-    public String getAccessToken(String key) {
-        return accessTemplate.opsForValue().get(key);
-    }
 }

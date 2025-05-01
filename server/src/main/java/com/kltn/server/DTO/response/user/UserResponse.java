@@ -2,6 +2,7 @@ package com.kltn.server.DTO.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.DTO.response.ApiPaging;
+import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.Project;
@@ -10,14 +11,14 @@ import com.kltn.server.model.entity.Task;
 import java.util.List;
 import java.util.Set;
 
-@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
-                               String role, List<Project> projects,
-                               Set<Task> assignedTasks,
-                               Set<Task> reviewedTasks,
-                               Boolean alive,
-                               ApiPaging<WorkspaceResponse> workspaces
-    ) {
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
+                           String role, List<ProjectResponse> projects,
+                           Set<Task> assignedTasks,
+                           Set<Task> reviewedTasks,
+                           Boolean alive,
+                           List<WorkspaceResponse> workspaces
+) {
     public UserResponse(UserResponseBuilder b) {
         this(b.getId(), b.name, b.email, b.uniId, b.uniPassword, b.className, b.role,
                 b.projects, b.assignedTasks, b.reviewedTasks, b.alive, b.workspaces);
@@ -34,11 +35,11 @@ import java.util.Set;
         private String uniId;
         private String uniPassword;
         private String role;
-        private List<Project> projects;
+        private List<ProjectResponse> projects;
         private Set<Task> assignedTasks;
         private Set<Task> reviewedTasks;
         private Boolean alive;
-        private ApiPaging<WorkspaceResponse> workspaces;
+        private List<WorkspaceResponse> workspaces;
 
         public UserResponseBuilder id(String id) {
             this.id = id;
@@ -50,7 +51,7 @@ import java.util.Set;
             return this;
         }
 
-        public UserResponseBuilder workspaces(ApiPaging<WorkspaceResponse> uniPassword) {
+        public UserResponseBuilder workspaces(List<WorkspaceResponse> workspaces) {
             this.workspaces = workspaces;
             return this;
         }
@@ -81,7 +82,7 @@ import java.util.Set;
             return this;
         }
 
-        public UserResponseBuilder project(List<Project> projects) {
+        public UserResponseBuilder project(List<ProjectResponse> projects) {
             this.projects = projects;
             return this;
         }
@@ -96,7 +97,7 @@ import java.util.Set;
             return this;
         }
 
-        public UserResponseBuilder workspace( ApiPaging<WorkspaceResponse> workspaces) {
+        public UserResponseBuilder workspace(List<WorkspaceResponse> workspaces) {
             this.workspaces = workspaces;
             return this;
         }
@@ -115,5 +116,65 @@ import java.util.Set;
         public UserResponse build() {
             return new UserResponse(this);
         }
+    }
+//getter/setter section
+    @Override
+    public String id() {
+        return id;
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public String email() {
+        return email;
+    }
+
+    @Override
+    public String uniId() {
+        return uniId;
+    }
+
+    @Override
+    public String uniPassword() {
+        return uniPassword;
+    }
+
+    @Override
+    public String className() {
+        return className;
+    }
+
+    @Override
+    public String role() {
+        return role;
+    }
+
+    @Override
+    public List<ProjectResponse> projects() {
+        return projects;
+    }
+
+    @Override
+    public Set<Task> assignedTasks() {
+        return assignedTasks;
+    }
+
+    @Override
+    public Set<Task> reviewedTasks() {
+        return reviewedTasks;
+    }
+
+    @Override
+    public Boolean alive() {
+        return alive;
+    }
+
+    @Override
+    public List<WorkspaceResponse> workspaces() {
+        return workspaces;
     }
 }

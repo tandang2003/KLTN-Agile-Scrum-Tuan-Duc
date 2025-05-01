@@ -1,15 +1,18 @@
 package com.kltn.server.config.security;
 
+import com.kltn.server.config.properties.ApplicationProps;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -46,6 +50,8 @@ public class SecurityConfig {
     private CustomLogoutHandler customLogoutHandler;
     @Autowired
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    @Autowired
+    private ApplicationProps applicationProps;
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -57,8 +63,8 @@ public class SecurityConfig {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         http.securityContext(contextConfig -> {
-            contextConfig.requireExplicitSave(false);
-        })
+                    contextConfig.requireExplicitSave(false);
+                })
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logoutConfig -> {
@@ -73,14 +79,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers("user/**").authenticated();
-                    authorizeRequests.anyRequest().permitAll();
+//                    authorizeRequests.requestMatchers("user/**").authenticated();
+                    authorizeRequests.requestMatchers(applicationProps.getWhitelist().toArray(String[]::new )).permitAll();
+                    authorizeRequests.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {
-                        jwt.decoder(accessTokenDecoder);
-                        jwt.jwtAuthenticationConverter(customConverterJwtToUser);
-                    })
+                                jwt.decoder(accessTokenDecoder);
+                                jwt.jwtAuthenticationConverter(customConverterJwtToUser);
+                            })
                             .authenticationEntryPoint(customAuthenticationEntryPoint);
                 })
                 .exceptionHandling(exc -> {
