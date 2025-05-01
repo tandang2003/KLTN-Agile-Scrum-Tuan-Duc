@@ -31,6 +31,10 @@ public class User extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects;
+
+    @ManyToMany(mappedBy = "members")
+    private List<Workspace> workspacesJoined;
+
     @OneToMany(mappedBy = "assigner")
     private Set<Task> assignedTasks;
     // One user can review multiple tasks
@@ -38,7 +42,8 @@ public class User extends BaseEntity implements UserDetails {
     private Set<Task> reviewedTasks;
     @Transient
     private boolean alive;
-//    @Transient
+
+    //    @Transient
 //    private long totalProject;
 //    @Transient
 //    private long totalWorkspace;
@@ -83,6 +88,7 @@ public class User extends BaseEntity implements UserDetails {
         private Set<Task> assignedTasks;
         // One user can review multiple tasks
         private Set<Task> reviewedTasks;
+        private List<Workspace> workspacesJoined;
 
         private UserEntityBuilder() {
             super();
@@ -101,6 +107,11 @@ public class User extends BaseEntity implements UserDetails {
 
         public UserEntityBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public UserEntityBuilder workspacesJoined(List<Workspace> workspacesJoined) {
+            this.workspacesJoined = workspacesJoined;
             return this;
         }
 
@@ -280,6 +291,9 @@ public class User extends BaseEntity implements UserDetails {
         this.reviewedTasks = reviewedTasks;
     }
 
+    public List<Workspace> getWorkspacesJoined() {
+        return workspacesJoined;
+    }
 //    public long getTotalProject() {
 //        return totalProject;
 //    }
