@@ -86,13 +86,12 @@ public class WorkspaceController {
                         .build());
     }
 
-    @PostMapping("/{workspaceId}/student")
+    @PostMapping("/student")
     @PreAuthorize("hasAuthority('manage_workspace_members')")
-    public ResponseEntity<ApiResponse<Void>> addStudentToWorkspace(@PathVariable String workspaceId,
-                                                                   @Valid @RequestBody
+    public ResponseEntity<ApiResponse<Void>> addStudentToWorkspace(@Valid @RequestBody
                                                                    WorkspaceUserAdditionRequest
                                                                            workspaceUserAdditionRequest) {
-        workspaceService.addStudentToWorkspace(workspaceId, workspaceUserAdditionRequest.studentIds());
+        workspaceService.addStudentToWorkspace(workspaceUserAdditionRequest.workspaceId(), workspaceUserAdditionRequest.studentIds());
 
         return ResponseEntity.ok().body(
                 ApiResponse.<Void>builder()
