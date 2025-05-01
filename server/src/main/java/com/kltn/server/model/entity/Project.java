@@ -10,14 +10,21 @@ import java.util.Set;
 @Table(name = "projects")
 public class Project extends BaseEntity {
     private String name;
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
+    //    @ManyToOne
+//    @JoinColumn(name = "workspace_id")
+//    @ManyToMany(mappedBy = "projects")
     @ManyToOne
-    @JoinColumn(name = "workspace_id")
+    @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
     @ManyToMany(mappedBy = "projects")
     private Set<User> users;
     @OneToMany(mappedBy = "project")
     private List<Sprint> sprints;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     public Project(ProjectEntityBuilder builder) {
         super(builder);

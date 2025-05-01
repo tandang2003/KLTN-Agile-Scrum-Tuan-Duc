@@ -55,15 +55,15 @@ public interface UserMapper {
 
 
     @Mappings({
-            @Mapping(target = "id", source = "user.id"),
-            @Mapping(target = "name", source = "user.name"),
-            @Mapping(target = "email", source = "user.email"),
-            @Mapping(target = "uniId", source = "user.uniId"),
-            @Mapping(target = "className", source = "user.className"),
-            @Mapping(target = "workspace", source = "page"),
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "email", source = "email"),
+            @Mapping(target = "uniId", source = "uniId"),
+            @Mapping(target = "className", source = "className"),
+            @Mapping(target = "workspace", source = "workspaces", qualifiedByName = "workspaceToWorkspaceResponse"),
     })
     @BeanMapping(ignoreByDefault = true)
-    UserResponse toUserWorkspaceResponse(User user, ApiPaging<WorkspaceResponse> page);
+    UserResponse toUserWorkspaceResponse(User user);
 
 
     @Mappings({
