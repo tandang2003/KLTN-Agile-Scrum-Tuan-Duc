@@ -477,6 +477,70 @@ paths:
                           - id: "project-2"
                             name: "Project B"
   # -----------------------------------------------
+  /workspace/student:
+    post:
+      summary: Add student to workspace
+      description: |
+        Used by: Teacher
+
+        Force add student to workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: workspace id
+                  required: true
+                studentIds:
+                  type: array
+                  items:
+                    type: string
+                  description: array contains student id
+                  required: true
+            example:
+              id: "workspace-001"
+              studentIds:
+                - "student-001"
+                - "student-002"
+                - "student-003"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+              example:
+                code: 200
+                message: "Invite student to workspace"
+        409:
+          description: "At least 1 student is exist in workspace"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+                        description: array contains student id exist in workspace
+                    example:
+                      code: 409
+                      message: "Invite student to workspace"
+                      data:
+                        - "student-003"
+  # -----------------------------------------------
   /workspace/{workspace_id}/student:
     get:
       summary: Paging student (both leader) inside workspace
@@ -558,68 +622,6 @@ paths:
                         currentPage: 1
                         totalPages: 2
                         totalItems: 4
-    post:
-      summary: Add student to workspace
-      description: |
-        Used by: Teacher
-
-        Force add student to workspace
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: workspace id
-                  required: true
-                studentIds:
-                  type: array
-                  items:
-                    type: string
-                  description: array contains student id
-                  required: true
-            example:
-              id: "workspace-001"
-              studentIds:
-                - "student-001"
-                - "student-002"
-                - "student-003"
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-              example:
-                code: 200
-                message: "Invite student to workspace"
-        409:
-          description: "At least 1 student is exist in workspace"
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: string
-                        description: array contains student id exist in workspace
-                    example:
-                      code: 409
-                      message: "Invite student to workspace"
-                      data:
-                        - "student-003"
   # -----------------------------------------------
   /workspace/{workspace_id}/project:
     get:
@@ -812,12 +814,6 @@ paths:
                 description:
                   type: string
                   description: project description, must not empty
-                teamMember:
-                  type: array
-                  items:
-                    type: string
-                  description: array contains student id
-                  required: true
                 workspace:
                   type: string
                   description: workspace id, must not empty
@@ -829,7 +825,6 @@ paths:
               example:
                 name: "workspace-LTW"
                 description: "Workspace for student in lab LTW NLU"
-                teamMember: [21130171, 21130172, 21130173]
                 workspace: 1
                 tags:
                   [
