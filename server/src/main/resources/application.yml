@@ -12,6 +12,7 @@ spring:
         key:
           private-key: key/refresh/private_key.pem
           public-key: key/refresh/public_key.pem
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   jackson:
@@ -64,8 +65,8 @@ cache:
       ttl: 432000
       key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
       value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
-#      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
-#      hash-value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+    #      hash-key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
+    #      hash-value-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
     access-token:
       ttl: 600
       key-serializer: org.springframework.data.redis.serializer.StringRedisSerializer
@@ -81,22 +82,21 @@ app:
     - /v3/api-docs/**
     - /swagger-ui/**
 
-
 kafka:
-    topic:
-      send-object-customer:
-        name: send_object_customer
-        partitions: 3
-        replication-factor: 3
-      send-object-order:
-        name: send_object_order
-        partitions: 3
-        replication-factor: 3
-      send-object-product:
-        name: send_object_product
-        partitions: 3
-        replication-factor: 3
-      send-object-user:
-        name: send_object_user
-        partitions: 3
-        replication-factor: 3
+  topic:
+    send-object-customer:
+      name: send_object_customer
+      partitions: 3
+      replication-factor: 3
+    send-object-order:
+      name: send_object_order
+      partitions: 3
+      replication-factor: 3
+    send-object-product:
+      name: send_object_product
+      partitions: 3
+      replication-factor: 3
+    send-object-user:
+      name: send_object_user
+      partitions: 3
+      replication-factor: 3

@@ -19,8 +19,6 @@ const manualAxios = axios.create({
   withCredentials: true
 })
 
-// const whiteList = ['/auth/refresh']
-
 const setAuthorization = (accessToken?: string) => {
   appAxios.defaults.headers.common.Authorization = accessToken
     ? `Bearer ${accessToken}`
@@ -82,7 +80,6 @@ appAxios.interceptors.response.use(
       }
 
       case HttpStatusCode.Unauthorized: {
-        console.log('Token expired')
         const response = await authService.refresh()
         if (response.code >= 400) {
           toast.error('Refresh token is expired')

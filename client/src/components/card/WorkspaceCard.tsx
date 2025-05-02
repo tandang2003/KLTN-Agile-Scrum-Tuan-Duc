@@ -25,7 +25,7 @@ const WorkspaceCard = ({ id, name, owner }: WorkspaceCard) => {
           <span className='text-md mt-2'>{owner}</span>
         </NavLink>
         <span className='absolute top-1/4 right-4 grid size-[100px] place-items-center rounded-full bg-gray-700 text-3xl text-white'>
-          {owner?.charAt(0) ?? ''}
+          {owner?.charAt(0)}
         </span>
       </CardHeader>
       <CardDescription></CardDescription>

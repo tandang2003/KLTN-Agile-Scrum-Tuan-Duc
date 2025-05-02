@@ -7,7 +7,7 @@ const workSpacesData: WorkSpaceModel[] = [
     name: 'LT Web',
     description: 'workspace danh cho LT Web',
     owner: currentUser,
-    dtStart: new Date(),
+    start: new Date(),
     numSprint: 10,
     timePerSprint: 1
   },
@@ -16,7 +16,7 @@ const workSpacesData: WorkSpaceModel[] = [
     name: 'LT Mobile',
     description: 'workspace danh cho LT Mobile',
     owner: currentUser,
-    dtStart: new Date(),
+    start: new Date(),
     numSprint: 10,
     timePerSprint: 1
   },
@@ -25,7 +25,7 @@ const workSpacesData: WorkSpaceModel[] = [
     name: 'ML',
     description: 'workspace danh cho ML',
     owner: currentUser,
-    dtStart: new Date(),
+    start: new Date(),
     numSprint: 10,
     timePerSprint: 1
   }

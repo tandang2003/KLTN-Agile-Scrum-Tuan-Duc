@@ -16,6 +16,7 @@ const WorkspacePage = () => {
   const isDialogCreateOpen = useAppSelector(
     (state: RootState) => state.workspaceSlice.isDialogCreateOpen
   )
+
   return (
     <Container inSidebar>
       <div className='flex justify-between pt-2 pb-4'>
