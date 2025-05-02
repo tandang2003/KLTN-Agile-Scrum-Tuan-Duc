@@ -1,11 +1,13 @@
 import workspaceService from '@/services/workspace.service'
 import { Page } from '@/types/http.type'
+import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
+  ListStudentWorkspaceReq,
+  StudentWorkspaceDataTable,
   WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
-import { UniqueIdentifier } from '@dnd-kit/core'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 const workspaceApi = createApi({
@@ -47,7 +49,7 @@ const workspaceApi = createApi({
         return final
       }
     }),
-    getWorkspace: builder.query<WorkspaceResponse, UniqueIdentifier>({
+    getWorkspace: builder.query<WorkspaceResponse, Id>({
       async queryFn(arg) {
         try {
           const data = await workspaceService.getWorkSpace(arg)
@@ -74,6 +76,19 @@ const workspaceApi = createApi({
       invalidatesTags: () => {
         return [{ type: 'Workspaces', id: 'LIST' }]
       }
+    }),
+    getListStudentWorkspace: builder.query<
+      Page<StudentWorkspaceDataTable>,
+      ListStudentWorkspaceReq
+    >({
+      async queryFn(args) {
+        try {
+          const data = await workspaceService.getListStudent(args)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -83,5 +98,6 @@ export default workspaceApi
 export const {
   useGetListWorkspaceQuery,
   useCreateWorkspaceMutation,
-  useGetWorkspaceQuery
+  useGetWorkspaceQuery,
+  useGetListStudentWorkspaceQuery
 } = workspaceApi
