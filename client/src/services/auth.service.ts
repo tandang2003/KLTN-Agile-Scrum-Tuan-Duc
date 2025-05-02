@@ -1,9 +1,11 @@
+import { go } from '@/configuration/component.config'
 import envConfig from '@/configuration/env.config'
 import { setAuthorization } from '@/configuration/http.config'
-import { StorageItem } from '@/lib/const'
+import { HOME_PATH, StorageItem } from '@/lib/const'
 import httpService from '@/services/http.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
 import { ResponseApi } from '@/types/http.type'
+import { UserInfoResponse } from '@/types/user.type'
 import { toast } from 'sonner'
 
 const authService = {
@@ -34,6 +36,7 @@ const authService = {
 
     if (!response.ok) {
       removeTokenLocal()
+      go(HOME_PATH)
       throw new Error('UnAuthorization')
     }
 
@@ -41,6 +44,18 @@ const authService = {
     const { access_token } = body.data
     setTokenLocal(access_token)
     return body
+  },
+  getInfo: async (options?: object) => {
+    try {
+      const response = await httpService.get<ResponseApi<UserInfoResponse>>(
+        '/user',
+        options
+      )
+      return response.data
+    } catch (e) {
+      removeTokenLocal()
+      throw e
+    }
   }
 }
 

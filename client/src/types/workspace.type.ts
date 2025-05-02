@@ -1,5 +1,7 @@
+import { PageRequest } from '@/types/http.type'
+import { UserModel } from '@/types/model/user.model'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
-import { UniqueIdentifier } from '@dnd-kit/core'
+import { Id } from '@/types/other.type'
 import { z } from 'zod'
 
 const CreateWorkspaceSchema = z.object({
@@ -25,29 +27,39 @@ type CreateWorkspaceReqType = Omit<CreateWorkspaceSchemaType, 'date'> & {
   end: Date
 }
 
-type WorkspaceResponse = {
-  id: UniqueIdentifier
-  name: string
-  numSprint: number
-  timePerSprint: number
-  dtStart: Date
-  dtEnd?: Date
-}
+type WorkspaceResponse = Pick<
+  WorkSpaceModel,
+  'id' | 'name' | 'description' | 'start' | 'end'
+>
 
 type WorkspaceCardResponse = {
-  id: UniqueIdentifier
+  id: Id
   name: string
   owner: string
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
 
+type ListWorkspaceReq = PageRequest
+
+type ListStudentWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
+  page?: PageRequest
+}
+
+type StudentWorkspaceDataTable = Pick<
+  UserModel,
+  'id' | 'name' | 'className' | 'role'
+>
+
 export type {
   CreateWorkspaceReqType,
   CreateWorkspaceSchemaType,
   WorkspaceResponse,
   WorkspaceCardResponse,
-  WorkspaceSideBar
+  WorkspaceSideBar,
+  ListWorkspaceReq,
+  ListStudentWorkspaceReq,
+  StudentWorkspaceDataTable
 }
 
 export { CreateWorkspaceSchema }

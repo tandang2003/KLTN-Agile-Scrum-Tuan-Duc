@@ -1,22 +1,21 @@
+import DialogController, {
+  DialogControllerProps
+} from '@/components/dialog/DialogController'
 import CreateWorkspaceForm from '@/components/form/CreateWorkspaceForm'
 import {
-  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
 
-type DialogCreateWorkspaceProps = {
-  open: boolean
-  onOpen: (open: boolean) => void
-}
+type DialogCreateWorkspaceProps = {} & DialogControllerProps
 const DialogCreateWorkspace = ({
   open,
   onOpen
 }: DialogCreateWorkspaceProps) => {
   return (
-    <Dialog open={open} onOpenChange={onOpen}>
+    <DialogController open={open} onOpen={onOpen}>
       <DialogContent className='sm:max-w-[70vw]'>
         <DialogHeader>
           <DialogTitle>Create workspace</DialogTitle>
@@ -27,7 +26,7 @@ const DialogCreateWorkspace = ({
         </DialogHeader>
         <CreateWorkspaceForm />
       </DialogContent>
-    </Dialog>
+    </DialogController>
   )
 }
 
