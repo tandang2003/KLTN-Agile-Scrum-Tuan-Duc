@@ -1,6 +1,5 @@
 package com.kltn.server.config.security;
 
-import com.kltn.server.config.properties.AppProperties;
 import com.kltn.server.config.properties.ApplicationProps;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
@@ -27,9 +26,6 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-
-    private final AppProperties appProperties;
-
     @Autowired
     private JwtDecoder accessTokenDecoder;
 
@@ -52,10 +48,6 @@ public class SecurityConfig {
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
     @Autowired
     private ApplicationProps applicationProps;
-
-    SecurityConfig(AppProperties appProperties) {
-        this.appProperties = appProperties;
-    }
 
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -84,7 +76,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests
-                            .requestMatchers((appProperties.getSecurity().getWhiteList().toArray(new String[0])))
+                            .requestMatchers((applicationProps.getWhitelist().toArray(new String[0])))
                             .permitAll();
                     authorizeRequests.anyRequest().authenticated();
                 })
