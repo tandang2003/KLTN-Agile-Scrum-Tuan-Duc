@@ -99,10 +99,16 @@ public class WorkspaceService {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         Set<User> members = workspace.getMembers();
         List<User> users = new ArrayList<>(members);
+        if (page * size >= users.size()) {
+            return ApiPaging.<UserResponse>builder()
+                    .items(Collections.emptyList())
+                    .totalItems(members.size())
+                    .totalPages((int) Math.ceil((double) members.size() / size))
+                    .currentPage(page)
+                    .build();
+        }
+        int start = page * size;
         int end = Math.min(users.size(), (page + 1) * size);
-        int start;
-        if (page * size > users.size()) start = 0;
-        else start = Math.min(users.size(), page * size);
         return ApiPaging.<UserResponse>builder()
                 .items(users.subList(start, end).stream().map(userMapper::toWorkspaceStudentResponse).toList())
                 .totalItems(members.size())
