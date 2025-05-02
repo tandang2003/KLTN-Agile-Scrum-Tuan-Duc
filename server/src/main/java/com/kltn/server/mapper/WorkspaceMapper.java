@@ -36,23 +36,26 @@ public interface WorkspaceMapper {
         @BeanMapping(ignoreByDefault = true)
         WorkspaceResponse toWorkspaceCreationResponse(Workspace workspace);
 
-        @Mappings({
-                        @Mapping(target = "id", source = "id"),
-                        @Mapping(target = "name", source = "name"),
-        })
-        @BeanMapping(ignoreByDefault = true)
-        WorkspaceResponse toWorkspaceResponseByIdWithoutProject(Workspace workspace);
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "owner.name", source = "owner.name"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+    WorkspaceResponse toWorkspaceResponseForPaging(Workspace workspace);
 
-        @Mappings({
-                        @Mapping(target = "id", source = "id"),
-                        @Mapping(target = "name", source = "name"),
-                        @Mapping(target = "start", source = "start"),
-                        @Mapping(target = "description", source = "description"),
-                        @Mapping(target = "end", source = "end"),
-                        @Mapping(target = "projects", source = "projects", qualifiedByName = "projectToProjectResponse"),
-        })
-        @BeanMapping(ignoreByDefault = true)
-        WorkspaceResponse toWorkspaceResponseById(Workspace workspace);
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "description", source = "description"),
+            @Mapping(target = "sprintNum", source = "sprintNum"),
+            @Mapping(target = "timePerSprint", source = "timePerSprint"),
+            @Mapping(target = "start", source = "start"),
+            @Mapping(target = "end", source = "end"),
+            @Mapping(target ="createdAt", source = "dtCreated"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+    WorkspaceResponse toWorkspaceResponseById(Workspace workspace);
 
         @Mappings({
                         @Mapping(target = "id", source = "id"),

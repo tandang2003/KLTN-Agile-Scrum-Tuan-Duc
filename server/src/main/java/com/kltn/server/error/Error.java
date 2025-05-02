@@ -16,8 +16,10 @@ public enum Error {
     TOO_MANY_REQUESTS(429, "Too many requests, please try again later"),
     INVALID_PARAMETER_REQUEST(422, "Invalid parameter request"),
 
-    CREATE_FAILED(409, "Failer to create resource"),
+    CREATE_FAILED(409, "Failure to create resource"),
+    INVITED_FAILED(409, "Failure to invite user"),
 
+    NOT_FOUND_PROJECT(404, "Project not found"),
 
     // Authentication & Token Errors
     TOKEN_EXPIRED(440, "Token has expired"),

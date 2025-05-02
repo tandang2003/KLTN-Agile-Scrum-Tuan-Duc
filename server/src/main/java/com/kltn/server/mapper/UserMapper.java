@@ -43,14 +43,14 @@ public interface UserMapper {
     @BeanMapping(ignoreByDefault = true)
     UserResponse toUserResponse(User user);
 
-
+//FIX
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
             @Mapping(target = "uniId", source = "uniId"),
             @Mapping(target = "className", source = "className"),
             @Mapping(target = "role", source = "role.name"),
-            @Mapping(target = "project", source = "project", qualifiedByName = "projectToProjectResponse"),
+//            @Mapping(target = "project", source = "project", qualifiedByName = "projectToProjectResponse"),
     })
     @BeanMapping(ignoreByDefault = true)
     UserResponse toWorkspaceStudentResponse(User user);
