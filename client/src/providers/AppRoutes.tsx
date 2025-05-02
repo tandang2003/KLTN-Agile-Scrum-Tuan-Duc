@@ -14,6 +14,7 @@ import BoardPage from '@/pages/manager/workspace/project/board/page'
 import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { KanbanDemo } from '@/pages/manager/workspace/project/kaban/page'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -63,6 +64,7 @@ const AppRoutes = () => {
               {/* http://localhost:3000/manager/workspace/project/1/board */}
               <Route path='board' index element={<BoardPage />} />
               <Route path='backlog' element={<BacklogPage />} />
+              <Route path='kaban' element={<KanbanDemo />} />
             </Route>
           </Route>
 
