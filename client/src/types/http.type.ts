@@ -1,6 +1,6 @@
 import { HttpStatusCode } from 'axios'
 
-export type ResponseApi<T> = {
+type ResponseApi<T> = {
   code: number
   data: T & {
     createdAt?: Date | undefined
@@ -12,25 +12,30 @@ export type ResponseApi<T> = {
   }
   message: string
 }
-export type ResponseApiError = {
+type ResponseApiError = {
   code: number
   message: string
   error: FieldError[]
 }
 
-export type FieldError = {
+type FieldError = {
   field: string
   message: string
 }
 
-export type Page<T> = {
+type Page<T> = {
   items: T[]
   currentPage: number
   totalPages: number
   totalItems: number
 }
 
-export class ValidationError extends Error {
+type PageRequest = {
+  page: number
+  size: number
+}
+
+class ValidationError extends Error {
   code: number
   message: string
   error: FieldError[]
@@ -49,7 +54,7 @@ export class ValidationError extends Error {
   }
 }
 
-export class UnauthorizedError extends Error {
+class UnauthorizedError extends Error {
   code: number
   message: string
   constructor() {
@@ -61,3 +66,6 @@ export class UnauthorizedError extends Error {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+export type { ResponseApi, ResponseApiError, FieldError, Page, PageRequest }
+
+export { ValidationError, UnauthorizedError }

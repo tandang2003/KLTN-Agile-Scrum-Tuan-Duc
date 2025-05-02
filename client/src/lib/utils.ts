@@ -6,14 +6,15 @@ import {
   ColumnModelType
 } from '@/types/card.type'
 import { clsx, type ClassValue } from 'clsx'
+import { format } from 'date-fns'
 import { twMerge } from 'tailwind-merge'
 import { v4 as uuidv4 } from 'uuid'
 
-export function cn(...inputs: ClassValue[]) {
+function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const convert = (boardModel: BoardModelType): BoardProps => {
+const convert = (boardModel: BoardModelType): BoardProps => {
   const columns: ColumnModelType[] = Object.values(boardModel.process)
   return {
     columns: columns.map((column: ColumnModelType) => {
@@ -57,14 +58,40 @@ const convertCardTypeToCardProps = (
   }
 }
 
-export const uuid = (): string => {
+const uuid = (): string => {
   return uuidv4()
 }
 
-export const invertColor = (hex: string) => {
+const invertColor = (hex: string) => {
   const r = 255 - parseInt(hex.substr(1, 2), 16)
   const g = 255 - parseInt(hex.substr(3, 2), 16)
   const b = 255 - parseInt(hex.substr(5, 2), 16)
 
   return `#${[r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('')}`
 }
+type AnyObject = { [key: string]: any }
+
+const toQueryString = (obj: AnyObject) => {
+  return Object.entries(obj)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
+    )
+    .join('&')
+}
+
+const formatDate = (
+  date: Date,
+  pattern: 'SHORT' | 'LONG' | string = 'SHORT'
+) => {
+  const patterns: Record<'SHORT' | 'LONG', string> = {
+    SHORT: 'dd/MM/yyyy',
+    LONG: 'HH:mm dd/MM/yyyy'
+  }
+
+  const resolvedPattern =
+    pattern === 'SHORT' || pattern === 'LONG' ? patterns[pattern] : pattern
+
+  return format(date, resolvedPattern)
+}
+export { uuid, cn, toQueryString, invertColor, convert, formatDate }

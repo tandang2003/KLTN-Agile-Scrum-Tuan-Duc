@@ -44,6 +44,4 @@ public class UserController {
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.<Void>builder().code(404).message("user is not exist").build());
     }
-
-
 }

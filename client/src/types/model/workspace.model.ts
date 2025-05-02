@@ -8,8 +8,8 @@ type WorkSpaceModel = {
   description?: string
   numSprint: number
   timePerSprint: number
-  dtStart: Date
-  dtEnd?: Date
+  start: Date
+  end: Date
 }
 
 export type { WorkSpaceModel }

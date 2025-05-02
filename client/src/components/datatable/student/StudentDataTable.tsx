@@ -1,14 +1,8 @@
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  InitialTableState,
-  TableState,
-  Updater,
-  useReactTable
-} from '@tanstack/react-table'
+import { flexRender } from '@tanstack/react-table'
 
+import { DataTablePagination } from '@/components/datatable/DataTablePagination'
+import { columns } from '@/components/datatable/student/userColumns'
+import { useUserTable } from '@/components/datatable/student/useUserDataTable'
 import {
   Table,
   TableBody,
@@ -17,46 +11,14 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { useState } from 'react'
-import { DataTablePagination } from '@/components/datatable/DataTablePagination'
+import { Id } from '@/types/other.type'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+interface DataTableProps {
+  workspaceId: Id
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data
-}: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
-    data,
-    columns,
-    debugAll: false,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
-  })
-
-  const [state, setState] = useState<TableState>({
-    ...table.initialState,
-    pagination: {
-      pageIndex: 1,
-      pageSize: 2
-    }
-  })
-
-  const handleStateChange = (updater: Updater<TableState>) => {
-    const newSortingValue =
-      updater instanceof Function ? updater(state) : updater
-    console.log(newSortingValue)
-    setState({ ...newSortingValue })
-  }
-
-  table.setOptions((prev) => ({
-    ...prev, //preserve any other options that we have set up above
-    state, //our fully controlled state overrides the internal state
-    onStateChange: handleStateChange //any state changes will be pushed up to our own state management
-  }))
+function DataTable({ workspaceId }: DataTableProps) {
+  const { table } = useUserTable(workspaceId)
 
   return (
     <div className='rounded-md border'>
@@ -95,7 +57,10 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center'>
+              <TableCell
+                colSpan={columns.length}
+                className='h-[50vh] text-center'
+              >
                 No results.
               </TableCell>
             </TableRow>
@@ -107,3 +72,4 @@ export function DataTable<TData, TValue>({
     </div>
   )
 }
+export { DataTable as StudentDataTable }
