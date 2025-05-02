@@ -56,6 +56,7 @@ public class ApiResponse<T> {
             this.error = error;
             return this;
         }
+
         public ApiResponseBuilder<T> logData(Object logData) {
             this.logData = logData;
             return this;

@@ -9,7 +9,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record WorkspaceResponse(String id, String name, String description, int sprintNum, int timePerSprint,
-                                UserResponse user, Instant start, Instant end, List<ProjectResponse> projects,
+                                UserResponse owner, Instant start, Instant end, List<ProjectResponse> projects,
                                 Instant createdAt) {
     public static WorkspaceResponseBuilder builder() {
         return new WorkspaceResponseBuilder();
@@ -23,7 +23,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
         int timePerSprint;
         Instant start;
         Instant end;
-        UserResponse user;
+        UserResponse owner;
         List<ProjectResponse> projects;
         Instant createdAt;
 
@@ -68,8 +68,8 @@ public record WorkspaceResponse(String id, String name, String description, int 
             return this;
         }
 
-        public WorkspaceResponseBuilder user(UserResponse user) {
-            this.user = user;
+        public WorkspaceResponseBuilder owner(UserResponse owner) {
+            this.owner = owner;
             return this;
         }
 
@@ -79,7 +79,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
         }
 
         public WorkspaceResponse build() {
-            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, user, start, end, projects, createdAt);
+            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, owner, start, end, projects, createdAt);
         }
     }
 
