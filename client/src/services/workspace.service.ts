@@ -4,6 +4,7 @@ import { Page, ResponseApi } from '@/types/http.type'
 import {
   CreateWorkspaceReqType,
   ListStudentWorkspaceReq,
+  ListWorkspaceReq,
   StudentWorkspaceDataTable,
   WorkspaceCardResponse,
   WorkspaceResponse
@@ -11,11 +12,13 @@ import {
 import { UniqueIdentifier } from '@dnd-kit/core'
 
 const workspaceService = {
-  getListWorkSpace: async (): Promise<Page<WorkspaceCardResponse>> => {
-    const response =
-      await httpService.get<ResponseApi<Page<WorkspaceCardResponse>>>(
-        `/workspace/list`
-      )
+  getListWorkSpace: async (
+    req: ListWorkspaceReq
+  ): Promise<Page<WorkspaceCardResponse>> => {
+    const queryString = req.page ? toQueryString(req) : ''
+    const response = await httpService.get<
+      ResponseApi<Page<WorkspaceCardResponse>>
+    >(`/workspace/list?${queryString}`)
     return response.data.data
   },
 

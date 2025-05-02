@@ -10,13 +10,15 @@ type LoginRes = {
     id: string
     name: string
     uniId: string
-    role: string
+    role: RoleType
   }
 }
+
+type RoleType = 'teacher' | 'student'
 
 type LogoutReq = {
   accessToken: string
 }
 
 type LoginReq = Omit<RegisterReq, 'name'>
-export type { RegisterReq, LoginRes, LoginReq, LogoutReq }
+export type { RegisterReq, LoginRes, LoginReq, LogoutReq, RoleType }
