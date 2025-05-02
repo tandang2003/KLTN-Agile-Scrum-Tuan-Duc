@@ -386,28 +386,31 @@ paths:
                           name:
                             type: string
                             description: name workspace
-                          projects:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: project id
-                                name:
-                                  type: string
-                                  description: project name
+                          owner:
+                            type: string
+                            description: name owner
+                          sprintNum:
+                            type: number
+                            description: quantity of sprint
+                          timePerSprint:
+                            type: number
+                            description: time per sprint
+                          start:
+                            type: string
+                            description: date time start workspace
+                          end:
+                            type: string
+                            description: date time end workspace
+                          createAt:
+                            type: string
+                            description: date time create workspace
                     example:
                       code: 200
                       message: "Workspace and project info retrieved successfully"
                       data:
                         id: "workspace-1"
                         name: "LTW"
-                        projects:
-                          - id: "project-1"
-                            name: "Project A"
-                          - id: "project-2"
-                            name: "Project B"
+
     put:
       summary: Update and setting workspace
       parameters:
@@ -476,6 +479,69 @@ paths:
                             name: "Project A"
                           - id: "project-2"
                             name: "Project B"
+  /workspace/list:
+    get:
+      summary: Paging workspace
+      description: |
+        Used by: 
+        - Teacher
+        - Student id appended to workspace
+        Sort by id
+      parameters:
+      - name: page
+        required: false
+        allowEmptyValue: true
+        in: query
+      - name: size
+        required: false
+        allowEmptyValue: true
+        in: query
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: "#/components/schemas/ApiPaging"
+                          - type: object
+                            properties:
+                              items:
+                                properties:
+                                  id:
+                                    type: string
+                                    description: project id
+                                  name:
+                                    type: string
+                                    description: project name
+                                  owner:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        description: name owner
+                    example:
+                      code: 200
+                      message: "Create project success"
+                      data:
+                        items:
+                          - id: "project-001"
+                            name: Sell clothes
+                            owner:
+                              name: Le Anh Duc
+                          - id: "project-002"
+                            name: Sell Estate
+                            owner:
+                              name: Dang Minh Tan
+                        currentPage: 1
+                        totalPages: 2
+                        totalItems: 4
   # -----------------------------------------------
   /workspace/student:
     post:
@@ -1213,6 +1279,43 @@ paths:
                   description: "..."
                   storyPoint: 10
                   priority: Critical
+  # -----------------------------------------------
+  /user/check:
+    post:
+      summary: Checking user with uniId has existed in workspace id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uniId:
+                  type: string
+                  description: university id
+                workspaceId:
+                  type: string
+                  description: workspace id
+      responses:
+        200:
+          description: user with uniId is not exist in workspace id
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+        404:
+          description: user with uniId is exist in workspace id
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+  # -----------------------------------------------
 components:
   schemas:
     TagObject:
