@@ -29,6 +29,4 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserResponse>> userWorkspace() {
         return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info workspace of user").data(userService.getUserWorkspaces()).build());
     }
-
-
 }

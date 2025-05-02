@@ -1,7 +1,9 @@
+import workspaceApi from '@/feature/workspace/workspace.api'
 import authService, { restoreTokenLocal } from '@/services/auth.service'
-import { LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
+import { LoginReq, LoginRes, LogoutReq, RoleType } from '@/types/auth.type'
 import { FieldError } from '@/types/http.type'
 import { Id } from '@/types/other.type'
+import { UserInfoResponse } from '@/types/user.type'
 import {
   createAsyncThunk,
   createSlice,
@@ -23,7 +25,7 @@ type UserAuthType = {
   id: Id
   name: string
   uniId: string
-  role: string
+  role: RoleType
 }
 
 const initialState: AuthState = {
@@ -46,13 +48,27 @@ const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
   }
 )
 
+const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
+  'auth/user',
+  async (_, { rejectWithValue, signal }) => {
+    try {
+      const data = await authService.getInfo(signal)
+      return data.data
+    } catch (_) {
+      return rejectWithValue('Get user workspace failed')
+    }
+  }
+)
+
 const logoutThunk = createAsyncThunk<void, LogoutReq>(
   'auth/logout',
-  async (req, thunkAPI) => {
+  async (req, { dispatch, rejectWithValue }) => {
     try {
       await authService.logout(req)
     } catch (_) {
-      return thunkAPI.rejectWithValue('Token invalid')
+      return rejectWithValue('Token invalid')
+    } finally {
+      dispatch(workspaceApi.util.resetApiState())
     }
   }
 )
@@ -74,7 +90,6 @@ const authSlice = createSlice({
       loginThunk.fulfilled,
       (state: AuthState, action: PayloadAction<LoginRes>) => {
         const { user } = action.payload
-        console.log(user)
         state.user = user
         state.isAuth = true
       }
@@ -87,19 +102,25 @@ const authSlice = createSlice({
         ? { field: 'password', message: action.payload as string }
         : { field: 'password', message: 'Email or password not valid' }
     })
-
+    builder.addCase(
+      restoreUserThunk.fulfilled,
+      (state: AuthState, action: PayloadAction<UserInfoResponse>) => {
+        state.user = action.payload
+        state.isAuth = true
+      }
+    )
+    builder.addCase(restoreUserThunk.rejected, (state: AuthState) => {
+      state.user = undefined
+      state.isAuth = false
+    })
     // logout
     builder.addMatcher(
       (action) =>
         action.type === logoutThunk.rejected.type ||
         action.type === logoutThunk.fulfilled.type,
-      (state) => {
-        state.accessToken = null
-        state.isAuth = false
-        state.user = undefined
-        state.error = undefined
-      }
+      () => initialState
     )
+
     builder.addMatcher(isPending, (state) => {
       state.loading = true
     })
@@ -113,5 +134,5 @@ const authSlice = createSlice({
 })
 const authReducer = authSlice.reducer
 const { setUser } = authSlice.actions
-export { loginThunk, logoutThunk, setUser }
+export { loginThunk, logoutThunk, setUser, restoreUserThunk }
 export default authReducer
