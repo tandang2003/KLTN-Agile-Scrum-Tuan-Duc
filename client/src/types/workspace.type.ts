@@ -40,6 +40,8 @@ type WorkspaceCardResponse = {
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
 
+type ListWorkspaceReq = PageRequest
+
 type ListStudentWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
   page?: PageRequest
 }
@@ -55,6 +57,7 @@ export type {
   WorkspaceResponse,
   WorkspaceCardResponse,
   WorkspaceSideBar,
+  ListWorkspaceReq,
   ListStudentWorkspaceReq,
   StudentWorkspaceDataTable
 }

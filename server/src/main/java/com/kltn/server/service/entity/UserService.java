@@ -46,23 +46,29 @@ public class UserService {
         return userResponse;
     }
 
+    //FIX
     public UserResponse getUserWorkspaces() {
-        User user = getCurrentUser();
-        List<Workspace> workspaces;
-        if (user.getRole().getName().equals("teacher")) {
-            workspaces = user.getWorkspaces();
-        } else if (user.getRole().getName().equals("student")) {
-            workspaces = user.getWorkspacesJoined();
-        } else {
-            workspaces = new ArrayList<>();
-        }
-        int subListSize = Math.min(workspaces.size(), 5);
-        workspaces = workspaces.stream()
-                .sorted(Comparator.comparing(Workspace::getDtCreated))
-                .toList().subList(0, subListSize);
-        user.setWorkspaces(workspaces);
-        UserResponse userResponse = userMapper.toUserWorkspaceResponse(user);
-        return userResponse;
+        return null;
+//        User user = getCurrentUser();
+//        List<Workspace> workspaces;
+//        if (user.getRole().getName().equals("teacher")) {
+//            workspaces = user.getWorkspaces();
+//        } else if (user.getRole().getName().equals("student")) {
+//            workspaces = user.getWorkspacesJoined();
+//        } else {
+//            workspaces = new ArrayList<>();
+//        }
+//        int subListSize = Math.min(workspaces.size(), 5);
+//        workspaces = workspaces.stream()
+//                .sorted(Comparator.comparing(Workspace::getDtCreated))
+//                .toList().subList(0, subListSize);
+//        user.setWorkspaces(workspaces);
+//        UserResponse userResponse = userMapper.toUserWorkspaceResponse(user);
+//        return userResponse;
     }
 
+    public boolean checkingUser(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null;
+    }
 }
