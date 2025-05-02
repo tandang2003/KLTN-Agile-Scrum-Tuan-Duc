@@ -1,6 +1,9 @@
 package com.kltn.server.model.entity;
 
+import com.kltn.server.error.AppException;
+import com.kltn.server.error.Error;
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -26,16 +30,20 @@ public class User extends BaseEntity implements UserDetails {
     private Role role;
     @OneToMany(mappedBy = "owner")
     private List<Workspace> workspaces;
-    @ManyToMany
-    @JoinTable(name = "users_projects",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id"))
-    private List<Project> projects;
-    @OneToMany(mappedBy = "owner")
-    private Set<Project> projectOwned;
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<WorkspacesUsersProjects> workspacesUserProjects;
 
-    @ManyToMany(mappedBy = "members")
-    private List<Workspace> workspacesJoined;
+//    @ManyToMany
+//    @JoinTable(name = "users_projects",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "project_id"))
+//    private List<Project> projects;
+//    @OneToMany(mappedBy = "owner")
+//    private Set<Project> projectOwned;
+
+//    @ManyToMany(mappedBy = "members")
+//    private List<Workspace> workspacesJoined;
 
     @OneToMany(mappedBy = "assigner")
     private Set<Task> assignedTasks;
@@ -45,14 +53,6 @@ public class User extends BaseEntity implements UserDetails {
     @Transient
     private boolean alive;
 
-    //    @Transient
-//    private long totalProject;
-//    @Transient
-//    private long totalWorkspace;
-//    @Transient
-//    private long totalTask;
-//    @Transient
-//    private long totalPageWorkspace;
     public User() {
         super();
     }
@@ -71,7 +71,7 @@ public class User extends BaseEntity implements UserDetails {
         this.uniId = builder.uniId;
         this.uniPassword = builder.uniPassword;
         this.role = builder.role;
-        this.projects = builder.projects;
+//        this.projects = builder.projects;
         this.assignedTasks = builder.assignedTasks;
         this.reviewedTasks = builder.reviewedTasks;
         this.workspaces = builder.workspaces;
@@ -180,11 +180,7 @@ public class User extends BaseEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         // Convert role permissions to authorities
-        Collection<GrantedAuthority> authorities = new ArrayList<>(
-                role.getPermissions().stream()
-                        .map(p -> new SimpleGrantedAuthority(p.getName()))
-                        .toList()
-        );
+        Collection<GrantedAuthority> authorities = new ArrayList<>(role.getPermissions().stream().map(p -> new SimpleGrantedAuthority(p.getName())).toList());
 
         // Add role with "ROLE_" prefix
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
@@ -244,14 +240,6 @@ public class User extends BaseEntity implements UserDetails {
         this.workspaces = workspaces;
     }
 
-    public List<Project> getProject() {
-        return projects;
-    }
-
-    public void setProject(List<Project> projects) {
-        this.projects = projects;
-    }
-
     public Set<Task> getAssignedTasks() {
         return assignedTasks;
     }
@@ -272,14 +260,6 @@ public class User extends BaseEntity implements UserDetails {
         this.className = className;
     }
 
-    public List<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
-    }
-
     public boolean isAlive() {
         return alive;
     }
@@ -293,38 +273,25 @@ public class User extends BaseEntity implements UserDetails {
         this.reviewedTasks = reviewedTasks;
     }
 
-    public List<Workspace> getWorkspacesJoined() {
-        return workspacesJoined;
+    public List<WorkspacesUsersProjects> getWorkspacesUserProjects() {
+        return workspacesUserProjects;
     }
-//    public long getTotalProject() {
-//        return totalProject;
-//    }
-//
-//    public void setTotalProject(long totalProject) {
-//        this.totalProject = totalProject;
-//    }
-//
-//    public long getTotalWorkspace() {
-//        return totalWorkspace;
-//    }
-//
-//    public void setTotalWorkspace(long totalWorkspace) {
-//        this.totalWorkspace = totalWorkspace;
-//    }
-//
-//    public long getTotalTask() {
-//        return totalTask;
-//    }
-//
-//    public void setTotalTask(long totalTask) {
-//        this.totalTask = totalTask;
-//    }
-//    public long getTotalPageWorkspace() {
-//        return totalPageWorkspace;
-//    }
-//    public void setTotalPageWorkspace(long totalPageWorkspace) {
-//        this.totalPageWorkspace = totalPageWorkspace;
-//    }
+
+    public void setWorkspacesUserProjects(List<WorkspacesUsersProjects> workspacesUserProjects) {
+        this.workspacesUserProjects = workspacesUserProjects;
+    }
+
+    public Set<Project> getProjectJoin() {
+        return workspacesUserProjects.stream().map(WorkspacesUsersProjects::getProject).collect(Collectors.toSet());
+    }
+
+    public Role getProjectRole(String projectId) {
+        return workspacesUserProjects.stream().filter(w -> !w.getProject().getId().equals(projectId)).findFirst().orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build()).getRole();
+    }
+
+    public Set<Workspace> getWorkspaceJoin() {
+        return workspacesUserProjects.stream().map(WorkspacesUsersProjects::getWorkspace).collect(Collectors.toSet());
+    }
 }
 
 

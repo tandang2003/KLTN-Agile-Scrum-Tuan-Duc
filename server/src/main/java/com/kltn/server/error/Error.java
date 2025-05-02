@@ -17,7 +17,9 @@ public enum Error {
     INVALID_PARAMETER_REQUEST(422, "Invalid parameter request"),
 
     CREATE_FAILED(409, "Failer to create resource"),
+    INVITED_FAILED(409, "Failer to invite user"),
 
+    NOT_FOUND_PROJECT(404, "Project not found"),
 
     // Authentication & Token Errors
     TOKEN_EXPIRED(440, "Token has expired"),

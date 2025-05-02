@@ -1,10 +1,10 @@
 package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "projects")
@@ -12,26 +12,16 @@ public class Project extends BaseEntity {
     private String name;
     @Column(columnDefinition = "LONGTEXT")
     private String description;
-    //    @ManyToOne
-//    @JoinColumn(name = "workspace_id")
-//    @ManyToMany(mappedBy = "projects")
-    @ManyToOne
-    @JoinColumn(name = "workspace_id", nullable = false)
-    private Workspace workspace;
-    @ManyToMany(mappedBy = "projects")
-    private Set<User> users;
     @OneToMany(mappedBy = "project")
     private List<Sprint> sprints;
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<WorkspacesUsersProjects> workspacesUserProjects;
 
     public Project(ProjectEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
         this.description = builder.description;
-        this.workspace = builder.workspace;
-        this.users = builder.users;
         this.sprints = builder.sprints;
     }
 
@@ -43,8 +33,6 @@ public class Project extends BaseEntity {
     public static class ProjectEntityBuilder extends BaseEntityBuilder<Project, ProjectEntityBuilder> {
         private String name;
         private String description;
-        private Workspace workspace;
-        private Set<User> users;
         private List<Sprint> sprints;
 
         @Override
@@ -64,16 +52,6 @@ public class Project extends BaseEntity {
 
         public ProjectEntityBuilder description(String description) {
             this.description = description;
-            return this;
-        }
-
-        public ProjectEntityBuilder workspace(Workspace workspace) {
-            this.workspace = workspace;
-            return this;
-        }
-
-        public ProjectEntityBuilder member(Set<User> users) {
-            this.users = users;
             return this;
         }
 
@@ -99,22 +77,6 @@ public class Project extends BaseEntity {
         this.description = description;
     }
 
-    public Workspace getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
-    }
-
-    public Set<User> getMember() {
-        return users;
-    }
-
-    public void setMember(Set<User> users) {
-        this.users = users;
-    }
-
     public List<Sprint> getSprints() {
         return sprints;
     }
@@ -122,4 +84,34 @@ public class Project extends BaseEntity {
     public void setSprints(List<Sprint> sprints) {
         this.sprints = sprints;
     }
+
+    public List<WorkspacesUsersProjects> getWorkspacesUserProjects() {
+        return workspacesUserProjects;
+    }
+
+    public void setWorkspacesUserProjects(List<WorkspacesUsersProjects> workspacesUserProjects) {
+        this.workspacesUserProjects = workspacesUserProjects;
+    }
+    @Transient
+    public Workspace getWorkspace() {
+        return workspacesUserProjects == null || workspacesUserProjects.isEmpty() ? null : workspacesUserProjects.get(0).getWorkspace();
+    }
+
+    @Transient
+    public List<User> getMembers() {
+        return workspacesUserProjects.stream()
+                .map(WorkspacesUsersProjects::getUser)
+                .toList();
+    }
+    @Transient
+    public Role getMemberRole(String userId) {
+        return workspacesUserProjects.stream()
+                .filter(
+                        workspacesUsersProjects ->
+                                workspacesUsersProjects.getUser().getId().equals(userId))
+                .map(WorkspacesUsersProjects::getRole)
+                .findFirst()
+                .orElse(null);
+    }
+
 }
