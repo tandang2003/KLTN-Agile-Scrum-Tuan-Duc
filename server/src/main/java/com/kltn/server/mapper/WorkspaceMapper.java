@@ -41,14 +41,20 @@ public interface WorkspaceMapper {
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
+            @Mapping(target = "owner.name", source = "owner.name"),
     })
     @BeanMapping(ignoreByDefault = true)
-    WorkspaceResponse toWorkspaceResponseByIdWithoutProject(Workspace workspace);
+    WorkspaceResponse toWorkspaceResponseForPaging(Workspace workspace);
 
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
-            @Mapping(target = "projects", source = "projects", qualifiedByName = "projectToProjectResponse"),
+            @Mapping(target = "description", source = "description"),
+            @Mapping(target = "sprintNum", source = "sprintNum"),
+            @Mapping(target = "timePerSprint", source = "timePerSprint"),
+            @Mapping(target = "start", source = "start"),
+            @Mapping(target = "end", source = "end"),
+            @Mapping(target ="createdAt", source = "dtCreated"),
     })
     @BeanMapping(ignoreByDefault = true)
     WorkspaceResponse toWorkspaceResponseById(Workspace workspace);

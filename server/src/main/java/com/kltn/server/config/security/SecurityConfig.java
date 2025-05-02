@@ -79,7 +79,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
-//                    authorizeRequests.requestMatchers("user/**").authenticated();
                     authorizeRequests.requestMatchers(applicationProps.getWhitelist().toArray(String[]::new )).permitAll();
                     authorizeRequests.anyRequest().authenticated();
                 })
