@@ -26,3 +26,8 @@ springdoc:
   swagger-ui:
     enabled: #OPTIONAL
     url: #REQUIRED
+
+app:
+  security:
+    whiteList:
+      - /auth/refresh

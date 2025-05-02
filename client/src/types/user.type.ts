@@ -7,4 +7,6 @@ type UserResponse = Pick<UserModel, 'id' | 'uniId' | 'name' | 'role'> & {
   }
 }
 
-export type { UserResponse }
+type UserInfoResponse = Pick<UserModel, 'id' | 'uniId' | 'name' | 'role'>
+
+export type { UserResponse, UserInfoResponse }

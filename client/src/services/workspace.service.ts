@@ -1,27 +1,32 @@
+import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { Page, ResponseApi } from '@/types/http.type'
 import {
   CreateWorkspaceReqType,
+  ListStudentWorkspaceReq,
+  ListWorkspaceReq,
+  StudentWorkspaceDataTable,
   WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 import { UniqueIdentifier } from '@dnd-kit/core'
 
 const workspaceService = {
-  getListWorkSpace: async (): Promise<Page<WorkspaceCardResponse>> => {
-    const response =
-      await httpService.get<ResponseApi<Page<WorkspaceCardResponse>>>(
-        `/workspace/list`
-      )
-    console.log('response', response)
+  getListWorkSpace: async (
+    req: ListWorkspaceReq
+  ): Promise<Page<WorkspaceCardResponse>> => {
+    const queryString = req.page ? toQueryString(req) : ''
+    const response = await httpService.get<
+      ResponseApi<Page<WorkspaceCardResponse>>
+    >(`/workspace/list?${queryString}`)
     return response.data.data
   },
 
   getWorkSpace: async (id: UniqueIdentifier): Promise<WorkspaceResponse> => {
-    const response = await httpService.get<WorkspaceResponse>(
+    const response = await httpService.get<ResponseApi<WorkspaceResponse>>(
       `/workspace/${id}`
     )
-    return response.data
+    return response.data.data
   },
   createWorkspace: async (
     req: CreateWorkspaceReqType
@@ -31,6 +36,15 @@ const workspaceService = {
       CreateWorkspaceReqType
     >('/workspace', req)
     return response.data
+  },
+  getListStudent: async (
+    req: ListStudentWorkspaceReq
+  ): Promise<Page<StudentWorkspaceDataTable>> => {
+    const queryString = req.page ? toQueryString(req.page) : ''
+    const response = await httpService.get<
+      ResponseApi<Page<StudentWorkspaceDataTable>>
+    >(`/workspace/${req.id}/student?${queryString}`)
+    return response.data.data
   }
 }
 
