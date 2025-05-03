@@ -9,8 +9,8 @@ import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppListArgumentNotValidException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
-import com.kltn.server.mapper.UserMapper;
-import com.kltn.server.mapper.WorkspaceMapper;
+import com.kltn.server.mapper.entity.UserMapper;
+import com.kltn.server.mapper.entity.WorkspaceMapper;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
@@ -35,7 +35,7 @@ public class WorkspaceService {
     private UserMapper userMapper;
     private WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository;
 
-    public WorkspaceService(WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,UserRepository userRepository, UserMapper userMapper, WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper) {
+    public WorkspaceService(WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, UserRepository userRepository, UserMapper userMapper, WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper) {
         this.userRepository = userRepository;
         this.workspaceRepository = workspaceRepository;
         this.workspaceMapper = workspaceMapper;
@@ -73,9 +73,9 @@ public class WorkspaceService {
         ).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         Page<Workspace> workspaces;
         if (user.getRole().getName().equals("teacher")) {
-            workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT));
+            workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_JPA));
         } else {
-            workspaces = workspaceRepository.findAllByMembersId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT));
+            workspaces = workspaceRepository.findAllByMembersId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_MANUAL));
         }
         return ApiPaging.<WorkspaceResponse>builder().items(workspaces.get().map(workspaceMapper::toWorkspaceResponseForPaging).toList()).totalItems(workspaces.getTotalElements()).totalPages(workspaces.getTotalPages()).currentPage(workspaces.getNumber()).build();
     }
@@ -127,7 +127,10 @@ public class WorkspaceService {
                 try {
                     workspacesUsersProjectsRepository.save(WorkspacesUsersProjects
                             .builder()
-                            .id(new WorkspacesUsersId(workspace.getId(), user.getId()))
+                            .id(WorkspacesUsersId.builder()
+                                    .userId(user.getId())
+                                    .workspaceId(workspace.getId())
+                                    .build())
                             .workspace(workspace)
                             .user(user)
                             .build());

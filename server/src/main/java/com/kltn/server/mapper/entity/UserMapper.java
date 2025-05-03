@@ -1,7 +1,6 @@
-package com.kltn.server.mapper;
+package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
-import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.AuthenticationResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
@@ -9,7 +8,6 @@ import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
 import org.mapstruct.*;
-import org.springframework.data.domain.Page;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",

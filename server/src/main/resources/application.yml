@@ -24,22 +24,23 @@ spring:
 #    producer:
 #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
 #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#    #      properties:
-#    #        spring:
-#    #          json:
-#    #            type:
-#    #              mapping:
-#    #                  "send_object_customer: com.example.kafkaspringexample.data.Customer"
+#      properties:
+#        spring:
+#          json:
+#            type:
+#              mapping:
+#                "send_project_customer: com.kltn.server.DTO.request.log.ProjectLogRequest"
 #    consumer:
 #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#    #      properties:
-#    #        spring:
-#    #          json:
-#    #            trusted:
-#    #              packages: "send_object_customer"
-#    #            type:
-#    #              mapping: "send_object_customer: com.example.springkafkaconsumerexample.data.Customer"
+#      properties:
+#        spring:
+#          json:
+#            trusted:
+#              packages: "send_project_customer"
+#            type:
+#              mapping: "send_project_customer: com.kltn.server.DTO.request.log.ProjectLogRequest"
+#
 #    bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
 
 springdoc:
