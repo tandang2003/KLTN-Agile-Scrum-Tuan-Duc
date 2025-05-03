@@ -30,6 +30,7 @@ public class Project extends BaseEntity {
     }
 
 
+
     public static class ProjectEntityBuilder extends BaseEntityBuilder<Project, ProjectEntityBuilder> {
         private String name;
         private String description;
