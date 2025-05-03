@@ -24,8 +24,10 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<RootLayout />}>
+          {/* <Route path='kaban' element={<KanbanDemo />} /> */}
           <Route index element={<HomePage />} />
           <Route path='home' element={<HomePage />} />
+          <Route path='kaban' element={<BoardPage />} />
           <Route
             path='auth'
             element={
@@ -64,7 +66,6 @@ const AppRoutes = () => {
               {/* http://localhost:3000/manager/workspace/project/1/board */}
               <Route path='board' index element={<BoardPage />} />
               <Route path='backlog' element={<BacklogPage />} />
-              <Route path='kaban' element={<KanbanDemo />} />
             </Route>
           </Route>
 

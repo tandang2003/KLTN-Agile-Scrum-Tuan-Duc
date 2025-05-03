@@ -1,33 +1,32 @@
-import { BaseCardProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import {
   CardFooter,
   CardHeader,
   CardTitle,
   Card as CardUI
 } from '@/components/ui/card'
-import { cn, uuid } from '@/lib/utils'
-import { getTagColor } from '@/types/tag.type'
+import { cn } from '@/lib/utils'
+import { CardModelType } from '@/types/card.type'
+import { Id } from '@/types/other.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { memo } from 'react'
 
-type CardProps = BaseCardProps & {
+type CardProps = {
+  data: CardModelType & { columnId: Id }
   container?: string
 }
 
 const Card = ({
-  id,
-  name,
-  columnId,
-  numAttach,
-  numComment,
-  numAssigner = 0,
-  assigners,
-  thumbnail,
-  tags,
+  data: {
+    id,
+    name,
+    columnId,
+    numAttach,
+    numComment,
+    numAssigner = 0,
+    thumbnail
+  },
   container
 }: CardProps) => {
   const {
@@ -46,9 +45,7 @@ const Card = ({
       numAttach,
       numComment,
       numAssigner,
-      assigners,
-      thumbnail,
-      tags
+      thumbnail
     }
   })
 
@@ -77,23 +74,7 @@ const Card = ({
     >
       <CardUI className='rounded-none border-none bg-transparent p-0 shadow-none'>
         <CardHeader className='p-0'>
-          <span className='flex'>
-            {tags?.map(({ color, name }) => {
-              return (
-                <Badge
-                  key={uuid()}
-                  variant='default'
-                  className={cn('mr-3')}
-                  style={{
-                    background: getTagColor(color).background,
-                    color: getTagColor(color).text
-                  }}
-                >
-                  {name}
-                </Badge>
-              )
-            })}
-          </span>
+          <span>#{id}</span>
           <CardTitle className='line-clamp-2 overflow-hidden leading-[1.67] text-wrap text-ellipsis'>
             {name}
           </CardTitle>
@@ -119,33 +100,6 @@ const Card = ({
             <Icon icon={'akar-icons:attach'} size={20} />
             <div>{numAttach ?? 0}</div>
           </span>
-          {assigners && (
-            <span className='ml-auto flex items-center text-sm'>
-              {/* <span className='text-nowrap'>Assigned to</span> */}
-              <span className={cn('flex', numAssigner != 0 && 'ml-3')}>
-                {numAssigner != 0 &&
-                  assigners?.map((item) => {
-                    return (
-                      <Avatar
-                        key={uuid()}
-                        className={cn('size-6 border-2', '-ml-2')}
-                      >
-                        <AvatarImage src={item.avatar} />
-                        <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    )
-                  })}
-                {/* Create more fallback*/}
-                {numAssigner != 0 && numAssigner > assigners.length && (
-                  <Avatar className={cn('size-6 border-2', '-ml-2')}>
-                    <AvatarFallback>
-                      {`${numAssigner - assigners.length}`}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-              </span>
-            </span>
-          )}
         </CardFooter>
       </CardUI>
     </div>
