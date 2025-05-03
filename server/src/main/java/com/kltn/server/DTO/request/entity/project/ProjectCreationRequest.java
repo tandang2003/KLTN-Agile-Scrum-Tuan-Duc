@@ -39,6 +39,9 @@ public record ProjectCreationRequest(@NotEmpty String name,
         }
 
         public ProjectCreationRequestBuilder tag(TopicRequest tag) {
+            if (this.tags == null) {
+                this.tags = new ArrayList<>();
+            }
             this.tags.add(tag);
             return this;
         }
