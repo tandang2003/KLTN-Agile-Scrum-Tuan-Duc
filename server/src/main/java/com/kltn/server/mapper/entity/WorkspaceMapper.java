@@ -1,4 +1,4 @@
-package com.kltn.server.mapper;
+package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;

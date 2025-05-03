@@ -5,6 +5,8 @@ import com.kltn.server.model.collection.model.Topic;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
+
 @Document
 public class Project extends BaseDocument {
     @Field("nk_project_id")
@@ -12,7 +14,7 @@ public class Project extends BaseDocument {
     @Field("description")
     private String description;
     @Field("topics")
-    private Topic[] topics;
+    private List<Topic> topics;
 
     public Project(ProjectBuilder builder) {
         super(builder);
@@ -24,7 +26,7 @@ public class Project extends BaseDocument {
     public static class ProjectBuilder extends BaseDocument.BaseDocumentBuilder<Project, ProjectBuilder> {
         private String nkProjectId;
         private String description;
-        private Topic[] topics;
+        private List<Topic> topics;
 
         public ProjectBuilder nkProjectId(String nkProjectId) {
             this.nkProjectId = nkProjectId;
@@ -36,7 +38,7 @@ public class Project extends BaseDocument {
             return this;
         }
 
-        public ProjectBuilder topics(Topic[] topics) {
+        public ProjectBuilder topics(List<Topic> topics) {
             this.topics = topics;
             return this;
         }
@@ -71,11 +73,11 @@ public class Project extends BaseDocument {
         this.description = description;
     }
 
-    public Topic[] getTags() {
+    public List<Topic> getTags() {
         return topics;
     }
 
-    public void setTags(Topic[] topics) {
+    public void setTags(List<Topic> topics) {
         this.topics = topics;
     }
 }

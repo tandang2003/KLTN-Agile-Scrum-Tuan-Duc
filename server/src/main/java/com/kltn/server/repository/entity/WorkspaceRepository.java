@@ -11,9 +11,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface WorkspaceRepository extends JpaRepository<Workspace, String>, PagingAndSortingRepository<Workspace, String> {
-    Sort DEFAULT_SORT = Sort.by(Sort.Direction.DESC, "dt_created");
+    Sort DEFAULT_SORT_JPA = Sort.by(Sort.Direction.DESC, "dtCreated");
+    Sort DEFAULT_SORT_MANUAL = Sort.by(Sort.Direction.DESC, "dt_created");
 
     Page<Workspace> findAllByOwnerId(String ownerId, Pageable pageable);
+
     @Query(
             value = "SELECT u.* FROM workspaces u " +
                     "WHERE u.id IN (SELECT DISTINCT w.workspace_id FROM workspaces_users_projects w WHERE w.user_id = :memberId)",

@@ -2,12 +2,12 @@ package com.kltn.server.controller;
 
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
-import com.kltn.server.mapper.UserMapper;
+import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.service.entity.UserService;
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ public class UserController {
 //    }
 
     @GetMapping("/check")
-    public ResponseEntity<ApiResponse<Void>> searchUser(@RequestBody
+    public ResponseEntity<ApiResponse<Void>> searchUser(@RequestParam("uniId")
                                                         @Length(
                                                                 min = 8,
                                                                 max = 8,
@@ -43,5 +43,20 @@ public class UserController {
             return ResponseEntity.ok().body(ApiResponse.<Void>builder().message("user is exist").build());
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.<Void>builder().code(404).message("user is not exist").build());
+    }
+
+    @GetMapping("/workspace/project/check")
+    public ResponseEntity<ApiResponse<Void>> checkUserInProject(@RequestParam("uniId") @Length(
+                                                                        min = 8,
+                                                                        max = 8,
+                                                                        message = "student id is not valid"
+                                                                ) String uniId,
+                                                                @RequestParam("workspaceId") @NotEmpty String workspaceId) {
+        ApiResponse<Void> response = userService.checkingUserWorkspaceProject(uniId, workspaceId);
+        return ResponseEntity.status(response.getCode()).body(response);
+//        if (userService.checkingUser(userId))
+//            return ResponseEntity.ok().body(ApiResponse.<Void>builder().message("user is exist").build());
+//        else
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.<Void>builder().code(404).message("user is not exist").build());
     }
 }
