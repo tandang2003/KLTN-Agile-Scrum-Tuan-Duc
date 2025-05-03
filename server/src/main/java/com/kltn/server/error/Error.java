@@ -16,8 +16,10 @@ public enum Error {
     TOO_MANY_REQUESTS(429, "Too many requests, please try again later"),
     INVALID_PARAMETER_REQUEST(422, "Invalid parameter request"),
 
-    CREATE_FAILED(409, "Failure to create resource"),
-    INVITED_FAILED(409, "Failure to invite user"),
+    CREATE_FAILED(410, "Failure to create resource"),
+    INVITED_FAILED(411, "Failure to invite user"),
+
+    ALREADY_EXISTS(409, "User already have project"),
 
     NOT_FOUND_PROJECT(404, "Project not found"),
 
