@@ -3,6 +3,7 @@ package com.kltn.server.DTO.request.entity.project;
 import com.kltn.server.DTO.request.base.TopicRequest;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record ProjectCreationRequest(@NotEmpty String name,

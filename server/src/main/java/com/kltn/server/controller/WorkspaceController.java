@@ -1,5 +1,6 @@
 package com.kltn.server.controller;
 
+import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
@@ -8,6 +9,8 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
+import com.kltn.server.kafka.SendMailEvent;
+import com.kltn.server.kafka.consumer.service.KafkaSendMailService;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.service.entity.UserService;
 import com.kltn.server.service.entity.WorkspaceService;
@@ -18,16 +21,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/workspace")
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
     private final UserService userService;
+    KafkaSendMailService kafkaSendMailService;
 
     @Autowired
-    public WorkspaceController(WorkspaceService workspaceService, UserService userService) {
+    public WorkspaceController(KafkaSendMailService kafkaSendMailService, WorkspaceService workspaceService, UserService userService) {
         this.workspaceService = workspaceService;
         this.userService = userService;
+        this.kafkaSendMailService = kafkaSendMailService;
     }
 
     @PostMapping
@@ -91,14 +98,26 @@ public class WorkspaceController {
     public ResponseEntity<ApiResponse<Void>> addStudentToWorkspace(@Valid @RequestBody
                                                                    WorkspaceUserAdditionRequest
                                                                            workspaceUserAdditionRequest) {
-        workspaceService.addStudentToWorkspace(workspaceUserAdditionRequest.workspaceId(), workspaceUserAdditionRequest.studentIds());
-
         return ResponseEntity.ok().body(
-                ApiResponse.<Void>builder()
-                        .message("Invite student to workspace")
-                        .build());
+                workspaceService.addStudentToWorkspace(workspaceUserAdditionRequest.workspaceId(), workspaceUserAdditionRequest.studentIds()));
     }
 
+//    @GetMapping("/test-mail")
+//    public ResponseEntity<ApiResponse<Void>> testMail() throws Exception {
+//        Map<String, String> resource = Map.of(
+//                "logo", "logo/kltn_logo.jpeg"
+//        );
+//        Map<String, String> variable = Map.of(
+//                "sender", "Tân Đan Minh",
+//                "project.name", "MY PROJECT",
+//                "project.confirmationLink", "https://google.com"
+//        );
+//        kafkaSendMailService.sendEmail(MailRequest.builder().templateName("email-confirm").to("tandanmin@gmail.com").resource(resource).variable(variable).build());
+//        return ResponseEntity.ok().body(
+//                ApiResponse.<Void>builder()
+//                        .message("test mail")
+//                        .build());
+//    }
 
 
 //    @GetMapping("/{workspaceId}/project")

@@ -10,14 +10,14 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class WorkspacesUsersProjects implements Serializable  {
+public class WorkspacesUsersProjects implements Serializable {
     @EmbeddedId
     private WorkspacesUsersId id;
-//@Id
+    //@Id
     @MapsId("workspaceId")
     @ManyToOne(optional = false)
     private Workspace workspace;
-//@Id
+    //@Id
     @MapsId("userId")
     @ManyToOne(optional = false)
     private User user;
@@ -28,6 +28,9 @@ public class WorkspacesUsersProjects implements Serializable  {
     @ManyToOne(optional = true)
     private Role role;
 
+    private boolean inProject;
+    private boolean inWorkspace;
+
     private WorkspacesUsersProjects(WorkspacesUsersProjectsBuilder builder) {
         super();
         this.workspace = builder.workspace;
@@ -35,6 +38,9 @@ public class WorkspacesUsersProjects implements Serializable  {
         this.project = builder.project;
         this.role = builder.role;
         this.id = builder.id;
+        this.inProject = builder.inProject;
+        this.inWorkspace = builder.inWorkspace;
+
     }
 
     public WorkspacesUsersProjects() {
@@ -54,6 +60,18 @@ public class WorkspacesUsersProjects implements Serializable  {
         private Project project;
         private Role role;
         private WorkspacesUsersId id;
+        private boolean inProject;
+        private boolean inWorkspace;
+
+        public WorkspacesUsersProjectsBuilder inProject(boolean inProject) {
+            this.inProject = inProject;
+            return this;
+        }
+
+        public WorkspacesUsersProjectsBuilder inWorkspace(boolean inWorkspace) {
+            this.inWorkspace = inWorkspace;
+            return this;
+        }
 
         public WorkspacesUsersProjectsBuilder id(WorkspacesUsersId id) {
             this.id = id;
@@ -123,5 +141,21 @@ public class WorkspacesUsersProjects implements Serializable  {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean isInProject() {
+        return inProject;
+    }
+
+    public void setInProject(boolean inProject) {
+        this.inProject = inProject;
+    }
+
+    public boolean isInWorkspace() {
+        return inWorkspace;
+    }
+
+    public void setInWorkspace(boolean inWorkspace) {
+        this.inWorkspace = inWorkspace;
     }
 }
