@@ -28,6 +28,7 @@ const AppRoutes = () => {
           <Route index element={<HomePage />} />
           <Route path='home' element={<HomePage />} />
           <Route path='kaban' element={<BoardPage />} />
+          <Route path='kaban1' element={<KanbanDemo />} />
           <Route
             path='auth'
             element={

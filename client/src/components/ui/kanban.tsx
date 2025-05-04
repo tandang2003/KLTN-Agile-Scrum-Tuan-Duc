@@ -336,8 +336,9 @@ function Kanban<T>(props: KanbanProps<T>) {
       const overColumn = getColumn(over.id)
 
       if (!activeColumn || !overColumn) return
-
+      // Same column
       if (activeColumn === overColumn) {
+        console.log('drag over same column')
         const items = value[activeColumn]
         if (!items) return
 
@@ -354,6 +355,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           onValueChange?.(newColumns)
         }
       } else {
+        console.log('drag over different column')
         const activeItems = value[activeColumn]
         const overItems = value[overColumn]
 
@@ -395,8 +397,9 @@ function Kanban<T>(props: KanbanProps<T>) {
         setActiveId(null)
         return
       }
-      console.log(active, over, value)
+      // Handle drag column
       if (active.id in value && over.id in value) {
+        console.log('drag end column')
         const activeIndex = Object.keys(value).indexOf(active.id as string)
         const overIndex = Object.keys(value).indexOf(over.id as string)
 
@@ -419,15 +422,15 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
         }
       } else {
+        console.log('drag end card')
         const activeColumn = getColumn(active.id)
         const overColumn = getColumn(over.id)
-
         if (!activeColumn || !overColumn) {
           setActiveId(null)
           return
         }
-
         if (activeColumn === overColumn) {
+          console.log('drag end card in 1 column')
           const items = value[activeColumn]
           if (!items) {
             setActiveId(null)
@@ -440,7 +443,6 @@ function Kanban<T>(props: KanbanProps<T>) {
           const overIndex = items.findIndex(
             (item) => getItemValue(item) === over.id
           )
-
           if (activeIndex !== overIndex) {
             const newColumns = { ...value }
             newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex)
@@ -478,7 +480,6 @@ function Kanban<T>(props: KanbanProps<T>) {
 
       setActiveId(null)
       hasMovedRef.current = false
-      console.log('drag cancel')
     },
     [kanbanProps.onDragCancel]
   )

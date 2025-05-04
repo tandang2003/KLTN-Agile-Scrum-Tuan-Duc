@@ -6,18 +6,16 @@ const THUMBNAIL_CARD =
 export const board: BoardModelType = {
   columns: {
     backlog: {
-      key: 'backlog',
       name: 'Backlog',
       cardIds: ['card-2', 'card-1']
     },
     todo: {
-      key: 'todo',
       name: 'To do',
       cardIds: ['card-7', 'card-8']
     },
-    doing: { key: 'doing', name: 'Doing', cardIds: [] },
-    review: { key: 'review', name: 'Review', cardIds: [] },
-    done: { key: 'done', name: 'Done', cardIds: [] }
+    doing: { name: 'Doing', cardIds: [] },
+    review: { name: 'Review', cardIds: [] },
+    done: { name: 'Done', cardIds: [] }
   },
   cards: [
     { id: 'card-2', name: 'Phân tích nghiệp vụ', point: 3 },

@@ -1,4 +1,3 @@
-import { ColumnProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
 
 import { Button } from '@/components/ui/button'
@@ -11,12 +10,11 @@ import { cn } from '@/lib/utils'
 import { CardModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import { useDroppable } from '@dnd-kit/core'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 
 type ColumnProps = {
   id: Id
   name: string
-  itemsOrder: Id[]
   items: CardModelType[]
   container?: string
 }
@@ -24,18 +22,21 @@ type ColumnProps = {
 const Column = ({ id, name, items, container }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
   const scrollRef = useRef<HTMLDivElement | null>(null)
-  const [heightToBottom, setHeightToBottom] = useState<number>(0)
+  // const [heightToBottom, setHeightToBottom] = useState<number>(0)
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      const rect = scrollRef.current.getBoundingClientRect()
-      const viewportHeight = window.innerHeight
-      setHeightToBottom(() => viewportHeight - rect.bottom)
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (scrollRef.current) {
+  //     const rect = scrollRef.current.getBoundingClientRect()
+  //     const viewportHeight = window.innerHeight
+  //     setHeightToBottom(() => viewportHeight - rect.bottom)
+  //   }
+  // }, [])
 
   return (
-    <div ref={setNodeRef} className={(cn('h-fit rounded-xl p-2'), container)}>
+    <div
+      ref={setNodeRef}
+      className={(cn('h-fit rounded-xl p-2 py-2'), container)}
+    >
       <span className='mb-3.5 flex items-center border-b-1 pb-3.5'>
         <Icon
           className='text-purple-700'
@@ -54,19 +55,12 @@ const Column = ({ id, name, items, container }: ColumnProps) => {
         // }}
         ref={scrollRef}
       >
-        <div
-          style={
-            {
-              // '--card': 'white'
-            }
-          }
-          className='p-l4 flex flex-col pr-4 pb-4 pl-2'
-        >
+        <div className='flex flex-col pr-4 pb-4 pl-2'>
           {items?.map((item: CardModelType) => {
             return (
               <Card
                 key={item.id}
-                data={{ ...item, columnId: id }}
+                data={{ ...item }}
                 container={cn('m-1 bg-white')}
               />
             )

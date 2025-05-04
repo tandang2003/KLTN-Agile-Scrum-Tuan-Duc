@@ -1,7 +1,6 @@
 import { Id } from '@/types/other.type'
 
 type ColumnModelType = {
-  key: ColumnsKey
   name: string
   cardIds: Id[]
 }
@@ -18,10 +17,8 @@ type CardModelType = {
   // tags?: { name: string; color: TagColorKey }[]
 }
 
-type ColumnsKey = 'backlog' | 'todo' | 'doing' | 'review' | 'done'
-
 type BoardModelType = {
-  columns: Record<ColumnsKey, ColumnModelType>
+  columns: Record<Id, ColumnModelType>
   cards: CardModelType[]
 }
 
@@ -41,6 +38,5 @@ export type {
   ColumnModelType,
   BoardModelType,
   Assigner,
-  CreateCardReqType,
-  ColumnsKey as ColumnsName
+  CreateCardReqType
 }

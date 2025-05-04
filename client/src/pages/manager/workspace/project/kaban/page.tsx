@@ -62,34 +62,37 @@ export function KanbanDemo() {
       }
     ],
     done: [
-      {
-        id: '7',
-        title: 'Setup project',
-        priority: 'high',
-        assignee: 'Eve Davis',
-        dueDate: '2024-03-25'
-      },
-      {
-        id: '8',
-        title: 'Initial commit',
-        priority: 'low',
-        assignee: 'Frank White',
-        dueDate: '2024-03-24'
-      }
+      // {
+      //   id: '7',
+      //   title: 'Setup project',
+      //   priority: 'high',
+      //   assignee: 'Eve Davis',
+      //   dueDate: '2024-03-25'
+      // },
+      // {
+      //   id: '8',
+      //   title: 'Initial commit',
+      //   priority: 'low',
+      //   assignee: 'Frank White',
+      //   dueDate: '2024-03-24'
+      // }
     ]
   })
+
+  React.useEffect(() => {
+    console.log(columns)
+  }, [columns])
 
   return (
     <Kanban.Root
       value={columns}
       onValueChange={(columns) => {
-        console.log('on value change', columns)
         setColumns(columns)
       }}
-      onMove={(event) => {
-        console.log('on move', event)
-      }}
       getItemValue={(item) => item.id}
+      onDragEnd={(event) => {
+        console.log(event)
+      }}
     >
       <Kanban.Board className='grid auto-rows-fr sm:grid-cols-3'>
         {Object.entries(columns).map(([columnValue, tasks]) => (

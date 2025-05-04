@@ -14,7 +14,9 @@ const useClickHandler = (
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
+      console.log(e.target)
       const clickedInside = ref.current?.contains(e.target as Node)
+      console.log('clickedInside', clickedInside, activeId)
       if (clickedInside) {
         setActiveId(id)
         onClickInside()

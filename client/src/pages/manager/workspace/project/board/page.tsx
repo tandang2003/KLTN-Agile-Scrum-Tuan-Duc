@@ -18,7 +18,13 @@ const BoardPage = () => {
       {/* {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />} */}
       {/* {!isFetching && data && ( */}
       <ScrollArea>
-        <Board />
+        <Board
+          onMove={({ active, columnTo, indexTo }) => {
+            console.log('active', active)
+            console.log('columnTo', columnTo)
+            console.log('indexTo', indexTo)
+          }}
+        />
         <ScrollBar orientation='horizontal' />
       </ScrollArea>
       {/* )} */}
