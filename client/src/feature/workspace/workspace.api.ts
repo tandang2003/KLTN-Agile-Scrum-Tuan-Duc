@@ -1,9 +1,11 @@
+import { addWorkspaceItems } from '@/feature/workspace/workspace.slice'
 import workspaceService from '@/services/workspace.service'
 import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
   ListStudentWorkspaceReq,
+  ListWorkspaceReq,
   StudentWorkspaceDataTable,
   WorkspaceCardResponse,
   WorkspaceResponse
@@ -15,11 +17,14 @@ const workspaceApi = createApi({
   baseQuery: () => ({ data: {} }),
   tagTypes: ['Workspaces'],
   endpoints: (builder) => ({
-    getListWorkspace: builder.query<Page<WorkspaceCardResponse>, void>({
-      async queryFn() {
+    getListWorkspace: builder.query<
+      Page<WorkspaceCardResponse>,
+      ListWorkspaceReq
+    >({
+      async queryFn(args) {
         try {
           const data: Page<WorkspaceCardResponse> =
-            await workspaceService.getListWorkSpace()
+            await workspaceService.getListWorkSpace(args)
           return { data: data }
         } catch (error) {
           console.log('error workspace api ', error)
@@ -47,6 +52,17 @@ const workspaceApi = createApi({
           }
         ]
         return final
+      },
+      async onQueryStarted({ size }, { dispatch, queryFulfilled }) {
+        console.log()
+        const { data } = await queryFulfilled
+        if (data.items)
+          dispatch(
+            addWorkspaceItems({
+              items: data.items,
+              from: data.currentPage * size
+            })
+          )
       }
     }),
     getWorkspace: builder.query<WorkspaceResponse, Id>({

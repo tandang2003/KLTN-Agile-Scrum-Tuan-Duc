@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import Icon from '@/components/Icon'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams<WorkspaceParams>()
@@ -63,12 +64,14 @@ const WorkspaceDetailPage = () => {
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Settings</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => setOpenDialogAddStudent((state) => !state)}
-            >
-              <Icon icon={'hugeicons:student'} />
-              Add Student
-            </DropdownMenuItem>
+            <RequiredAuth roles={['teacher']}>
+              <DropdownMenuItem
+                onClick={() => setOpenDialogAddStudent((state) => !state)}
+              >
+                <Icon icon={'hugeicons:student'} />
+                Add Student
+              </DropdownMenuItem>
+            </RequiredAuth>
             <DropdownMenuItem className='hover:!bg-blue-400'>
               <Icon icon={'mdi:information'} />
               Information

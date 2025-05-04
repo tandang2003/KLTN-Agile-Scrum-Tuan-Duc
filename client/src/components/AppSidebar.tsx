@@ -7,20 +7,13 @@ import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 import Icon from '@/components/Icon'
 import Logo from '@/components/Logo'
 import { NavMain } from '@/components/sidebar/nav-main'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { getUserWorkspaceThunk } from '@/feature/workspace/workspace.slice'
+import { useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const dispatch = useAppDispatch()
-  const { listItemSideBar, isFetched } = useAppSelector(
+  const { listItemSideBar } = useAppSelector(
     (state: RootState) => state.workspaceSlice
   )
-  React.useEffect(() => {
-    if (!isFetched) {
-      dispatch(getUserWorkspaceThunk())
-    }
-  }, [dispatch, isFetched])
 
   const data = React.useMemo(() => {
     return {
@@ -55,10 +48,15 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: '/manager/workspace',
             icon: <Icon icon={'carbon:workspace'} />,
             items:
-              listItemSideBar?.map((item) => ({
-                title: item.name,
-                url: `/manager/workspace/${item.id}`
-              })) ?? []
+              listItemSideBar
+                ?.filter((item) => item)
+                .map(
+                  (item) =>
+                    item && {
+                      title: item.name,
+                      url: `/manager/workspace/${item.id}`
+                    }
+                ) ?? []
           },
           {
             title: 'Project',
