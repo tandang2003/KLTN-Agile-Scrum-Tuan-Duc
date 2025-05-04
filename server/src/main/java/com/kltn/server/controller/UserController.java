@@ -26,10 +26,6 @@ public class UserController {
         return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info user").data(userService.getCurrUser()).build());
     }
 
-//    @GetMapping(value = "/workspace")
-//    public ResponseEntity<ApiResponse<UserResponse>> userWorkspace() {
-//        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder().message("get info workspace of user").data(userService.getUserWorkspaces()).build());
-//    }
 
     @GetMapping("/check")
     public ResponseEntity<ApiResponse<Void>> searchUser(@RequestParam("uniId")
@@ -54,9 +50,5 @@ public class UserController {
                                                                 @RequestParam("workspaceId") @NotEmpty String workspaceId) {
         ApiResponse<Void> response = userService.checkingUserWorkspaceProject(uniId, workspaceId);
         return ResponseEntity.status(response.getCode()).body(response);
-//        if (userService.checkingUser(userId))
-//            return ResponseEntity.ok().body(ApiResponse.<Void>builder().message("user is exist").build());
-//        else
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.<Void>builder().code(404).message("user is not exist").build());
     }
 }
