@@ -1,7 +1,9 @@
 package com.kltn.server.service.entity;
 
+import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
+import com.kltn.server.DTO.request.log.MailInviteStudent;
 import com.kltn.server.DTO.request.log.ProjectLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
@@ -9,6 +11,7 @@ import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
+import com.kltn.server.kafka.SendMailEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.model.collection.model.Topic;
@@ -27,7 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProjectService {
@@ -77,6 +82,7 @@ public class ProjectService {
 
         workspacesUsersProjects.setProject(savedProject);
         workspacesUsersProjects.setRole(roleRepository.getByName(Role.LEADER.getName()).orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build()));
+        workspacesUsersProjects.setInProject(true);
 
         workspacesUsersProjectsRepository.save(workspacesUsersProjects);
         List<Topic> topics = topicMapper.toTopicList(creationRequest.tags());
@@ -94,9 +100,15 @@ public class ProjectService {
                 .build()
                 ;
     }
-//TODO insert mail, optimize
-    public void inviteUserToProject(ProjectInvitationRequest invitationRequest) {
+
+    //TODO insert mail, optimize
+    @SendMailEvent(topic = "send-mail")
+    public ApiResponse<Void> inviteUserToProject(ProjectInvitationRequest invitationRequest) {
         String userInviteId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User userInvite = userRepository.findByUniId(userInviteId).orElseThrow(() -> AppException.builder()
+                .error(Error.NOT_FOUND)
+                .build());
+        List<String> emailToInvite = new ArrayList<>();
         WorkspacesUsersProjects relation = workspacesUsersProjectsRepository
                 .findByUserIdAndProjectId(userInviteId, invitationRequest.projectId())
                 .orElseThrow(() -> AppException.builder()
@@ -122,7 +134,9 @@ public class ProjectService {
                     .project(project)
                     .workspace(relation.getWorkspace())
                     .id(workspacesUsersId)
+                    .inProject(true)
                     .build();
+            emailToInvite.add(user.getEmail());
             try {
                 workspacesUsersProjectsRepository.save(usersProjects);
             } catch (Exception e) {
@@ -131,5 +145,19 @@ public class ProjectService {
                         .build();
             }
         });
+        return ApiResponse.<Void>builder()
+                .message("Invite student to project")
+                .logData(MailInviteStudent.builder()
+                        .to(emailToInvite)
+                        .mailRequest(MailRequest.builder()
+                                .variable(Map.of(
+                                        "sender", userInvite.getName(),
+                                        "project.name", project.getName(),
+                                        "project.confirmationLink", "https://google.com"
+                                ))
+                                .templateName("invite-student")
+                                .build())
+                        .build())
+                .build();
     }
 }

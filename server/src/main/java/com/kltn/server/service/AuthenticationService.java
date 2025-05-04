@@ -46,6 +46,7 @@ public class AuthenticationService {
 
     public void register(RegisterRequest registerRequest) {
         User user = userMapper.toUser(registerRequest);
+        user.setEmail(user.getUniId()+ "@st.hcmuaf.edu.vn");
         boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
         if (!check) {
             Role role = roleRepository.getByName("student")
