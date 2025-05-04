@@ -24,6 +24,7 @@ public class ProjectController {
     public ResponseEntity<ApiResponse<ProjectResponse>> createProject(@RequestBody @Valid ProjectCreationRequest creationRequest) {
         return ResponseEntity.ok().body(projectService.createProject(creationRequest));
     }
+
     @PostMapping("/invite")
     public ResponseEntity<ApiResponse<Void>> addUserToProject(@RequestBody @Valid ProjectInvitationRequest invitationRequest) {
         projectService.inviteUserToProject(invitationRequest);
