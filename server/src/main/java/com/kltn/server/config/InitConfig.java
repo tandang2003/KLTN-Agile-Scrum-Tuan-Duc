@@ -80,4 +80,6 @@ public class InitConfig {
         decoder.setJwtValidator(tokenValidator());
         return decoder;
     }
+
+
 }
