@@ -13,11 +13,32 @@ public class WorkspacesUsersId implements Serializable {
     public WorkspacesUsersId() {
     }
 
-    public WorkspacesUsersId(String workspaceId, String userId) {
-        this.workspaceId = workspaceId;
-        this.userId = userId;
+    private WorkspacesUsersId(WorkspacesUsersIdBuilder workspacesUsersIdBuilder) {
+        this.workspaceId = workspacesUsersIdBuilder.workspaceId;
+        this.userId = workspacesUsersIdBuilder.userId;
     }
 
+    public static class WorkspacesUsersIdBuilder {
+        private String workspaceId;
+        private String userId;
+
+        public WorkspacesUsersIdBuilder workspaceId(String workspaceId) {
+            this.workspaceId = workspaceId;
+            return this;
+        }
+
+        public WorkspacesUsersIdBuilder userId(String userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public WorkspacesUsersId build() {
+            return new WorkspacesUsersId(this);
+        }
+    }
+    public static WorkspacesUsersIdBuilder builder() {
+        return new WorkspacesUsersIdBuilder();
+    }
     // equals() and hashCode() are required for composite keys
     @Override
     public boolean equals(Object o) {
