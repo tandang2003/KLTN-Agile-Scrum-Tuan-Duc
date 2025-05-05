@@ -28,13 +28,16 @@ public class UserController {
 
 
     @GetMapping("/check")
-    public ResponseEntity<ApiResponse<Void>> searchUser(@RequestParam("uniId")
-                                                        @Length(
-                                                                min = 8,
-                                                                max = 8,
-                                                                message = "student id is not valid"
-                                                        )
-                                                        String userId) {
+    public ResponseEntity<ApiResponse<Void>> searchUser(
+            @RequestParam("uniId")
+            @Length(
+                    min = 8,
+                    max = 8,
+                    message = "student id is not valid"
+            )
+            String userId
+    ) {
+
         if (userService.checkingUser(userId))
             return ResponseEntity.ok().body(ApiResponse.<Void>builder().message("user is exist").build());
         else
