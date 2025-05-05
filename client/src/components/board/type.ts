@@ -1,3 +1,4 @@
+import { CardModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import { TagColorTypeOf } from '@/types/tag.type'
 
@@ -9,7 +10,7 @@ export type ColumnProps = {
   id: Id
   name: string
   itemsOrder: Id[]
-  items: BaseCardProps[]
+  items: CardModelType[]
 }
 
 // Override here

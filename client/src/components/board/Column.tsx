@@ -1,38 +1,42 @@
-import { BaseCardProps, ColumnProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
-import CardAdding from '@/components/board/CardAdding'
-import { cn } from '@/lib/utils'
-import { useDroppable } from '@dnd-kit/core'
-import { useEffect, useRef, useState } from 'react'
 import Card from '@/components/board/Card'
+import CardAdding from '@/components/board/CardAdding'
 import { useClickManager } from '@/context/click/click-manager-hook'
+import { cn } from '@/lib/utils'
+import { CardModelType } from '@/types/card.type'
+import { Id } from '@/types/other.type'
+import { useDroppable } from '@dnd-kit/core'
+import { useRef } from 'react'
 
-const Column = ({
-  id,
-  name,
-  items,
-  container = undefined
-}: ColumnProps & {
+type ColumnProps = {
+  id: Id
+  name: string
+  items: CardModelType[]
   container?: string
-}) => {
+}
+
+const Column = ({ id, name, items, container }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
   const scrollRef = useRef<HTMLDivElement | null>(null)
-  const [heightToBottom, setHeightToBottom] = useState<number>(0)
+  // const [heightToBottom, setHeightToBottom] = useState<number>(0)
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      const rect = scrollRef.current.getBoundingClientRect()
-      const viewportHeight = window.innerHeight
-      setHeightToBottom(() => viewportHeight - rect.bottom)
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (scrollRef.current) {
+  //     const rect = scrollRef.current.getBoundingClientRect()
+  //     const viewportHeight = window.innerHeight
+  //     setHeightToBottom(() => viewportHeight - rect.bottom)
+  //   }
+  // }, [])
 
   return (
-    <div ref={setNodeRef} className={(cn('h-fit rounded-xl p-2'), container)}>
+    <div
+      ref={setNodeRef}
+      className={(cn('h-fit rounded-xl p-2 py-2'), container)}
+    >
       <span className='mb-3.5 flex items-center border-b-1 pb-3.5'>
         <Icon
           className='text-purple-700'
@@ -46,22 +50,21 @@ const Column = ({
         </Button>
       </span>
       <ScrollArea
-        style={{
-          height: `${heightToBottom}px`
-        }}
+        // style={{
+        //   height: `${heightToBottom}px`
+        // }}
         ref={scrollRef}
       >
-        <div
-          style={
-            {
-              // '--card': 'white'
-            }
-          }
-          className='p-l4 flex flex-col pr-4 pb-4 pl-2'
-        >
-          {items?.map((item: BaseCardProps) => (
-            <Card key={item.id} {...item} container={cn('m-1 bg-white')} />
-          ))}
+        <div className='flex flex-col pr-4 pb-4 pl-2'>
+          {items?.map((item: CardModelType) => {
+            return (
+              <Card
+                key={item.id}
+                data={{ ...item }}
+                container={cn('m-1 bg-white')}
+              />
+            )
+          })}
 
           <ButtonCreateCard id={id as string} />
         </div>

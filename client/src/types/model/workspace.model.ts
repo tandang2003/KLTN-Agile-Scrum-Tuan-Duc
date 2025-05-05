@@ -6,7 +6,7 @@ type WorkSpaceModel = {
   name: string
   owner: UserModel
   description?: string
-  numSprint: number
+  sprintNum: number
   timePerSprint: number
   start: Date
   end: Date
