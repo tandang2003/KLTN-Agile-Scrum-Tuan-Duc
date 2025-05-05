@@ -27,11 +27,8 @@ public class ProjectController {
 
     @PostMapping("/invite")
     public ResponseEntity<ApiResponse<Void>> addUserToProject(@RequestBody @Valid ProjectInvitationRequest invitationRequest) {
-        projectService.inviteUserToProject(invitationRequest);
         return ResponseEntity.ok().body(
-                ApiResponse.<Void>builder()
-                        .message("Invite student to project")
-                        .build());
+                projectService.inviteUserToProject(invitationRequest));
     }
 
 }

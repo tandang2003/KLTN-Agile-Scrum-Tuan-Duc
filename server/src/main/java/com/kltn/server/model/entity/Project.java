@@ -14,8 +14,7 @@ public class Project extends BaseEntity {
     private String description;
     @OneToMany(mappedBy = "project")
     private List<Sprint> sprints;
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "project")
     private List<WorkspacesUsersProjects> workspacesUserProjects;
 
     public Project(ProjectEntityBuilder builder) {
@@ -95,7 +94,9 @@ public class Project extends BaseEntity {
     }
     @Transient
     public Workspace getWorkspace() {
-        return workspacesUserProjects == null || workspacesUserProjects.isEmpty() ? null : workspacesUserProjects.get(0).getWorkspace();
+        return workspacesUserProjects == null
+                || workspacesUserProjects.isEmpty() ? null :
+                workspacesUserProjects.get(0).getWorkspace();
     }
 
     @Transient
