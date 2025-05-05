@@ -28,6 +28,9 @@ public class AppException extends RuntimeException {
             return this;
         }
     }
+    public void setMessage(String message) {
+        this.error.setMessage(message);
+    }
 
     public Error getError() {
         return error;

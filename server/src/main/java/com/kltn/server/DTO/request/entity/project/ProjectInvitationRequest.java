@@ -5,13 +5,20 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 public record ProjectInvitationRequest(@NotEmpty String projectId,
+                                       @NotEmpty String workspaceId,
                                        @NotEmpty List<String> userId) {
     public static class ProjectInvitionRequestBuilder {
         private String projectId;
+        private String workspaceId;
         private List<String> userId;
 
         public ProjectInvitionRequestBuilder projectId(String projectId) {
             this.projectId = projectId;
+            return this;
+        }
+
+        public ProjectInvitionRequestBuilder workspaceId(String workspaceId) {
+            this.workspaceId = workspaceId;
             return this;
         }
 
@@ -21,7 +28,7 @@ public record ProjectInvitationRequest(@NotEmpty String projectId,
         }
 
         public ProjectInvitationRequest build() {
-            return new ProjectInvitationRequest(projectId, userId);
+            return new ProjectInvitationRequest(projectId,workspaceId, userId);
         }
     }
 

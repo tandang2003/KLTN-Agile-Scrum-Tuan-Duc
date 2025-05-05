@@ -38,15 +38,15 @@ public class KafkaMailEvent<T> {
                     ? (MailInviteStudent) apiResponse.getLogData()
                     : (MailInviteStudent) apiResponse.getData();
             try {
-                for (String email : logData.to()) {
-                    CompletionStage<SendResult<String, Object>> sendResult = kafkaTemplate.send(sendKafkaEvent.topic(), logData.mailRequest().rebuild(email));
-                    sendResult.thenAccept(re -> {
-                        System.out.println("Sent message=[" + logData + "] to with offset=[" + re.getRecordMetadata().offset() + "]");
-                    }).exceptionally(e -> {
-                        System.out.println("Unable to send message=[" + logData + "] due to : " + e.getMessage());
-                        return null;
-                    });
-                }
+//                for (String email : logData.to()) {
+//                    CompletionStage<SendResult<String, Object>> sendResult = kafkaTemplate.send(sendKafkaEvent.topic(), logData.mailRequest().rebuild(email));
+//                    sendResult.thenAccept(re -> {
+//                        System.out.println("Sent message=[" + logData + "] to with offset=[" + re.getRecordMetadata().offset() + "]");
+//                    }).exceptionally(e -> {
+//                        System.out.println("Unable to send message=[" + logData + "] due to : " + e.getMessage());
+//                        return null;
+//                    });
+//                }
             } catch (Exception e) {
                 System.out.println("ERROR :  " + e.getMessage());
             }

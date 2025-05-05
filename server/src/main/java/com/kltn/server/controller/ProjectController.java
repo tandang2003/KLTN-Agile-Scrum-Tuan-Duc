@@ -8,7 +8,10 @@ import com.kltn.server.service.entity.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/project")
@@ -27,11 +30,8 @@ public class ProjectController {
 
     @PostMapping("/invite")
     public ResponseEntity<ApiResponse<Void>> addUserToProject(@RequestBody @Valid ProjectInvitationRequest invitationRequest) {
-        projectService.inviteUserToProject(invitationRequest);
         return ResponseEntity.ok().body(
-                ApiResponse.<Void>builder()
-                        .message("Invite student to project")
-                        .build());
+                projectService.inviteUserToProject(invitationRequest));
     }
 
 }
