@@ -1,18 +1,12 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
-import com.kltn.server.kafka.SendMailEvent;
-import com.kltn.server.kafka.consumer.service.KafkaSendMailService;
-import com.kltn.server.model.entity.Project;
-import com.kltn.server.service.entity.UserService;
 import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/workspace")
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
-    private final UserService userService;
-    KafkaSendMailService kafkaSendMailService;
 
     @Autowired
-    public WorkspaceController(KafkaSendMailService kafkaSendMailService, WorkspaceService workspaceService, UserService userService) {
+    public WorkspaceController( WorkspaceService workspaceService) {
         this.workspaceService = workspaceService;
-        this.userService = userService;
-        this.kafkaSendMailService = kafkaSendMailService;
     }
 
     @PostMapping
@@ -71,7 +59,7 @@ public class WorkspaceController {
     @PutMapping("/{workspaceId}")
     @PreAuthorize("hasAuthority('update_workspace')")
     public ResponseEntity<ApiResponse<WorkspaceResponse>> updateWorkspace(@PathVariable String workspaceId,
-                                                                          @Valid @RequestBody WorkspaceUpdationRequest workspaceUpdationRequest
+                                                                          @Valid @RequestBody WorkspaceUpdateRequest workspaceUpdationRequest
     ) {
         return ResponseEntity.ok().body(
                 ApiResponse.<WorkspaceResponse>builder()
@@ -101,32 +89,4 @@ public class WorkspaceController {
         return ResponseEntity.ok().body(
                 workspaceService.addStudentToWorkspace(workspaceUserAdditionRequest.workspaceId(), workspaceUserAdditionRequest.studentIds()));
     }
-
-//    @GetMapping("/test-mail")
-//    public ResponseEntity<ApiResponse<Void>> testMail() throws Exception {
-//        Map<String, String> resource = Map.of(
-//                "logo", "logo/kltn_logo.jpeg"
-//        );
-//        Map<String, String> variable = Map.of(
-//                "sender", "Tân Đan Minh",
-//                "project.name", "MY PROJECT",
-//                "project.confirmationLink", "https://google.com"
-//        );
-//        kafkaSendMailService.sendEmail(MailRequest.builder().templateName("email-confirm").to("tandanmin@gmail.com").resource(resource).variable(variable).build());
-//        return ResponseEntity.ok().body(
-//                ApiResponse.<Void>builder()
-//                        .message("test mail")
-//                        .build());
-//    }
-
-
-//    @GetMapping("/{workspaceId}/project")
-//    public ResponseEntity<ApiResponse<ProjectResponse>> getProjectInWorkspace(@PathVariable String workspaceId) {
-//        return ResponseEntity.ok().body(
-//                ApiResponse.<WorkspaceResponse>builder()
-//                        .message("get project in workspace success")
-//                        .data(workspaceService.getProjectInWorkspace(workspaceId))
-//                        .build());
-//    }
-
 }

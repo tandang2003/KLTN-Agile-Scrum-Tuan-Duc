@@ -22,7 +22,7 @@ const CreateWorkspaceSchema = z.object({
 
 const UpdateWorkspaceSchema = z.object({
   description: z.string().optional(),
-  sprintNum: z.number().positive().optional(),
+  sprintNum: z.number().positive(),
   date: z
     .object({
       from: z.date(),

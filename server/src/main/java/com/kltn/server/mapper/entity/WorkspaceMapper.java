@@ -1,7 +1,7 @@
 package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Project;
@@ -74,5 +74,5 @@ public interface WorkspaceMapper {
                         @Mapping(target = "description", source = "workspaceUpdationRequest.description"),
                         @Mapping(target = "end", source = "workspaceUpdationRequest.end")
         })
-        Workspace updateWorkspace(Workspace workspace, WorkspaceUpdationRequest workspaceUpdationRequest);
+        Workspace updateWorkspace(Workspace workspace, WorkspaceUpdateRequest workspaceUpdationRequest);
 }

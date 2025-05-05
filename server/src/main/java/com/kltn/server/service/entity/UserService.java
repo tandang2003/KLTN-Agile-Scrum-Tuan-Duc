@@ -11,8 +11,6 @@ import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsRepository;
-import jakarta.validation.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -98,17 +96,5 @@ public class UserService {
                     .message("User is in workspace")
                     .build();
         }
-
-//        if (workspaceRepository.existsById(workspaceId)) {
-//            return ApiResponse.<Void>builder()
-//                    .code(409)
-//                    .message("User already in workspace")
-//                    .build();
-//        } else {
-//            return ApiResponse.<Void>builder()
-//                    .code(404)
-//                    .message("user is not exist")
-//                    .build();
-//        }
     }
 }

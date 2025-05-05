@@ -8,9 +8,9 @@ import java.time.Instant;
 
 import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 
-public record WorkspaceUpdationRequest(@Min(1) int sprintNum,
-                                       @NotEmpty String description,
-                                       @DateTimeFormat(pattern = LOCAL_DATE_TIME)
+public record WorkspaceUpdateRequest(@Min(1) int sprintNum,
+                                     @NotEmpty String description,
+                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
                                        Instant end) {
     @Override
     public int sprintNum() {

@@ -1,6 +1,6 @@
 package com.kltn.server.util;
 
-public enum Role {
+public enum RoleType {
     USER("student"),
     ADMIN("admin"),
     TEACHER("teacher"),
@@ -9,7 +9,7 @@ public enum Role {
 
     private final String name;
 
-    Role(String name) {
+    RoleType(String name) {
         this.name = name;
     }
 
