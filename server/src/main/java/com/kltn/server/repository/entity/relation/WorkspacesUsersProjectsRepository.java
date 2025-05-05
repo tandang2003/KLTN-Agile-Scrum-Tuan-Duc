@@ -13,4 +13,5 @@ public interface WorkspacesUsersProjectsRepository extends JpaRepository<Workspa
     Optional<WorkspacesUsersProjects> findById(WorkspacesUsersId id);
     @Query("SELECT wup FROM WorkspacesUsersProjects wup WHERE wup.user.uniId = :userId AND wup.project.id = :projectId")
     Optional<WorkspacesUsersProjects> findByUserIdAndProjectId(String userId, String projectId);
+
 }
