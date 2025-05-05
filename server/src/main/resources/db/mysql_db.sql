@@ -44,7 +44,7 @@ INSERT INTO `permissions` VALUES ('e79e7f0b-0874-11f0-91a0-0242ac120002', 'view_
 -- ----------------------------
 INSERT INTO `roles` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, 'Quản trị hệ thống', 'f7b59d23-0874-11f0-91a0-0242ac120002', NULL, 'admin');
 INSERT INTO `roles` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, 'Giáo viên hướng dẫn', 'f7b5f76b-0874-11f0-91a0-0242ac120002', NULL, 'teacher');
-INSERT INTO `roles` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, 'Trưởng nhóm', 'f7b5f8f8-0874-11f0-91a0-0242ac120002', NULL, 'team_leader');
+INSERT INTO `roles` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, 'Trưởng nhóm', 'f7b5f8f8-0874-11f0-91a0-0242ac120002', NULL, 'leader');
 INSERT INTO `roles` VALUES (NULL, NULL, NULL, NULL, NULL, NULL, 'Sinh viên', 'f7b5f96a-0874-11f0-91a0-0242ac120002', NULL, 'student');
 
 -- ----------------------------

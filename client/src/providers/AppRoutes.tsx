@@ -59,6 +59,7 @@ const AppRoutes = () => {
               path='workspace/:workspaceId'
               element={<WorkspaceDetailPage />}
             />
+            {/* http://localhost:3000/manager/workspace/1/setting */}
             <Route
               path='workspace/:workspaceId/setting'
               element={<WorkspaceSettingPage />}

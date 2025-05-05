@@ -1,5 +1,6 @@
 import authReducer from '@/feature/auth/auth.slice'
 import boardApi from '@/feature/board/board.api'
+import projectApi from '@/feature/project/project.api'
 import workspaceApi from '@/feature/workspace/workspace.api'
 import { workspaceReducer } from '@/feature/workspace/workspace.slice'
 import { configureStore } from '@reduxjs/toolkit'
@@ -9,6 +10,7 @@ export const store = configureStore({
   reducer: {
     [boardApi.reducerPath]: boardApi.reducer,
     [workspaceApi.reducerPath]: workspaceApi.reducer,
+    [projectApi.reducerPath]: projectApi.reducer,
     authSlice: authReducer,
     workspaceSlice: workspaceReducer
   },
@@ -16,6 +18,7 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(boardApi.middleware)
       .concat(workspaceApi.middleware)
+      .concat(projectApi.middleware)
 })
 
 setupListeners(store.dispatch)
