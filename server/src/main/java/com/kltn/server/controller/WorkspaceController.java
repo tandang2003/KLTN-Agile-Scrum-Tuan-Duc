@@ -1,17 +1,13 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
-import com.kltn.server.kafka.SendMailEvent;
 import com.kltn.server.kafka.consumer.service.KafkaSendMailService;
-import com.kltn.server.model.entity.Project;
 import com.kltn.server.service.entity.UserService;
 import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.validation.Valid;
@@ -20,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/workspace")
@@ -71,7 +65,7 @@ public class WorkspaceController {
     @PutMapping("/{workspaceId}")
     @PreAuthorize("hasAuthority('update_workspace')")
     public ResponseEntity<ApiResponse<WorkspaceResponse>> updateWorkspace(@PathVariable String workspaceId,
-                                                                          @Valid @RequestBody WorkspaceUpdationRequest workspaceUpdationRequest
+                                                                          @Valid @RequestBody WorkspaceUpdateRequest workspaceUpdationRequest
     ) {
         return ResponseEntity.ok().body(
                 ApiResponse.<WorkspaceResponse>builder()

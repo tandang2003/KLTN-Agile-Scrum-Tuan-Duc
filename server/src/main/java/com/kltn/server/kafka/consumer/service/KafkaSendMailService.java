@@ -1,6 +1,7 @@
 package com.kltn.server.kafka.consumer.service;
 
 import com.kltn.server.DTO.request.base.MailRequest;
+import com.kltn.server.util.token.TokenUtils;
 import jakarta.activation.DataSource;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,11 @@ public class KafkaSendMailService {
     private String senderMail;
     @Value("${mail.name}")
     private String senderName;
+    @Autowired
+    private TokenUtils tokenUtils;
 
     public void sendEmail(MailRequest request) throws Exception {
-        String content = render(request.templateName(), request.variable());
+        String content = render(request.templateName(), request.confirmationLink(), request.variable(), request.data());
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -48,12 +51,14 @@ public class KafkaSendMailService {
         }
     }
 
-    private String render(String template, Map<String, String> variable) throws IOException {
+    private String render(String template, String link, Map<String, String> variable, Map<String, String> data) throws IOException {
         ClassPathResource resource = new ClassPathResource("template/" + template + ".html");
         String content = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         for (Map.Entry<String, String> entry : variable.entrySet()) {
             content = content.replace("{{" + entry.getKey() + "}}", entry.getValue());
         }
+        if (link != null)
+            content = content.replace("{{link}}", link + tokenUtils.generateVerifyToken(data));
         return content;
     }
 
