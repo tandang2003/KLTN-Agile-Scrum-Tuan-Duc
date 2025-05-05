@@ -5,7 +5,7 @@ type StudentColumns = StudentWorkspaceDataTable
 
 const columns: ColumnDef<StudentColumns>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: 'uniId',
     header: '#'
   },
   {

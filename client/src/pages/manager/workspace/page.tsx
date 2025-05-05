@@ -49,7 +49,7 @@ const WorkspacePage = () => {
             key={item.id}
             id={item.id}
             name={item.name}
-            owner={item.owner}
+            owner={item.owner.name}
           />
         )}
       />
