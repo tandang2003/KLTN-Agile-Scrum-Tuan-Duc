@@ -7,6 +7,7 @@ import {
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
   StudentWorkspaceDataTable,
+  UpdateWorkspaceReqType,
   WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
@@ -54,7 +55,6 @@ const workspaceApi = createApi({
         return final
       },
       async onQueryStarted({ size }, { dispatch, queryFulfilled }) {
-        console.log()
         const { data } = await queryFulfilled
         if (data.items)
           dispatch(
@@ -73,7 +73,8 @@ const workspaceApi = createApi({
         } catch (error) {
           return { error }
         }
-      }
+      },
+      providesTags: (_, __, id) => [{ type: 'Workspaces', id }]
     }),
     createWorkspace: builder.mutation<
       WorkspaceResponse,
@@ -91,6 +92,30 @@ const workspaceApi = createApi({
       },
       invalidatesTags: () => {
         return [{ type: 'Workspaces', id: 'LIST' }]
+      }
+    }),
+    updateWorkspace: builder.mutation<
+      WorkspaceResponse,
+      {
+        workspaceId: Id
+        payload: UpdateWorkspaceReqType
+      }
+    >({
+      async queryFn({ workspaceId, payload }) {
+        try {
+          const data = await workspaceService.updatesWorkspace(
+            workspaceId,
+            payload
+          )
+          return {
+            data: data
+          }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, __, { workspaceId }) => {
+        return [{ type: 'Workspaces', id: workspaceId }]
       }
     }),
     getListStudentWorkspace: builder.query<
@@ -115,5 +140,6 @@ export const {
   useGetListWorkspaceQuery,
   useCreateWorkspaceMutation,
   useGetWorkspaceQuery,
-  useGetListStudentWorkspaceQuery
+  useGetListStudentWorkspaceQuery,
+  useUpdateWorkspaceMutation
 } = workspaceApi

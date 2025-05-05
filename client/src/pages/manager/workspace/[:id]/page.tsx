@@ -2,7 +2,7 @@ import { StudentDataTable } from '@/components/datatable/student/StudentDataTabl
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { WorkspaceParams } from '@/types/route.type'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { NavLink, useNavigate, useParams } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatDate } from '@/lib/utils'
 import {
@@ -37,7 +37,7 @@ const WorkspaceDetailPage = () => {
   if (!data) return null
 
   return (
-    <div className='px-4'>
+    <div className='container-sidebar'>
       <div className='relative mt-1 mb-4 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 text-gray-100'>
         <span className='text-sm font-semibold'># {data.id}</span>
         <h1 className='h1 pb-2'>
@@ -52,7 +52,7 @@ const WorkspaceDetailPage = () => {
           <span className='rounded-xl bg-amber-500 px-4 py-2'>
             {formatDate(new Date())}
           </span>
-          <span>Start </span>
+          <span>End </span>
           <span className='rounded-xl bg-red-500 px-4 py-2'>
             {formatDate(data.end)}
           </span>
@@ -76,10 +76,14 @@ const WorkspaceDetailPage = () => {
               <Icon icon={'mdi:information'} />
               Information
             </DropdownMenuItem>
-            <DropdownMenuItem className='hover:!bg-yellow-400'>
-              <Icon icon={'solar:pen-bold'} />
-              Change
-            </DropdownMenuItem>
+            <RequiredAuth roles={['teacher']}>
+              <DropdownMenuItem className='hover:!bg-yellow-400' asChild>
+                <NavLink to={`${location.pathname}/setting`}>
+                  <Icon icon={'solar:pen-bold'} />
+                  Change
+                </NavLink>
+              </DropdownMenuItem>
+            </RequiredAuth>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -96,6 +100,7 @@ const WorkspaceDetailPage = () => {
       <DialogAddStudent
         open={openDialogAddStudent}
         onOpen={setOpenDialogAddStudent}
+        workspaceId={workspaceId}
       />
     </div>
   )
