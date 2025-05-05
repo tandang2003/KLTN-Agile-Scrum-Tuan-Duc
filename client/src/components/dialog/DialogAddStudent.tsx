@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/context/redux/hook'
+import workspaceApi from '@/feature/workspace/workspace.api'
 import { HttpStatusCode } from '@/lib/const'
 import { cn } from '@/lib/utils'
 import userService from '@/services/user.service'
@@ -83,19 +84,24 @@ const DialogAddStudent = ({
         studentIds: ids
       })
       onOpen(!open)
+      workspaceApi.util.invalidateTags([{ type: 'Workspaces', id: 'LIST' }])
       toast.success(`Invite student ${ids.join(', ')} success`)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         switch (error.response?.status) {
           case HttpStatusCode.Conflict: {
             const idsError = error.response.data['error']
-            toast.success(
-              `Invite student ${ids.filter((id) => !idsError.includes(id)).join(', ')} success`
-            )
+            const idsSuccess = ids.filter((id) => !idsError.includes(id))
+            if (idsSuccess.length) {
+              workspaceApi.util.invalidateTags([
+                { type: 'Workspaces', id: 'LIST' }
+              ])
+            }
+
+            toast.success(`Invite student ${idsSuccess.join(', ')} success`)
             toast.warning(`Student ${idsError.join(', ')} is in project`)
             break
           }
-
           default:
         }
       }

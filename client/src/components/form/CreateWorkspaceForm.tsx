@@ -59,6 +59,7 @@ const CreateWorkspaceForm = () => {
         toast.error('Create workspace failed')
       })
   }
+
   return (
     <div>
       <Form {...form}>
