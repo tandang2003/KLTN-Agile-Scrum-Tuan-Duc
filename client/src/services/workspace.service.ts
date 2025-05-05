@@ -8,6 +8,7 @@ import {
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
   StudentWorkspaceDataTable,
+  UpdateWorkspaceReqType,
   WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
@@ -35,10 +36,21 @@ const workspaceService = {
     req: CreateWorkspaceReqType
   ): Promise<WorkspaceResponse> => {
     const response = await httpService.post<
-      WorkspaceResponse,
+      ResponseApi<WorkspaceResponse>,
       CreateWorkspaceReqType
     >('/workspace', req)
-    return response.data
+    return response.data.data
+  },
+
+  updatesWorkspace: async (
+    workspaceId: Id,
+    req: UpdateWorkspaceReqType
+  ): Promise<WorkspaceResponse> => {
+    const response = await httpService.put<
+      ResponseApi<WorkspaceResponse>,
+      UpdateWorkspaceReqType
+    >(`/workspace/${workspaceId}`, req)
+    return response.data.data
   },
 
   getListStudent: async (

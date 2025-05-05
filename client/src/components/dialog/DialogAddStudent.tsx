@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/context/redux/hook'
 import { HttpStatusCode } from '@/lib/const'
+import { cn } from '@/lib/utils'
 import userService from '@/services/user.service'
 import workspaceService from '@/services/workspace.service'
 import { Id } from '@/types/other.type'
@@ -163,7 +164,10 @@ const DialogAddStudent = ({
             <Button className='bg-red-600'>Cancel</Button>
           </DialogClose>
           <Button
-            className='bg-yellow-400'
+            className={cn(
+              'bg-yellow-400',
+              ids.length === 0 && 'hover:cursor-not-allowed'
+            )}
             disabled={ids.length === 0}
             onClick={handleInvite}
           >

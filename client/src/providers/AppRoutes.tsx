@@ -15,6 +15,7 @@ import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { KanbanDemo } from '@/pages/manager/workspace/project/kaban/page'
+import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -57,6 +58,10 @@ const AppRoutes = () => {
             <Route
               path='workspace/:workspaceId'
               element={<WorkspaceDetailPage />}
+            />
+            <Route
+              path='workspace/:workspaceId/setting'
+              element={<WorkspaceSettingPage />}
             />
             {/* http://localhost:3000/manager/workspace/project/1 */}
             <Route
