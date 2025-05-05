@@ -156,18 +156,6 @@ public class WorkspaceService {
         }
         return ApiResponse.<Void>builder()
                 .message("Invite student to workspace")
-//                .logData(MailInviteStudent.builder()
-//                        .to(emails)
-//                        .mailRequest(
-//                                MailRequest.builder()
-//                                        .variable(Map.of(
-//                                                "sender", sender.getName(),
-//                                                "project.name", workspace.getName(),
-//                                                "project.confirmationLink",
-//                                        ))
-//                                        .templateName("workspace-invite-student")
-//                                        .build())
-//                        .build())
                 .build();
     }
 
