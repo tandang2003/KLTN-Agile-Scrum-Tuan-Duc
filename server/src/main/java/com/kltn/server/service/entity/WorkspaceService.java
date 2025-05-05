@@ -1,9 +1,7 @@
 package com.kltn.server.service.entity;
 
-import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
-import com.kltn.server.DTO.request.log.MailInviteStudent;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
@@ -12,7 +10,6 @@ import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppListArgumentNotValidException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
-import com.kltn.server.kafka.SendMailEvent;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.mapper.entity.WorkspaceMapper;
 import com.kltn.server.model.entity.User;
@@ -25,10 +22,8 @@ import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsReposit
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -86,7 +81,7 @@ public class WorkspaceService {
         return ApiPaging.<WorkspaceResponse>builder().items(workspaces.get().map(workspaceMapper::toWorkspaceResponseForPaging).toList()).totalItems(workspaces.getTotalElements()).totalPages(workspaces.getTotalPages()).currentPage(workspaces.getNumber()).build();
     }
 
-    public WorkspaceResponse updateWorkspace(String workspaceId, WorkspaceUpdationRequest workspaceUpdationRequest) {
+    public WorkspaceResponse updateWorkspace(String workspaceId, WorkspaceUpdateRequest workspaceUpdationRequest) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         if (workspaceUpdationRequest.end().isBefore(workspace.getStart())) {
             Map<String, String> error = new HashMap<>();
@@ -123,11 +118,12 @@ public class WorkspaceService {
                 .build();
     }
 
-    @SendMailEvent(topic = "send-mail")
+    //    @SendMailEvent(topic = "send-mail")
     @Transactional
     public ApiResponse<Void> addStudentToWorkspace(String workspaceId, String[] uniIds) {
-        User sender = userRepository.findByUniId((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).get();
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+//        String senderId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() ->
+                AppException.builder().error(Error.NOT_FOUND).build());
         List<String> removedUniIds = new ArrayList<>();
         List<String> emails = new ArrayList<>();
         List<String> uniIdsList = Arrays.stream(uniIds).toList();
@@ -160,18 +156,6 @@ public class WorkspaceService {
         }
         return ApiResponse.<Void>builder()
                 .message("Invite student to workspace")
-                .logData(MailInviteStudent.builder()
-                        .to(emails)
-                        .mailRequest(
-                                MailRequest.builder()
-                                        .variable(Map.of(
-                                                "sender", sender.getName(),
-                                                "project.name", workspace.getName(),
-                                                "project.confirmationLink", "https://google.com"
-                                        ))
-                                        .templateName("workspace-invite-student")
-                                        .build())
-                        .build())
                 .build();
     }
 

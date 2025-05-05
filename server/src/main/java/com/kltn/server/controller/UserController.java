@@ -9,7 +9,10 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -28,13 +31,16 @@ public class UserController {
 
 
     @GetMapping("/check")
-    public ResponseEntity<ApiResponse<Void>> searchUser(@RequestParam("uniId")
-                                                        @Length(
-                                                                min = 8,
-                                                                max = 8,
-                                                                message = "student id is not valid"
-                                                        )
-                                                        String userId) {
+    public ResponseEntity<ApiResponse<Void>> searchUser(
+            @RequestParam("uniId")
+            @Length(
+                    min = 8,
+                    max = 8,
+                    message = "student id is not valid"
+            )
+            String userId
+    ) {
+
         if (userService.checkingUser(userId))
             return ResponseEntity.ok().body(ApiResponse.<Void>builder().message("user is exist").build());
         else
