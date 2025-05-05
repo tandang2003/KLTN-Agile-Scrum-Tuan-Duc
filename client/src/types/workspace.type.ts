@@ -35,7 +35,9 @@ type WorkspaceResponse = Pick<
 type WorkspaceCardResponse = {
   id: Id
   name: string
-  owner: string
+  owner: {
+    name: string
+  }
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
@@ -48,8 +50,13 @@ type ListStudentWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
 
 type StudentWorkspaceDataTable = Pick<
   UserModel,
-  'id' | 'name' | 'className' | 'role'
+  'id' | 'name' | 'className' | 'role' | 'uniId'
 >
+
+type InviteStudentWorkspaceReqType = {
+  workspaceId: Id
+  studentIds: Id[]
+}
 
 export type {
   CreateWorkspaceReqType,
@@ -59,7 +66,8 @@ export type {
   WorkspaceSideBar,
   ListWorkspaceReq,
   ListStudentWorkspaceReq,
-  StudentWorkspaceDataTable
+  StudentWorkspaceDataTable,
+  InviteStudentWorkspaceReqType
 }
 
 export { CreateWorkspaceSchema }

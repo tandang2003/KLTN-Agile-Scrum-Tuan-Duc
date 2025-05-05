@@ -52,7 +52,7 @@ const WorkspaceDetailPage = () => {
           <span className='rounded-xl bg-amber-500 px-4 py-2'>
             {formatDate(new Date())}
           </span>
-          <span>Start </span>
+          <span>End </span>
           <span className='rounded-xl bg-red-500 px-4 py-2'>
             {formatDate(data.end)}
           </span>
@@ -96,6 +96,7 @@ const WorkspaceDetailPage = () => {
       <DialogAddStudent
         open={openDialogAddStudent}
         onOpen={setOpenDialogAddStudent}
+        workspaceId={workspaceId}
       />
     </div>
   )

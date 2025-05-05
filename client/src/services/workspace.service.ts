@@ -1,8 +1,10 @@
 import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { Page, ResponseApi } from '@/types/http.type'
+import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
+  InviteStudentWorkspaceReqType,
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
   StudentWorkspaceDataTable,
@@ -28,6 +30,7 @@ const workspaceService = {
     )
     return response.data.data
   },
+
   createWorkspace: async (
     req: CreateWorkspaceReqType
   ): Promise<WorkspaceResponse> => {
@@ -37,6 +40,7 @@ const workspaceService = {
     >('/workspace', req)
     return response.data
   },
+
   getListStudent: async (
     req: ListStudentWorkspaceReq
   ): Promise<Page<StudentWorkspaceDataTable>> => {
@@ -45,6 +49,30 @@ const workspaceService = {
       ResponseApi<Page<StudentWorkspaceDataTable>>
     >(`/workspace/${req.id}/student?${queryString}`)
     return response.data.data
+  },
+
+  checkUserExist: async (
+    workspaceId: Id,
+    uniId: Id
+  ): Promise<ResponseApi<void>> => {
+    const queryString = toQueryString({
+      workspaceId,
+      uniId
+    })
+    const response = await httpService.get<ResponseApi<void>>(
+      `/workspace/student?${queryString}`
+    )
+    return response.data
+  },
+
+  inviteStudentToWorkspace: async (
+    req: InviteStudentWorkspaceReqType
+  ): Promise<ResponseApi<void>> => {
+    const response = await httpService.post<
+      ResponseApi<void>,
+      InviteStudentWorkspaceReqType
+    >(`/workspace/student`, req)
+    return response.data
   }
 }
 
