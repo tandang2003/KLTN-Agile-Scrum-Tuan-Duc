@@ -89,4 +89,12 @@ public class WorkspaceController {
         return ResponseEntity.ok().body(
                 workspaceService.addStudentToWorkspace(workspaceUserAdditionRequest.workspaceId(), workspaceUserAdditionRequest.studentIds()));
     }
+    @GetMapping("/{workspaceId}/project")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<ApiResponse<ApiPaging<ProjectResponse>>> getProjectByWorkspaceId(@PathVariable String workspaceId,
+                                                                                           @RequestParam(defaultValue = "0") int page,
+                                                                                           @RequestParam(defaultValue = "10") int size) {
+        ApiResponse<ApiPaging<ProjectResponse>> projectResponse = workspaceService.getListPagingProject(workspaceId, page, size);
+        return ResponseEntity.status(projectResponse.getCode()).body(projectResponse);
+    }
 }

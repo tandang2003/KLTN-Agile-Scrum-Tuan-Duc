@@ -168,13 +168,6 @@ public class User extends BaseEntity implements UserDetails {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -187,13 +180,17 @@ public class User extends BaseEntity implements UserDetails {
         return authorities;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
-    public String getUsername() {
+    public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setPassword(String password) {
@@ -214,6 +211,14 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setUniId(String uniId) {
         this.uniId = uniId;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getUniPassword() {
@@ -252,12 +257,8 @@ public class User extends BaseEntity implements UserDetails {
         return reviewedTasks;
     }
 
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
+    public void setReviewedTasks(Set<Task> reviewedTasks) {
+        this.reviewedTasks = reviewedTasks;
     }
 
     public boolean isAlive() {
@@ -268,10 +269,11 @@ public class User extends BaseEntity implements UserDetails {
         this.alive = alive;
     }
 
-    public void setReviewedTasks(Set<Task> reviewedTasks) {
-
-        this.reviewedTasks = reviewedTasks;
+    @Override
+    public String getUsername() {
+        return name;
     }
+
 
     public List<WorkspacesUsersProjects> getWorkspacesUserProjects() {
         return workspacesUserProjects;
