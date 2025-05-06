@@ -1,8 +1,10 @@
 import { logoutThunk } from '@/feature/auth/auth.slice'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
+import { Id } from '@/types/other.type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type WorkspaceState = {
+  currentId?: Id
   isDialogCreateOpen: boolean
   isFetching: boolean
   isFetched: boolean
@@ -19,6 +21,10 @@ const workspaceSlice = createSlice({
   name: 'workspace',
   initialState: initialState,
   reducers: {
+    setCurrentWorkspaceId(state: WorkspaceState, action: PayloadAction<Id>) {
+      state.currentId = action.payload
+    },
+
     setStateDialogWorkspace(
       state: WorkspaceState,
       action: PayloadAction<boolean>
@@ -52,7 +58,10 @@ const workspaceSlice = createSlice({
   }
 })
 
-export const { setStateDialogWorkspace, addWorkspaceItems } =
-  workspaceSlice.actions
+export const {
+  setStateDialogWorkspace,
+  addWorkspaceItems,
+  setCurrentWorkspaceId
+} = workspaceSlice.actions
 export const workspaceReducer = workspaceSlice.reducer
 export default workspaceSlice

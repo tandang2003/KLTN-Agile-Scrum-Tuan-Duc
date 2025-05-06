@@ -18,7 +18,6 @@ import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.*;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
-import com.kltn.server.repository.document.ProjectLogRepository;
 import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;

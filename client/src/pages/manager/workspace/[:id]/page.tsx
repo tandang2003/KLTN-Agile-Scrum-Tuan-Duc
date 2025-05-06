@@ -16,9 +16,15 @@ import {
 import Icon from '@/components/Icon'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { PlusIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
+import { useAppDispatch } from '@/context/redux/hook'
+import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams<WorkspaceParams>()
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId
@@ -26,12 +32,16 @@ const WorkspaceDetailPage = () => {
   const [openDialogAddStudent, setOpenDialogAddStudent] =
     useState<boolean>(false)
 
+  const [openDialogCreateProject, setOpenDialogCreateProject] =
+    useState<boolean>(false)
+
   useEffect(() => {
     if (!workspaceId) {
       navigate('/404', { replace: true })
       return
     }
-  }, [navigate, workspaceId])
+    dispatch(setCurrentWorkspaceId(workspaceId))
+  }, [navigate, workspaceId, dispatch])
 
   if (!workspaceId) return null
   if (!data) return null
@@ -88,10 +98,20 @@ const WorkspaceDetailPage = () => {
         </DropdownMenu>
       </div>
       <Tabs defaultValue='project'>
-        <TabsList>
-          <TabsTrigger value='project'>Project</TabsTrigger>
-          <TabsTrigger value='student'>Student</TabsTrigger>
-        </TabsList>
+        <div className='flex items-center justify-between'>
+          <TabsList>
+            <TabsTrigger value='project'>Project</TabsTrigger>
+            <TabsTrigger value='student'>Student</TabsTrigger>
+          </TabsList>
+          <Button
+            variant='default'
+            size='sm'
+            onClick={() => setOpenDialogCreateProject(true)}
+          >
+            <PlusIcon />
+            New Group
+          </Button>
+        </div>
         <TabsContent value='student'>
           <StudentDataTable workspaceId={workspaceId} />
         </TabsContent>
@@ -101,6 +121,10 @@ const WorkspaceDetailPage = () => {
         open={openDialogAddStudent}
         onOpen={setOpenDialogAddStudent}
         workspaceId={workspaceId}
+      />
+      <DialogCreateProject
+        open={openDialogCreateProject}
+        onOpen={setOpenDialogCreateProject}
       />
     </div>
   )
