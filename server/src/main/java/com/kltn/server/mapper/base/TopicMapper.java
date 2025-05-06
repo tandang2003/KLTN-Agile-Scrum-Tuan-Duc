@@ -6,6 +6,7 @@ import com.kltn.server.model.collection.model.Topic;
 import org.mapstruct.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper(componentModel = "spring", unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface TopicMapper {
@@ -32,4 +33,5 @@ public interface TopicMapper {
             @Mapping(target = "color", source = "topicRequest.color"),
     })
     List<Topic> toTopicList(List<TopicRequest> topicRequests);
+
 }

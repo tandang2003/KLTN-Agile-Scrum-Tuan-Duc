@@ -23,7 +23,6 @@ import java.util.Set;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
         setFilterProcessesUrl("/auth");

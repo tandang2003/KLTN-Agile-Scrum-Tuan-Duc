@@ -6,9 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Topic {
     private ObjectId id;
-    @Field
+    @Field(name = "name")
     private String name;
-    @Field
+    @Field(name = "color")
     private String color;
 
     public Topic() {

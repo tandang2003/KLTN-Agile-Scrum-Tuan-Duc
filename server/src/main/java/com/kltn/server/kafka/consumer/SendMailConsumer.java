@@ -17,7 +17,7 @@ public class SendMailConsumer {
     }
 
     @KafkaListener(topics = "send-mail", groupId = "send-mail")
-    public void consumeMail(MailRequest mail) {
+    public void consumeObj1(MailRequest mail) {
         try {
             kafkaSendMailService.sendEmail(mail);
         } catch (Exception e) {

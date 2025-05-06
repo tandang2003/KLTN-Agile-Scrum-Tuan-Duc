@@ -1,7 +1,7 @@
 package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
-import com.kltn.server.DTO.response.AuthenticationResponse;
+import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Role;
