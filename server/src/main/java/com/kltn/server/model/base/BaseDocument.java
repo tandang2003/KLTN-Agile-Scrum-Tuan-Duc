@@ -30,6 +30,9 @@ public abstract class BaseDocument {
     @Field(name = "deleted_by")
     protected String deletedBy;
 
+    protected BaseDocument() {
+    }
+
     protected BaseDocument(BaseDocumentBuilder<?, ?> builder) {
         this.id = builder.id;
         this.DTCreated = builder.DTCreated;

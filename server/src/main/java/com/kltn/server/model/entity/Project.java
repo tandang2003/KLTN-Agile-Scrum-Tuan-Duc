@@ -11,7 +11,7 @@ import java.util.List;
 public class Project extends BaseEntity {
     private String name;
     @Column(columnDefinition = "LONGTEXT")
-    private String description;
+        private String description;
     @OneToMany(mappedBy = "project")
     private List<Sprint> sprints;
     @OneToMany(mappedBy = "project")
