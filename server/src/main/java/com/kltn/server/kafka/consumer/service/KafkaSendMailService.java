@@ -58,7 +58,7 @@ public class KafkaSendMailService {
             content = content.replace("{{" + entry.getKey() + "}}", entry.getValue());
         }
         if (link != null)
-            content = content.replace("{{link}}", link + tokenUtils.generateVerifyToken(data));
+            content = content.replace("{{link}}", link + tokenUtils.generateVerifyToken("mail", data));
         return content;
     }
 

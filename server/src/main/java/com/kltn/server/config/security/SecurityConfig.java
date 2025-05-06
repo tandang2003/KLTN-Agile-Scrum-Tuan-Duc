@@ -2,6 +2,7 @@ package com.kltn.server.config.security;
 
 import com.kltn.server.config.properties.ApplicationProps;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
+import com.kltn.server.config.security.filter.ProjectRoleAuthorizationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -39,6 +41,9 @@ public class SecurityConfig {
     private CustomAccessDenyHandler customAccessDenyHandler;
 
     @Autowired
+    private ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter;
+
+    @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     @Autowired
     private CustomConverterJwtToUser customConverterJwtToUser;
@@ -56,6 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        projectRoleAuthorizationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         http.securityContext(contextConfig -> {
@@ -71,6 +77,7 @@ public class SecurityConfig {
                             .deleteCookies("refresh_token");
                 })
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(projectRoleAuthorizationFilter, BearerTokenAuthenticationFilter.class)
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())

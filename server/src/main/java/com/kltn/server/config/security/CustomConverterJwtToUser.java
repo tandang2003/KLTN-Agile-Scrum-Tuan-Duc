@@ -18,7 +18,6 @@ public class CustomConverterJwtToUser implements Converter<Jwt, UsernamePassword
 
     @Override
     public UsernamePasswordAuthenticationToken convert(Jwt source) {
-        
         JwtGrantedAuthoritiesConverter defaultConverter = new JwtGrantedAuthoritiesConverter();
         Collection<GrantedAuthority> defaultAuthorities = defaultConverter.convert(source);
         List<String> roles = source.getClaimAsStringList("authorities");

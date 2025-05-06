@@ -16,6 +16,10 @@ public class Project extends BaseDocument {
     @Field("topics")
     private List<Topic> topics;
 
+    public Project() {
+        super();
+    }
+
     public Project(ProjectBuilder builder) {
         super(builder);
         this.nkProjectId = builder.nkProjectId;
@@ -73,11 +77,11 @@ public class Project extends BaseDocument {
         this.description = description;
     }
 
-    public List<Topic> getTags() {
+    public List<Topic> getTopics() {
         return topics;
     }
 
-    public void setTags(List<Topic> topics) {
+    public void setTopics(List<Topic> topics) {
         this.topics = topics;
     }
 }

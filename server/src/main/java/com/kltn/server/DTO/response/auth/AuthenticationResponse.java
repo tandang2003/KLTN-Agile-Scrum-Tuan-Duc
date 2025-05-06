@@ -1,4 +1,4 @@
-package com.kltn.server.DTO.response;
+package com.kltn.server.DTO.response.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
