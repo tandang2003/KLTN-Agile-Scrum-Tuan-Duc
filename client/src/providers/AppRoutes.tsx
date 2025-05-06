@@ -16,6 +16,7 @@ import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { KanbanDemo } from '@/pages/manager/workspace/project/kaban/page'
 import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
+import InviteProjectPage from '@/pages/verification/invite-project/page'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -79,6 +80,7 @@ const AppRoutes = () => {
           <Route path='/404' element={<NotFoundPage />} />
           <Route path='*' element={<NotFoundPage />} />
         </Route>
+        <Route path='/invite' element={<InviteProjectPage />} />
       </Routes>
     </BrowserRouter>
   )

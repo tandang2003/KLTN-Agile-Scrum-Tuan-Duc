@@ -6,10 +6,8 @@ import { Toaster } from 'sonner'
 const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <AppGlobalState>
-      <RestoreToken>
-        <Toaster richColors position='bottom-right' />
-        {children}
-      </RestoreToken>
+      <Toaster richColors position='bottom-right' />
+      {children}
     </AppGlobalState>
   )
 }
