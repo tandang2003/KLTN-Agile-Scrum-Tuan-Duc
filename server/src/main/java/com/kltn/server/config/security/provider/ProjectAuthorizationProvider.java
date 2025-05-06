@@ -53,7 +53,7 @@ public class ProjectAuthorizationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.isAssignableFrom(ProjectAuthorizationProvider.class);
+        return authentication.isAssignableFrom(ProjectAuthorizationToken.class);
     }
 
 
