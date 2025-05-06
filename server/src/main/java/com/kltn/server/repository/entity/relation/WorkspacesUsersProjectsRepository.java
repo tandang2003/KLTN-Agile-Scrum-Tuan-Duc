@@ -29,5 +29,4 @@ public interface WorkspacesUsersProjectsRepository extends JpaRepository<Workspa
 //            nativeQuery = true
     )
     Page<Project> getProjecByWorkspaceId(String workspaceId, PageRequest sort);
-
 }

@@ -60,7 +60,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
           {
             title: 'Project',
-            url: '/manager/project',
+            url: '/manager/workspace/project/1',
             icon: <Icon icon={'ant-design:project-twotone'} />
           }
         ]
