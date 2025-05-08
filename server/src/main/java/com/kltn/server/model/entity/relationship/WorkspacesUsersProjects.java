@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class WorkspacesUsersProjects implements Serializable {
     @EmbeddedId
     private WorkspacesUsersId id;
-    //@Id
+
     @MapsId("workspaceId")
     @ManyToOne(optional = false)
     private Workspace workspace;

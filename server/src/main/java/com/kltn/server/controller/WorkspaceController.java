@@ -5,6 +5,7 @@ import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.service.entity.WorkspaceService;
