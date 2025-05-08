@@ -19,6 +19,8 @@ public interface SprintMapper {
         @Mapping(target = "title", source = "title"),
         @Mapping(target = "dtStart", source = "start"),
         @Mapping(target = "dtEnd", source = "end"),
+        @Mapping(target = "miniumStoryPoint", source = "minimumStoryPoint"),
+        @Mapping(target = "dtPredict", source = "predict"),
     })
     Sprint toSprint(SprintCreationRequest sprintCreationRequest);
 
@@ -26,8 +28,10 @@ public interface SprintMapper {
     @Mappings({
             @Mapping(target = "title", source = "title"),
             @Mapping(target = "id", source = "id"),
-            @Mapping(target = "dtStart", source = "dtStart"),
-            @Mapping(target = "dtEnd", source = "dtEnd"),
+            @Mapping(target = "miniumStoryPoint", source = "miniumStoryPoint"),
+            @Mapping(target = "predict", source = "dtPredict"),
+            @Mapping(target = "start", source = "dtStart"),
+            @Mapping(target = "end", source = "dtEnd"),
     })
     @BeanMapping(ignoreByDefault = true)
     SprintResponse toSprintCreateResponse(Sprint sprint);
@@ -35,11 +39,12 @@ public interface SprintMapper {
     @Mappings({
             @Mapping(target = "title", source = "projectSprint.sprint.title"),
             @Mapping(target = "id", source = "projectSprint.sprint.id"),
-            @Mapping(target = "dtStart", source = "projectSprint.sprint.dtStart"),
-            @Mapping(target = "dtEnd", source = "projectSprint.sprint.dtEnd"),
+            @Mapping(target = "miniumStoryPoint", source = "projectSprint.sprint.miniumStoryPoint"),
+            @Mapping(target = "start", source = "projectSprint.sprint.dtStart"),
+            @Mapping(target = "end", source = "projectSprint.sprint.dtEnd"),
             @Mapping(target = "planning", source = "projectSprint.dtPlanning"),
             @Mapping(target = "preview", source = "projectSprint.dtPreview"),
     })
     @BeanMapping(ignoreByDefault = true)
-    SprintResponse toSprintResponse(ProjectSprint projectSprint);
+    SprintResponse toSprintStudentUpdateResponse(ProjectSprint projectSprint);
 }

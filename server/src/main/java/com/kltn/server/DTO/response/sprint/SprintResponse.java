@@ -11,8 +11,10 @@ import java.util.Map;
 public record SprintResponse(String id,
                              String title,
                              Map<String, String> process,
-                             Instant dtStart,
-                             Instant dtEnd,
+                             int miniumStoryPoint,
+                             Instant predict,
+                             Instant start,
+                             Instant end,
                              Instant planning,
                              Instant preview
 ) {
@@ -20,6 +22,8 @@ public record SprintResponse(String id,
         private String id;
         private Map<String, String> process;
         private String title;
+        private int miniumStoryPoint;
+        private Instant predict;
         private Instant dtStart;
         private Instant dtEnd;
         private Instant planning;
@@ -35,18 +39,27 @@ public record SprintResponse(String id,
             return this;
         }
 
+        public SprintResponseBuilder miniumStoryPoint(int miniumStoryPoint) {
+            this.miniumStoryPoint = miniumStoryPoint;
+            return this;
+        }
+
+        public SprintResponseBuilder predict(Instant predict) {
+            this.predict = predict;
+            return this;
+        }
 
         public SprintResponseBuilder process(Map<String, String> process) {
             this.process = process;
             return this;
         }
 
-        public SprintResponseBuilder dtStart(Instant dtStart) {
+        public SprintResponseBuilder start(Instant dtStart) {
             this.dtStart = dtStart;
             return this;
         }
 
-        public SprintResponseBuilder dtEnd(Instant dtEnd) {
+        public SprintResponseBuilder end(Instant dtEnd) {
             this.dtEnd = dtEnd;
             return this;
         }
@@ -62,7 +75,7 @@ public record SprintResponse(String id,
         }
 
         public SprintResponse build() {
-            return new SprintResponse(id, title, process, dtStart, dtEnd, planning, preview);
+            return new SprintResponse(id, title, process, miniumStoryPoint, predict, dtStart, dtEnd, planning, preview);
         }
     }
 
@@ -70,38 +83,4 @@ public record SprintResponse(String id,
         return new SprintResponseBuilder();
     }
 
-    @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
-    public Map<String, String> process() {
-        return process;
-    }
-
-    @Override
-    public Instant dtStart() {
-        return dtStart;
-    }
-
-    @Override
-    public Instant dtEnd() {
-        return dtEnd;
-    }
-
-    @Override
-    public Instant planning() {
-        return planning;
-    }
-
-    @Override
-    public Instant preview() {
-        return preview;
-    }
-
-    @Override
-    public String title() {
-        return title;
-    }
 }

@@ -15,10 +15,7 @@ import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.model.collection.model.Topic;
-import com.kltn.server.model.entity.Project;
-import com.kltn.server.model.entity.Sprint;
-import com.kltn.server.model.entity.User;
-import com.kltn.server.model.entity.Workspace;
+import com.kltn.server.model.entity.*;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
@@ -119,15 +116,15 @@ public class ProjectService {
         User user = userRepository.findByUniId(userId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         Project project = projectRepository.findById(projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
 //        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<GrantedAuthority> authorities;
         if (user.getRole().getName().equals("teacher")) {
             Workspace workspace = project.getWorkspace();
             if (!workspace.getOwner().equals(user)) {
                 throw AppException.builder().error(Error.NOT_FOUND_SPECIFYING_PROJECT_TEACHER).build();
             }
-//            TODO: if is techer get authority as Leader
-//            WorkspacesUsersProjects usersProjects = workspacesUsersProjectsRepository.findByUserIdAndProjectId(workspace.getId(), projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_USER_PROJECT_RELATION).build());
-
+            Role role = roleInit.getRole(RoleType.LEADER.getName());
+            authorities = new ArrayList<>(role.getPermissions().stream().map(p -> new SimpleGrantedAuthority(p.getName())).toList());
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
         } else {
             WorkspacesUsersProjects usersProjects = workspacesUsersProjectsRepository.findByUserIdAndProjectId(user.getId(), projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_USER_PROJECT_RELATION).build());
             authorities = new ArrayList<>(usersProjects.getRole().getPermissions().stream().map(p -> new SimpleGrantedAuthority(p.getName())).toList());
@@ -162,8 +159,8 @@ public class ProjectService {
                                         "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
                                         "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""
                                 )).
-                        dtStart(sprint.getDtStart()).
-                        dtEnd(sprint.getDtEnd()).
+                        start(sprint.getDtStart()).
+                        end(sprint.getDtEnd()).
                         build());
             });
         }
