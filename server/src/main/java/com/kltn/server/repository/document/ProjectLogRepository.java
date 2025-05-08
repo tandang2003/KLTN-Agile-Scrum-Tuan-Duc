@@ -7,8 +7,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectLogRepository extends MongoRepository<Project, ObjectId> {
-    Project findByNkProjectId(String nkProjectId);
+    Optional<Project> findByNkProjectId(String nkProjectId);
 
 }

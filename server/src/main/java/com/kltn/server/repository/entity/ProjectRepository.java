@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, String> {
     Sort DEFAULT_SORT = Sort.by(Sort.Direction.DESC, "dtCreated");
+
     Project findByName(String name);
 
     Optional<Project> findById(String id);
