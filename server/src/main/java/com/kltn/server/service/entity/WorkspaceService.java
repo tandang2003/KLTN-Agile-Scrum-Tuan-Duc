@@ -185,8 +185,12 @@ public class WorkspaceService {
         Page<Project> projects = workspacesUsersProjectsRepository.getProjecByWorkspaceId(workspaceId, PageRequest.of(page, size, WorkspacesUsersProjectsRepository.DEFAULT_SORT));
         List<ProjectResponse> projectResponses = new ArrayList<>();
         projects.getContent().forEach(project -> {
-            com.kltn.server.model.collection.Project project1 = projectLogRepository.findByNkProjectId(project.getId());
-            List<Topic> topics = project1.getTopics();
+            var project1 = projectLogRepository.findByNkProjectId(project.getId());
+            List<Topic> topics;
+            if (project1.isPresent())
+                topics = project1.get().getTopics();
+            else
+                topics = new ArrayList<>();
             projectResponses.add(projectMapper.toProjectResponseForPaging(project, topics));
         });
 

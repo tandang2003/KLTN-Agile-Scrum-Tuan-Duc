@@ -1,41 +1,81 @@
 package com.kltn.server.DTO.response.sprint;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.model.collection.model.Topic;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-public record SprintResponse(String id, Map<String, String> process, Instant dtStart, Instant dtEnd) {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record SprintResponse(String id,
+                             String title,
+                             Map<String, String> process,
+                             int miniumStoryPoint,
+                             Instant predict,
+                             Instant start,
+                             Instant end,
+                             Instant planning,
+                             Instant preview
+) {
     public static class SprintResponseBuilder {
         private String id;
         private Map<String, String> process;
+        private String title;
+        private int miniumStoryPoint;
+        private Instant predict;
         private Instant dtStart;
         private Instant dtEnd;
+        private Instant planning;
+        private Instant preview;
 
         public SprintResponseBuilder id(String id) {
             this.id = id;
             return this;
         }
 
+        public SprintResponseBuilder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public SprintResponseBuilder miniumStoryPoint(int miniumStoryPoint) {
+            this.miniumStoryPoint = miniumStoryPoint;
+            return this;
+        }
+
+        public SprintResponseBuilder predict(Instant predict) {
+            this.predict = predict;
+            return this;
+        }
 
         public SprintResponseBuilder process(Map<String, String> process) {
             this.process = process;
             return this;
         }
 
-        public SprintResponseBuilder dtStart(Instant dtStart) {
+        public SprintResponseBuilder start(Instant dtStart) {
             this.dtStart = dtStart;
             return this;
         }
 
-        public SprintResponseBuilder dtEnd(Instant dtEnd) {
+        public SprintResponseBuilder end(Instant dtEnd) {
             this.dtEnd = dtEnd;
             return this;
         }
 
+        public SprintResponseBuilder planning(Instant planning) {
+            this.planning = planning;
+            return this;
+        }
+
+        public SprintResponseBuilder preview(Instant preview) {
+            this.preview = preview;
+            return this;
+        }
+
         public SprintResponse build() {
-            return new SprintResponse(id, process, dtStart, dtEnd);
+            return new SprintResponse(id, title, process, miniumStoryPoint, predict, dtStart, dtEnd, planning, preview);
         }
     }
 
@@ -43,23 +83,4 @@ public record SprintResponse(String id, Map<String, String> process, Instant dtS
         return new SprintResponseBuilder();
     }
 
-    @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
-    public Map<String, String> process() {
-        return process;
-    }
-
-    @Override
-    public Instant dtStart() {
-        return dtStart;
-    }
-
-    @Override
-    public Instant dtEnd() {
-        return dtEnd;
-    }
 }

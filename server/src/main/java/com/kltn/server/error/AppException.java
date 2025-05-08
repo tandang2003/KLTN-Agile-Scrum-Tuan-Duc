@@ -27,7 +27,13 @@ public class AppException extends RuntimeException {
             this.error = error;
             return this;
         }
+
+        public AppExceptionBuilder message(String message) {
+            this.error.setMessage(message);
+            return this;
+        }
     }
+
     public void setMessage(String message) {
         this.error.setMessage(message);
     }

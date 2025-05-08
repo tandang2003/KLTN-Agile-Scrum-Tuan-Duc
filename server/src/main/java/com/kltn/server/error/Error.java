@@ -28,6 +28,7 @@ public enum Error {
     NOT_FOUND_SPECIFYING_PROJECT_TEACHER(404, "Project not found in any workspace"),
 
     NOT_FOUND_USER_PROJECT_RELATION(404, "User-Project relation not found"),
+    NOT_FOUND_SPRINT_PROJECT_RELATION(404, "Sprint-Project relation not found"),
 
     // Authentication & Token Errors
     TOKEN_EXPIRED(440, "Token has expired"),
