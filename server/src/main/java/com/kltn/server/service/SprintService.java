@@ -58,7 +58,7 @@ public class SprintService {
         projectSprint.setDtPreview(sprintStudentUpdateTimeRequest.dtPreview());
 
         projectSprint = projectSprintService.save(projectSprint);
-        SprintResponse sprintResponse = sprintMapper.toSprintResponse(projectSprint);
+        SprintResponse sprintResponse = sprintMapper.toSprintStudentUpdateResponse(projectSprint);
         return ApiResponse.<SprintResponse>builder()
                 .data(sprintResponse)
                 .message("Update sprint successfully")

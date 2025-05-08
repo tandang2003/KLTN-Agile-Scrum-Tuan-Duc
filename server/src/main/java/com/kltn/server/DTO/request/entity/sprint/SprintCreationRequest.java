@@ -11,12 +11,16 @@ import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 
 @ValidTimeRangeValidator(mainField = "start", dependencyField = "end", constraint = DateConstraint.BEFORE)
 @ValidTimeRangeValidator(mainField = "end", dependencyField = "start", constraint = DateConstraint.AFTER)
+@ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
 public record SprintCreationRequest(@NotEmpty String projectId,
                                     String title,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
                                     Instant start,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
-                                    Instant end
+                                    Instant end,
+                                    int minimumStoryPoint,
+                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME)
+                                    Instant predict
 ) {
 
 
@@ -25,8 +29,8 @@ public record SprintCreationRequest(@NotEmpty String projectId,
         private String title;
         private Instant dtStart;
         private Instant dtEnd;
-        private Instant dtPlanning;
-        private Instant dtPreview;
+        private Instant predict;
+        private int miniummStoryPoint;
 
         public SprintCreationRequestBuilder projectId(String projectId) {
             this.projectId = projectId;
@@ -35,6 +39,14 @@ public record SprintCreationRequest(@NotEmpty String projectId,
 
         public SprintCreationRequestBuilder title(String title) {
             this.title = title;
+            return this;
+        }
+        public SprintCreationRequestBuilder minimumStoryPoint(int miniummStoryPoint) {
+            this.miniummStoryPoint = miniummStoryPoint;
+            return this;
+        }
+        public SprintCreationRequestBuilder predict(Instant predict) {
+            this.predict = predict;
             return this;
         }
 
@@ -48,44 +60,15 @@ public record SprintCreationRequest(@NotEmpty String projectId,
             return this;
         }
 
-        public SprintCreationRequestBuilder dtPlanning(Instant dtPlanning) {
-            this.dtPlanning = dtPlanning;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder dtPreview(Instant dtPreview) {
-            this.dtPreview = dtPreview;
-            return this;
-        }
 
         public SprintCreationRequest build() {
-            return new SprintCreationRequest(projectId, title, dtStart, dtEnd);
+            return new SprintCreationRequest(projectId, title, dtStart, dtEnd, miniummStoryPoint, predict);
         }
 
     }
+
     public static SprintCreationRequestBuilder builder() {
         return new SprintCreationRequestBuilder();
-    }
-
-
-    @Override
-    public String projectId() {
-        return projectId;
-    }
-
-    @Override
-    public String title() {
-        return title;
-    }
-
-    @Override
-    public Instant start() {
-        return start;
-    }
-
-    @Override
-    public Instant end() {
-        return end;
     }
 
 }

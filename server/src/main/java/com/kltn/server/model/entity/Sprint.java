@@ -22,6 +22,10 @@ public class Sprint extends BaseEntity {
     @OneToMany(mappedBy = "sprint")
     private List<ProjectSprint> projectSprints;
 
+    private int miniumStoryPoint;
+    @Column(name = "dt_predict")
+    private Instant dtPredict;
+
     public Sprint(SprintEntityBuilder sprintBuilder) {
         super(sprintBuilder);
 //        this.project = sprintBuilder.project;
@@ -31,6 +35,8 @@ public class Sprint extends BaseEntity {
         this.dtStart = sprintBuilder.DTStart;
         this.dtEnd = sprintBuilder.DTEnd;
         this.projectSprints = sprintBuilder.projectSprints;
+        this.miniumStoryPoint = sprintBuilder.miniumStoryPoint;
+        this.dtPredict = sprintBuilder.dtPredict;
     }
 
     public Sprint() {
@@ -38,6 +44,8 @@ public class Sprint extends BaseEntity {
 
     public static class SprintEntityBuilder extends BaseEntityBuilder<Sprint, SprintEntityBuilder> {
         //        private Project project;
+        private int miniumStoryPoint;
+        private Instant dtPredict;
         private String title;
         //        private Instant DTPlanning;
 //        private Instant DTPreview;
@@ -61,6 +69,14 @@ public class Sprint extends BaseEntity {
 //        }
         public SprintEntityBuilder title(String title) {
             this.title = title;
+            return this;
+        }
+        public SprintEntityBuilder miniumStoryPoint(int miniumStoryPoint) {
+            this.miniumStoryPoint = miniumStoryPoint;
+            return this;
+        }
+        public SprintEntityBuilder dtPredict(Instant dtPredict) {
+            this.dtPredict = dtPredict;
             return this;
         }
 
@@ -155,6 +171,22 @@ public class Sprint extends BaseEntity {
 
     public void setProjectSprints(List<ProjectSprint> projectSprints) {
         this.projectSprints = projectSprints;
+    }
+
+    public int getMiniumStoryPoint() {
+        return miniumStoryPoint;
+    }
+
+    public void setMiniumStoryPoint(int miniumStoryPoint) {
+        this.miniumStoryPoint = miniumStoryPoint;
+    }
+
+    public Instant getDtPredict() {
+        return dtPredict;
+    }
+
+    public void setDtPredict(Instant dtPredict) {
+        this.dtPredict = dtPredict;
     }
 }
 
