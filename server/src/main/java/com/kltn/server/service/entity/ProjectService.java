@@ -15,12 +15,16 @@ import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.model.collection.model.Topic;
-import com.kltn.server.model.entity.*;
+import com.kltn.server.model.entity.Project;
+import com.kltn.server.model.entity.Sprint;
+import com.kltn.server.model.entity.User;
+import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
+import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
+import com.kltn.server.repository.document.ProjectLogRepository;
 import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.UserRepository;
-import com.kltn.server.repository.entity.WorkspaceRepository;
 import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsRepository;
 import com.kltn.server.service.EmailService;
 import com.kltn.server.util.RoleType;
@@ -28,6 +32,8 @@ import com.kltn.server.util.token.TokenUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -113,33 +118,60 @@ public class ProjectService {
         String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user = userRepository.findByUniId(userId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         Project project = projectRepository.findById(projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Collection<String> authorities = new ArrayList<>();
+//        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
         if (user.getRole().getName().equals("teacher")) {
             Workspace workspace = project.getWorkspace();
             if (!workspace.getOwner().equals(user)) {
                 throw AppException.builder().error(Error.NOT_FOUND_SPECIFYING_PROJECT_TEACHER).build();
             }
+//            TODO: if is techer get authority as Leader
+//            WorkspacesUsersProjects usersProjects = workspacesUsersProjectsRepository.findByUserIdAndProjectId(workspace.getId(), projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_USER_PROJECT_RELATION).build());
+
         } else {
             WorkspacesUsersProjects usersProjects = workspacesUsersProjectsRepository.findByUserIdAndProjectId(user.getId(), projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_USER_PROJECT_RELATION).build());
-            authorities = usersProjects.getRole().getPermissions().stream().map(Permission::getName).collect(Collectors.toList());
-            authorities.add("ROLE_" + usersProjects.getRole().getName().toUpperCase());
+            authorities = new ArrayList<>(usersProjects.getRole().getPermissions().stream().map(p -> new SimpleGrantedAuthority(p.getName())).toList());
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + usersProjects.getRole().getName().toUpperCase()));
         }
-        com.kltn.server.model.collection.Project project1 = projectLogRepository.findByNkProjectId(projectId);
-        List<Topic> topics = project1.getTopics();
-        List<Sprint> sprints = project.getSprints();
-        List<SprintResponse> sprintResponses = new ArrayList<>();
-        if (sprints != null) {
-            sprints.forEach(sprint -> {
-                sprintResponses.add(SprintResponse.builder().id(sprint.getId()).process(Map.of("planning", sprint.getDTPlanning().toString(), "review", sprint.getDTPreview().toString())).dtStart(sprint.getDTStart()).dtEnd(sprint.getDTEnd()).build());
-            });
-        }
+        var project1 = projectLogRepository.findByNkProjectId(projectId);
+        List<Topic> topics;
+        if (project1.isPresent())
+            topics = project1.get().getTopics();
+        else
+            topics = new ArrayList<>();
+        List<SprintResponse> sprintResponses = getSprintResponses(project);
         ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics, sprintResponses);
         String jwt = tokenUtils.generateVerifyToken(
-                "project", Map.of("userId", user.getUniId(), "authorities", authorities.toString())
+                "project", Map.<String, Object>ofEntries(Map.entry("userId", user.getUniId()), Map.entry("authorities", authorities.stream().map(GrantedAuthority::getAuthority).toList()))
         );
         ProjectAuthorizationResponse projectAuthorizationResponse = ProjectAuthorizationResponse.builder().authorizationProject(jwt).project(projectResponse).build();
         return ApiResponse.<ProjectAuthorizationResponse>builder().message("Get project by id").data(projectAuthorizationResponse).build();
 
+    }
+
+    private List<SprintResponse> getSprintResponses(Project project) {
+        List<ProjectSprint> projectSprints = project.getProjectSprints();
+        List<SprintResponse> sprintResponses = new ArrayList<>();
+        if (projectSprints != null && !projectSprints.isEmpty()) {
+
+            projectSprints.forEach(ps -> {
+                Sprint sprint = ps.getSprint();
+                sprintResponses.add(SprintResponse.builder().id(sprint.getId()).
+                        process(
+                                Map.of(
+                                        "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
+                                        "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""
+                                )).
+                        dtStart(sprint.getDtStart()).
+                        dtEnd(sprint.getDtEnd()).
+                        build());
+            });
+        }
+        return sprintResponses;
+    }
+
+    public Project getProjectById(String id) {
+        return projectRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     }
 
 

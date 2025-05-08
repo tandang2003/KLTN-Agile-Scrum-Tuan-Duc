@@ -1,6 +1,7 @@
 package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.type.task.TaskPriority;
 import com.kltn.server.model.type.task.TaskStatus;
 import com.kltn.server.model.type.task.TaskTag;
@@ -12,15 +13,22 @@ import java.util.List;
 @Entity
 @Table(name = "tasks")
 public class Task extends BaseEntity {
-
+    //    @ManyToOne
+    //    @JoinColumn(name = "project_id")
+    //    private Project project;
+    //    @ManyToOne
+    //    @JoinColumn(name = "sprint_id")
+    //    private Sprint sprint;
     @ManyToOne
-    @JoinColumn(name = "sprint_id")
-    private Sprint sprint;
+    @JoinColumns({
+            @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
+            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")
+    })
+//    @JoinColumn(name = "proje")
+    private ProjectSprint projectSprint;
     @OneToMany(mappedBy = "task")
     private List<Resource> resources;
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+
     @ManyToOne
     @JoinColumn(name = "assigner")
     private User assigner;
@@ -48,6 +56,7 @@ public class Task extends BaseEntity {
     @Column(name = "dt_planning")
     private Instant DTPlanning;
 
+
     public Task(TaskEntityBuilder builder) {
         super(builder);
         this.title = builder.title;
@@ -60,8 +69,8 @@ public class Task extends BaseEntity {
         this.complexOfDescription = builder.complexOfDescription;
         this.assigner = builder.assigner;
         this.reviewer = builder.reviewer;
-        this.project = builder.project;
-        this.sprint = builder.sprint;
+//        this.project = builder.project;
+//        this.sprint = builder.sprint;
         this.DTStart = builder.DTStart;
         this.DTEnd = builder.DTEnd;
         this.DTPlanning = builder.DTPlanning;
@@ -82,8 +91,8 @@ public class Task extends BaseEntity {
         private int numChangeOfDescription;
         private int complexOfDescription;
 
-        private Sprint sprint;
-        private Project project;
+        //        private Sprint sprint;
+//        private Project project;
         private User assigner;
         private User reviewer;
         private Instant DTStart;
@@ -145,15 +154,15 @@ public class Task extends BaseEntity {
             return this;
         }
 
-        public TaskEntityBuilder sprint(Sprint sprint) {
-            this.sprint = sprint;
-            return this;
-        }
-
-        public TaskEntityBuilder project(Project project) {
-            this.project = project;
-            return this;
-        }
+//        public TaskEntityBuilder sprint(Sprint sprint) {
+//            this.sprint = sprint;
+//            return this;
+//        }
+//
+//        public TaskEntityBuilder project(Project project) {
+//            this.project = project;
+//            return this;
+//        }
 
         public TaskEntityBuilder DTStart(Instant DTStart) {
             this.DTStart = DTStart;
@@ -181,21 +190,21 @@ public class Task extends BaseEntity {
         }
     }
 
-    public Sprint getSprint() {
-        return sprint;
-    }
-
-    public void setSprint(Sprint sprint) {
-        this.sprint = sprint;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
+//    public Sprint getSprint() {
+//        return sprint;
+//    }
+//
+//    public void setSprint(Sprint sprint) {
+//        this.sprint = sprint;
+//    }
+//
+//    public Project getProject() {
+//        return project;
+//    }
+//
+//    public void setProject(Project project) {
+//        this.project = project;
+//    }
 
     public User getAssigner() {
         return assigner;

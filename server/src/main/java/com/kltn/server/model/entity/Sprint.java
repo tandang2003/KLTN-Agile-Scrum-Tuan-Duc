@@ -1,6 +1,7 @@
 package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.entity.relationship.ProjectSprint;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -9,40 +10,40 @@ import java.util.List;
 @Entity
 @Table(name = "sprints")
 public class Sprint extends BaseEntity {
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
-    @Column(name ="dt_planning")
-    private Instant DTPlanning;
-    @Column(name ="dt_preview")
-    private Instant DTPreview;
-    @Column(name ="dt_start")
-    private Instant DTStart;
-    @Column(name ="dt_end")
-    private Instant DTEnd;
+    //    @ManyToOne
+//    @JoinColumn(name = "project_id")
+//    private Project project;
+    @Column(name = "title", columnDefinition = "LONGTEXT")
+    private String title;
+    @Column(name = "dt_start")
+    private Instant dtStart;
+    @Column(name = "dt_end")
+    private Instant dtEnd;
     @OneToMany(mappedBy = "sprint")
-    private List<Task> tasks;
+    private List<ProjectSprint> projectSprints;
 
     public Sprint(SprintEntityBuilder sprintBuilder) {
         super(sprintBuilder);
-        this.project = sprintBuilder.project;
-        this.DTPlanning = sprintBuilder.DTPlanning;
-        this.DTPreview = sprintBuilder.DTPreview;
-        this.DTStart = sprintBuilder.DTStart;
-        this.DTEnd = sprintBuilder.DTEnd;
-        this.tasks = sprintBuilder.tasks;
+//        this.project = sprintBuilder.project;
+        this.title = sprintBuilder.title;
+//        this.DTPlanning = sprintBuilder.DTPlanning;
+//        this.DTPreview = sprintBuilder.DTPreview;
+        this.dtStart = sprintBuilder.DTStart;
+        this.dtEnd = sprintBuilder.DTEnd;
+        this.projectSprints = sprintBuilder.projectSprints;
     }
 
     public Sprint() {
     }
 
     public static class SprintEntityBuilder extends BaseEntityBuilder<Sprint, SprintEntityBuilder> {
-        private Project project;
-        private Instant DTPlanning;
-        private Instant DTPreview;
+        //        private Project project;
+        private String title;
+        //        private Instant DTPlanning;
+//        private Instant DTPreview;
         private Instant DTStart;
         private Instant DTEnd;
-        private List<Task> tasks;
+        private List<ProjectSprint> projectSprints;
 
         @Override
         protected SprintEntityBuilder self() {
@@ -54,21 +55,25 @@ public class Sprint extends BaseEntity {
             return new Sprint(this);
         }
 
-        public SprintEntityBuilder project(Project project) {
-            this.project = project;
+        //        public SprintEntityBuilder project(Project project) {
+//            this.project = project;
+//            return this;
+//        }
+        public SprintEntityBuilder title(String title) {
+            this.title = title;
             return this;
         }
 
 
-        public SprintEntityBuilder DTPlanning(Instant DTPlanning) {
-            this.DTPlanning = DTPlanning;
-            return this;
-        }
-
-        public SprintEntityBuilder DTPreview(Instant DTPreview) {
-            this.DTPreview = DTPreview;
-            return this;
-        }
+//        public SprintEntityBuilder DTPlanning(Instant DTPlanning) {
+//            this.DTPlanning = DTPlanning;
+//            return this;
+//        }
+//
+//        public SprintEntityBuilder DTPreview(Instant DTPreview) {
+//            this.DTPreview = DTPreview;
+//            return this;
+//        }
 
         public SprintEntityBuilder DTStart(Instant DTStart) {
             this.DTStart = DTStart;
@@ -80,60 +85,76 @@ public class Sprint extends BaseEntity {
             return this;
         }
 
-        public SprintEntityBuilder tasks(List<Task> tasks) {
-            this.tasks = tasks;
+        public SprintEntityBuilder projectSprints(List<ProjectSprint> projectSprints) {
+            this.projectSprints = projectSprints;
             return this;
         }
 
     }
 
-    public Project getProject() {
-        return project;
+//    public Project getProject() {
+//        return project;
+//    }
+//
+//    public void setProject(Project project) {
+//        this.project = project;
+//    }
+
+
+//    public Instant getDTPlanning() {
+//        return DTPlanning;
+//    }
+//
+//    public void setDTPlanning(Instant DTPlanning) {
+//        this.DTPlanning = DTPlanning;
+//    }
+//
+//    public Instant getDTPreview() {
+//        return DTPreview;
+//    }
+//
+//    public void setDTPreview(Instant DTPreview) {
+//        this.DTPreview = DTPreview;
+//    }
+
+
+    @Transient
+    public List<Project> getProjects() {
+        return projectSprints.stream()
+                .map(ProjectSprint::getProject)
+                .toList();
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public String getTitle() {
+        return title;
     }
 
-
-    public Instant getDTPlanning() {
-        return DTPlanning;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setDTPlanning(Instant DTPlanning) {
-        this.DTPlanning = DTPlanning;
+    public Instant getDtStart() {
+        return dtStart;
     }
 
-    public Instant getDTPreview() {
-        return DTPreview;
+    public void setDtStart(Instant dtStart) {
+        this.dtStart = dtStart;
     }
 
-    public void setDTPreview(Instant DTPreview) {
-        this.DTPreview = DTPreview;
+    public Instant getDtEnd() {
+        return dtEnd;
     }
 
-    public Instant getDTStart() {
-        return DTStart;
+    public void setDtEnd(Instant dtEnd) {
+        this.dtEnd = dtEnd;
     }
 
-    public void setDTStart(Instant DTStart) {
-        this.DTStart = DTStart;
+    public List<ProjectSprint> getProjectSprints() {
+        return projectSprints;
     }
 
-    public Instant getDTEnd() {
-        return DTEnd;
-    }
-
-    public void setDTEnd(Instant DTEnd) {
-        this.DTEnd = DTEnd;
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setProjectSprints(List<ProjectSprint> projectSprints) {
+        this.projectSprints = projectSprints;
     }
 }
 

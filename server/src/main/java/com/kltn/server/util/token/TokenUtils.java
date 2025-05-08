@@ -78,7 +78,7 @@ public class TokenUtils {
         return refreshJwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 
-    public String generateVerifyToken(String context, Map<String, String> data) {
+    public String generateVerifyToken(String context, Map<String, Object> data) {
         Instant now = Instant.now();
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                 .issuer("verify_" + context)
