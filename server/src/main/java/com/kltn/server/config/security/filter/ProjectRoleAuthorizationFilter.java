@@ -72,7 +72,7 @@ public class ProjectRoleAuthorizationFilter extends AbstractAuthenticationProces
         if ("GET".equals(method) && path.matches("^/project/[^/]+$"))
             return false;
 
-        if ("POST".equals(method) && path.matches("^/project+$"))
+        if ("POST".equals(method) && path.matches("^/project$"))
             return false;
 
         if ("POST".equals(method) && path.matches("^/sprint+$"))
