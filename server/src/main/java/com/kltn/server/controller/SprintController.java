@@ -4,7 +4,7 @@ import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
-import com.kltn.server.service.SprintService;
+import com.kltn.server.service.entity.SprintService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,8 @@
-package com.kltn.server.service;
+package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.sprint.SprintCreateResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
@@ -12,8 +11,6 @@ import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.SprintRepository;
-import com.kltn.server.service.entity.ProjectService;
-import com.kltn.server.service.entity.ProjectSprintService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
