@@ -1,15 +1,11 @@
 package com.kltn.server.config.security.provider;
 
-import com.kltn.server.config.RoleInit;
-import com.kltn.server.config.security.LoadUserService;
 import com.kltn.server.config.security.exception.AuthenticationError;
 import com.kltn.server.config.security.exception.MyAuthenticationException;
 import com.kltn.server.config.security.token.ProjectAuthorizationToken;
-import com.kltn.server.model.entity.Project;
-import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.UserRepository;
-import com.kltn.server.util.RoleType;
+import com.kltn.server.service.entity.RoleService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,8 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,7 +28,7 @@ public class ProjectAuthorizationProvider implements AuthenticationProvider {
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
-    private RoleInit roleInit;
+    private RoleService roleInit;
 
     @Override
     @Transactional

@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "workspaces")
@@ -187,10 +188,10 @@ public class Workspace extends BaseEntity {
 
     @Transient
     public Set<Project> getProjects() {
-        return workspacesUserProjects.
-                stream()
-                .map(WorkspacesUsersProjects::getProject).
-                collect(java.util.stream.Collectors.toSet());
+        return workspacesUserProjects.stream()
+                .map(WorkspacesUsersProjects::getProject)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
 }
