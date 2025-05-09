@@ -16,8 +16,19 @@ public enum Error {
     TOO_MANY_REQUESTS(429, "Too many requests, please try again later"),
     INVALID_PARAMETER_REQUEST(422, "Invalid parameter request"),
 
-    CREATE_FAILED(409, "Failer to create resource"),
+    CREATE_FAILED(410, "Failure to create resource"),
+    INVITED_FAILED(411, "Failure to invite user"),
 
+    ALREADY_EXISTS(409, "User already have project"),
+
+    NOT_FOUND_WORKSPACE(404, "Workspace not found"),
+
+    NOT_FOUND_PROJECT(404, "Project not found"),
+
+    NOT_FOUND_SPECIFYING_PROJECT_TEACHER(404, "Project not found in any workspace"),
+
+    NOT_FOUND_USER_PROJECT_RELATION(404, "User-Project relation not found"),
+    NOT_FOUND_SPRINT_PROJECT_RELATION(404, "Sprint-Project relation not found"),
 
     // Authentication & Token Errors
     TOKEN_EXPIRED(440, "Token has expired"),

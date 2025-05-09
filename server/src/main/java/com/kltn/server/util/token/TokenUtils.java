@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -26,11 +27,18 @@ public class TokenUtils {
     @Value("${spring.application.security.refresh-token.time-of-life}")
     private String refreshTokenTOL;
 
+    @Value("${spring.application.security.verify-token.time-of-life}")
+    private String verifyTokenTOL;
+
     @Autowired
     private JwtEncoder accessJwtEncoder;
     @Autowired
     @Qualifier("refreshTokenEncoder")
     private JwtEncoder refreshJwtEncoder;
+
+    @Autowired
+    @Qualifier("verifyTokenEncoder")
+    private JwtEncoder verifyTokenEncoder;
 
     public String generateAccessToken(Object authentication) {
         UserDetails userDetails;
@@ -70,11 +78,28 @@ public class TokenUtils {
         return refreshJwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 
+    public String generateVerifyToken(String context, Map<String, Object> data) {
+        Instant now = Instant.now();
+        JwtClaimsSet claimsSet = JwtClaimsSet.builder()
+                .issuer("verify_" + context)
+                .issuedAt(now)
+                .expiresAt(now.plus(getVerifyTokenExpiration(), ChronoUnit.SECONDS))
+                .claims(stringObjectMap -> stringObjectMap.putAll(data))
+                .build();
+
+        return verifyTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
+    }
+
+
     public long getAccessTokenExpiration() {
         return Duration.parse("PT" + accessTokenTOL.toUpperCase()).getSeconds();
     }
 
     public long getRefreshTokenExpiration() {
         return Duration.parse("PT" + refreshTokenTOL.toUpperCase()).getSeconds();
+    }
+
+    public long getVerifyTokenExpiration() {
+        return Duration.parse("PT" + verifyTokenTOL.toUpperCase()).getSeconds();
     }
 }

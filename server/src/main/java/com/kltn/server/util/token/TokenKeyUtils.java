@@ -29,10 +29,17 @@ public class TokenKeyUtils {
     @Value("${spring.application.security.refresh-token.key.public-key}")
     private String refreshPubKeyPlacingFile;
 
+    @Value("${spring.application.security.verify-token.key.private-key}")
+    private String verifyPriKeyPlacingFile;
+    @Value("${spring.application.security.verify-token.key.public-key}")
+    private String verifyPubKeyPlacingFile;
+
     private RSAPublicKey accessPublicKey;
     private RSAPrivateKey accessPrivateKey;
     private RSAPublicKey refreshPublicKey;
     private RSAPrivateKey refreshPrivateKey;
+    private RSAPublicKey verifyPublicKey;
+    private RSAPrivateKey verifyPrivateKey;
 
     // Read a public key from a file
     private RSAPublicKey getPublicKey(String filePath) {
@@ -100,5 +107,19 @@ public class TokenKeyUtils {
             refreshPrivateKey = getPrivateKey(refreshPriKeyPlacingFile);
         }
         return refreshPrivateKey;
+    }
+
+    public RSAPublicKey getVerifyPublicKey() {
+        if (verifyPublicKey == null) {
+            verifyPublicKey = getPublicKey(verifyPubKeyPlacingFile);
+        }
+        return verifyPublicKey;
+    }
+
+    public RSAPrivateKey getVerifyPrivateKey() {
+        if (verifyPrivateKey == null) {
+            verifyPrivateKey = getPrivateKey(verifyPriKeyPlacingFile);
+        }
+        return verifyPrivateKey;
     }
 }

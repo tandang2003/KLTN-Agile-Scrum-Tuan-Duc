@@ -80,4 +80,21 @@ public class InitConfig {
         decoder.setJwtValidator(tokenValidator());
         return decoder;
     }
+
+    @Bean
+    @Qualifier("verifyTokenEncoder")
+    JwtEncoder verifyTokenEncoder() {
+        JWK jwk = new RSAKey.Builder(tokenKeyUtils.getVerifyPublicKey()).privateKey(tokenKeyUtils.getVerifyPrivateKey()).build();
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSource);
+    }
+
+    @Bean
+    @Qualifier("verifyTokenDecoder")
+    JwtDecoder verifyTokenDecoder() {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getVerifyPublicKey()).build();
+//        decoder.setJwtValidator(tokenValidator());
+        return decoder;
+    }
+
 }

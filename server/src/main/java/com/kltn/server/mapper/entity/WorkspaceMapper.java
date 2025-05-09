@@ -1,7 +1,7 @@
-package com.kltn.server.mapper;
+package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
-import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdationRequest;
+import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Project;
@@ -39,17 +39,20 @@ public interface WorkspaceMapper {
         @Mappings({
                         @Mapping(target = "id", source = "id"),
                         @Mapping(target = "name", source = "name"),
+                        @Mapping(target = "owner.name", source = "owner.name"),
         })
         @BeanMapping(ignoreByDefault = true)
-        WorkspaceResponse toWorkspaceResponseByIdWithoutProject(Workspace workspace);
+        WorkspaceResponse toWorkspaceResponseForPaging(Workspace workspace);
 
         @Mappings({
                         @Mapping(target = "id", source = "id"),
                         @Mapping(target = "name", source = "name"),
-                        @Mapping(target = "start", source = "start"),
                         @Mapping(target = "description", source = "description"),
+                        @Mapping(target = "sprintNum", source = "sprintNum"),
+                        @Mapping(target = "timePerSprint", source = "timePerSprint"),
+                        @Mapping(target = "start", source = "start"),
                         @Mapping(target = "end", source = "end"),
-                        @Mapping(target = "projects", source = "projects", qualifiedByName = "projectToProjectResponse"),
+                        @Mapping(target = "createdAt", source = "dtCreated"),
         })
         @BeanMapping(ignoreByDefault = true)
         WorkspaceResponse toWorkspaceResponseById(Workspace workspace);
@@ -71,5 +74,5 @@ public interface WorkspaceMapper {
                         @Mapping(target = "description", source = "workspaceUpdationRequest.description"),
                         @Mapping(target = "end", source = "workspaceUpdationRequest.end")
         })
-        Workspace updateWorkspace(Workspace workspace, WorkspaceUpdationRequest workspaceUpdationRequest);
+        Workspace updateWorkspace(Workspace workspace, WorkspaceUpdateRequest workspaceUpdationRequest);
 }

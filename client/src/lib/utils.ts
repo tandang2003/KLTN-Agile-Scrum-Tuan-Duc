@@ -1,10 +1,3 @@
-import { BaseCardProps, BoardProps } from '@/components/board/type'
-import {
-  Assigner,
-  BoardModelType,
-  CardModelType,
-  ColumnModelType
-} from '@/types/card.type'
 import { clsx, type ClassValue } from 'clsx'
 import { format } from 'date-fns'
 import { twMerge } from 'tailwind-merge'
@@ -12,50 +5,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
-
-const convert = (boardModel: BoardModelType): BoardProps => {
-  const columns: ColumnModelType[] = Object.values(boardModel.process)
-  return {
-    columns: columns.map((column: ColumnModelType) => {
-      return {
-        id: column.id,
-        name: column.name,
-        itemsOrder: column.items.map((item) => item.id),
-        items: column.items.map((item: CardModelType) => ({
-          ...convertCardTypeToCardProps(item),
-          columnId: column.id
-        }))
-      }
-    })
-  }
-}
-
-const convertCardTypeToCardProps = (
-  cardType: CardModelType
-): Omit<BaseCardProps, 'columnId'> => {
-  let assigners: Assigner[]
-  if (cardType.assigners?.length ?? 0 < 3)
-    assigners =
-      cardType.assigners?.map((item) => {
-        return {
-          name: item.name,
-          avatar: item.avatar
-        }
-      }) ?? []
-  else
-    assigners =
-      cardType.assigners?.slice(0, 3).map((item) => {
-        return {
-          name: item.name,
-          avatar: item.avatar
-        }
-      }) ?? []
-
-  return {
-    assigners: assigners,
-    ...cardType
-  }
 }
 
 const uuid = (): string => {
@@ -94,4 +43,4 @@ const formatDate = (
 
   return format(date, resolvedPattern)
 }
-export { uuid, cn, toQueryString, invertColor, convert, formatDate }
+export { cn, formatDate, invertColor, toQueryString, uuid }

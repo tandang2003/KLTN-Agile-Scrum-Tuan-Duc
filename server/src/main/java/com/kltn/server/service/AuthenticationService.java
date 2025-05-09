@@ -1,10 +1,10 @@
 package com.kltn.server.service;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
-import com.kltn.server.DTO.response.AuthenticationResponse;
+import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.mapper.UserMapper;
+import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.entity.RoleRepository;
@@ -46,6 +46,7 @@ public class AuthenticationService {
 
     public void register(RegisterRequest registerRequest) {
         User user = userMapper.toUser(registerRequest);
+        user.setEmail(user.getUniId()+ "@st.hcmuaf.edu.vn");
         boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
         if (!check) {
             Role role = roleRepository.getByName("student")

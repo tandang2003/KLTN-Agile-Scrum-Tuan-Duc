@@ -84,14 +84,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(statusCode).body(response);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleAppExceptions(Exception exception) {
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiResponse<Void>> handleAppExceptions(Exception exception) {
+//        ApiResponse<Void> response = ApiResponse.<Void>builder()
 //                .error(exception.getStackTrace())
-                .error(exception.getMessage())
-                .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .code(500)
-                .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
-    }
+//                .error(exception.getMessage())
+//                .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+//                .code(500)
+//                .build();
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
+//    }
 }

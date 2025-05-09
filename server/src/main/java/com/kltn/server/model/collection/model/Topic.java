@@ -1,19 +1,30 @@
 package com.kltn.server.model.collection.model;
 
+import jakarta.persistence.PrePersist;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Topic {
-    @Field("_id")
-    private String id;
-    @Field
+    private ObjectId id;
+    @Field(name = "name")
     private String name;
-    @Field
+    @Field(name = "color")
     private String color;
+
+    public Topic() {
+    }
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) {
+            this.id = new ObjectId();
+        }
+    }
 
     private Topic(TagBuilder builder) {
         this.name = builder.name;
         this.color = builder.color;
     }
+
 
     public static TagBuilder builder() {
         return new TagBuilder();
@@ -54,4 +65,11 @@ public class Topic {
         this.color = color;
     }
 
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
 }

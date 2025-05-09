@@ -1,3 +1,1 @@
-import { UniqueIdentifier } from '@dnd-kit/core'
-
-export type Id = UniqueIdentifier
+export type Id = string | number

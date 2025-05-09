@@ -1,7 +1,9 @@
 package com.kltn.server.model.base;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -21,10 +23,15 @@ public abstract class BaseDocument {
     protected Instant DTDeleted;
     @Field(name = "is_deleted")
     protected boolean deleted;
+    @CreatedBy
     @Field(name = "create_by")
     protected String createdBy;
+    @LastModifiedBy
     @Field(name = "deleted_by")
     protected String deletedBy;
+
+    protected BaseDocument() {
+    }
 
     protected BaseDocument(BaseDocumentBuilder<?, ?> builder) {
         this.id = builder.id;

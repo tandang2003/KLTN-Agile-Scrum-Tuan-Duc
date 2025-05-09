@@ -1,15 +1,13 @@
-package com.kltn.server.mapper;
+package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
-import com.kltn.server.DTO.response.ApiPaging;
-import com.kltn.server.DTO.response.AuthenticationResponse;
+import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
 import org.mapstruct.*;
-import org.springframework.data.domain.Page;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",
@@ -43,14 +41,14 @@ public interface UserMapper {
     @BeanMapping(ignoreByDefault = true)
     UserResponse toUserResponse(User user);
 
-
+//FIX
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
             @Mapping(target = "uniId", source = "uniId"),
             @Mapping(target = "className", source = "className"),
             @Mapping(target = "role", source = "role.name"),
-            @Mapping(target = "project", source = "project", qualifiedByName = "projectToProjectResponse"),
+//            @Mapping(target = "project", source = "project", qualifiedByName = "projectToProjectResponse"),
     })
     @BeanMapping(ignoreByDefault = true)
     UserResponse toWorkspaceStudentResponse(User user);
