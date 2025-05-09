@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestValueException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -84,10 +86,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(statusCode).body(response);
     }
 
+    @ExceptionHandler(MissingRequestValueException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMissing(MissingRequestValueException exception) {
+//        int statusCode = exception.getError() == null
+//                ? HttpStatus.BAD_REQUEST.value()
+//                : exception.getError().getCode();
+//        String error = exception.getError() == null
+//                ? exception.getMessage()
+//                : exception.getError().toString();
+
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+
+//                .error(exception.)
+                .message(exception.getMessage())
+                .code(HttpStatus.BAD_REQUEST.value())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
+    }
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<ApiResponse<Void>> handleAppExceptions(Exception exception) {
 //        ApiResponse<Void> response = ApiResponse.<Void>builder()
-//                .error(exception.getStackTrace())
+////                .error(exception.getStackTrace())
 //                .error(exception.getMessage())
 //                .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
 //                .code(500)

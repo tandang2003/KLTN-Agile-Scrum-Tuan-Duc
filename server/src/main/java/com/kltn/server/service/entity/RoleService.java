@@ -1,26 +1,31 @@
-package com.kltn.server.config;
+package com.kltn.server.service.entity;
 
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.repository.entity.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
-@Component
-public class RoleInit {
+@Service
+public class RoleService {
     private Map<String, Role> roles;
     private RoleRepository roleRepository;
 
-    private RoleInit() {
+    private RoleService() {
         roles = new ConcurrentHashMap<>();
     }
 
     @Autowired
-    public RoleInit(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository) {
         this();
         this.roleRepository = roleRepository;
     }
@@ -34,4 +39,12 @@ public class RoleInit {
         return role;
     }
 
+    public Collection<GrantedAuthority> mapPermissionsToAuthorities(Role role) {
+        List<GrantedAuthority> permissions = role.getPermissions().stream()
+                .map(p -> new SimpleGrantedAuthority(p.getName()))
+                .collect(Collectors.toList());
+
+        permissions.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
+        return permissions;
+    }
 }
