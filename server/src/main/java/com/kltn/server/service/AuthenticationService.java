@@ -1,7 +1,7 @@
 package com.kltn.server.service;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
-import com.kltn.server.DTO.response.AuthenticationResponse;
+import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.entity.UserMapper;

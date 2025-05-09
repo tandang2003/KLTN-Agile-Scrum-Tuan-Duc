@@ -171,10 +171,12 @@ public class Workspace extends BaseEntity {
     public List<WorkspacesUsersProjects> getWorkspacesUserProjects() {
         return workspacesUserProjects;
     }
+
     @Transient
     public void setWorkspacesUserProjects(List<WorkspacesUsersProjects> workspacesUserProjects) {
         this.workspacesUserProjects = workspacesUserProjects;
     }
+
     @Transient
     public Set<User> getMembers() {
         return workspacesUserProjects.
@@ -182,6 +184,7 @@ public class Workspace extends BaseEntity {
                 map(WorkspacesUsersProjects::getUser).
                 collect(java.util.stream.Collectors.toSet());
     }
+
     @Transient
     public Set<Project> getProjects() {
         return workspacesUserProjects.

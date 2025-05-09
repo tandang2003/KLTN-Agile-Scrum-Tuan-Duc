@@ -5,6 +5,7 @@ import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUserAdditionRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.service.entity.WorkspaceService;
@@ -88,5 +89,13 @@ public class WorkspaceController {
                                                                            workspaceUserAdditionRequest) {
         return ResponseEntity.ok().body(
                 workspaceService.addStudentToWorkspace(workspaceUserAdditionRequest.workspaceId(), workspaceUserAdditionRequest.studentIds()));
+    }
+    @GetMapping("/{workspaceId}/project")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<ApiResponse<ApiPaging<ProjectResponse>>> getProjectByWorkspaceId(@PathVariable String workspaceId,
+                                                                                           @RequestParam(defaultValue = "0") int page,
+                                                                                           @RequestParam(defaultValue = "10") int size) {
+        ApiResponse<ApiPaging<ProjectResponse>> projectResponse = workspaceService.getListPagingProject(workspaceId, page, size);
+        return ResponseEntity.status(projectResponse.getCode()).body(projectResponse);
     }
 }

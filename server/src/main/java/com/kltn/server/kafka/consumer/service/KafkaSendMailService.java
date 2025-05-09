@@ -51,14 +51,14 @@ public class KafkaSendMailService {
         }
     }
 
-    private String render(String template, String link, Map<String, String> variable, Map<String, String> data) throws IOException {
+    private String render(String template, String link, Map<String, String> variable, Map<String, Object> data) throws IOException {
         ClassPathResource resource = new ClassPathResource("template/" + template + ".html");
         String content = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         for (Map.Entry<String, String> entry : variable.entrySet()) {
             content = content.replace("{{" + entry.getKey() + "}}", entry.getValue());
         }
         if (link != null)
-            content = content.replace("{{link}}", link + tokenUtils.generateVerifyToken(data));
+            content = content.replace("{{link}}", link + tokenUtils.generateVerifyToken("mail", data));
         return content;
     }
 
