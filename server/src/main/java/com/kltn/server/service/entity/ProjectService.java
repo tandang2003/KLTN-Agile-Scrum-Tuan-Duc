@@ -5,17 +5,18 @@ import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.request.log.ProjectLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.auth.ProjectAuthorizationResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
-import com.kltn.server.config.RoleInit;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.model.collection.model.Topic;
-import com.kltn.server.model.entity.*;
+import com.kltn.server.model.entity.Project;
+import com.kltn.server.model.entity.Sprint;
+import com.kltn.server.model.entity.User;
+import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
@@ -24,18 +25,16 @@ import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsRepository;
 import com.kltn.server.service.EmailService;
+import com.kltn.server.service.entity.relation.WorkspacesUsersProjectsService;
 import com.kltn.server.util.RoleType;
 import com.kltn.server.util.token.TokenUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,15 +45,15 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository;
     private final UserRepository userRepository;
-    private final RoleInit roleInit;
+    private final RoleService roleInit;
     private final EmailService emailService;
     private final ProjectLogRepository projectLogRepository;
     @Value("${verify.invite-project-link}")
     private String link;
-    private final TokenUtils tokenUtils;
+    private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
 
     @Autowired
-    public ProjectService(TokenUtils tokenUtils, ProjectLogRepository projectLogRepository, EmailService emailService, RoleInit roleInit, UserRepository userRepository, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
+    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit, UserRepository userRepository, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
         this.projectLogRepository = projectLogRepository;
         this.roleInit = roleInit;
         this.topicMapper = topicMapper;
@@ -63,7 +62,7 @@ public class ProjectService {
         this.userRepository = userRepository;
         this.workspacesUsersProjectsRepository = workspacesUsersProjectsRepository;
         this.emailService = emailService;
-        this.tokenUtils = tokenUtils;
+        this.workspacesUsersProjectsService = workspacesUsersProjectsService;
     }
 
     @SendKafkaEvent(topic = "project-created")
@@ -111,25 +110,19 @@ public class ProjectService {
         return ApiResponse.<Void>builder().message("Invite student to project").build();
     }
 
-    public ApiResponse<ProjectAuthorizationResponse> getById(String projectId) {
+    public ApiResponse<ProjectResponse> getById(String projectId) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user = userRepository.findByUniId(userId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         Project project = projectRepository.findById(projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-//        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Collection<GrantedAuthority> authorities;
+
         if (user.getRole().getName().equals("teacher")) {
-            Workspace workspace = project.getWorkspace();
-            if (!workspace.getOwner().equals(user)) {
+            if (!project.getWorkspace().getOwner().getId().equals(user.getId())) {
                 throw AppException.builder().error(Error.NOT_FOUND_SPECIFYING_PROJECT_TEACHER).build();
             }
-            Role role = roleInit.getRole(RoleType.LEADER.getName());
-            authorities = new ArrayList<>(role.getPermissions().stream().map(p -> new SimpleGrantedAuthority(p.getName())).toList());
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
         } else {
-            WorkspacesUsersProjects usersProjects = workspacesUsersProjectsRepository.findByUserIdAndProjectId(user.getId(), projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_USER_PROJECT_RELATION).build());
-            authorities = new ArrayList<>(usersProjects.getRole().getPermissions().stream().map(p -> new SimpleGrantedAuthority(p.getName())).toList());
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + usersProjects.getRole().getName().toUpperCase()));
+          workspacesUsersProjectsService.getByUserIdAndProjectId(user.getId(), projectId);
         }
+
         var project1 = projectLogRepository.findByNkProjectId(projectId);
         List<Topic> topics;
         if (project1.isPresent())
@@ -138,12 +131,7 @@ public class ProjectService {
             topics = new ArrayList<>();
         List<SprintResponse> sprintResponses = getSprintResponses(project);
         ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics, sprintResponses);
-        String jwt = tokenUtils.generateVerifyToken(
-                "project", Map.<String, Object>ofEntries(Map.entry("userId", user.getUniId()), Map.entry("authorities", authorities.stream().map(GrantedAuthority::getAuthority).toList()))
-        );
-        ProjectAuthorizationResponse projectAuthorizationResponse = ProjectAuthorizationResponse.builder().authorizationProject(jwt).project(projectResponse).build();
-        return ApiResponse.<ProjectAuthorizationResponse>builder().message("Get project by id").data(projectAuthorizationResponse).build();
-
+        return ApiResponse.<ProjectResponse>builder().message("Get project by id").data(projectResponse).build();
     }
 
     private List<SprintResponse> getSprintResponses(Project project) {
