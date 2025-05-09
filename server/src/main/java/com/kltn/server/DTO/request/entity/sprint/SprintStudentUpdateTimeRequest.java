@@ -49,24 +49,4 @@ public record SprintStudentUpdateTimeRequest(
     public static SprintStudentUpdateTimeRequestBuilder builder() {
         return new SprintStudentUpdateTimeRequestBuilder();
     }
-
-        @Override
-        public String projectId() {
-                return projectId;
-        }
-
-        @Override
-        public String sprintId() {
-                return sprintId;
-        }
-
-        @Override
-        public Instant dtPlanning() {
-                return dtPlanning;
-        }
-
-        @Override
-        public Instant dtPreview() {
-                return dtPreview;
-        }
 }

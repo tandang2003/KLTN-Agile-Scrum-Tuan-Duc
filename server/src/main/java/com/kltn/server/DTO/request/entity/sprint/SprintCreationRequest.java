@@ -12,7 +12,7 @@ import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 @ValidTimeRangeValidator(mainField = "start", dependencyField = "end", constraint = DateConstraint.BEFORE)
 @ValidTimeRangeValidator(mainField = "end", dependencyField = "start", constraint = DateConstraint.AFTER)
 @ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
-public record SprintCreationRequest(@NotEmpty String projectId,
+public record SprintCreationRequest(@NotEmpty String workspaceId,
                                     String title,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
                                     Instant start,
@@ -25,15 +25,15 @@ public record SprintCreationRequest(@NotEmpty String projectId,
 
 
     public static class SprintCreationRequestBuilder {
-        private String projectId;
+        private String workspaceId;
         private String title;
         private Instant dtStart;
         private Instant dtEnd;
         private Instant predict;
         private int miniummStoryPoint;
 
-        public SprintCreationRequestBuilder projectId(String projectId) {
-            this.projectId = projectId;
+        public SprintCreationRequestBuilder workspaceId(String workspaceId) {
+            this.workspaceId = workspaceId;
             return this;
         }
 
@@ -62,7 +62,7 @@ public record SprintCreationRequest(@NotEmpty String projectId,
 
 
         public SprintCreationRequest build() {
-            return new SprintCreationRequest(projectId, title, dtStart, dtEnd, miniummStoryPoint, predict);
+            return new SprintCreationRequest(workspaceId, title, dtStart, dtEnd, miniummStoryPoint, predict);
         }
 
     }

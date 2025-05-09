@@ -11,6 +11,7 @@ import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.SprintRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,22 +22,29 @@ public class SprintService {
     private SprintMapper sprintMapper;
     private SprintRepository sprintRepository;
     private ProjectService projectService;
+    private WorkspaceService workspaceService;
     private ProjectSprintService projectSprintService;
 
     @Autowired
-    public SprintService(ProjectSprintService projectSprintService, SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
+    public SprintService(WorkspaceService workspaceService,ProjectSprintService projectSprintService, SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
         this.sprintMapper = sprintMapper;
         this.sprintRepository = sprintRepository;
         this.projectService = projectService;
         this.projectSprintService = projectSprintService;
+        this.workspaceService = workspaceService;
     }
 
+    @Transactional
     public ApiResponse<SprintResponse> createSprint(SprintCreationRequest sprintCreationRequest) {
         var sprint = sprintMapper.toSprint(sprintCreationRequest);
-        var project = projectService.getProjectById(sprintCreationRequest.projectId());
+        var workspace = workspaceService.getWorkspaceById(sprintCreationRequest.workspaceId());
 //        sprint.setProject(project);
+        sprint.setWorkspace(workspace);
         sprint = sprintRepository.save(sprint);
-        ProjectSprint projectSprint = projectSprintService.create(project, sprint);
+        Sprint finalSprint = sprint;
+        workspace.getProjects().forEach(prj -> {
+            projectSprintService.create(prj, finalSprint);
+        });
 
         return ApiResponse.<SprintResponse>builder()
                 .code(HttpStatus.CREATED.value())
