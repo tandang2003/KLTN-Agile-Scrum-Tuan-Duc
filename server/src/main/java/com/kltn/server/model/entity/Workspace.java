@@ -27,6 +27,8 @@ public class Workspace extends BaseEntity {
     @OneToMany
     @JoinColumn(name = "workspace_id")
     private List<WorkspacesUsersProjects> workspacesUserProjects;
+    @OneToMany(mappedBy = "workspace")
+    private List<Sprint> sprints;
 
     private Workspace(WorkspaceEntityBuilder workspaceBuilder) {
         super(workspaceBuilder);
@@ -37,6 +39,8 @@ public class Workspace extends BaseEntity {
         this.timePerSprint = workspaceBuilder.timePerSprint;
         this.start = workspaceBuilder.start;
         this.end = workspaceBuilder.end;
+        this.sprints = workspaceBuilder.sprints;
+        this.workspacesUserProjects = workspaceBuilder.workspacesUserProjects;
     }
 
     public Workspace() {
@@ -62,6 +66,8 @@ public class Workspace extends BaseEntity {
         private int timePerSprint;
         private Instant start;
         private Instant end;
+        private List<Sprint> sprints;
+        private List<WorkspacesUsersProjects> workspacesUserProjects;
 
         @Override
         protected WorkspaceEntityBuilder self() {
@@ -81,6 +87,16 @@ public class Workspace extends BaseEntity {
 
         public WorkspaceEntityBuilder sprintNum(int sprintNum) {
             this.sprintNum = sprintNum;
+            return this;
+        }
+
+        public WorkspaceEntityBuilder sprints(List<Sprint> sprints) {
+            this.sprints = sprints;
+            return this;
+        }
+
+        public WorkspaceEntityBuilder workspacesUserProjects(List<WorkspacesUsersProjects> workspacesUserProjects) {
+            this.workspacesUserProjects = workspacesUserProjects;
             return this;
         }
 
@@ -194,4 +210,11 @@ public class Workspace extends BaseEntity {
                 .collect(Collectors.toSet());
     }
 
+    public List<Sprint> getSprints() {
+        return sprints;
+    }
+
+    public void setSprints(List<Sprint> sprints) {
+        this.sprints = sprints;
+    }
 }

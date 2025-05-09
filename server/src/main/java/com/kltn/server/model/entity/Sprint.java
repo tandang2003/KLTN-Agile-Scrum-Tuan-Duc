@@ -21,6 +21,9 @@ public class Sprint extends BaseEntity {
     private Instant dtEnd;
     @OneToMany(mappedBy = "sprint")
     private List<ProjectSprint> projectSprints;
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     private int miniumStoryPoint;
     @Column(name = "dt_predict")
@@ -187,6 +190,14 @@ public class Sprint extends BaseEntity {
 
     public void setDtPredict(Instant dtPredict) {
         this.dtPredict = dtPredict;
+    }
+
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
     }
 }
 
