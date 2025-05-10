@@ -63,23 +63,23 @@ public class ProjectRoleAuthorizationFilter extends AbstractAuthenticationProces
         throw new MyAuthenticationException("Authentication failed");
     }
 
-    @Override
-    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        String path = request.getRequestURI();
-        String method = request.getMethod();
-
-        // ✅ Skip only GET /project/{projectId}
-        if ("GET".equals(method) && path.matches("^/project/[^/]+$"))
-            return false;
-
-        if ("POST".equals(method) && path.matches("^/project$"))
-            return false;
-
-        if ("POST".equals(method) && path.matches("^/sprint+$"))
-            return false;
-
-        return super.requiresAuthentication(request, response);
-    }
+//    @Override
+//    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+//        String path = request.getRequestURI();
+//        String method = request.getMethod();
+//
+//        // ✅ Skip only GET /project/{projectId}
+////        if ("GET".equals(method) && path.matches("^/project/[^/]+$"))
+////            return false;
+////
+////        if ("POST".equals(method) && path.matches("^/project$"))
+////            return false;
+////
+////        if ("POST".equals(method) && path.matches("^/sprint+$"))
+////            return false;
+//
+//        return super.requiresAuthentication(request, response);
+//    }
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, jakarta.servlet.FilterChain chain, Authentication authResult) {
         try {
