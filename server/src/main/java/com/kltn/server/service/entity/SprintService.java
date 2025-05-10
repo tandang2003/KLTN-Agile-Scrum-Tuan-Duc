@@ -13,6 +13,10 @@ import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.SprintRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +30,8 @@ public class SprintService {
     private ProjectSprintService projectSprintService;
 
     @Autowired
-    public SprintService(WorkspaceService workspaceService,ProjectSprintService projectSprintService, SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
+    public SprintService(WorkspaceService workspaceService, ProjectSprintService projectSprintService,
+            SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
         this.sprintMapper = sprintMapper;
         this.sprintRepository = sprintRepository;
         this.projectService = projectService;
@@ -38,7 +43,7 @@ public class SprintService {
     public ApiResponse<SprintResponse> createSprint(SprintCreationRequest sprintCreationRequest) {
         var sprint = sprintMapper.toSprint(sprintCreationRequest);
         var workspace = workspaceService.getWorkspaceById(sprintCreationRequest.workspaceId());
-//        sprint.setProject(project);
+        // sprint.setProject(project);
         sprint.setWorkspace(workspace);
         sprint = sprintRepository.save(sprint);
         Sprint finalSprint = sprint;
@@ -52,10 +57,10 @@ public class SprintService {
                 .message("Create sprint successfully")
                 .build();
 
-
     }
 
-    public ApiResponse<SprintResponse> updateSprint(@Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+    public ApiResponse<SprintResponse> updateSprint(
+            @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
         ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
                 .projectId(sprintStudentUpdateTimeRequest.projectId())
                 .sprintId(sprintStudentUpdateTimeRequest.sprintId()).build());
@@ -71,6 +76,17 @@ public class SprintService {
     }
 
     public Sprint getSprintById(String sprintId) {
-        return sprintRepository.findById(sprintId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        return sprintRepository.findById(sprintId)
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     }
+
+    public ApiResponse<List<SprintResponse>> getListSprintByWorkspaceId(String workspaceId) {
+        List<Sprint> list = sprintRepository.findAllByWorkspaceId(workspaceId);
+        if (list.isEmpty())
+            return ApiResponse.<List<SprintResponse>>builder().data(null).build();
+        List<SprintResponse> transferList = list.stream().map(sprintMapper::toSprintCreateResponse).toList();
+        return ApiResponse.<List<SprintResponse>>builder().code(HttpStatus.OK.value()).data(transferList).build();
+
+    }
+
 }
