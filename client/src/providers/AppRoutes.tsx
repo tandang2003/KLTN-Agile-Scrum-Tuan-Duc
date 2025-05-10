@@ -18,6 +18,7 @@ import { KanbanDemo } from '@/pages/manager/workspace/project/kaban/page'
 import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
+import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -59,15 +60,15 @@ const AppRoutes = () => {
             {/* http://localhost:3000/manager/workspace/1 */}
             <Route
               path='workspace/:workspaceId'
-              element={<WorkspaceDetailPage />}
-            />
-            {/* http://localhost:3000/manager/workspace/1/setting */}
-            <Route
-              path='workspace/:workspaceId/setting'
-              element={<SettingLayout />}
+              element={<WorkspaceDetailLayout />}
             >
-              <Route index element={<WorkspaceSettingPage />} />
+              <Route index element={<WorkspaceDetailPage />} />
+              <Route path='setting' element={<SettingLayout />}>
+                {/* http://localhost:3000/manager/workspace/1/setting */}
+                <Route index element={<WorkspaceSettingPage />} />
+              </Route>
             </Route>
+
             {/* http://localhost:3000/manager/workspace/project/1 */}
             <Route
               path='workspace/project/:projectId'

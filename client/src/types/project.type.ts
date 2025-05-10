@@ -14,5 +14,15 @@ type CreateProjectRequest = CreateProjectFormType & {
   userId: Id
 }
 
-export type { CreateProjectFormType, ProjectResponse, CreateProjectRequest }
+type TokenProjectResponse = {
+  project_authorization_token: string
+  project_ids: string[]
+}
+
+export type {
+  CreateProjectFormType,
+  ProjectResponse,
+  CreateProjectRequest,
+  TokenProjectResponse
+}
 export { CreateProjectForm }

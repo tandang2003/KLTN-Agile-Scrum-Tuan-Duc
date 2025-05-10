@@ -1,7 +1,7 @@
-import { UniqueIdentifier } from '@dnd-kit/core'
+import { Id } from '@/types/other.type'
 
 type ProjectModel = {
-  id: UniqueIdentifier
+  id: Id
   name: string
   description: string
   createdAt: Date

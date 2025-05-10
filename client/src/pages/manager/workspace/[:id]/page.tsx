@@ -1,10 +1,9 @@
+import Icon from '@/components/Icon'
+import { ProjectDataTable } from '@/components/datatable/project/ProjectDataTable'
 import { StudentDataTable } from '@/components/datatable/student/StudentDataTable'
-import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
-import { WorkspaceParams } from '@/types/route.type'
-import { useEffect, useState } from 'react'
-import { NavLink, useNavigate, useParams } from 'react-router-dom'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { formatDate } from '@/lib/utils'
+import DialogAddStudent from '@/components/dialog/DialogAddStudent'
+import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,20 +12,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import Icon from '@/components/Icon'
-import DialogAddStudent from '@/components/dialog/DialogAddStudent'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { useAppSelector } from '@/context/redux/hook'
+import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import { formatDate } from '@/lib/utils'
 import { PlusIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
-import { ProjectDataTable } from '@/components/datatable/project/ProjectDataTable'
+import { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 
 const WorkspaceDetailPage = () => {
-  const { workspaceId } = useParams<WorkspaceParams>()
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
+  const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
+  const { user } = useAppSelector((state) => state.authSlice)
+
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId
   })
@@ -35,16 +33,6 @@ const WorkspaceDetailPage = () => {
 
   const [openDialogCreateProject, setOpenDialogCreateProject] =
     useState<boolean>(false)
-
-  const { user } = useAppSelector((state) => state.authSlice)
-
-  useEffect(() => {
-    if (!workspaceId) {
-      navigate('/404', { replace: true })
-      return
-    }
-    dispatch(setCurrentWorkspaceId(workspaceId))
-  }, [navigate, workspaceId, dispatch])
 
   if (!workspaceId) return null
   if (!data) return null

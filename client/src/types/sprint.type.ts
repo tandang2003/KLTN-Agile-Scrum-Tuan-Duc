@@ -1,12 +1,12 @@
-import { stringSchema } from '@/types/other.type'
+import { SprintModel } from '@/types/model/sprint.model'
+import { Id, stringSchema } from '@/types/other.type'
 import { z } from 'zod'
 
 const CreateSprintFormSchema = z
   .object({
-    workspaceId: z.string(),
     title: stringSchema(),
     predict: z.date(),
-    storyPoint: z.number().positive(),
+    minimumStoryPoint: z.number().positive(),
     start: z.date(),
     end: z.date()
   })
@@ -19,6 +19,17 @@ const CreateSprintFormSchema = z
     path: ['predict']
   })
 type CreateSprintFormType = z.infer<typeof CreateSprintFormSchema>
+type CreateSprintRequest = CreateSprintFormType & {
+  workspaceId: Id
+}
+type SprintResponse = SprintModel
 
-export type { CreateSprintFormType }
+type SprintWorkspaceDataTable = SprintModel
+
+export type {
+  CreateSprintFormType,
+  CreateSprintRequest,
+  SprintResponse,
+  SprintWorkspaceDataTable
+}
 export { CreateSprintFormSchema }

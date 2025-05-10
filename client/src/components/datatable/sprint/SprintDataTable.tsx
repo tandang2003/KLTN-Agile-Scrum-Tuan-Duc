@@ -1,7 +1,6 @@
 import { flexRender } from '@tanstack/react-table'
 
 import { DataTablePagination } from '@/components/datatable/DataTablePagination'
-import { columns } from '@/components/datatable/project/projectColumns'
 import {
   Table,
   TableBody,
@@ -12,13 +11,12 @@ import {
 } from '@/components/ui/table'
 import { Id } from '@/types/other.type'
 import { useSprintTable } from '@/components/datatable/sprint/useSprintDataTable'
+import { useAppSelector } from '@/context/redux/hook'
+import { columns } from '@/components/datatable/sprint/sprintColumns'
 
-interface DataTableProps {
-  workspaceId: Id
-}
-
-function DataTable({ workspaceId }: DataTableProps) {
-  const { table } = useSprintTable(workspaceId)
+function DataTable() {
+  const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
+  const { table } = useSprintTable(workspaceId as Id)
 
   return (
     <div className='rounded-md border'>
@@ -75,4 +73,4 @@ function DataTable({ workspaceId }: DataTableProps) {
     </div>
   )
 }
-export { DataTable as ProjectDataTable }
+export { DataTable as SprintDataTable }

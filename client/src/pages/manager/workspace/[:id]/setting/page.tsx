@@ -1,6 +1,6 @@
 import Icon from '@/components/Icon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppSelector } from '@/context/redux/hook'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import SummaryTab from '@/pages/manager/workspace/[:id]/setting/summary'
 import TemplateTab from '@/pages/manager/workspace/[:id]/setting/template'
@@ -18,13 +18,14 @@ const WorkspaceSettingPage = () => {
       skip: !workspaceId
     }
   )
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (!workspaceId) return
     if (!isFetching && !isSuccess) {
       navigate('/404')
     }
-  }, [navigate, workspaceId, isSuccess, isFetching])
+  }, [navigate, workspaceId, isSuccess, isFetching, dispatch])
 
   return (
     <div>
@@ -35,7 +36,7 @@ const WorkspaceSettingPage = () => {
         </div>
       )}
 
-      <Tabs defaultValue={'summary'}>
+      <Tabs defaultValue={'template'}>
         <div className='flex items-center justify-between'>
           <TabsList>
             <TabsTrigger value='summary'>Summary</TabsTrigger>
