@@ -53,7 +53,10 @@ public class ProjectService {
     private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
 
     @Autowired
-    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit, UserRepository userRepository, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
+    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService,
+            ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit,
+            UserRepository userRepository, TopicMapper topicMapper, ProjectMapper projectMapper,
+            WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
         this.projectLogRepository = projectLogRepository;
         this.roleInit = roleInit;
         this.topicMapper = topicMapper;
@@ -68,10 +71,12 @@ public class ProjectService {
     @SendKafkaEvent(topic = "project-created")
     @Transactional
     public ApiResponse<ProjectResponse> createProject(ProjectCreationRequest creationRequest) {
-        WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder().workspaceId(creationRequest.workspaceId()).userId(creationRequest.userId()).build();
+        WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder().workspaceId(creationRequest.workspaceId())
+                .userId(creationRequest.userId()).build();
 
-        WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository.findById(workspacesUsersId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-//      insert workspace
+        WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository.findById(workspacesUsersId)
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        // insert workspace
         var project = projectMapper.toEntity(creationRequest);
         var savedProject = projectRepository.save(project);
 
@@ -84,25 +89,36 @@ public class ProjectService {
 
         workspacesUsersProjectsRepository.save(workspacesUsersProjects);
         List<Topic> topics = topicMapper.toTopicList(creationRequest.tags());
-        var logProject = ProjectLogRequest.builder().projectId(project.getId()).description(project.getDescription()).tags(topics).build();
+        var logProject = ProjectLogRequest.builder().projectId(project.getId()).description(project.getDescription())
+                .tags(topics).build();
 
-        return ApiResponse.<ProjectResponse>builder().message("Create project success").data(projectMapper.toCreationResponse(savedProject, topics)).logData(logProject).build();
+        return ApiResponse.<ProjectResponse>builder().message("Create project success")
+                .data(projectMapper.toCreationResponse(savedProject, topics)).logData(logProject).build();
     }
 
-    //TODO insert mail, optimize
+    // TODO insert mail, optimize
     public ApiResponse<Void> inviteUserToProject(ProjectInvitationRequest invitationRequest) {
         String userInviteId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User userInvite = userRepository.findByUniId(userInviteId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Project project = projectRepository.findById(invitationRequest.projectId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        MailRequest mailRequest = MailRequest.builder().confirmationLink(link).variable(Map.of("sender", userInvite.getName(), "project.name", project.getName())).templateName("invite-student").build();
+        User userInvite = userRepository.findByUniId(userInviteId)
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        Project project = projectRepository.findById(invitationRequest.projectId())
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        MailRequest mailRequest = MailRequest.builder().confirmationLink(link)
+                .variable(Map.of("sender", userInvite.getName(), "project.name", project.getName()))
+                .templateName("invite-student").build();
         invitationRequest.userId().forEach(userId -> {
-            User user = userRepository.findByUniId(userId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+            User user = userRepository.findByUniId(userId)
+                    .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
 
-            WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder().userId(user.getId()).workspaceId(invitationRequest.workspaceId()).build();
-            WorkspacesUsersProjects usersProjects = WorkspacesUsersProjects.builder().role(roleInit.getRole(RoleType.MEMBER.getName())).user(user).project(project).workspace(project.getWorkspace()).id(workspacesUsersId).build();
+            WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder().userId(user.getId())
+                    .workspaceId(invitationRequest.workspaceId()).build();
+            WorkspacesUsersProjects usersProjects = WorkspacesUsersProjects.builder()
+                    .role(roleInit.getRole(RoleType.MEMBER.getName())).user(user).project(project)
+                    .workspace(project.getWorkspace()).id(workspacesUsersId).build();
             try {
                 workspacesUsersProjectsRepository.save(usersProjects);
-                emailService.inviteToProject(mailRequest.rebuild(user.getEmail(), Map.of("userId", workspacesUsersId.getUserId(), "workspaceId", workspacesUsersId.getWorkspaceId())));
+                emailService.inviteToProject(mailRequest.rebuild(user.getEmail(), Map.of("userId",
+                        workspacesUsersId.getUserId(), "workspaceId", workspacesUsersId.getWorkspaceId())));
             } catch (Exception e) {
                 throw AppException.builder().error(Error.SERVER_ERROR).build();
             }
@@ -112,15 +128,17 @@ public class ProjectService {
 
     public ApiResponse<ProjectResponse> getById(String projectId) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUniId(userId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        User user = userRepository.findByUniId(userId)
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
 
         if (user.getRole().getName().equals("teacher")) {
             if (!project.getWorkspace().getOwner().getId().equals(user.getId())) {
                 throw AppException.builder().error(Error.NOT_FOUND_SPECIFYING_PROJECT_TEACHER).build();
             }
         } else {
-          workspacesUsersProjectsService.getByUserIdAndProjectId(user.getId(), projectId);
+            workspacesUsersProjectsService.getByUserIdAndProjectId(user.getId(), projectId);
         }
 
         var project1 = projectLogRepository.findByNkProjectId(projectId);
@@ -141,15 +159,11 @@ public class ProjectService {
 
             projectSprints.forEach(ps -> {
                 Sprint sprint = ps.getSprint();
-                sprintResponses.add(SprintResponse.builder().id(sprint.getId()).
-                        process(
-                                Map.of(
-                                        "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
-                                        "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""
-                                )).
-                        start(sprint.getDtStart()).
-                        end(sprint.getDtEnd()).
-                        build());
+                sprintResponses.add(SprintResponse.builder().id(sprint.getId()).process(
+                        Map.of(
+                                "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
+                                "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""))
+                        .start(sprint.getDtStart()).end(sprint.getDtEnd()).build());
             });
         }
         return sprintResponses;
@@ -159,5 +173,16 @@ public class ProjectService {
         return projectRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     }
 
+    public ApiResponse<ProjectResponse> getWorkspaceByWorkspaceId(String workspaceId) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository
+                .findByUserIdAndProjectId(userId, workspaceId).orElseThrow(() -> AppException.builder()
+                        .error(Error.NOT_FOUND).message("Not found project in workspace").build());
+        Project project = workspacesUsersProjects.getProject();
+
+        return ApiResponse.<ProjectResponse>builder()
+                .data(projectMapper.toProjectResponseForUserJoined(project))
+                .build();
+    }
 
 }

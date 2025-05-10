@@ -65,9 +65,6 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
   }
   return (
     <div>
-      <div className='relative mt-1 mb-4 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 text-gray-100'>
-        #{data.id}
-      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}

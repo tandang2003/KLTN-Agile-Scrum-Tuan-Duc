@@ -6,6 +6,7 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.service.entity.ProjectService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +22,14 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProjectResponse>> createProject(@RequestBody @Valid ProjectCreationRequest creationRequest) {
+    public ResponseEntity<ApiResponse<ProjectResponse>> createProject(
+            @RequestBody @Valid ProjectCreationRequest creationRequest) {
         return ResponseEntity.ok().body(projectService.createProject(creationRequest));
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<ApiResponse<Void>> addUserToProject(@RequestBody @Valid ProjectInvitationRequest invitationRequest) {
+    public ResponseEntity<ApiResponse<Void>> addUserToProject(
+            @RequestBody @Valid ProjectInvitationRequest invitationRequest) {
         return ResponseEntity.ok().body(
                 projectService.inviteUserToProject(invitationRequest));
     }
@@ -37,5 +40,9 @@ public class ProjectController {
         return ResponseEntity.status(projectResponse.getCode()).body(projectResponse);
     }
 
-
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<ProjectResponse>> getProjectIdJoinedByWorkspaceId(
+            @RequestParam("workspaceId") String workspaceId) {
+        return ResponseEntity.ok().body(this.projectService.getWorkspaceByWorkspaceId(workspaceId));
+    }
 }
