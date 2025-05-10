@@ -9,7 +9,9 @@ import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.service.entity.ProjectService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,5 +44,8 @@ public class ProjectController {
         return ResponseEntity.status(projectResponse.getCode()).body(projectResponse);
     }
 
-
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<ProjectResponse>> getProjectIdJoinedByWorkspaceId(@RequestParam("workspaceId") String workspaceId) {
+        return ResponseEntity.ok().body(this.projectService.getWorkspaceByWorkspaceId(workspaceId));
+    }
 }

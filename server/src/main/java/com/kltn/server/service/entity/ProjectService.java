@@ -29,15 +29,14 @@ import com.kltn.server.util.token.TokenUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import javax.swing.text.html.Option;
+import java.util.*;
 
 @Service
 public class ProjectService {
@@ -171,5 +170,14 @@ public class ProjectService {
         return projectRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     }
 
+    public ApiResponse<ProjectResponse> getWorkspaceByWorkspaceId(String workspaceId) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository.findByUserIdAndProjectId(userId, workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).message("Not found project in workspace").build());
+        Project project = workspacesUsersProjects.getProject();
+
+        return ApiResponse.<ProjectResponse>builder()
+                .data(projectMapper.toProjectResponseForUserJoined(project))
+                .build();
+    }
 
 }
