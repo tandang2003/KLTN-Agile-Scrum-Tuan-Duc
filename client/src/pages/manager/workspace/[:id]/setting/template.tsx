@@ -1,6 +1,8 @@
 import DialogCreateSprint from '@/components/dialog/DialogCreateSprint'
 import Icon from '@/components/Icon'
-import WorkspaceTemplate from '@/components/workspace/WorkspaceTemplate'
+import WorkspaceTemplate, {
+  WorkspaceTemplateRef
+} from '@/components/workspace/WorkspaceTemplate'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -9,21 +11,28 @@ import {
 } from '@/components/ui/tooltip'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
-import { disableDragMode, enableDragMode } from '@/feature/sprint/sprint.slice'
+import {
+  closeDialogCreateSprint,
+  disableDragMode,
+  enableDragMode,
+  openDialogCreateSprint
+} from '@/feature/sprint/sprint.slice'
 import { cn } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import { PlusIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useRef } from 'react'
 
 const TemplateTab = () => {
-  const [openDialogCreateSprint, setOpenDialogCreateSprint] =
-    useState<boolean>(false)
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { data } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
-  const isDragMode = useAppSelector((state) => state.sprintSlice.isDragMode)
+  const { isDragMode, isOpenDialogCreate } = useAppSelector(
+    (state) => state.sprintSlice
+  )
+  const workspaceRef = useRef<WorkspaceTemplateRef>(null)
+
   const dispatch = useAppDispatch()
 
   const handleChangedPosition = () => {
@@ -32,21 +41,25 @@ const TemplateTab = () => {
 
   const handleCancelPosition = () => {
     dispatch(disableDragMode())
+    workspaceRef.current?.rollback()
   }
 
   return (
     <div>
       <div className='flex items-center pb-4'>
-        <Button
-          variant='default'
-          size='sm'
-          onClick={() => {
-            setOpenDialogCreateSprint(true)
-          }}
-        >
-          <PlusIcon />
-          Create Sprint
-        </Button>
+        {!isDragMode && (
+          <Button
+            variant='default'
+            size='sm'
+            onClick={() => {
+              dispatch(openDialogCreateSprint())
+            }}
+          >
+            <PlusIcon />
+            Create Sprint
+          </Button>
+        )}
+
         <span className='ml-auto'>
           <TooltipProvider>
             <Tooltip>
@@ -89,6 +102,7 @@ const TemplateTab = () => {
       </div>
       {data && (
         <WorkspaceTemplate
+          ref={workspaceRef}
           sprints={data}
           onChange={(item, index) => {
             console.log(item)
@@ -97,8 +111,8 @@ const TemplateTab = () => {
         />
       )}
       <DialogCreateSprint
-        open={openDialogCreateSprint}
-        onOpen={setOpenDialogCreateSprint}
+        open={isOpenDialogCreate}
+        onOpen={() => dispatch(closeDialogCreateSprint())}
       />
     </div>
   )
