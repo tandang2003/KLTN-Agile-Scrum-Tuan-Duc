@@ -9,7 +9,7 @@ const CreateProjectForm = z.object({
 
 type CreateProjectFormType = z.infer<typeof CreateProjectForm>
 type ProjectResponse = Pick<ProjectModel, 'id' | 'name'>
-type CreateProjectRequest = Omit<ProjectModel, 'id'> & {
+type CreateProjectRequest = CreateProjectFormType & {
   workspaceId: Id
   userId: Id
 }

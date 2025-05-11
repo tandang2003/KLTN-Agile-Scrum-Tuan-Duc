@@ -45,7 +45,6 @@ public interface ProjectMapper {
     ProjectResponse toProjectResponseById(Project project, List<Topic> topics, List<SprintResponse> sprintResponses);
 
 
-
     @Mappings({
             @Mapping(target = "id", source = "project.id"),
             @Mapping(target = "name", source = "project.name"),
@@ -57,6 +56,14 @@ public interface ProjectMapper {
     @BeanMapping(ignoreByDefault = true)
     ProjectResponse toProjectResponseForPaging(Project project, List<Topic> topics);
 
-//    ProjectResponse toProjectResponseById( );
-
+    //    ProjectResponse toProjectResponseById( );
+    @Mappings({
+            @Mapping(target = "id", source = "project.id"),
+            @Mapping(target = "name", source = "project.name"),
+            @Mapping(target = "description", source = "project.description"),
+            @Mapping(target = "createAt", source = "project.dtCreated"),
+            @Mapping(target = "updateAt", source = "project.dtModified"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+    ProjectResponse toProjectResponseForUserJoined(Project project);
 }

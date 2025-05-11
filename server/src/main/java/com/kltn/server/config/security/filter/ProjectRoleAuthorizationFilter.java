@@ -18,9 +18,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.util.matcher.*;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -30,20 +28,25 @@ import java.util.List;
 public class ProjectRoleAuthorizationFilter extends AbstractAuthenticationProcessingFilter {
     private final JwtDecoder jwtDecoder;
 
-
-//    @Autowired
+    // @Autowired
     public ProjectRoleAuthorizationFilter(JwtDecoder jwtDecoder) {
-//        super("/project/");
+        // super("/project/");
         super(new OrRequestMatcher(
                 new AntPathRequestMatcher("/project/**"),
-                new AntPathRequestMatcher("/sprint/**")
-        ));
-//        setAuthenticationManager(new ProviderManager(List.of(projectAuthorizationProvider)));
+                new AndRequestMatcher(
+                        new AntPathRequestMatcher("/sprint/**"),
+                        new NegatedRequestMatcher(
+                                new AntPathRequestMatcher("/sprint/list", "GET")
+                        )
+                )));
+        // setAuthenticationManager(new
+        // ProviderManager(List.of(projectAuthorizationProvider)));
         this.jwtDecoder = jwtDecoder;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException, ServletException {
         String token = request.getHeader("Project-Authorization");
         if (token == null || token.isEmpty()) {
             throw new MyAuthenticationException("Authorization-Project header is missing");
@@ -56,20 +59,22 @@ public class ProjectRoleAuthorizationFilter extends AbstractAuthenticationProces
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
-            ProjectAuthorizationToken authToken = new ProjectAuthorizationToken(jwt, (UsernamePasswordAuthenticationToken) auth);
+            ProjectAuthorizationToken authToken = new ProjectAuthorizationToken(jwt,
+                    (UsernamePasswordAuthenticationToken) auth);
             authToken.setDetails(authenticationDetailsSource.buildDetails(request));
             return this.getAuthenticationManager().authenticate(authToken);
         }
         throw new MyAuthenticationException("Authentication failed");
     }
 
-//    @Override
-//    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-//        String path = request.getRequestURI();
-//        String method = request.getMethod();
-//
-//        // ✅ Skip only GET /project/{projectId}
-////        if ("GET".equals(method) && path.matches("^/project/[^/]+$"))
+    // @Override
+    // protected boolean requiresAuthentication(HttpServletRequest request,
+    // HttpServletResponse response) {
+    // String path = request.getRequestURI();
+    // String method = request.getMethod();
+    //
+    // // ✅ Skip only GET /project/{projectId}
+    ////        if ("GET".equals(method) && path.matches("^/project/[^/]+$"))
 ////            return false;
 ////
 ////        if ("POST".equals(method) && path.matches("^/project$"))
@@ -77,11 +82,12 @@ public class ProjectRoleAuthorizationFilter extends AbstractAuthenticationProces
 ////
 ////        if ("POST".equals(method) && path.matches("^/sprint+$"))
 ////            return false;
-//
-//        return super.requiresAuthentication(request, response);
-//    }
+    //
+    // return super.requiresAuthentication(request, response);
+    // }
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, jakarta.servlet.FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+            jakarta.servlet.FilterChain chain, Authentication authResult) {
         try {
             SecurityContextHolder.getContext().setAuthentication(authResult);
             chain.doFilter(request, response);

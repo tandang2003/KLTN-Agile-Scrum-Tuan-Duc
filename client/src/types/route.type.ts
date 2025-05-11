@@ -6,4 +6,8 @@ type WorkspaceParams = {
   workspaceId: string
 }
 
-export type { ProjectParams, WorkspaceParams }
+type InviteProjectParams = {
+  token: string
+}
+
+export type { ProjectParams, WorkspaceParams, InviteProjectParams }

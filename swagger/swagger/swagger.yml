@@ -219,6 +219,42 @@ paths:
                         className: "DH21DTX"
                         avatar: "https://res.cloudinary.com/yourstyle/image/upload/c_scale/q_auto/f_auto/v1/product_img/4/Screenshot%202024-03-24%20170336.png"
   # -----------------------------------------------
+  /user/check:
+    post:
+      summary: Checking user with uniId has existed in workspace id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uniId:
+                  type: string
+                  description: university id
+                workspaceId:
+                  type: string
+                  description: workspace id
+      responses:
+        200:
+          description: user with uniId is not exist in workspace id
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+        404:
+          description: user with uniId is exist in workspace id
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+  # -----------------------------------------------
   /user/workspace:
     get:
       summary: Get info user
@@ -386,28 +422,31 @@ paths:
                           name:
                             type: string
                             description: name workspace
-                          projects:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: project id
-                                name:
-                                  type: string
-                                  description: project name
+                          owner:
+                            type: string
+                            description: name owner
+                          sprintNum:
+                            type: number
+                            description: quantity of sprint
+                          timePerSprint:
+                            type: number
+                            description: time per sprint
+                          start:
+                            type: string
+                            description: date time start workspace
+                          end:
+                            type: string
+                            description: date time end workspace
+                          createAt:
+                            type: string
+                            description: date time create workspace
                     example:
                       code: 200
                       message: "Workspace and project info retrieved successfully"
                       data:
                         id: "workspace-1"
                         name: "LTW"
-                        projects:
-                          - id: "project-1"
-                            name: "Project A"
-                          - id: "project-2"
-                            name: "Project B"
+
     put:
       summary: Update and setting workspace
       parameters:
@@ -476,8 +515,139 @@ paths:
                             name: "Project A"
                           - id: "project-2"
                             name: "Project B"
+  /workspace/list:
+    get:
+      summary: Paging workspace
+      description: |
+        Used by: 
+        - Teacher
+        - Student id appended to workspace
+        Sort by id
+      parameters:
+        - name: page
+          required: false
+          allowEmptyValue: true
+          in: query
+        - name: size
+          required: false
+          allowEmptyValue: true
+          in: query
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: "#/components/schemas/ApiPaging"
+                          - type: object
+                            properties:
+                              items:
+                                properties:
+                                  id:
+                                    type: string
+                                    description: project id
+                                  name:
+                                    type: string
+                                    description: student name
+                                  role:
+                                    type: string
+                                    description: name role (student or leader)
+                                  className:
+                                    type: string
+                                    description: student class
+                                  project:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        description: name owner
+                    example:
+                      code: 200
+                      message: "Create project success"
+                      data:
+                        items:
+                          - id: "project-001"
+                            name: Sell clothes
+                            owner:
+                              name: Le Anh Duc
+                          - id: "project-002"
+                            name: Sell Estate
+                            owner:
+                              name: Dang Minh Tan
+                        currentPage: 1
+                        totalPages: 2
+                        totalItems: 4
+    post:
+      summary: Add student to workspace
+      description: |
+        Used by: Teacher
+
+        Force add student to workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: workspace id
+                  required: true
+                studentIds:
+                  type: array
+                  items:
+                    type: string
+                  description: array contains student id
+                  required: true
+            example:
+              id: "workspace-001"
+              studentIds:
+                - "student-001"
+                - "student-002"
+                - "student-003"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+              example:
+                code: 200
+                message: "Invite student to workspace"
+        409:
+          description: "At least 1 student is exist in workspace"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseApi"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+                        description: array contains student id exist in workspace
+                    example:
+                      code: 409
+                      message: "Invite student to workspace"
+                      data:
+                        - "student-003"
   # -----------------------------------------------
-  /workspace/student:
+  /workspace/{workspace_id}/student:
     get:
       summary: Paging student (both leader) inside workspace
       description: |
@@ -485,6 +655,10 @@ paths:
         - Teacher, that is owner of this workspace
         Sort by id
       parameters:
+        - name: workspace_id
+          description: workspace_id
+          in: path
+          required: true
         - name: page
           required: false
           allowEmptyValue: true
@@ -554,70 +728,8 @@ paths:
                         currentPage: 1
                         totalPages: 2
                         totalItems: 4
-    post:
-      summary: Add student to workspace
-      description: |
-        Used by: Teacher
-
-        Force add student to workspace
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: workspace id
-                  required: true
-                studentIds:
-                  type: array
-                  items:
-                    type: string
-                  description: array contains student id
-                  required: true
-            example:
-              id: "workspace-001"
-              studentIds:
-                - "student-001"
-                - "student-002"
-                - "student-003"
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-              example:
-                code: 200
-                message: "Invite student to workspace"
-        409:
-          description: "At least 1 student is exist in workspace"
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: string
-                        description: array contains student id exist in workspace
-                    example:
-                      code: 409
-                      message: "Invite student to workspace"
-                      data:
-                        - "student-003"
   # -----------------------------------------------
-  /workspace/project:
+  /workspace/{workspace_id}/project:
     get:
       summary: Paging project inside workspace
       description: |
@@ -821,7 +933,7 @@ paths:
               example:
                 name: "workspace-LTW"
                 description: "Workspace for student in lab LTW NLU"
-                teamMember: [21130171, 21130172, 21130173]
+                teamMember: [ 21130171, 21130172, 21130173 ]
                 workspace: 1
                 tags:
                   [
@@ -978,10 +1090,76 @@ paths:
                           name: "task 002"
                           check: false
   # -----------------------------------------------
-  /project/issue:
+  /sprint:
+    post:
+      summary: create sprint
+      description: create sprint by teacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+                  description: project id
+                title:
+                  type: string
+                  description: issue name
+                storyPoint:
+                  type: integer
+                  description: minimum story point
+                  required: true
+                predict:
+                  type: string
+                  description: date time to run model predict
+                  required: true
+                start:
+                  type: string
+                  description: date time start
+                end:
+                  type: string
+                  description: date time end
+            example:
+              projectId: "7b1635b7-8a2d-4054-a2ab-033d930ff799"
+              title: "The furst sprint for project"
+              predict: "2025-05-27T08:15:41.747Z"
+              storyPoint: "12"
+              start: "2025-05-24T08:15:41.747Z"
+              end: "2025-05-30T08:15:41.747Z"
+      responses:
+
+    put:
+      summary: update sprint
+      description: create sprint by student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+                  description: project id
+                dtPlanning:
+                  type: string
+                  description: date time start
+                dtPreview:
+                  type: string
+                  description: date time end
+            example:
+              projectId: "7b1635b7-8a2d-4054-a2ab-033d930ff799"
+              sprintId: "869970d9-9109-4cde-89b8-5c69013dff5c"
+              dtPlanning: "2025-05-29T08:15:41.747Z"
+              dtPreview: "2025-05-29T08:15:41.747Z"
+      responses:
+
+  /issue:
     post:
       summary: create issue
-      description: create issue
+      description: create issue by student
       requestBody:
         required: true
         content:
@@ -992,40 +1170,60 @@ paths:
                 name:
                   type: string
                   description: issue name
-                sprint:
+                sprintId:
                   type: string
                   description: sprint id
-                project:
+                projectId:
                   type: string
                   description: project id
-                workspace:
+                workspaceId:
                   type: string
                   description: workspace id
-                currentStatus:
+                storyPoint:
+                  type: integer
+                  description: story point
+                  required: true
+                status:
                   allOf:
                     - $ref: "#/components/schemas/Status"
-                  description: current status
-                changeStatus:
+                  description: status
+                priority:
                   allOf:
-                    - $ref: "#/components/schemas/Status"
-                  description: next status
+                    - $ref: "#/components/schemas/Priority"
+                  description: priority
+                description:
+                  type: string
+                  description: description
                 position:
                   type: number
                   description: "position of issue,
                     this is calculate in front-end and sent to server,
                     position = (prevPosition + nextPosition) / 2 = (2000 + 1000) /2"
-                createAt:
+                assignerId:
                   type: string
-                  description: update at in task, prevent race condition
+                  description: uniId of assigner
+                reviewId:
+                  type: string
+                  description: uniId of reviewer
+                start:
+                  type: string
+                  description: date time start
+                end:
+                  type: string
+                  description: date time end
             example:
               name: "Design database"
-              sprint: "sprint-001"
-              project: "project-001"
-              workspace: "workspace-001"
-              currentStatus: "Backlog"
-              changeStatus: "In Process"
+              sprintId: "sprint-001"
+              projectId: "project-001"
+              workspaceId: "workspace-001"
+              status: "Backlog"
+              priority: "Major"
+              description: "Lorem"
               position: 1200
-              createAt: ""
+              assignerId: "uni-002"
+              reviewerId: "uni-001"
+              start: ""
+              end: ""
 
       responses:
         200:
@@ -1040,118 +1238,9 @@ paths:
               example:
                 code: 200
                 message: "Create issue"
-    patch:
-      summary: change status issue
-      description: change position of issue
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: sprint id
-                currentStatus:
-                  allOf:
-                    - $ref: "#/components/schemas/Status"
-                  type: string
-                  description: current status of issue
-                changeStatus:
-                  allOf:
-                    - $ref: "#/components/schemas/Status"
-                  type: string
-                  description: next status of issue
-                position:
-                  type: number
-                  description: "position of issue,
-                    this is calculate in front-end and sent to server,
-                    newPosition = (2000 + 3000) / 2 = 2500"
-                updateAt:
-                  type: string
-                  description: update at in task, prevent race condition
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-              example:
-                code: 200
-                message: "Update status and position"
-  # -----------------------------------------------
-  /sprint/issue/teacher:
-    post:
-      summary: create issue
-      description: create issue by teacher
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                workspace:
-                  type: string
-                  description: workspace id
-                project:
-                  type: string
-                  description: project id
-                sprint:
-                  type: string
-                  description: sprint id
-                name:
-                  type: string
-                  description: issue name
-                  required: true
-                status:
-                  type: string
-                  description: value allow in Backlog, Todo, In Process, Review, Done
-                  required: true
-              example:
-                workspace: "workspace-001"
-                project: "project-001"
-                sprint: "sprint-001"
-                name: "issue 1"
-                status: "Backlog"
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-                    properties:
-                      data:
-                        properties:
-                          id:
-                            type: string
-                            description: issue id
-                          name:
-                            type: string
-                            description: issue name
-                          status:
-                            type: string
-                            description: current status of issue
-                    example:
-                      code: 200
-                      message: "Create issue"
-                      data:
-                        id: "issue-001"
-                        name: "issue 001"
-                        status: "Backlog"
-
     put:
       summary: update issue
-      description: update issue by teacher
+      description: update issue by student
       requestBody:
         required: true
         content:
@@ -1210,6 +1299,35 @@ paths:
                   description: "..."
                   storyPoint: 10
                   priority: Critical
+    patch:
+      summary: change status issue (move card)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                issueId:
+                  type: string
+                  description: issue id
+                  required: true
+                status:
+                  $ref: "#/components/schemas/Status"
+                position:
+                  type: number
+                  description: use to decide order in list issue same status, front-end wil calculate it
+              example:
+                issueId: '10'
+                status: "Todo"
+                position: 2000
+      responses:
+        200:
+          description: Success
+        400:
+          description: Not found issue with id
+
+
 components:
   schemas:
     TagObject:
@@ -1230,6 +1348,16 @@ components:
         - In Process
         - Review
         - Done
+    Priority:
+      type: string
+      description: priority of issue
+      default: Critical
+      enum:
+        - Critical
+        - Major
+        - Minor
+        - Trivial
+        - Blocked
     ApiPaging:
       type: object
       description: contain value in paging

@@ -75,15 +75,19 @@ import {
 type DatePickerWithPresetsProps = {
   date?: Date
   setDate?: (date: Date | undefined) => void
+  className?: string
+  disabled?: boolean
 }
 
 export function DatePickerWithPresets({
   date,
-  setDate
+  setDate,
+  className,
+  disabled = false
 }: DatePickerWithPresetsProps) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger disabled={disabled} className={cn(className)} asChild>
         <Button
           variant={'outline'}
           className={cn(

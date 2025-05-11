@@ -8,6 +8,7 @@ import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.service.entity.ProjectService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,12 +27,14 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProjectResponse>> createProject(@RequestBody @Valid ProjectCreationRequest creationRequest) {
+    public ResponseEntity<ApiResponse<ProjectResponse>> createProject(
+            @RequestBody @Valid ProjectCreationRequest creationRequest) {
         return ResponseEntity.ok().body(projectService.createProject(creationRequest));
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<ApiResponse<Void>> addUserToProject(@RequestBody @Valid ProjectInvitationRequest invitationRequest) {
+    public ResponseEntity<ApiResponse<Void>> addUserToProject(
+            @RequestBody @Valid ProjectInvitationRequest invitationRequest) {
         return ResponseEntity.ok().body(
                 projectService.inviteUserToProject(invitationRequest));
     }
