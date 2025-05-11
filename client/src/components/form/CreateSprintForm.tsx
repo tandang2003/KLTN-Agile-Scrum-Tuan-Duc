@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select'
 import { useAppSelector } from '@/context/redux/hook'
 import { useCreateSprintMutation } from '@/feature/sprint/sprint.api'
+import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
 import {
   CreateSprintFormSchema,
   CreateSprintFormType
@@ -26,8 +27,9 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
 import { isNumber } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
 import { toast } from 'sonner'
 
 type DurationType = 1 | 2 | 3 | 4 | 'custom'
@@ -35,6 +37,9 @@ type DurationType = 1 | 2 | 3 | 4 | 'custom'
 const CreateSprintForm = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const [createSprint] = useCreateSprintMutation()
+
+  const dispatch = useDispatch()
+
   const [durationValue, setDurationValue] = useState<{
     active: DurationType
     list: DurationType[]
@@ -53,8 +58,6 @@ const CreateSprintForm = () => {
       end: addDays(new Date(), 7)
     }
   })
-
-  useEffect(() => {}, [])
 
   const handleSelectDurationChange = (value: string) => {
     if (value) {
@@ -81,7 +84,9 @@ const CreateSprintForm = () => {
           description: `Sprint #${id} - ${title}`
         })
       })
-      .then(() => {})
+      .then(() => {
+        dispatch(closeDialogCreateSprint())
+      })
       .catch(() => {
         toast.error('Create sprint failed')
       })

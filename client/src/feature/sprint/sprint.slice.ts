@@ -3,9 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 
 type SprintState = {
   isDragMode: boolean
+  isOpenDialogCreate: boolean
 }
 const initialState: SprintState = {
-  isDragMode: false
+  isDragMode: false,
+  isOpenDialogCreate: false
 }
 
 const sprintSlice = createSlice({
@@ -17,6 +19,12 @@ const sprintSlice = createSlice({
     },
     disableDragMode(state: SprintState) {
       state.isDragMode = false
+    },
+    openDialogCreateSprint(state: SprintState) {
+      state.isOpenDialogCreate = true
+    },
+    closeDialogCreateSprint(state: SprintState) {
+      state.isOpenDialogCreate = false
     }
   },
   // reset state
@@ -32,5 +40,10 @@ const sprintSlice = createSlice({
 
 const sprintReducer = sprintSlice.reducer
 export { sprintReducer }
-export const { enableDragMode, disableDragMode } = sprintSlice.actions
+export const {
+  enableDragMode,
+  disableDragMode,
+  openDialogCreateSprint,
+  closeDialogCreateSprint
+} = sprintSlice.actions
 export default sprintSlice

@@ -68,14 +68,16 @@ const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
         <span className='ml-auto flex items-center gap-4'>
           <span>min point: </span>
           <Badge className='bg-green-500'>{data.miniumStoryPoint}</Badge>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Icon icon={'ri:more-fill'} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {isDisabled && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Icon icon={'ri:more-fill'} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </span>
       </div>
     </div>

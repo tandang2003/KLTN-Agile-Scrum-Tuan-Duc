@@ -39,7 +39,10 @@ const projectSlice = createSlice({
       getTokenProjectThunk.fulfilled,
       (state: ProjectState, action: PayloadAction<TokenProjectResponse>) => {
         state.token = action.payload.project_authorization_token
-        state.projectIdsAllowed = action.payload.project_ids
+        state.projectIdsAllowed = [
+          ...(action.payload.project_ids ?? []),
+          action.payload.project_id
+        ]
       }
     )
     builder.addMatcher(

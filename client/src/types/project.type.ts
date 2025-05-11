@@ -17,6 +17,7 @@ type CreateProjectRequest = CreateProjectFormType & {
 type TokenProjectResponse = {
   project_authorization_token: string
   project_ids: string[]
+  project_id: string
 }
 
 export type {
