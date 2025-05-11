@@ -5,8 +5,10 @@ import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
   InviteStudentWorkspaceReqType,
+  ListProjectWorkspaceReq,
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
+  ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
   WorkspaceCardResponse,
@@ -60,6 +62,16 @@ const workspaceService = {
     const response = await httpService.get<
       ResponseApi<Page<StudentWorkspaceDataTable>>
     >(`/workspace/${req.id}/student?${queryString}`)
+    return response.data.data
+  },
+
+  getListProject: async (
+    req: ListProjectWorkspaceReq
+  ): Promise<Page<ProjectWorkspaceDataTable>> => {
+    const queryString = req.page ? toQueryString(req.page) : ''
+    const response = await httpService.get<
+      ResponseApi<Page<ProjectWorkspaceDataTable>>
+    >(`/workspace/${req.id}/project?${queryString}`)
     return response.data.data
   },
 
