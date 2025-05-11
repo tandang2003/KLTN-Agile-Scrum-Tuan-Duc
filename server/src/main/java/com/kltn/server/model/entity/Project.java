@@ -13,8 +13,6 @@ public class Project extends BaseEntity {
     private String name;
     @Column(columnDefinition = "LONGTEXT")
     private String description;
-    //    @OneToMany(mappedBy = "project")
-//    private List<Sprint> sprints;
     @OneToMany(mappedBy = "project")
     private List<WorkspacesUsersProjects> workspacesUserProjects;
     @OneToMany(mappedBy = "project")
@@ -25,7 +23,6 @@ public class Project extends BaseEntity {
         this.name = builder.name;
         this.description = builder.description;
         this.projectSprints = builder.projectSprints;
-//        this.sprints = builder.sprints;
     }
 
     public Project() {

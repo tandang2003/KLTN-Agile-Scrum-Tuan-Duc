@@ -2,6 +2,12 @@ package com.kltn.server.config;
 
 import com.kltn.server.config.properties.CacheProperties;
 import com.kltn.server.config.security.CustomJWTValidation;
+import com.kltn.server.mapper.document.ChangeLogMapper;
+import com.kltn.server.mapper.document.LogProjectMapper;
+import com.kltn.server.mapper.document.LogTaskMapper;
+import com.kltn.server.mapper.document.iml.ChangeLogMapperIml;
+import com.kltn.server.mapper.document.iml.LogProjectMapperIml;
+import com.kltn.server.mapper.document.iml.LogTaskMapperIml;
 import com.kltn.server.util.token.TokenKeyUtils;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -95,6 +101,21 @@ public class InitConfig {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getVerifyPublicKey()).build();
 //        decoder.setJwtValidator(tokenValidator());
         return decoder;
+    }
+
+    //    @Bean
+    public LogTaskMapper logTaskMapper() {
+        return new LogTaskMapperIml();
+    }
+
+    //    @Bean
+    public LogProjectMapper logProjectMapper() {
+        return new LogProjectMapperIml();
+    }
+
+    @Bean
+    public ChangeLogMapper getChangeLogMapper() {
+        return new ChangeLogMapperIml(logTaskMapper(), logProjectMapper());
     }
 
 }

@@ -12,8 +12,8 @@ public class Resource extends BaseEntity {
     @JoinColumn(name = "project_id")
     private Project project;
     @ManyToOne
-    @JoinColumn(name = "task_id")
-    private Task task;
+    @JoinColumn(name = "issue_id")
+    private Issue issue;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,7 +34,7 @@ public class Resource extends BaseEntity {
         this.extension = resourceBuilder.extension;
         this.placeContent = resourceBuilder.placeContent;
         this.size = resourceBuilder.size;
-        this.task = resourceBuilder.task;
+        this.issue = resourceBuilder.issue;
         this.user = resourceBuilder.user;
     }
 
@@ -44,7 +44,7 @@ public class Resource extends BaseEntity {
 
     public static class ResourceEntityBuilder extends BaseEntityBuilder<Resource, ResourceEntityBuilder> {
         private Project project;
-        private Task task;
+        private Issue issue;
         private User user;
         private String name;
         private String extension;
@@ -57,8 +57,8 @@ public class Resource extends BaseEntity {
             return this;
         }
 
-        public ResourceEntityBuilder task(Task task) {
-            this.task = task;
+        public ResourceEntityBuilder task(Issue issue) {
+            this.issue = issue;
             return this;
         }
 
@@ -111,12 +111,12 @@ public class Resource extends BaseEntity {
         this.project = project;
     }
 
-    public Task getTask() {
-        return task;
+    public Issue getTask() {
+        return issue;
     }
 
-    public void setTask(Task task) {
-        this.task = task;
+    public void setTask(Issue issue) {
+        this.issue = issue;
     }
 
     public User getUser() {
