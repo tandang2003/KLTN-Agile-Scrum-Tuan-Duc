@@ -1,16 +1,17 @@
 package com.kltn.server.DTO.response.base;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.bson.types.ObjectId;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record TopicResponse(String id, String name, String color) {
+public record TopicResponse(ObjectId id, String name, String color) {
 
     public static class TopicResponseBuilder {
-        private String id;
+        private ObjectId id;
         private String name;
         private String color;
 
-        public TopicResponseBuilder id(String id) {
+        public TopicResponseBuilder id(ObjectId id) {
             this.id = id;
             return this;
         }
@@ -35,7 +36,7 @@ public record TopicResponse(String id, String name, String color) {
     }
 
     @Override
-    public String id() {
+    public ObjectId id() {
         return id;
     }
 

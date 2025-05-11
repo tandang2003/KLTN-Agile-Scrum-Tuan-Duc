@@ -3,8 +3,9 @@ package com.kltn.server.model.collection.model;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.List;
 
-public class LogTasks implements ILog {
+public class LogTask extends ILog {
     @Field
     private String projectId;
     @Field
@@ -32,15 +33,19 @@ public class LogTasks implements ILog {
     @Field
     private int complexDescription;
     @Field("topics")
-    private Topic[] topics;
-    @Field("subTags")
-    private SubTask[] subTags;
+    private List<Topic> topics;
+    @Field("subTask")
+    private List<SubTask> subTask;
     @Field("attachments")
-    private Attachment[] attachment;
+    private List<Attachment> attachment;
     @Field("comments")
-    private Comment[] comments;
+    private List<Comment> comments;
 
-    private LogTasks(LogTasksBuilder builder) {
+    public LogTask() {
+        super();
+    }
+
+    private LogTask(LogTaskBuilder builder) {
         this.projectId = builder.projectId;
         this.sprintId = builder.sprintId;
         this.assigner = builder.assigner;
@@ -55,16 +60,16 @@ public class LogTasks implements ILog {
         this.dtPredictComplete = builder.dtPredictComplete;
         this.complexDescription = builder.complexDescription;
         this.topics = builder.topics;
-        this.subTags = builder.subTags;
+        this.subTask = builder.subTask;
         this.attachment = builder.attachment;
         this.comments = builder.comments;
     }
 
-    public static LogTasksBuilder builder() {
-        return new LogTasksBuilder();
+    public static LogTaskBuilder builder() {
+        return new LogTaskBuilder();
     }
 
-    public static class LogTasksBuilder {
+    public static class LogTaskBuilder {
         private String projectId;
         private String sprintId;
         private String assigner;
@@ -78,99 +83,104 @@ public class LogTasks implements ILog {
         private Instant dtPlanning;
         private Instant dtPredictComplete;
         private int complexDescription;
-        private Topic[] topics;
-        private SubTask[] subTags;
-        private Attachment[] attachment;
-        private Comment[] comments;
+        private List<Topic> topics;
+        private List<SubTask> subTask;
+        private List<Attachment> attachment;
+        private List<Comment> comments;
 
 
-        public LogTasksBuilder setProjectId(String projectId) {
+        public LogTaskBuilder projectId(String projectId) {
             this.projectId = projectId;
             return this;
         }
 
-        public LogTasksBuilder setSprintId(String sprintId) {
+        public LogTaskBuilder sprintId(String sprintId) {
             this.sprintId = sprintId;
             return this;
         }
 
-        public LogTasksBuilder setAssigner(String assigner) {
+        public LogTaskBuilder assigner(String assigner) {
             this.assigner = assigner;
             return this;
         }
 
-        public LogTasksBuilder setReviewer(String reviewer) {
+        public LogTaskBuilder reviewer(String reviewer) {
             this.reviewer = reviewer;
             return this;
         }
 
-        public LogTasksBuilder setDescription(String description) {
+        public LogTaskBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public LogTasksBuilder setStatus(String status) {
+        public LogTaskBuilder status(String status) {
             this.status = status;
             return this;
         }
 
-        public LogTasksBuilder setPriority(String priority) {
+        public LogTaskBuilder priority(String priority) {
             this.priority = priority;
             return this;
         }
 
-        public LogTasksBuilder setStoryPoint(int storyPoint) {
+        public LogTaskBuilder storyPoint(int storyPoint) {
             this.storyPoint = storyPoint;
             return this;
         }
 
-        public LogTasksBuilder setDtStart(Instant dtStart) {
+        public LogTaskBuilder dtStart(Instant dtStart) {
             this.dtStart = dtStart;
             return this;
         }
 
-        public LogTasksBuilder setDtEnd(Instant dtEnd) {
+        public LogTaskBuilder dtEnd(Instant dtEnd) {
             this.dtEnd = dtEnd;
             return this;
         }
 
-        public LogTasksBuilder setDtPlanning(Instant dtPlanning) {
+        public LogTaskBuilder dtPlanning(Instant dtPlanning) {
             this.dtPlanning = dtPlanning;
             return this;
         }
 
-        public LogTasksBuilder setDtPredictComplete(Instant dtPredictComplete) {
+        public LogTaskBuilder dtPredictComplete(Instant dtPredictComplete) {
             this.dtPredictComplete = dtPredictComplete;
             return this;
         }
 
-        public LogTasksBuilder setComplexDescription(int complexDescription) {
+        public LogTaskBuilder complexDescription(int complexDescription) {
             this.complexDescription = complexDescription;
             return this;
         }
 
-        public LogTasksBuilder setTags(Topic[] topics) {
+        public LogTaskBuilder topics(List<Topic> topics) {
             this.topics = topics;
             return this;
         }
 
-        public LogTasksBuilder setSubTags(SubTask[] subTags) {
-            this.subTags = subTags;
+        public LogTaskBuilder tags(List<Topic> topics) {
+            this.topics = topics;
             return this;
         }
 
-        public LogTasksBuilder setAttachment(Attachment[] attachment) {
+        public LogTaskBuilder subTask(List<SubTask> subTask) {
+            this.subTask = subTask;
+            return this;
+        }
+
+        public LogTaskBuilder attachment(List<Attachment> attachment) {
             this.attachment = attachment;
             return this;
         }
 
-        public LogTasksBuilder setComments(Comment[] comments) {
+        public LogTaskBuilder comments(List<Comment> comments) {
             this.comments = comments;
             return this;
         }
 
-        public LogTasks build() {
-            return new LogTasks(this);
+        public LogTask build() {
+            return new LogTask(this);
         }
     }
 
@@ -278,35 +288,35 @@ public class LogTasks implements ILog {
         this.complexDescription = complexDescription;
     }
 
-    public Topic[] getTags() {
+    public List<Topic> getTags() {
         return topics;
     }
 
-    public void setTags(Topic[] topics) {
+    public void setTags(List<Topic> topics) {
         this.topics = topics;
     }
 
-    public SubTask[] getSubTags() {
-        return subTags;
+    public List<SubTask> getSubTask() {
+        return subTask;
     }
 
-    public void setSubTags(SubTask[] subTags) {
-        this.subTags = subTags;
+    public void setSubTags(List<SubTask> subTask) {
+        this.subTask = subTask;
     }
 
-    public Attachment[] getAttachment() {
+    public List<Attachment> getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(Attachment[] attachment) {
+    public void setAttachment(List<Attachment> attachment) {
         this.attachment = attachment;
     }
 
-    public Comment[] getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(Comment[] comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 }
