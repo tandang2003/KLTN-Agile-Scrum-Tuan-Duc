@@ -39,4 +39,16 @@ public class ProjectSprintId implements Serializable {
     public static ProjectSprintIdBuilder builder() {
         return new ProjectSprintIdBuilder();
     }
+    public String getProjectId() {
+        return projectId;
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+    public String getSprintId() {
+        return sprintId;
+    }
+    public void setSprintId(String sprintId) {
+        this.sprintId = sprintId;
+    }
 }

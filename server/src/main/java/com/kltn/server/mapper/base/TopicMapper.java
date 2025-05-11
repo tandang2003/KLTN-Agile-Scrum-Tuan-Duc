@@ -34,4 +34,7 @@ public interface TopicMapper {
     })
     List<Topic> toTopicList(List<TopicRequest> topicRequests);
 
+    @Named("toListResponse")
+    List<TopicResponse> toTopicResponse(List<Topic> topics);
+
 }

@@ -2,33 +2,26 @@ package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
-import com.kltn.server.model.type.task.TaskPriority;
-import com.kltn.server.model.type.task.TaskStatus;
-import com.kltn.server.model.type.task.TaskTag;
+import com.kltn.server.model.type.task.IssuePriority;
+import com.kltn.server.model.type.task.IssueStatus;
+import com.kltn.server.model.type.task.IssueTag;
 import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name = "tasks")
-public class Task extends BaseEntity {
-    //    @ManyToOne
-    //    @JoinColumn(name = "project_id")
-    //    private Project project;
-    //    @ManyToOne
-    //    @JoinColumn(name = "sprint_id")
-    //    private Sprint sprint;
+@Table(name = "issues")
+public class Issue extends BaseEntity {
+    private int position;
+    @Column(columnDefinition = "LONGTEXT")
+    private String description;
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
-            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")
-    })
+    @JoinColumns({@JoinColumn(name = "project_id", referencedColumnName = "project_id"), @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")})
 //    @JoinColumn(name = "proje")
     private ProjectSprint projectSprint;
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "issue")
     private List<Resource> resources;
-
     @ManyToOne
     @JoinColumn(name = "assigner")
     private User assigner;
@@ -37,12 +30,12 @@ public class Task extends BaseEntity {
     private User reviewer;
     private String title;
     @Enumerated(EnumType.STRING)
-    private TaskStatus type;
+    private IssueStatus status;
     private int storyPoint;
     @Enumerated(EnumType.STRING)
-    private TaskPriority priority;
+    private IssuePriority priority;
     @Enumerated(EnumType.STRING)
-    private TaskTag tag;
+    private IssueTag tag;
     @Column(name = "num_changing_of_priority")
     private int numChangeOfPriority;
     @Column(name = "num_changing_of_description")
@@ -50,17 +43,19 @@ public class Task extends BaseEntity {
     @Column(name = "commplex_of_description")
     private int complexOfDescription;
     @Column(name = "dt_start")
-    private Instant DTStart;
+    private Instant dtStart;
     @Column(name = "dt_end")
-    private Instant DTEnd;
+    private Instant dtEnd;
     @Column(name = "dt_planning")
-    private Instant DTPlanning;
+    private Instant dtPlanning;
 
 
-    public Task(TaskEntityBuilder builder) {
+    public Issue(IssueEntityBuilder builder) {
         super(builder);
         this.title = builder.title;
-        this.type = builder.type;
+        this.position = builder.position;
+        this.description = builder.description;
+        this.status = builder.status;
         this.storyPoint = builder.storyPoint;
         this.priority = builder.priority;
         this.tag = builder.tag;
@@ -71,22 +66,25 @@ public class Task extends BaseEntity {
         this.reviewer = builder.reviewer;
 //        this.project = builder.project;
 //        this.sprint = builder.sprint;
-        this.DTStart = builder.DTStart;
-        this.DTEnd = builder.DTEnd;
-        this.DTPlanning = builder.DTPlanning;
+        this.dtStart = builder.dtStart;
+        this.dtEnd = builder.dtEnd;
+        this.dtPlanning = builder.dtPlanning;
         this.resources = builder.resources;
+        this.projectSprint = builder.projectSprint;
     }
 
-    public Task() {
+    public Issue() {
     }
 
-    public static class TaskEntityBuilder extends BaseEntityBuilder<Task, TaskEntityBuilder> {
+    public static class IssueEntityBuilder extends BaseEntityBuilder<Issue, IssueEntityBuilder> {
+        private int position;
         private List<Resource> resources;
         private String title;
-        private TaskStatus type;
+        private String description;
+        private IssueStatus status;
         private int storyPoint;
-        private TaskPriority priority;
-        private TaskTag tag;
+        private IssuePriority priority;
+        private IssueTag tag;
         private int numChangeOfPriority;
         private int numChangeOfDescription;
         private int complexOfDescription;
@@ -95,98 +93,114 @@ public class Task extends BaseEntity {
 //        private Project project;
         private User assigner;
         private User reviewer;
-        private Instant DTStart;
-        private Instant DTEnd;
-        private Instant DTPlanning;
+        private Instant dtStart;
+        private Instant dtEnd;
+        private Instant dtPlanning;
+        private ProjectSprint projectSprint;
 
-        public TaskEntityBuilder title(String title) {
+        public IssueEntityBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public TaskEntityBuilder type(TaskStatus type) {
-            this.type = type;
+        public IssueEntityBuilder description(String description) {
+            this.description = description;
             return this;
         }
 
-        public TaskEntityBuilder storyPoint(int storyPoint) {
+        public IssueEntityBuilder position(int position) {
+            this.position = position;
+            return this;
+        }
+
+        public IssueEntityBuilder status(IssueStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public IssueEntityBuilder storyPoint(int storyPoint) {
             this.storyPoint = storyPoint;
             return this;
         }
 
-        public TaskEntityBuilder resource(List<Resource> resources) {
+        public IssueEntityBuilder resource(List<Resource> resources) {
             this.resources = resources;
             return this;
         }
 
-        public TaskEntityBuilder priority(TaskPriority priority) {
+        public IssueEntityBuilder priority(IssuePriority priority) {
             this.priority = priority;
             return this;
         }
 
-        public TaskEntityBuilder tag(TaskTag tag) {
+        public IssueEntityBuilder tag(IssueTag tag) {
             this.tag = tag;
             return this;
         }
 
-        public TaskEntityBuilder numChangeOfPriority(int numChangeOfPriority) {
+        public IssueEntityBuilder numChangeOfPriority(int numChangeOfPriority) {
             this.numChangeOfPriority = numChangeOfPriority;
             return this;
         }
 
-        public TaskEntityBuilder numChangeOfDescription(int numChangeOfDescription) {
+        public IssueEntityBuilder numChangeOfDescription(int numChangeOfDescription) {
             this.numChangeOfDescription = numChangeOfDescription;
             return this;
         }
 
-        public TaskEntityBuilder complexOfDescription(int complexOfDescription) {
+        public IssueEntityBuilder complexOfDescription(int complexOfDescription) {
             this.complexOfDescription = complexOfDescription;
             return this;
         }
 
-        public TaskEntityBuilder assigner(User assigner) {
+        public IssueEntityBuilder assigner(User assigner) {
             this.assigner = assigner;
             return this;
         }
 
-        public TaskEntityBuilder reviewer(User reviewer) {
+        public IssueEntityBuilder reviewer(User reviewer) {
             this.reviewer = reviewer;
             return this;
         }
 
-//        public TaskEntityBuilder sprint(Sprint sprint) {
+//        public IssueEntityBuilder sprint(Sprint sprint) {
 //            this.sprint = sprint;
 //            return this;
 //        }
 //
-//        public TaskEntityBuilder project(Project project) {
+//        public IssueEntityBuilder project(Project project) {
 //            this.project = project;
 //            return this;
 //        }
 
-        public TaskEntityBuilder DTStart(Instant DTStart) {
-            this.DTStart = DTStart;
+        public IssueEntityBuilder dtStart(Instant dtStart) {
+            this.dtStart = dtStart;
             return this;
         }
 
-        public TaskEntityBuilder DTEnd(Instant DTEnd) {
-            this.DTEnd = DTEnd;
+        public IssueEntityBuilder dtEnd(Instant dtEnd) {
+            this.dtEnd = dtEnd;
             return this;
         }
 
-        public TaskEntityBuilder DTPlanning(Instant DTPlanning) {
-            this.DTPlanning = DTPlanning;
+        public IssueEntityBuilder dtPlanning(Instant dtPlanning) {
+            this.dtPlanning = dtPlanning;
+            return this;
+        }
+
+        public IssueEntityBuilder projectSprint(ProjectSprint projectSprint) {
+            this.projectSprint = projectSprint;
             return this;
         }
 
         @Override
-        protected TaskEntityBuilder self() {
+        protected IssueEntityBuilder self() {
             return this;
         }
 
         @Override
-        public Task build() {
-            return new Task(this);
+        public Issue build() {
+            return new Issue(this);
         }
     }
 
@@ -230,12 +244,12 @@ public class Task extends BaseEntity {
         this.title = title;
     }
 
-    public TaskStatus getType() {
-        return type;
+    public IssueStatus getStatus() {
+        return status;
     }
 
-    public void setType(TaskStatus type) {
-        this.type = type;
+    public void setStatus(IssueStatus status) {
+        this.status = status;
     }
 
     public int getStoryPoint() {
@@ -246,19 +260,19 @@ public class Task extends BaseEntity {
         this.storyPoint = storyPoint;
     }
 
-    public TaskPriority getPriority() {
+    public IssuePriority getPriority() {
         return priority;
     }
 
-    public void setPriority(TaskPriority priority) {
+    public void setPriority(IssuePriority priority) {
         this.priority = priority;
     }
 
-    public TaskTag getTag() {
+    public IssueTag getTag() {
         return tag;
     }
 
-    public void setTag(TaskTag tag) {
+    public void setTag(IssueTag tag) {
         this.tag = tag;
     }
 
@@ -286,35 +300,62 @@ public class Task extends BaseEntity {
         this.complexOfDescription = complexOfDescription;
     }
 
-    public Instant getDTStart() {
-        return DTStart;
-    }
-
-    public void setDTStart(Instant DTStart) {
-        this.DTStart = DTStart;
-    }
-
-    public Instant getDTEnd() {
-        return DTEnd;
-    }
-
-    public void setDTEnd(Instant DTEnd) {
-        this.DTEnd = DTEnd;
-    }
-
-    public Instant getDTPlanning() {
-        return DTPlanning;
-    }
-
-    public void setDTPlanning(Instant DTPlanning) {
-        this.DTPlanning = DTPlanning;
-    }
 
     public List<Resource> getResources() {
         return resources;
     }
 
+    public ProjectSprint getProjectSprint() {
+        return projectSprint;
+    }
+
+    public void setProjectSprint(ProjectSprint projectSprint) {
+        this.projectSprint = projectSprint;
+    }
+
     public void setResources(List<Resource> resources) {
+
         this.resources = resources;
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Instant getDtStart() {
+        return dtStart;
+    }
+
+    public void setDtStart(Instant dtStart) {
+        this.dtStart = dtStart;
+    }
+
+    public Instant getDtEnd() {
+        return dtEnd;
+    }
+
+    public void setDtEnd(Instant dtEnd) {
+        this.dtEnd = dtEnd;
+    }
+
+    public Instant getDtPlanning() {
+        return dtPlanning;
+    }
+
+    public void setDtPlanning(Instant dtPlanning) {
+        this.dtPlanning = dtPlanning;
+    }
+
 }

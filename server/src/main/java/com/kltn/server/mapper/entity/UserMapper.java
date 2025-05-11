@@ -28,6 +28,7 @@ public interface UserMapper {
             @Mapping(target = "role", source = "role.name")
     })
     @BeanMapping(ignoreByDefault = true)
+    @Named("toUserDetailDTO")
     AuthenticationResponse.UserDetailDTO toUserDetailDTO(User user);
 
     @Mappings({
