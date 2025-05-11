@@ -46,10 +46,10 @@ public class User extends BaseEntity implements UserDetails {
 //    private List<Workspace> workspacesJoined;
 
     @OneToMany(mappedBy = "assigner")
-    private Set<Task> assignedTasks;
+    private Set<Issue> assignedIssues;
     // One user can review multiple tasks
     @OneToMany(mappedBy = "reviewer")
-    private Set<Task> reviewedTasks;
+    private Set<Issue> reviewedIssues;
     @Transient
     private boolean alive;
 
@@ -72,8 +72,8 @@ public class User extends BaseEntity implements UserDetails {
         this.uniPassword = builder.uniPassword;
         this.role = builder.role;
 //        this.projects = builder.projects;
-        this.assignedTasks = builder.assignedTasks;
-        this.reviewedTasks = builder.reviewedTasks;
+        this.assignedIssues = builder.assignedIssues;
+        this.reviewedIssues = builder.reviewedIssues;
         this.workspaces = builder.workspaces;
     }
 
@@ -87,9 +87,9 @@ public class User extends BaseEntity implements UserDetails {
         private Role role;
         private List<Project> projects;
         private List<Workspace> workspaces;
-        private Set<Task> assignedTasks;
+        private Set<Issue> assignedIssues;
         // One user can review multiple tasks
-        private Set<Task> reviewedTasks;
+        private Set<Issue> reviewedIssues;
         private List<Workspace> workspacesJoined;
 
         private UserEntityBuilder() {
@@ -152,13 +152,13 @@ public class User extends BaseEntity implements UserDetails {
             return this;
         }
 
-        public UserEntityBuilder assignedTasks(Set<Task> assignedTasks) {
-            this.assignedTasks = assignedTasks;
+        public UserEntityBuilder assignedIssues(Set<Issue> assignedIssues) {
+            this.assignedIssues = assignedIssues;
             return this;
         }
 
-        public UserEntityBuilder reviewedTasks(Set<Task> reviewedTasks) {
-            this.reviewedTasks = reviewedTasks;
+        public UserEntityBuilder reviewedIssues(Set<Issue> reviewedIssues) {
+            this.reviewedIssues = reviewedIssues;
             return this;
         }
 
@@ -245,20 +245,20 @@ public class User extends BaseEntity implements UserDetails {
         this.workspaces = workspaces;
     }
 
-    public Set<Task> getAssignedTasks() {
-        return assignedTasks;
+    public Set<Issue> getAssignedIssues() {
+        return assignedIssues;
     }
 
-    public void setAssignedTasks(Set<Task> assignedTasks) {
-        this.assignedTasks = assignedTasks;
+    public void setAssignedIssues(Set<Issue> assignedIssues) {
+        this.assignedIssues = assignedIssues;
     }
 
-    public Set<Task> getReviewedTasks() {
-        return reviewedTasks;
+    public Set<Issue> getReviewedIssues() {
+        return reviewedIssues;
     }
 
-    public void setReviewedTasks(Set<Task> reviewedTasks) {
-        this.reviewedTasks = reviewedTasks;
+    public void setReviewedIssues(Set<Issue> reviewedIssues) {
+        this.reviewedIssues = reviewedIssues;
     }
 
     public boolean isAlive() {
