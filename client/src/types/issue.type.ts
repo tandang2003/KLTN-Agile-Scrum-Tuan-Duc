@@ -4,11 +4,11 @@ import { Id } from '@/types/other.type'
 
 type IssueResponse = Pick<
   IssueModel,
-  'id' | 'title' | 'position' | 'status'
+  'id' | 'title' | 'position' | 'status' | 'dtStart' | 'dtEnd' | 'storyPoint'
 > & {
   projectId: Id
   sprintId: Id
-  assigner: Pick<UserModel, 'id' | 'email' | 'name'>
-  reviewer: Pick<UserModel, 'id' | 'email' | 'name'>
+  assigner?: Pick<UserModel, 'id' | 'email' | 'name'>
+  reviewer?: Pick<UserModel, 'id' | 'email' | 'name'>
 }
 export type { IssueResponse }

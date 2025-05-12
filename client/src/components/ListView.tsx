@@ -13,6 +13,7 @@ type ListViewProps<T> = {
     items: number
     loadingComponent?: ReactNode
   }
+  emptyComponent?: ReactNode
 } & React.ComponentProps<'div'>
 
 const ListView = <T,>({
@@ -23,6 +24,7 @@ const ListView = <T,>({
   orientation,
   display = 'flex',
   loadingItems,
+  emptyComponent = <div>No result</div>,
   className
 }: ListViewProps<T>) => {
   if (loading && !loadingItems) {
@@ -51,6 +53,8 @@ const ListView = <T,>({
               )
           )}
       {data && data.map((item, index) => render(item, index))}
+
+      {((loading && !data) || data?.length == 0) && emptyComponent}
     </div>
   )
 }

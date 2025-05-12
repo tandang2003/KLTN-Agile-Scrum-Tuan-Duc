@@ -1,3 +1,4 @@
+import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 
 type ColumnModelType = {
@@ -18,7 +19,7 @@ type CardModelType = {
 }
 
 type BoardModelType = {
-  columns: Record<Id, ColumnModelType>
+  columns: Record<IssueStatus, ColumnModelType>
   cards: CardModelType[]
 }
 

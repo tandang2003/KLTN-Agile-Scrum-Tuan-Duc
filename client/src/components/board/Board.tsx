@@ -22,7 +22,8 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 
-type BoardType = {
+type BoardProps = {
+  data: BoardModelType
   onMove?: ({
     active,
     columnTo,
@@ -34,7 +35,7 @@ type BoardType = {
   }) => void
 }
 
-const Board = ({ onMove }: BoardType) => {
+const Board = ({ data: board, onMove }: BoardProps) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10

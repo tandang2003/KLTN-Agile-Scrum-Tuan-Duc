@@ -1,9 +1,6 @@
 import { BaseModel } from '@/types/model/base.model'
-import {
-  IssuePriorityEnum,
-  IssueStatusEnum,
-  IssueTagEnum
-} from '@/types/model/enum'
+import { IssuePriority, IssueStatus, IssueTag } from '@/types/model/typeOf'
+
 import { UserModel } from '@/types/model/user.model'
 
 type IssueModel = BaseModel & {
@@ -11,15 +8,15 @@ type IssueModel = BaseModel & {
   position: number
   description: string
   projectSprint: any
-  status: IssueStatusEnum
+  status: IssueStatus
   storyPoint: number
-  priority: IssuePriorityEnum
-  tag: IssueTagEnum
+  priority: IssuePriority
+  tag: IssueTag
   numChangeOfPriority: number
   numChangeOfDescription: number
   complexOfDescription: number
-  assigner: UserModel
-  reviewer: UserModel
+  assigner?: UserModel
+  reviewer?: UserModel
   dtStart: Date
   dtEnd: Date
   dtPlanning: Date

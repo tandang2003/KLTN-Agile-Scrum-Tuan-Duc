@@ -16,9 +16,11 @@ const ProjectPage = () => {
       {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
       {!isFetching && data && (
         <>
-          <h2 className='h2 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 pb-2 text-white'>
-            {data.name}
-          </h2>
+          <div className='rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 pb-2 text-white'>
+            <span className='text-sm'>{data.id}</span>
+            <h2 className='h2'>{data.name}</h2>
+          </div>
+
           <div className='pt-2 pb-4'>
             <ProjectNavigation id={data.id} />
           </div>
