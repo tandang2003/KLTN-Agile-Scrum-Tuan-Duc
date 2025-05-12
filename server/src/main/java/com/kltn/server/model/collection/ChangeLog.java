@@ -2,15 +2,17 @@ package com.kltn.server.model.collection;
 
 import com.kltn.server.model.base.BaseDocument;
 import com.kltn.server.model.collection.model.ILog;
+import com.kltn.server.model.type.task.LogType;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class ChangeLog extends BaseDocument {
     @Field
-    private String type;
+    private LogType type;
     @Field("entity_target")
     private String entityTarget;
     @Field("properties_target")
     private String[] propertiesTargets;
+//    entity id of the target entity
     @Field("id_ref")
     private String idRef;
     @Field("change")
@@ -24,16 +26,19 @@ public class ChangeLog extends BaseDocument {
         this.idRef = builder.idRef;
         this.change = builder.change;
     }
+    public static ChangeLogBuilder builder() {
+        return new ChangeLogBuilder();
+    }
 
 
     public static class ChangeLogBuilder extends BaseDocument.BaseDocumentBuilder<ChangeLog, ChangeLogBuilder> {
-        private String type;
+        private LogType type;
         private String entityTarget;
         private String[] propertiesTargets;
         private String idRef;
         private ILog change;
 
-        public ChangeLogBuilder type(String type) {
+        public ChangeLogBuilder type(LogType type) {
             this.type = type;
             return this;
         }
@@ -69,11 +74,11 @@ public class ChangeLog extends BaseDocument {
         }
     }
 
-    public String getType() {
+    public LogType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(LogType type) {
         this.type = type;
     }
 

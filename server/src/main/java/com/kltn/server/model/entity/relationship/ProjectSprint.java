@@ -2,7 +2,7 @@ package com.kltn.server.model.entity.relationship;
 
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Sprint;
-import com.kltn.server.model.entity.Task;
+import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import jakarta.persistence.*;
 
@@ -22,7 +22,7 @@ public class ProjectSprint {
     private Sprint sprint;
 
     @OneToMany(mappedBy = "projectSprint")
-    private List<Task> tasks;
+    private List<Issue> issues;
 
     @Column(name = "dt_planning")
     private Instant dtPlanning;
@@ -40,7 +40,7 @@ public class ProjectSprint {
         this.id = builder.id;
         this.project = builder.project;
         this.sprint = builder.sprint;
-        this.tasks = builder.tasks;
+        this.issues = builder.issues;
         this.dtPlanning = builder.DTPlanning;
         this.dtPreview = builder.DTPreview;
     }
@@ -49,7 +49,7 @@ public class ProjectSprint {
         private ProjectSprintId id;
         private Project project;
         private Sprint sprint;
-        private List<Task> tasks;
+        private List<Issue> issues;
         private Instant DTPlanning;
         private Instant DTPreview;
 
@@ -68,8 +68,8 @@ public class ProjectSprint {
             return this;
         }
 
-        public ProjectSprintBuilder tasks(List<Task> tasks) {
-            this.tasks = tasks;
+        public ProjectSprintBuilder tasks(List<Issue> issues) {
+            this.issues = issues;
             return this;
         }
 
@@ -112,12 +112,12 @@ public class ProjectSprint {
         this.sprint = sprint;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public List<Issue> getTasks() {
+        return issues;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setTasks(List<Issue> issues) {
+        this.issues = issues;
     }
 
     public Instant getDtPlanning() {

@@ -116,39 +116,39 @@ export function KanbanDemo() {
               </Kanban.ColumnHandle>
             </div>
             <div className='flex flex-col gap-2 p-0.5'>
-              {tasks.map((task) => (
-                <Kanban.Item key={task.id} value={task.id} asHandle asChild>
+              {tasks.map((issue) => (
+                <Kanban.Item key={issue.id} value={issue.id} asHandle asChild>
                   <div className='bg-card rounded-md border p-3 shadow-xs'>
                     <div className='flex flex-col gap-2'>
                       <div className='flex items-center justify-between gap-2'>
                         <span className='line-clamp-1 text-sm font-medium'>
-                          {task.title}
+                          {issue.title}
                         </span>
                         <Badge
                           variant={
-                            task.priority === 'high'
+                            issue.priority === 'high'
                               ? 'destructive'
-                              : task.priority === 'medium'
+                              : issue.priority === 'medium'
                                 ? 'default'
                                 : 'secondary'
                           }
                           className='pointer-events-none h-5 rounded-sm px-1.5 text-[11px] capitalize'
                         >
-                          {task.priority}
+                          {issue.priority}
                         </Badge>
                       </div>
                       <div className='text-muted-foreground flex items-center justify-between text-xs'>
-                        {task.assignee && (
+                        {issue.assignee && (
                           <div className='flex items-center gap-1'>
                             <div className='bg-primary/20 size-2 rounded-full' />
                             <span className='line-clamp-1'>
-                              {task.assignee}
+                              {issue.assignee}
                             </span>
                           </div>
                         )}
-                        {task.dueDate && (
+                        {issue.dueDate && (
                           <time className='text-[10px] tabular-nums'>
-                            {task.dueDate}
+                            {issue.dueDate}
                           </time>
                         )}
                       </div>
