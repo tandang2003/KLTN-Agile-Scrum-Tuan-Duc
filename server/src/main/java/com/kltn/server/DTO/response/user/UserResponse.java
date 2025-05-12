@@ -5,8 +5,7 @@ import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.base.BaseEntity;
-import com.kltn.server.model.entity.Project;
-import com.kltn.server.model.entity.Task;
+import com.kltn.server.model.entity.Issue;
 
 import java.util.List;
 import java.util.Set;
@@ -14,8 +13,8 @@ import java.util.Set;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
                            String role, List<ProjectResponse> projects,
-                           Set<Task> assignedTasks,
-                           Set<Task> reviewedTasks,
+                           Set<Issue> assignedTasks,
+                           Set<Issue> reviewedTasks,
                            Boolean alive,
                            List<WorkspaceResponse> workspaces
 ) {
@@ -36,8 +35,8 @@ public record UserResponse(String id, String name, String email, String uniId, S
         private String uniPassword;
         private String role;
         private List<ProjectResponse> projects;
-        private Set<Task> assignedTasks;
-        private Set<Task> reviewedTasks;
+        private Set<Issue> assignedTasks;
+        private Set<Issue> reviewedTasks;
         private Boolean alive;
         private List<WorkspaceResponse> workspaces;
 
@@ -87,12 +86,12 @@ public record UserResponse(String id, String name, String email, String uniId, S
             return this;
         }
 
-        public UserResponseBuilder assignedTasks(Set<Task> assignedTasks) {
+        public UserResponseBuilder assignedTasks(Set<Issue> assignedTasks) {
             this.assignedTasks = assignedTasks;
             return this;
         }
 
-        public UserResponseBuilder reviewedTasks(Set<Task> reviewedTasks) {
+        public UserResponseBuilder reviewedTasks(Set<Issue> reviewedTasks) {
             this.reviewedTasks = reviewedTasks;
             return this;
         }
@@ -159,12 +158,12 @@ public record UserResponse(String id, String name, String email, String uniId, S
     }
 
     @Override
-    public Set<Task> assignedTasks() {
+    public Set<Issue> assignedTasks() {
         return assignedTasks;
     }
 
     @Override
-    public Set<Task> reviewedTasks() {
+    public Set<Issue> reviewedTasks() {
         return reviewedTasks;
     }
 

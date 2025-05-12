@@ -1,8 +1,10 @@
 package com.kltn.server.model.collection.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class SubTask {
+    private ObjectId id;
     @Field
     private String name;
     @Field
@@ -11,6 +13,7 @@ public class SubTask {
     private boolean checked;
 
     private SubTask(SubTagBuilder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.order = builder.order;
         this.checked = builder.checked;
@@ -22,6 +25,7 @@ public class SubTask {
 
 
     public static class SubTagBuilder {
+        private ObjectId id;
         private String name;
         private int order;
         private boolean checked;
@@ -41,7 +45,14 @@ public class SubTask {
             return this;
         }
 
+        public void prePersist() {
+            if (this.id == null) {
+                this.id = new ObjectId();
+            }
+        }
+
         public SubTask build() {
+            prePersist();
             return new SubTask(this);
         }
     }

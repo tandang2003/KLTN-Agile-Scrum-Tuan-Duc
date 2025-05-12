@@ -13,12 +13,7 @@ public class Topic {
 
     public Topic() {
     }
-    @PrePersist
-    public void prePersist() {
-        if (this.id == null) {
-            this.id = new ObjectId();
-        }
-    }
+
 
     private Topic(TagBuilder builder) {
         this.name = builder.name;
@@ -31,6 +26,7 @@ public class Topic {
     }
 
     public static class TagBuilder {
+        private ObjectId id;
         private String name;
         private String color;
 
@@ -39,12 +35,19 @@ public class Topic {
             return this;
         }
 
+        public void prePersist() {
+            if (this.id == null) {
+                this.id = new ObjectId();
+            }
+        }
+
         public TagBuilder setColor(String color) {
             this.color = color;
             return this;
         }
 
         public Topic build() {
+            prePersist();
             return new Topic(this);
         }
     }

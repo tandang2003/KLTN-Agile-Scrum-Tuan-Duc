@@ -5,6 +5,7 @@ import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.entity.UserMapper;
+import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.List;
 
 @Service
 @RequestScope
@@ -34,33 +37,12 @@ public class UserService {
 
     public User getCurrentUser() {
         String uniId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        return userRepository.findByUniId(uniId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        return getUserByUniId(uniId);
     }
 
     public UserResponse getCurrUser() {
         UserResponse userResponse = userMapper.toUserResponse(getCurrentUser());
         return userResponse;
-    }
-
-    //FIX
-    public UserResponse getUserWorkspaces() {
-        return null;
-//        User user = getCurrentUser();
-//        List<Workspace> workspaces;
-//        if (user.getRole().getName().equals("teacher")) {
-//            workspaces = user.getWorkspaces();
-//        } else if (user.getRole().getName().equals("student")) {
-//            workspaces = user.getWorkspacesJoined();
-//        } else {
-//            workspaces = new ArrayList<>();
-//        }
-//        int subListSize = Math.min(workspaces.size(), 5);
-//        workspaces = workspaces.stream()
-//                .sorted(Comparator.comparing(Workspace::getDtCreated))
-//                .toList().subList(0, subListSize);
-//        user.setWorkspaces(workspaces);
-//        UserResponse userResponse = userMapper.toUserWorkspaceResponse(user);
-//        return userResponse;
     }
 
     public boolean checkingUser(String userId) {
@@ -69,9 +51,7 @@ public class UserService {
     }
 
     public ApiResponse<Void> checkingUserWorkspaceProject(String uniId, String workspaceId) {
-        User user = userRepository.findByUniId(uniId).orElseThrow(() -> AppException.builder()
-                .error(Error.NOT_FOUND)
-                .build());
+        User user = getUserByUniId(uniId);
         if (!workspaceRepository.existsById(workspaceId)) {
             throw AppException.builder()
                     .error(Error.NOT_FOUND)
@@ -97,4 +77,18 @@ public class UserService {
                     .build();
         }
     }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+    }
+
+    public User getUserByUniId(String id) {
+        return userRepository.findByUniId(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+    }
+
+    public UserResponse transformToUserResponse(User user, Role role) {
+        user.setRole(role);
+        return  userMapper.toUserResponse(user);
+    }
+
 }

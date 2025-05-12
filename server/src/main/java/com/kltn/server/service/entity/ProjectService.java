@@ -7,6 +7,7 @@ import com.kltn.server.DTO.request.log.ProjectLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
+import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -44,7 +46,7 @@ public class ProjectService {
     private final TopicMapper topicMapper;
     private final ProjectRepository projectRepository;
     private final WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final RoleService roleInit;
     private final EmailService emailService;
     private final ProjectLogRepository projectLogRepository;
@@ -53,16 +55,13 @@ public class ProjectService {
     private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
 
     @Autowired
-    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService,
-            ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit,
-            UserRepository userRepository, TopicMapper topicMapper, ProjectMapper projectMapper,
-            WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
+    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
         this.projectLogRepository = projectLogRepository;
         this.roleInit = roleInit;
         this.topicMapper = topicMapper;
         this.projectMapper = projectMapper;
         this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.workspacesUsersProjectsRepository = workspacesUsersProjectsRepository;
         this.emailService = emailService;
         this.workspacesUsersProjectsService = workspacesUsersProjectsService;
@@ -98,23 +97,14 @@ public class ProjectService {
 
     // TODO insert mail, optimize
     public ApiResponse<Void> inviteUserToProject(ProjectInvitationRequest invitationRequest) {
-        String userInviteId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User userInvite = userRepository.findByUniId(userInviteId)
-                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Project project = projectRepository.findById(invitationRequest.projectId())
-                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        MailRequest mailRequest = MailRequest.builder().confirmationLink(link)
-                .variable(Map.of("sender", userInvite.getName(), "project.name", project.getName()))
-                .templateName("invite-student").build();
+        User userInvite = userService.getCurrentUser();
+        Project project = projectRepository.findById(invitationRequest.projectId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        MailRequest mailRequest = MailRequest.builder().confirmationLink(link).variable(Map.of("sender", userInvite.getName(), "project.name", project.getName())).templateName("invite-student").build();
         invitationRequest.userId().forEach(userId -> {
-            User user = userRepository.findByUniId(userId)
-                    .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+            User user = userService.getUserByUniId(userId);
 
-            WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder().userId(user.getId())
-                    .workspaceId(invitationRequest.workspaceId()).build();
-            WorkspacesUsersProjects usersProjects = WorkspacesUsersProjects.builder()
-                    .role(roleInit.getRole(RoleType.MEMBER.getName())).user(user).project(project)
-                    .workspace(project.getWorkspace()).id(workspacesUsersId).build();
+            WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder().userId(user.getId()).workspaceId(invitationRequest.workspaceId()).build();
+            WorkspacesUsersProjects usersProjects = WorkspacesUsersProjects.builder().role(roleInit.getRole(RoleType.MEMBER.getName())).user(user).project(project).workspace(project.getWorkspace()).id(workspacesUsersId).build();
             try {
                 workspacesUsersProjectsRepository.save(usersProjects);
                 emailService.inviteToProject(mailRequest.rebuild(user.getEmail(), Map.of("userId",
@@ -127,11 +117,8 @@ public class ProjectService {
     }
 
     public ApiResponse<ProjectResponse> getById(String projectId) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUniId(userId)
-                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        User user = userService.getCurrentUser();
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
 
         if (user.getRole().getName().equals("teacher")) {
             if (!project.getWorkspace().getOwner().getId().equals(user.getId())) {
@@ -185,4 +172,11 @@ public class ProjectService {
                 .build();
     }
 
+    public ApiResponse<List<UserResponse>> getMembersOfProject(String projectId) {
+        Project project = getProjectById(projectId);
+        var workspacesUsersProjects = project.getWorkspacesUserProjects();
+        List<UserResponse> userResponses = workspacesUsersProjects.stream().map(wup -> userService.transformToUserResponse(wup.getUser(), wup.getRole())).toList();
+        return ApiResponse.<List<UserResponse>>builder().message("Get members of project").data(userResponses).build();
+
+    }
 }
