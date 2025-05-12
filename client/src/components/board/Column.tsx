@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { CardModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import { useDroppable } from '@dnd-kit/core'
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type ColumnProps = {
   id: Id
@@ -21,20 +21,28 @@ type ColumnProps = {
 
 const Column = ({ id, name, items, container }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
-  const scrollRef = useRef<HTMLDivElement | null>(null)
-  // const [heightToBottom, setHeightToBottom] = useState<number>(0)
+  const [isAdding, setIsAdding] = useState<boolean>(false)
+  const cardRef = useRef<HTMLDivElement>(null)
 
-  // useEffect(() => {
-  //   if (scrollRef.current) {
-  //     const rect = scrollRef.current.getBoundingClientRect()
-  //     const viewportHeight = window.innerHeight
-  //     setHeightToBottom(() => viewportHeight - rect.bottom)
-  //   }
-  // }, [])
+  useEffect(() => {
+    const handleClickOutSide = (e: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        console.log('outside')
+        setIsAdding(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutSide)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutSide)
+    }
+  }, [isAdding])
 
   return (
     <div
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node)
+        // columnRef.current = node
+      }}
       className={(cn('h-fit rounded-xl p-2 py-2'), container)}
     >
       <span className='mb-3.5 flex items-center border-b-1 pb-3.5'>
@@ -49,12 +57,7 @@ const Column = ({ id, name, items, container }: ColumnProps) => {
           <Icon size={25} icon={'material-symbols:add-rounded'} />
         </Button>
       </span>
-      <ScrollArea
-        // style={{
-        //   height: `${heightToBottom}px`
-        // }}
-        ref={scrollRef}
-      >
+      <ScrollArea>
         <div className='flex flex-col pr-4 pb-4 pl-2'>
           {items?.map((item: CardModelType) => {
             return (
@@ -66,7 +69,24 @@ const Column = ({ id, name, items, container }: ColumnProps) => {
             )
           })}
 
-          <ButtonCreateCard id={id as string} />
+          {isAdding ? (
+            <CardAdding id={id} ref={cardRef} />
+          ) : (
+            <Button
+              onClick={() => {
+                setIsAdding(true)
+                console.log(cardRef.current)
+              }}
+              className={
+                'w-full justify-start border-none bg-inherit p-1 text-black'
+              }
+            >
+              <Icon icon='ic:baseline-plus' size={24} />
+              Add Card
+            </Button>
+          )}
+
+          <div className='m-1 w-full bg-gray-100 pr-2'></div>
         </div>
         <ScrollBar orientation='vertical' />
       </ScrollArea>
@@ -74,25 +94,3 @@ const Column = ({ id, name, items, container }: ColumnProps) => {
   )
 }
 export default Column
-
-const ButtonCreateCard = ({ id }: { id: string }) => {
-  const { setActiveId } = useClickManager()
-  return (
-    <>
-      <CardAdding id={id} />
-      <div className='m-1 w-full bg-gray-100 pr-2'>
-        <Button
-          onClick={() => {
-            setActiveId(id)
-          }}
-          className={
-            'w-full justify-start border-none bg-inherit p-1 text-black'
-          }
-        >
-          <Icon icon='ic:baseline-plus' size={24} />
-          Add Card
-        </Button>
-      </div>
-    </>
-  )
-}
