@@ -19,7 +19,9 @@ const ProjectPage = () => {
           <h2 className='h2 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 pb-2 text-white'>
             {data.name}
           </h2>
-          <ProjectNavigation id={data.id} />
+          <div className='pt-2 pb-4'>
+            <ProjectNavigation id={data.id} />
+          </div>
           <Outlet />
         </>
       )}

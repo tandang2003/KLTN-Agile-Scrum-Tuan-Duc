@@ -1,42 +1,39 @@
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import {
-  useClickHandler,
-  useClickManager
-} from '@/context/click/click-manager-hook'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import React from 'react'
+import React, { forwardRef } from 'react'
 
-type CardAddingProps = React.HTMLProps<HTMLDivElement> & {
+type CardAddingProps = {
   id: string
-}
+} & React.ComponentPropsWithoutRef<typeof Card>
 
-const CardAdding = ({ id, className }: CardAddingProps) => {
-  const { activeId } = useClickManager()
-
-  const divRef = useClickHandler(
-    id,
-    () => {
-      console.log(`${id} Clicked inside Dropdown`)
-    },
-    () => {
-      // Add card into card
-      console.log(`${id} Clicked outside Dropdown`)
-    }
-  )
-
-  return (
-    <Card
-      className={cn('p-1', id == activeId ? 'block' : 'hidden', className)}
-      ref={divRef}
-    >
-      <CardContent className='p-0'>
-        <form>
-          <Input />
-        </form>
-      </CardContent>
-    </Card>
-  )
-}
+const CardAdding = forwardRef<HTMLDivElement, CardAddingProps>(
+  ({ id, className, ...props }, ref) => {
+    return (
+      <Card
+        ref={ref}
+        className={cn('border-2 border-blue-300 p-1', className)}
+        {...props}
+      >
+        <CardContent className='p-2'>
+          <form>
+            <ScrollArea className='w-full'>
+              <textarea
+                placeholder='What needs to done?'
+                className='h-[60px] w-full resize-none outline-none'
+              />
+              <ScrollBar orientation='vertical' />
+            </ScrollArea>
+            <div className='flex'>
+              <Button className='ml-auto'>Create</Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    )
+  }
+)
 
 export default CardAdding

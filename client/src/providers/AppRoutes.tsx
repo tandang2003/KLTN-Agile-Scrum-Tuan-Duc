@@ -2,7 +2,7 @@ import LoginPage from '@/pages/auth/login/page'
 import HomePage from '@/pages/home/page'
 import NotFoundPage from '@/pages/not-found'
 import RootLayout from '@/pages/layout'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import RegisterPage from '@/pages/auth/register/page'
 import AuthLayout from '@/pages/auth/layout'
 import GuestOnly from '@/components/wrapper/GuestOnly'
@@ -72,7 +72,7 @@ const AppRoutes = () => {
               {/* http://localhost:3000/manager/workspace/project/1 */}
               <Route path='project' element={<ProjectLayout />}>
                 <Route path=':projectId' element={<ProjectPage />}>
-                  <Route index element={<BoardPage />} />
+                  <Route index element={<Navigate to='board' replace />} />
                   {/* http://localhost:3000/manager/workspace/project/1/board */}
                   <Route path='board' index element={<BoardPage />} />
                   <Route path='backlog' element={<BacklogPage />} />
