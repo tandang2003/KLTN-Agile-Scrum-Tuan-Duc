@@ -20,7 +20,7 @@ const getTokenProjectThunk = createAsyncThunk<TokenProject, Id>(
       return {
         token: data.project_authorization_token,
         ids: [...(data.project_ids || []), data.project_id].filter(
-          (id): id is string => typeof id === 'string'
+          (id): id is string => typeof id === 'string' && id.trim() != ''
         ),
         workspaceId: workspaceId
       }

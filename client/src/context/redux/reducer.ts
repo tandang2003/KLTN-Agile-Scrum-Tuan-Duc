@@ -4,6 +4,7 @@ import projectApi from '@/feature/project/project.api'
 import { projectReducer } from '@/feature/project/project.slice'
 import sprintApi from '@/feature/sprint/sprint.api'
 import { sprintReducer } from '@/feature/sprint/sprint.slice'
+import { triggerReducer } from '@/feature/trigger/trigger.slice'
 import workspaceApi from '@/feature/workspace/workspace.api'
 import { workspaceReducer } from '@/feature/workspace/workspace.slice'
 import { combineReducers } from '@reduxjs/toolkit'
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   authSlice: authReducer,
   workspaceSlice: workspaceReducer,
   projectSlice: projectReducer,
-  sprintSlice: sprintReducer
+  sprintSlice: sprintReducer,
+  triggerSlice: triggerReducer
 })
 export default rootReducer
