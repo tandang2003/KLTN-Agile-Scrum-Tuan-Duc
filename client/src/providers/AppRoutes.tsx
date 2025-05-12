@@ -19,6 +19,7 @@ import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
+import ProjectLayout from '@/pages/manager/workspace/project/layout'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -56,28 +57,27 @@ const AppRoutes = () => {
             {/* http://localhost:3000/manager */}
             <Route index element={<ManagerPage />} />
             {/* http://localhost:3000/manager/workspace */}
-            <Route path='workspace' element={<WorkspacePage />} />
-            {/* http://localhost:3000/manager/workspace/1 */}
-            <Route
-              path='workspace/:workspaceId'
-              element={<WorkspaceDetailLayout />}
-            >
-              <Route index element={<WorkspaceDetailPage />} />
-              <Route path='setting' element={<SettingLayout />}>
-                {/* http://localhost:3000/manager/workspace/1/setting */}
-                <Route index element={<WorkspaceSettingPage />} />
+            <Route path='workspace'>
+              {/* Workspace */}
+              <Route index element={<WorkspacePage />} />
+              {/* Workspace detail */}
+              <Route path=':workspaceId' element={<WorkspaceDetailLayout />}>
+                {/* http://localhost:3000/manager/workspace/1 */}
+                <Route index element={<WorkspaceDetailPage />} />
+                <Route path='setting' element={<SettingLayout />}>
+                  {/* http://localhost:3000/manager/workspace/1/setting */}
+                  <Route index element={<WorkspaceSettingPage />} />
+                </Route>
               </Route>
-            </Route>
-
-            {/* http://localhost:3000/manager/workspace/project/1 */}
-            <Route
-              path='workspace/project/:projectId'
-              element={<ProjectPage />}
-            >
-              <Route index element={<BoardPage />} />
-              {/* http://localhost:3000/manager/workspace/project/1/board */}
-              <Route path='board' index element={<BoardPage />} />
-              <Route path='backlog' element={<BacklogPage />} />
+              {/* http://localhost:3000/manager/workspace/project/1 */}
+              <Route path='project' element={<ProjectLayout />}>
+                <Route path=':projectId' element={<ProjectPage />}>
+                  <Route index element={<BoardPage />} />
+                  {/* http://localhost:3000/manager/workspace/project/1/board */}
+                  <Route path='board' index element={<BoardPage />} />
+                  <Route path='backlog' element={<BacklogPage />} />
+                </Route>
+              </Route>
             </Route>
           </Route>
 

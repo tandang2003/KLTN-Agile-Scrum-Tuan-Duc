@@ -293,10 +293,10 @@ const Board = ({ onMove }: BoardType) => {
       onDragCancel={handleDragCancel}
     >
       <ClickOutsideProvider>
-        <div className='flex gap-3 bg-white'>
+        <div className='flex gap-3 bg-transparent'>
           {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
             <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
-              <div className='w-[350px]'>
+              <div className='w-[350px] flex-none'>
                 <Column
                   id={keyColumn}
                   name={valueColumn.name}

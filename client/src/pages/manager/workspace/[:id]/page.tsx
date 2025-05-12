@@ -35,8 +35,7 @@ const WorkspaceDetailPage = () => {
   const [openDialogCreateProject, setOpenDialogCreateProject] =
     useState<boolean>(false)
 
-  if (!workspaceId) return null
-  if (!data) return null
+  if (!workspaceId || !data) return null
 
   return (
     <div className='container-sidebar'>
@@ -97,14 +96,13 @@ const WorkspaceDetailPage = () => {
             </RequiredAuth>
             <TabsTrigger value='student'>Student</TabsTrigger>
           </TabsList>
-          {projectIdsAllowed.length === 0 ? (
-            <Button
-              variant='default'
-              size='sm'
-              onClick={() => setOpenDialogCreateProject(true)}
-            >
-              <PlusIcon />
-              New Group
+          {projectIdsAllowed.length === 1 && user?.role === 'student' ? (
+            <Button variant='default' size='sm' asChild>
+              <NavLink
+                to={`/manager/workspace/project/${projectIdsAllowed[0]}`}
+              >
+                Your Project
+              </NavLink>
             </Button>
           ) : (
             <Button
@@ -112,11 +110,8 @@ const WorkspaceDetailPage = () => {
               size='sm'
               onClick={() => setOpenDialogCreateProject(true)}
             >
-              <NavLink
-                to={`/manager/workspace/project/${projectIdsAllowed[0]}`}
-              >
-                Your Project
-              </NavLink>
+              <PlusIcon />
+              New Group
             </Button>
           )}
         </div>

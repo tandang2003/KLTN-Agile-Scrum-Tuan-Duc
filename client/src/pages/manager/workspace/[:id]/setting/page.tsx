@@ -2,6 +2,7 @@ import Icon from '@/components/Icon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
 import SummaryTab from '@/pages/manager/workspace/[:id]/setting/summary'
 import TemplateTab from '@/pages/manager/workspace/[:id]/setting/template'
 import { Id } from '@/types/other.type'
@@ -21,7 +22,6 @@ const WorkspaceSettingPage = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (!workspaceId) return
     if (!isFetching && !isSuccess) {
       navigate('/404')
     }

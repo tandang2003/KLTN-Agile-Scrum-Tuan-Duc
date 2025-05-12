@@ -1,28 +1,29 @@
-import { setProjectAuthorization } from '@/configuration/http.config'
-import { RootState } from '@/context/redux/store'
 import { logoutThunk } from '@/feature/auth/auth.slice'
 import tokenService from '@/services/token.service'
-import { TokenProjectResponse } from '@/types/project.type'
+import { Id } from '@/types/other.type'
+import { TokenProject } from '@/types/project.type'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type ProjectState = {
-  token?: string
-  projectIdsAllowed: string[]
+  token?: Id
+  projectIdsAllowed: Id[]
 }
 const initialState: ProjectState = {
   projectIdsAllowed: []
 }
 
-const getTokenProjectThunk = createAsyncThunk<TokenProjectResponse, void>(
+const getTokenProjectThunk = createAsyncThunk<TokenProject, Id>(
   'workspace/token',
-  async (_, { rejectWithValue, getState }) => {
+  async (workspaceId, { rejectWithValue }) => {
     try {
-      const state = getState() as RootState
-      const workspaceId = state.workspaceSlice.currentId
-      if (!workspaceId) return rejectWithValue('Workspace Id is empty')
-      const data = await tokenService.getTokenProject(workspaceId)
-      setProjectAuthorization(data.data.project_authorization_token)
-      return data.data
+      const data = (await tokenService.getTokenProject(workspaceId)).data
+      return {
+        token: data.project_authorization_token,
+        ids: [...(data.project_ids || []), data.project_id].filter(
+          (id): id is string => typeof id === 'string'
+        ),
+        workspaceId: workspaceId
+      }
     } catch (_) {
       return rejectWithValue('You are not a part of this workspace')
     }
@@ -32,17 +33,21 @@ const getTokenProjectThunk = createAsyncThunk<TokenProjectResponse, void>(
 const projectSlice = createSlice({
   name: 'project',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setProjectState: (
+      state: ProjectState,
+      action: PayloadAction<ProjectState>
+    ) => {
+      state = action.payload
+    }
+  },
   // reset state
   extraReducers(builder) {
     builder.addCase(
       getTokenProjectThunk.fulfilled,
-      (state: ProjectState, action: PayloadAction<TokenProjectResponse>) => {
-        state.token = action.payload.project_authorization_token
-        state.projectIdsAllowed = [
-          ...(action.payload.project_ids ?? []),
-          action.payload.project_id
-        ]
+      (state: ProjectState, action: PayloadAction<TokenProject>) => {
+        state.token = action.payload.token
+        state.projectIdsAllowed = action.payload.ids
       }
     )
     builder.addMatcher(
@@ -56,4 +61,5 @@ const projectSlice = createSlice({
 
 const projectReducer = projectSlice.reducer
 export { getTokenProjectThunk, projectReducer }
+export const { setProjectState } = projectSlice.actions
 export default projectSlice

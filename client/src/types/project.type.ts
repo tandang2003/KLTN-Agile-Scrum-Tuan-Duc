@@ -9,21 +9,29 @@ const CreateProjectForm = z.object({
 
 type CreateProjectFormType = z.infer<typeof CreateProjectForm>
 type ProjectResponse = Pick<ProjectModel, 'id' | 'name'>
+type ProjectDetailResponse = ProjectModel
 type CreateProjectRequest = CreateProjectFormType & {
   workspaceId: Id
   userId: Id
 }
 
 type TokenProjectResponse = {
-  project_authorization_token: string
-  project_ids: string[]
-  project_id: string
+  project_authorization_token: Id
+  project_ids?: Id[]
+  project_id?: Id
+}
+
+type TokenProject = {
+  token: string
+  ids: Id[]
 }
 
 export type {
   CreateProjectFormType,
   ProjectResponse,
   CreateProjectRequest,
-  TokenProjectResponse
+  TokenProjectResponse,
+  ProjectDetailResponse,
+  TokenProject
 }
 export { CreateProjectForm }

@@ -16,7 +16,7 @@ const WorkspaceDetailLayout = () => {
       return
     }
     dispatch(setCurrentWorkspaceId(workspaceId))
-    dispatch(getTokenProjectThunk()).unwrap()
+    dispatch(getTokenProjectThunk(workspaceId))
   }, [navigate, workspaceId, dispatch])
   return (
     <Outlet

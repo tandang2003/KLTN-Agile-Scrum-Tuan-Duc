@@ -29,6 +29,10 @@ const setProjectAuthorization = (token: string) => {
   appAxios.defaults.headers.common['Project-Authorization'] = token ?? undefined
 }
 
+const getProjectAuthorization = () => {
+  return appAxios.defaults.headers.common['Project-Authorization']
+}
+
 const getAuthorization = () => {
   return appAxios.defaults.headers.common.Authorization
 }
@@ -117,6 +121,7 @@ export {
   manualAxios,
   setAuthorization,
   getAuthorization,
-  setProjectAuthorization
+  setProjectAuthorization,
+  getProjectAuthorization
 }
 export default appAxios
