@@ -2,6 +2,7 @@ package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
+import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.service.entity.SprintService;
@@ -37,7 +38,15 @@ public class SprintController {
     @PreAuthorize("hasAuthority('update_sprint')")
     public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
             @RequestBody @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
-        var sprint = sprintService.updateSprint(sprintStudentUpdateTimeRequest);
+        var sprint = sprintService.studentUpdateSprint(sprintStudentUpdateTimeRequest);
+        return ResponseEntity.status(sprint.getCode()).body(sprint);
+    }
+
+    @PutMapping("teacher/update")
+    @PreAuthorize("hasRole('TEACHER') ")
+    public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
+            @RequestBody @Valid SprintTeacherUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+        var sprint = sprintService.teacherUpdateSprint(sprintStudentUpdateTimeRequest);
         return ResponseEntity.status(sprint.getCode()).body(sprint);
     }
 
