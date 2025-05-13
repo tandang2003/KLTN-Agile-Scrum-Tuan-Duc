@@ -17,8 +17,8 @@ public class Issue extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
     @ManyToOne
-    @JoinColumns({@JoinColumn(name = "project_id", referencedColumnName = "project_id"), @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")})
-//    @JoinColumn(name = "proje")
+    @JoinColumns({@JoinColumn(name = "project_id", referencedColumnName = "project_id"),
+            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id", nullable = true)})
     private ProjectSprint projectSprint;
     @OneToMany(mappedBy = "issue")
     private List<Resource> resources;
