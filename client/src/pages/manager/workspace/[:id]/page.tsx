@@ -19,8 +19,9 @@ import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
-import { useAppDispatch } from '@/context/redux/hook'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
+import { ProjectDataTable } from '@/components/datatable/project/ProjectDataTable'
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams<WorkspaceParams>()
@@ -34,6 +35,8 @@ const WorkspaceDetailPage = () => {
 
   const [openDialogCreateProject, setOpenDialogCreateProject] =
     useState<boolean>(false)
+
+  const { user } = useAppSelector((state) => state.authSlice)
 
   useEffect(() => {
     if (!workspaceId) {
@@ -97,10 +100,12 @@ const WorkspaceDetailPage = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <Tabs defaultValue='project'>
+      <Tabs defaultValue={user?.role === 'teacher' ? 'project' : 'student'}>
         <div className='flex items-center justify-between'>
           <TabsList>
-            <TabsTrigger value='project'>Project</TabsTrigger>
+            <RequiredAuth mode='hide' roles={['teacher']}>
+              <TabsTrigger value='project'>Project</TabsTrigger>
+            </RequiredAuth>
             <TabsTrigger value='student'>Student</TabsTrigger>
           </TabsList>
           <Button
@@ -112,10 +117,14 @@ const WorkspaceDetailPage = () => {
             New Group
           </Button>
         </div>
+        <RequiredAuth mode='hide' roles={['teacher']}>
+          <TabsContent value='project'>
+            <ProjectDataTable workspaceId={workspaceId} />
+          </TabsContent>
+        </RequiredAuth>
         <TabsContent value='student'>
           <StudentDataTable workspaceId={workspaceId} />
         </TabsContent>
-        <TabsContent value='project'></TabsContent>
       </Tabs>
       <DialogAddStudent
         open={openDialogAddStudent}
