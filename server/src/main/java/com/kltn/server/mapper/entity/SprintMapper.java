@@ -1,12 +1,14 @@
 package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
-import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.sprint.SprintCreateResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 import java.util.Map;
 
@@ -14,12 +16,11 @@ import java.util.Map;
 
 public interface SprintMapper {
     @Mappings({
-            @Mapping(target = "title", source = "title"),
-            @Mapping(target = "dtStart", source = "start"),
-            @Mapping(target = "dtEnd", source = "end"),
-            @Mapping(target = "miniumStoryPoint", source = "minimumStoryPoint"),
-            @Mapping(target = "dtPredict", source = "predict"),
-            @Mapping(target = "position", source = "position")
+        @Mapping(target = "title", source = "title"),
+        @Mapping(target = "dtStart", source = "start"),
+        @Mapping(target = "dtEnd", source = "end"),
+        @Mapping(target = "miniumStoryPoint", source = "minimumStoryPoint"),
+        @Mapping(target = "dtPredict", source = "predict"),
     })
     Sprint toSprint(SprintCreationRequest sprintCreationRequest);
 
@@ -31,7 +32,6 @@ public interface SprintMapper {
             @Mapping(target = "predict", source = "dtPredict"),
             @Mapping(target = "start", source = "dtStart"),
             @Mapping(target = "end", source = "dtEnd"),
-            @Mapping(target = "position", source = "position")
     })
     @BeanMapping(ignoreByDefault = true)
     SprintResponse toSprintCreateResponse(Sprint sprint);
@@ -43,19 +43,8 @@ public interface SprintMapper {
             @Mapping(target = "start", source = "projectSprint.sprint.dtStart"),
             @Mapping(target = "end", source = "projectSprint.sprint.dtEnd"),
             @Mapping(target = "planning", source = "projectSprint.dtPlanning"),
-            @Mapping(target = "preview", source = "projectSprint.dtPreview")
+            @Mapping(target = "preview", source = "projectSprint.dtPreview"),
     })
     @BeanMapping(ignoreByDefault = true)
     SprintResponse toSprintStudentUpdateResponse(ProjectSprint projectSprint);
-
-    @Mappings({
-            @Mapping(target = "title", source = "updateRequest.title"),
-            @Mapping(target = "miniumStoryPoint", source = "updateRequest.minimumStoryPoint"),
-            @Mapping(target = "dtStart", source = "updateRequest.start"),
-            @Mapping(target = "dtEnd", source = "updateRequest.end"),
-            @Mapping(target = "dtPredict", source = "updateRequest.predict"),
-            @Mapping(target = "position", source = "updateRequest.position")
-    })
-    @BeanMapping(ignoreByDefault = true)
-    Sprint updateTeacherSprint(@MappingTarget Sprint cur, SprintTeacherUpdateTimeRequest updateRequest);
 }

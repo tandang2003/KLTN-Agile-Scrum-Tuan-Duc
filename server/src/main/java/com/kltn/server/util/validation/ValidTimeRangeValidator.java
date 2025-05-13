@@ -17,7 +17,7 @@ public @interface ValidTimeRangeValidator {
 
     String mainField();
 
-    String dependencyField() default "";
+    String dependencyField();
 
     DateConstraint constraint() default DateConstraint.BEFORE_OR_EQUAL;
 
