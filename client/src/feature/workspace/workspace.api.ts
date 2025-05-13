@@ -4,8 +4,10 @@ import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
+  ListProjectWorkspaceReq,
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
+  ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
   WorkspaceCardResponse,
@@ -130,6 +132,34 @@ const workspaceApi = createApi({
           return { error }
         }
       }
+    }),
+    getListProjectWorkspace: builder.query<
+      Page<ProjectWorkspaceDataTable>,
+      ListProjectWorkspaceReq
+    >({
+      async queryFn(args) {
+        try {
+          const data = await workspaceService.getListProject(args)
+          console.log(data)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
+    }),
+    getListSprintWorkspace: builder.query<
+      Page<ProjectWorkspaceDataTable>,
+      ListProjectWorkspaceReq
+    >({
+      async queryFn(args) {
+        try {
+          const data = await workspaceService.getListProject(args)
+          console.log(data)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -141,5 +171,6 @@ export const {
   useCreateWorkspaceMutation,
   useGetWorkspaceQuery,
   useGetListStudentWorkspaceQuery,
-  useUpdateWorkspaceMutation
+  useUpdateWorkspaceMutation,
+  useGetListProjectWorkspaceQuery
 } = workspaceApi
