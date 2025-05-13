@@ -2,6 +2,7 @@ package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
+import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.error.AppException;
@@ -14,6 +15,8 @@ import com.kltn.server.repository.entity.SprintRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class SprintService {
 
     @Autowired
     public SprintService(WorkspaceService workspaceService, ProjectSprintService projectSprintService,
-            SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
+                         SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
         this.sprintMapper = sprintMapper;
         this.sprintRepository = sprintRepository;
         this.projectService = projectService;
@@ -59,8 +62,8 @@ public class SprintService {
 
     }
 
-    public ApiResponse<SprintResponse> updateSprint(
-            @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+    public ApiResponse<SprintResponse> studentUpdateSprint(
+            SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
         ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
                 .projectId(sprintStudentUpdateTimeRequest.projectId())
                 .sprintId(sprintStudentUpdateTimeRequest.sprintId()).build());
@@ -69,6 +72,31 @@ public class SprintService {
 
         projectSprint = projectSprintService.save(projectSprint);
         SprintResponse sprintResponse = sprintMapper.toSprintStudentUpdateResponse(projectSprint);
+        return ApiResponse.<SprintResponse>builder()
+                .data(sprintResponse)
+                .message("Update sprint successfully")
+                .build();
+    }
+
+    public ApiResponse<SprintResponse> teacherUpdateSprint(
+            SprintTeacherUpdateTimeRequest updateRequest) {
+        Sprint sprint = getSprintById(updateRequest.id());
+        Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.MINUTES);
+        Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.MINUTES);
+
+        boolean isOngoing = (now.equals(start) || now.equals(end) || (now.isAfter(start) && now.isBefore(end)));
+
+        if (!isOngoing) throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+
+        if (end.isBefore(now)) throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+
+        sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
+
+        sprintRepository.save(sprint);
+
+        SprintResponse sprintResponse = sprintMapper.toSprintCreateResponse(sprint);
+
         return ApiResponse.<SprintResponse>builder()
                 .data(sprintResponse)
                 .message("Update sprint successfully")

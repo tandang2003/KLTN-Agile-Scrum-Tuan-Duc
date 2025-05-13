@@ -24,7 +24,7 @@ public class Sprint extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
-
+    private int position;
     private int miniumStoryPoint;
     @Column(name = "dt_predict")
     private Instant dtPredict;
@@ -40,6 +40,7 @@ public class Sprint extends BaseEntity {
         this.projectSprints = sprintBuilder.projectSprints;
         this.miniumStoryPoint = sprintBuilder.miniumStoryPoint;
         this.dtPredict = sprintBuilder.dtPredict;
+        this.position = sprintBuilder.position;
     }
 
     public Sprint() {
@@ -55,6 +56,7 @@ public class Sprint extends BaseEntity {
         private Instant DTStart;
         private Instant DTEnd;
         private List<ProjectSprint> projectSprints;
+        private int position;
 
         @Override
         protected SprintEntityBuilder self() {
@@ -74,32 +76,28 @@ public class Sprint extends BaseEntity {
             this.title = title;
             return this;
         }
+
         public SprintEntityBuilder miniumStoryPoint(int miniumStoryPoint) {
             this.miniumStoryPoint = miniumStoryPoint;
             return this;
         }
+
         public SprintEntityBuilder dtPredict(Instant dtPredict) {
             this.dtPredict = dtPredict;
             return this;
         }
 
+        public SprintEntityBuilder position(int position) {
+            this.position = position;
+            return this;
+        }
 
-//        public SprintEntityBuilder DTPlanning(Instant DTPlanning) {
-//            this.DTPlanning = DTPlanning;
-//            return this;
-//        }
-//
-//        public SprintEntityBuilder DTPreview(Instant DTPreview) {
-//            this.DTPreview = DTPreview;
-//            return this;
-//        }
-
-        public SprintEntityBuilder DTStart(Instant DTStart) {
+        public SprintEntityBuilder dtStart(Instant DTStart) {
             this.DTStart = DTStart;
             return this;
         }
 
-        public SprintEntityBuilder DTEnd(Instant DTEnd) {
+        public SprintEntityBuilder dtEnd(Instant DTEnd) {
             this.DTEnd = DTEnd;
             return this;
         }
@@ -199,5 +197,14 @@ public class Sprint extends BaseEntity {
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
 }
 
