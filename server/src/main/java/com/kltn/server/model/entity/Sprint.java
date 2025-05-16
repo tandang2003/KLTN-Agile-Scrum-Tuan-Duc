@@ -46,6 +46,10 @@ public class Sprint extends BaseEntity {
     public Sprint() {
     }
 
+    public static SprintEntityBuilder builder() {
+        return new SprintEntityBuilder();
+    }
+
     public static class SprintEntityBuilder extends BaseEntityBuilder<Sprint, SprintEntityBuilder> {
         //        private Project project;
         private int miniumStoryPoint;
@@ -169,7 +173,6 @@ public class Sprint extends BaseEntity {
     public List<ProjectSprint> getProjectSprints() {
         return projectSprints;
     }
-
     public void setProjectSprints(List<ProjectSprint> projectSprints) {
         this.projectSprints = projectSprints;
     }

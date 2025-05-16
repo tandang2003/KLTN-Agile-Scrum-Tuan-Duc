@@ -16,12 +16,14 @@ public class ProjectSprint {
     private ProjectSprintId id;
     @MapsId("projectId")
     @ManyToOne(optional = false)
+    @JoinColumn(name = "project_id", insertable = false)
     private Project project;
     @MapsId("sprintId")
     @ManyToOne(optional = false)
+    @JoinColumn(name = "sprint_id", nullable = false)
     private Sprint sprint;
 
-    @OneToMany(mappedBy = "projectSprint")
+    @OneToMany(mappedBy = "projectSprint", fetch = FetchType.LAZY)
     private List<Issue> issues;
 
     @Column(name = "dt_planning")
