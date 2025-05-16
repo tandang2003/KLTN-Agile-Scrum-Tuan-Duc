@@ -1,17 +1,18 @@
 package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
+import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
+import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.mapper.base.AttachmentMapper;
 import com.kltn.server.mapper.base.SubTaskMapper;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.model.entity.Issue;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {UserMapper.class, TopicMapper.class, AttachmentMapper.class, SubTaskMapper.class})
+import java.util.List;
+
+@Mapper(componentModel = "spring", uses = {UserMapper.class, ResourceMapper.class, TopicMapper.class, AttachmentMapper.class, SubTaskMapper.class})
 public interface IssueMapper {
     @Mappings({
             @Mapping(target = "title", source = "name")
@@ -51,8 +52,44 @@ public interface IssueMapper {
             @Mapping(target = "reviewer", source = "task.reviewer", qualifiedByName = "toUserDetailDTO"),
             @Mapping(target = "start", source = "task.dtStart"),
             @Mapping(target = "end", source = "task.dtEnd"),
-
     })
     @BeanMapping(ignoreByDefault = true)
     IssueResponse toIssueResponse(Issue task, com.kltn.server.model.collection.Issue issueMongo);
+
+//    List<IssueResponse> toIssueResponseList(List<Issue> issues, List<com.kltn.server.model.collection.Issue> issueMongo);
+
+    @Mappings({
+            @Mapping(target = "id", source = "task.id"),
+            @Mapping(target = "title", source = "task.title"),
+            @Mapping(target = "description", source = "task.title"),
+            @Mapping(target = "status", source = "task.status"),
+            @Mapping(target = "priority", source = "task.priority"),
+            @Mapping(target = "tag", source = "task.tag"),
+            @Mapping(target = "position", source = "task.position"),
+            @Mapping(target = "assigner", source = "task.assigner", qualifiedByName = "toUserDetailDTO"),
+            @Mapping(target = "reviewer", source = "task.reviewer", qualifiedByName = "toUserDetailDTO"),
+            @Mapping(target = "topics", source = "issueMongo.topics", qualifiedByName = "toListResponse"),
+            @Mapping(target = "subTasks", source = "issueMongo.subTasks", qualifiedByName = "toListResponse"),
+            @Mapping(target = "resources", source = "task.resources", qualifiedByName = "toListResponse"),
+            @Mapping(target = "complexOfDescription", source = "task.complexOfDescription"),
+            @Mapping(target = "dtStart", source = "task.dtStart"),
+            @Mapping(target = "dtEnd", source = "task.dtEnd"),
+            @Mapping(target = "dtPlanning", source = "task.dtPlanning"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+    IssueDetailResponse toIssueDetailResponse(Issue task, com.kltn.server.model.collection.Issue issueMongo);
+
+
+
+//    @Mappings({
+//            @Mapping(target = "title", source = "updateRequest.name"),
+//            @Mapping(target = "description", source = "updateRequest.description"),
+//            @Mapping(target = "status", source = "updateRequest.status"),
+//            @Mapping(target = "priority", source = "updateRequest.priority"),
+////            @Mapping(target = "storyPoint", source = "updateRequest.storyPoint"),
+//            @Mapping(target = "dtStart", source = "updateRequest.start"),
+//            @Mapping(target = "dtEnd", source = "updateRequest.end"),
+//    })
+//    @BeanMapping(ignoreByDefault = true)
+//    Issue updateTask(@MappingTarget Issue task, IssueUpdateRequest updateRequest);
 }

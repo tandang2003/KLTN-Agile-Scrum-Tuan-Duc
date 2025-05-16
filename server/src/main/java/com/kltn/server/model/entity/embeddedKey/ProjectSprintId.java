@@ -1,12 +1,15 @@
 package com.kltn.server.model.entity.embeddedKey;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
 
 @Embeddable
 public class ProjectSprintId implements Serializable {
+    @Column(name = "project_id")
     private String projectId;
+    @Column(name = "sprint_id")
     private String sprintId;
 
     public ProjectSprintId() {
@@ -39,15 +42,19 @@ public class ProjectSprintId implements Serializable {
     public static ProjectSprintIdBuilder builder() {
         return new ProjectSprintIdBuilder();
     }
+
     public String getProjectId() {
         return projectId;
     }
+
     public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
+
     public String getSprintId() {
         return sprintId;
     }
+
     public void setSprintId(String sprintId) {
         this.sprintId = sprintId;
     }
