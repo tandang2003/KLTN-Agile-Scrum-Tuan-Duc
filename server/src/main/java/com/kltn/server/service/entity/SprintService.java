@@ -1,12 +1,17 @@
 package com.kltn.server.service.entity;
 
+import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
+import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
+import com.kltn.server.mapper.entity.IssueMapperImpl;
 import com.kltn.server.mapper.entity.SprintMapper;
+import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
@@ -14,9 +19,12 @@ import com.kltn.server.repository.entity.SprintRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,16 +33,14 @@ import org.springframework.stereotype.Service;
 public class SprintService {
     private SprintMapper sprintMapper;
     private SprintRepository sprintRepository;
-    private ProjectService projectService;
     private WorkspaceService workspaceService;
     private ProjectSprintService projectSprintService;
 
     @Autowired
     public SprintService(WorkspaceService workspaceService, ProjectSprintService projectSprintService,
-            SprintMapper sprintMapper, SprintRepository sprintRepository, ProjectService projectService) {
+                         SprintMapper sprintMapper, SprintRepository sprintRepository) {
         this.sprintMapper = sprintMapper;
         this.sprintRepository = sprintRepository;
-        this.projectService = projectService;
         this.projectSprintService = projectSprintService;
         this.workspaceService = workspaceService;
     }
@@ -59,8 +65,8 @@ public class SprintService {
 
     }
 
-    public ApiResponse<SprintResponse> updateSprint(
-            @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+    public ApiResponse<SprintResponse> studentUpdateSprint(
+            SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
         ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
                 .projectId(sprintStudentUpdateTimeRequest.projectId())
                 .sprintId(sprintStudentUpdateTimeRequest.sprintId()).build());
@@ -69,6 +75,31 @@ public class SprintService {
 
         projectSprint = projectSprintService.save(projectSprint);
         SprintResponse sprintResponse = sprintMapper.toSprintStudentUpdateResponse(projectSprint);
+        return ApiResponse.<SprintResponse>builder()
+                .data(sprintResponse)
+                .message("Update sprint successfully")
+                .build();
+    }
+
+    public ApiResponse<SprintResponse> teacherUpdateSprint(
+            SprintTeacherUpdateTimeRequest updateRequest) {
+        Sprint sprint = getSprintById(updateRequest.id());
+        Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.MINUTES);
+        Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.MINUTES);
+
+        boolean isOngoing = (now.equals(start) || now.equals(end) || (now.isAfter(start) && now.isBefore(end)));
+
+        if (!isOngoing) throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+
+        if (end.isBefore(now)) throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+
+        sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
+
+        sprintRepository.save(sprint);
+
+        SprintResponse sprintResponse = sprintMapper.toSprintCreateResponse(sprint);
+
         return ApiResponse.<SprintResponse>builder()
                 .data(sprintResponse)
                 .message("Update sprint successfully")
@@ -86,7 +117,15 @@ public class SprintService {
             return ApiResponse.<List<SprintResponse>>builder().data(null).build();
         List<SprintResponse> transferList = list.stream().map(sprintMapper::toSprintCreateResponse).toList();
         return ApiResponse.<List<SprintResponse>>builder().code(HttpStatus.OK.value()).data(transferList).build();
-
     }
+
+    public Sprint saveSprint(Sprint sprint) {
+        try {
+            return sprintRepository.save(sprint);
+        } catch (Exception e) {
+            throw AppException.builder().error(Error.SERVER_ERROR).build();
+        }
+    }
+
 
 }

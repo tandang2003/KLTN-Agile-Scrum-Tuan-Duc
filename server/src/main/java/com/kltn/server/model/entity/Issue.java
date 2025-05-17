@@ -17,8 +17,10 @@ public class Issue extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
     @ManyToOne
-    @JoinColumns({@JoinColumn(name = "project_id", referencedColumnName = "project_id"), @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")})
-//    @JoinColumn(name = "proje")
+    @JoinColumns({
+            @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
+            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")
+    })
     private ProjectSprint projectSprint;
     @OneToMany(mappedBy = "issue")
     private List<Resource> resources;
@@ -74,6 +76,10 @@ public class Issue extends BaseEntity {
     }
 
     public Issue() {
+    }
+
+    public static IssueEntityBuilder builder() {
+        return new IssueEntityBuilder();
     }
 
     public static class IssueEntityBuilder extends BaseEntityBuilder<Issue, IssueEntityBuilder> {

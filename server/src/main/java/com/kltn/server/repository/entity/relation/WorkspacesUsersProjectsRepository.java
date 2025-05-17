@@ -5,6 +5,7 @@ import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,9 +25,7 @@ public interface WorkspacesUsersProjectsRepository extends JpaRepository<Workspa
             value = "SELECT p FROM WorkspacesUsersProjects wup " +
                     "JOIN Project p ON wup.project.id = p.id WHERE wup.workspace.id = ?1",
             countQuery = "SELECT COUNT(*) FROM WorkspacesUsersProjects wup " +
-                    "JOIN Project p ON wup.project.id = p.id WHERE wup.workspace.id = ?1"
-//            ,
-//            nativeQuery = true
+                    "JOIN Project p ON wup.project.id = p.id WHERE wup.workspace.id = :workspaceId"
     )
-    Page<Project> getProjecByWorkspaceId(String workspaceId, PageRequest sort);
+    Page<Project> getProjecByWorkspaceId(String workspaceId, Pageable sort);
 }

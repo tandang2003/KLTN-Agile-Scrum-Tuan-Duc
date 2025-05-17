@@ -29,16 +29,14 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
-        authException.printStackTrace();
-        MyAuthenticationException myAuthenticationException = (MyAuthenticationException) authException;
-        response.setStatus(myAuthenticationException.getError().getCode());
+//        MyAuthenticationException myAuthenticationException = (MyAuthenticationException) authException;
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         String errorMessage = Optional.ofNullable(authException.getCause())
                 .map(Throwable::getMessage)
                 .orElse(authException.getMessage());
         ApiResponse<Object> res = ApiResponse.builder()
                 .code(HttpStatus.UNAUTHORIZED.value())
                 .error(errorMessage)
-//                .message()
                 .build();
         mapper.writeValue(response.getWriter(), res);
 

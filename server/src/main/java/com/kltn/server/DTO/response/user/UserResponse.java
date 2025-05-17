@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
-public record UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
+public record   UserResponse(String id, String name, String email, String uniId, String uniPassword, String className,
                            String role, List<ProjectResponse> projects,
                            Set<Issue> assignedTasks,
                            Set<Issue> reviewedTasks,

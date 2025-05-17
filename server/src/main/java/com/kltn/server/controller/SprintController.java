@@ -1,8 +1,11 @@
 package com.kltn.server.controller;
 
+import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
+import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.service.entity.SprintService;
 import jakarta.validation.Valid;
@@ -37,14 +40,24 @@ public class SprintController {
     @PreAuthorize("hasAuthority('update_sprint')")
     public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
             @RequestBody @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
-        var sprint = sprintService.updateSprint(sprintStudentUpdateTimeRequest);
+        var sprint = sprintService.studentUpdateSprint(sprintStudentUpdateTimeRequest);
+        return ResponseEntity.status(sprint.getCode()).body(sprint);
+    }
+
+    @PutMapping("teacher/update")
+    @PreAuthorize("hasRole('TEACHER') ")
+    public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
+            @RequestBody @Valid SprintTeacherUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+        var sprint = sprintService.teacherUpdateSprint(sprintStudentUpdateTimeRequest);
         return ResponseEntity.status(sprint.getCode()).body(sprint);
     }
 
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<SprintResponse>>> getList(@RequestParam("workspace_id") String workspaceId) {
-          var sprint = sprintService.getListSprintByWorkspaceId(workspaceId);
+        var sprint = sprintService.getListSprintByWorkspaceId(workspaceId);
         return ResponseEntity.status(sprint.getCode()).body(sprint);
     }
+
+
 
 }
