@@ -19,7 +19,9 @@ public enum Error {
     CREATE_FAILED(410, "Failure to create resource"),
     INVITED_FAILED(411, "Failure to invite user"),
 
-    ALREADY_EXISTS(409, "User already have project"),
+    ALREADY_EXISTS(HttpServletResponse.SC_CONFLICT, "User already have project"),
+    SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
+    SPRINT_ALREADY_END(HttpServletResponse.SC_CONFLICT, "Sprint already ended"),
 
     NOT_FOUND_WORKSPACE(404, "Workspace not found"),
 

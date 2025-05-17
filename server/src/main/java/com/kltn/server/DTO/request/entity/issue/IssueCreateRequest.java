@@ -6,6 +6,8 @@ import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.model.type.task.IssueTag;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,20 +16,29 @@ import java.util.List;
 
 import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 
-public class IssueCreateRequest{
-    @NotEmpty private String name;
-    @NotEmpty private String projectId;
-    @NotEmpty private String sprintId;
-    private IssueStatus status = IssueStatus.BACKLOG;
-    private IssuePriority priority = IssuePriority.CRITICAL;
-    private IssueTag tag = IssueTag.THEORY;
+public class IssueCreateRequest {
+    @NotEmpty
+    private String name;
+    @NotEmpty
+    private String projectId;
+    @NotEmpty
+    private String sprintId;
+    @Enumerated(EnumType.STRING)
+    private IssueStatus status;
+    @Enumerated(EnumType.STRING)
+    private IssuePriority priority;
+    @Enumerated(EnumType.STRING)
+    private IssueTag tag;
     private int position;
     private List<Topic> topics;
     private List<SubTask> subTasks;
     private List<Attachment> attachments;
-    @NotEmpty private String description;
-    @NotEmpty private String assigneeId;
-    @NotEmpty private String reviewerId;
+    @NotEmpty
+    private String description;
+    @NotEmpty
+    private String assigneeId;
+    @NotEmpty
+    private String reviewerId;
     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
     private Instant start;
     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
@@ -36,7 +47,8 @@ public class IssueCreateRequest{
     public static IssueCreateRequestBuilder builder() {
         return new IssueCreateRequestBuilder();
     }
-    public IssueCreateRequest(){
+
+    public IssueCreateRequest() {
     }
 
     public IssueCreateRequest(String name, String projectId, String sprintId, IssueStatus status, IssuePriority priority, IssueTag tag, int position, List<Topic> topics, List<SubTask> subTasks, List<Attachment> attachments, String description, String assigneeId, String reviewerId, Instant start, Instant end) {
@@ -147,6 +159,10 @@ public class IssueCreateRequest{
         public IssueCreateRequestBuilder end(Instant end) {
             this.end = end;
             return this;
+        }
+
+        public IssueCreateRequest build() {
+            return new IssueCreateRequest(name, projectId, sprintId, IssueStatus.valueOf(status), IssuePriority.valueOf(priority), IssueTag.valueOf(tag), position, topics, subTasks, attachments, description, assigneeId, reviewerId, start, end);
         }
     }
 

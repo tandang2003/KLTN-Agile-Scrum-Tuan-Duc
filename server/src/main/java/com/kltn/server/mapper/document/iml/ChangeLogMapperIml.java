@@ -38,4 +38,28 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
                 .change(logProjectMapper.entityToLogDomain(project, projectMongo));
         return changeLogBuilder.build();
     }
+
+    @Override
+    public ChangeLog TaskToUpdate(String[] properties, Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+        ChangeLog.ChangeLogBuilder changeLogBuilder = ChangeLog.builder();
+        changeLogBuilder.type(LogType.UPDATE)
+                .idRef(task.getId())
+                .entityTarget(EntityTarget.TASK.name())
+                .propertiesTargets(properties)
+                .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+        return changeLogBuilder.build();
+    }
+
+//    @Override
+//    public ChangeLog TaskToUpdate(Issue curEntity, Issue newEntity, com.kltn.server.model.collection.Issue curDocument, com.kltn.server.model.collection.Issue newDocument) {
+//        ChangeLog.ChangeLogBuilder changeLogBuilder = ChangeLog.builder();
+////        changeLogBuilder.type(LogType.UPDATE)
+////                .idRef(curEntity.getId())
+////                .entityTarget(EntityTarget.PROJECT.name())
+////                .
+////                .change();
+//
+//
+//        return null;
+//    }
 }

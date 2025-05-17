@@ -48,14 +48,16 @@ public class ProjectService {
     private final WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository;
     private final UserService userService;
     private final RoleService roleInit;
+    private final SprintService sprintService;
     private final EmailService emailService;
     private final ProjectLogRepository projectLogRepository;
+    private final ProjectSprintService projectSprintService;
     @Value("${verify.invite-project-link}")
     private String link;
     private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
 
     @Autowired
-    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository) {
+    public ProjectService(WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectLogRepository projectLogRepository, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, ProjectRepository projectRepository, SprintService sprintService, ProjectSprintService projectSprintService) {
         this.projectLogRepository = projectLogRepository;
         this.roleInit = roleInit;
         this.topicMapper = topicMapper;
@@ -65,6 +67,8 @@ public class ProjectService {
         this.workspacesUsersProjectsRepository = workspacesUsersProjectsRepository;
         this.emailService = emailService;
         this.workspacesUsersProjectsService = workspacesUsersProjectsService;
+        this.sprintService = sprintService;
+        this.projectSprintService = projectSprintService;
     }
 
     @SendKafkaEvent(topic = "project-created")
@@ -78,6 +82,12 @@ public class ProjectService {
         // insert workspace
         var project = projectMapper.toEntity(creationRequest);
         var savedProject = projectRepository.save(project);
+
+        Sprint sprint = Sprint.builder().id(savedProject.getId() + "_BACKLOG").title("SPRINT_BACKLOG_" + savedProject.getName()).build();
+        sprint = sprintService.saveSprint(sprint);
+
+        ProjectSprint projectSprint = ProjectSprint.builder().project(savedProject).sprint(sprint).build();
+        projectSprintService.save(projectSprint);
 
         if (workspacesUsersProjects.getProject() != null) {
             throw AppException.builder().error(Error.ALREADY_EXISTS).build();
@@ -147,9 +157,9 @@ public class ProjectService {
             projectSprints.forEach(ps -> {
                 Sprint sprint = ps.getSprint();
                 sprintResponses.add(SprintResponse.builder().id(sprint.getId()).process(
-                        Map.of(
-                                "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
-                                "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""))
+                                Map.of(
+                                        "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
+                                        "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""))
                         .start(sprint.getDtStart()).end(sprint.getDtEnd()).build());
             });
         }

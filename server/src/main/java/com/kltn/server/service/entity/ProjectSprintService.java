@@ -31,11 +31,16 @@ public class ProjectSprintService {
         projectSprint = projectSprintRepository.save(projectSprint);
         return projectSprint;
     }
+
     public ProjectSprint getProjectSprintById(ProjectSprintId projectSprintId) {
         return projectSprintRepository.findById(projectSprintId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_SPRINT_PROJECT_RELATION).build());
     }
 
     public ProjectSprint save(ProjectSprint projectSprint){
-        return projectSprintRepository.save(projectSprint);
+        ProjectSprint savedProjectSprint = projectSprintRepository.save(projectSprint);
+        if (savedProjectSprint == null || savedProjectSprint.getId() == null) {
+            throw AppException.builder().error(Error.SERVER_ERROR).build();
+        }
+        return savedProjectSprint;
     }
 }
