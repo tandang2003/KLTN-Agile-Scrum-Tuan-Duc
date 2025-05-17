@@ -25,6 +25,14 @@ const setAuthorization = (accessToken?: string) => {
     : undefined
 }
 
+const setProjectAuthorization = (token: string) => {
+  appAxios.defaults.headers.common['Project-Authorization'] = token ?? undefined
+}
+
+const getProjectAuthorization = () => {
+  return appAxios.defaults.headers.common['Project-Authorization']
+}
+
 const getAuthorization = () => {
   return appAxios.defaults.headers.common.Authorization
 }
@@ -49,13 +57,13 @@ appAxios.interceptors.response.use(
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     // extract data in response
-    console.info('Interceptor axios response: ', response)
+    // console.info('Interceptor axios response: ', response)
     return response
   },
   async (err: AxiosError) => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    console.info('Interceptor axios response error: ', err)
+    // console.info('Interceptor axios response error: ', err)
     const statusCode =
       err.response?.status ?? HttpStatusCode.InternalServerError
 
@@ -109,5 +117,11 @@ appAxios.interceptors.response.use(
   }
 )
 
-export { manualAxios, setAuthorization, getAuthorization }
+export {
+  manualAxios,
+  setAuthorization,
+  getAuthorization,
+  setProjectAuthorization,
+  getProjectAuthorization
+}
 export default appAxios

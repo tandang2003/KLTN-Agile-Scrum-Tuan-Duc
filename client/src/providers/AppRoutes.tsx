@@ -2,7 +2,7 @@ import LoginPage from '@/pages/auth/login/page'
 import HomePage from '@/pages/home/page'
 import NotFoundPage from '@/pages/not-found'
 import RootLayout from '@/pages/layout'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import RegisterPage from '@/pages/auth/register/page'
 import AuthLayout from '@/pages/auth/layout'
 import GuestOnly from '@/components/wrapper/GuestOnly'
@@ -18,6 +18,8 @@ import { KanbanDemo } from '@/pages/manager/workspace/project/kaban/page'
 import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
+import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
+import ProjectLayout from '@/pages/manager/workspace/project/layout'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -55,28 +57,27 @@ const AppRoutes = () => {
             {/* http://localhost:3000/manager */}
             <Route index element={<ManagerPage />} />
             {/* http://localhost:3000/manager/workspace */}
-            <Route path='workspace' element={<WorkspacePage />} />
-            {/* http://localhost:3000/manager/workspace/1 */}
-            <Route
-              path='workspace/:workspaceId'
-              element={<WorkspaceDetailPage />}
-            />
-            {/* http://localhost:3000/manager/workspace/1/setting */}
-            <Route
-              path='workspace/:workspaceId/setting'
-              element={<SettingLayout />}
-            >
-              <Route index element={<WorkspaceSettingPage />} />
-            </Route>
-            {/* http://localhost:3000/manager/workspace/project/1 */}
-            <Route
-              path='workspace/project/:projectId'
-              element={<ProjectPage />}
-            >
-              <Route index element={<BoardPage />} />
-              {/* http://localhost:3000/manager/workspace/project/1/board */}
-              <Route path='board' index element={<BoardPage />} />
-              <Route path='backlog' element={<BacklogPage />} />
+            <Route path='workspace'>
+              {/* Workspace */}
+              <Route index element={<WorkspacePage />} />
+              {/* Workspace detail */}
+              <Route path=':workspaceId' element={<WorkspaceDetailLayout />}>
+                {/* http://localhost:3000/manager/workspace/1 */}
+                <Route index element={<WorkspaceDetailPage />} />
+                <Route path='setting' element={<SettingLayout />}>
+                  {/* http://localhost:3000/manager/workspace/1/setting */}
+                  <Route index element={<WorkspaceSettingPage />} />
+                </Route>
+              </Route>
+              {/* http://localhost:3000/manager/workspace/project/1 */}
+              <Route path='project' element={<ProjectLayout />}>
+                <Route path=':projectId' element={<ProjectPage />}>
+                  <Route index element={<Navigate to='board' replace />} />
+                  {/* http://localhost:3000/manager/workspace/project/1/board */}
+                  <Route path='board' index element={<BoardPage />} />
+                  <Route path='backlog' element={<BacklogPage />} />
+                </Route>
+              </Route>
             </Route>
           </Route>
 

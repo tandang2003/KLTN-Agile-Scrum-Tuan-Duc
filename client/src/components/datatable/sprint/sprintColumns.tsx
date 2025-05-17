@@ -1,15 +1,20 @@
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
-import { SprintWorkspaceDataTable } from '@/types/workspace.type'
+import { SprintWorkspaceDataTable } from '@/types/sprint.type'
 import { ColumnDef } from '@tanstack/react-table'
 
 type SprintColumns = SprintWorkspaceDataTable
 
 const columns: ColumnDef<SprintColumns>[] = [
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: 'title',
+    header: 'Title',
+    size: 100
+  },
+  {
+    accessorKey: 'miniumStoryPoint',
+    header: 'Point',
     size: 100
   },
   {
@@ -19,7 +24,7 @@ const columns: ColumnDef<SprintColumns>[] = [
       const start: Date = row.getValue('start')
       const end: Date = row.getValue('end')
       const current = new Date()
-      if (current < start) {
+      if (current <= start) {
         return <Badge>Pending</Badge>
       }
       if (current >= start) {
@@ -28,7 +33,7 @@ const columns: ColumnDef<SprintColumns>[] = [
       if (current <= end) {
         return <Badge>End</Badge>
       }
-      return null
+      return <Badge>null</Badge>
     }
   },
   {

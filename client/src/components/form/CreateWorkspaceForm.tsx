@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useCreateWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
+import { handleErrorApi } from '@/lib/form'
 import {
   CreateWorkspaceSchema,
   CreateWorkspaceSchemaType
@@ -55,8 +56,9 @@ const CreateWorkspaceForm = () => {
       .then(() => {
         dispatch(setStateDialogWorkspace(!state))
       })
-      .catch(() => {
+      .catch((error) => {
         toast.error('Create workspace failed')
+        handleErrorApi(error)
       })
   }
 

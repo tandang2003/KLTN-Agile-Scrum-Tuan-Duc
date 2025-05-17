@@ -13,24 +13,22 @@ type ListViewProps<T> = {
     items: number
     loadingComponent?: ReactNode
   }
+  emptyComponent?: ReactNode
 } & React.ComponentProps<'div'>
 
 const ListView = <T,>({
   data,
   render,
-  loading,
-  loadingComponent,
+  loading = true,
+  loadingComponent = <Skeleton className='h-[300px] w-full bg-red-200' />,
   orientation,
   display = 'flex',
   loadingItems,
+  emptyComponent = <div>No result</div>,
   className
 }: ListViewProps<T>) => {
-  if (loading && !loadingItems) {
-    return loadingComponent ? (
-      loadingComponent
-    ) : (
-      <Skeleton className='h-[300px] w-full' />
-    )
+  if (loading) {
+    return loadingComponent
   }
   return (
     <div
@@ -51,6 +49,8 @@ const ListView = <T,>({
               )
           )}
       {data && data.map((item, index) => render(item, index))}
+
+      {((loading && !data) || data?.length == 0) && emptyComponent}
     </div>
   )
 }

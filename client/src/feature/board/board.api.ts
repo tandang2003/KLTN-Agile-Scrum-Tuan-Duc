@@ -10,6 +10,7 @@ const boardApi = createApi({
     getBoardByProjectId: builder.query<BoardModelType, Id>({
       async queryFn(projectId) {
         const data = await boardService.getData(projectId)
+        console.log(data)
         return {
           data: data
         }

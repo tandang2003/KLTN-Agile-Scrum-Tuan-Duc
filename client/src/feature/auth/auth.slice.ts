@@ -1,5 +1,6 @@
 import workspaceApi from '@/feature/workspace/workspace.api'
-import authService, { restoreTokenLocal } from '@/services/auth.service'
+import authService from '@/services/auth.service'
+import tokenService from '@/services/token.service'
 import { LoginReq, LoginRes, LogoutReq, RoleType } from '@/types/auth.type'
 import { FieldError } from '@/types/http.type'
 import { Id } from '@/types/other.type'
@@ -12,12 +13,13 @@ import {
   isRejected,
   PayloadAction
 } from '@reduxjs/toolkit'
+import { toast } from 'sonner'
 
 type AuthState = {
   loading: boolean
   isAuth?: boolean
   error?: FieldError
-  accessToken: string | null
+  accessToken?: string
   user?: UserAuthType
 }
 
@@ -29,11 +31,7 @@ type UserAuthType = {
 }
 
 const initialState: AuthState = {
-  loading: false,
-  accessToken: restoreTokenLocal(),
-  isAuth: undefined,
-  user: undefined,
-  error: undefined
+  loading: false
 }
 
 const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
@@ -41,6 +39,7 @@ const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
   async (req, { rejectWithValue }) => {
     try {
       const data = await authService.login(req)
+      tokenService.setTokenLocal(data.data.access_token)
       return data.data
     } catch (_) {
       return rejectWithValue('Email or password not right')
@@ -55,6 +54,7 @@ const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
       const data = await authService.getInfo(signal)
       return data.data
     } catch (_) {
+      tokenService.removeTokenLocal()
       return rejectWithValue('Get user workspace failed')
     }
   }
@@ -68,6 +68,8 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
     } catch (_) {
       return rejectWithValue('Token invalid')
     } finally {
+      tokenService.removeTokenLocal()
+      toast.success('Logout')
       dispatch(workspaceApi.util.resetApiState())
     }
   }
@@ -95,7 +97,7 @@ const authSlice = createSlice({
       }
     )
     builder.addCase(loginThunk.rejected, (state: AuthState, action) => {
-      state.accessToken = null
+      state.accessToken = undefined
       state.user = undefined
       state.isAuth = false
       state.error = action.payload
@@ -134,5 +136,5 @@ const authSlice = createSlice({
 })
 const authReducer = authSlice.reducer
 const { setUser } = authSlice.actions
-export { loginThunk, logoutThunk, setUser, restoreUserThunk }
+export { loginThunk, logoutThunk, restoreUserThunk, setUser }
 export default authReducer
