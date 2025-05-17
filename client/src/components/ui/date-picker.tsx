@@ -77,13 +77,15 @@ type DatePickerWithPresetsProps = {
   setDate?: (date: Date | undefined) => void
   className?: string
   disabled?: boolean
+  max?: Date
 }
 
 export function DatePickerWithPresets({
   date,
   setDate,
   className,
-  disabled = false
+  disabled = false,
+  max
 }: DatePickerWithPresetsProps) {
   return (
     <Popover>
@@ -119,7 +121,12 @@ export function DatePickerWithPresets({
           </SelectContent>
         </Select>
         <div className='rounded-md border'>
-          <Calendar mode='single' selected={date} onSelect={setDate} />
+          <Calendar
+            mode='single'
+            selected={date}
+            onSelect={setDate}
+            disabled={(date) => (max ? date < new Date(max) : false)}
+          />
         </div>
       </PopoverContent>
     </Popover>

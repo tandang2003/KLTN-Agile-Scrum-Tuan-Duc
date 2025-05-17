@@ -1,4 +1,4 @@
-import SprintAccordion from '@/components/SprintAccordion'
+import SprintAccordion from '@/components/sprint/SprintAccordion'
 import { useAppSelector } from '@/context/redux/hook'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import { Id } from '@/types/other.type'

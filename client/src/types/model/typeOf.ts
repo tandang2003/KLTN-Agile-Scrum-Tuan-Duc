@@ -16,8 +16,19 @@ const statusOrder: IssueStatus[] = [
 
 type IssueStatus = (typeof issueStatusList)[number]
 
-type IssuePriority = 'CRITICAL' | 'MAJOR' | 'MINOR' | 'TRIVIAL' | 'BLOCKED'
+const issuePriorityList = [
+  'CRITICAL',
+  'MAJOR',
+  'MINOR',
+  'TRIVIAL',
+  'BLOCKED'
+] as const
 
-type IssueTag = 'THEORY' | ' PRACTICE'
+type IssuePriority = (typeof issuePriorityList)[number]
+
+const issueTagList = ['THEORY', ' PRACTICE']
+
+type IssueTag = (typeof issueTagList)[number]
+
 export type { IssueStatus, IssuePriority, IssueTag }
-export { issueStatusList, statusOrder }
+export { issueStatusList, statusOrder, issueTagList, issuePriorityList }

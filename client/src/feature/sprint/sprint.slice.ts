@@ -1,9 +1,17 @@
 import { logoutThunk } from '@/feature/auth/auth.slice'
-import { createSlice } from '@reduxjs/toolkit'
+import { Id } from '@/types/other.type'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+type SprintCurrent = {
+  id: Id
+  start: string
+  end: string
+}
 
 type SprintState = {
   isDragMode: boolean
   isOpenDialogCreate: boolean
+  current?: SprintCurrent
 }
 const initialState: SprintState = {
   isDragMode: false,
@@ -14,6 +22,9 @@ const sprintSlice = createSlice({
   name: 'sprint',
   initialState: initialState,
   reducers: {
+    setCurrentSprint(state: SprintState, action: PayloadAction<SprintCurrent>) {
+      state.current = action.payload
+    },
     enableDragMode(state: SprintState) {
       state.isDragMode = true
     },
@@ -44,6 +55,7 @@ export const {
   enableDragMode,
   disableDragMode,
   openDialogCreateSprint,
-  closeDialogCreateSprint
+  closeDialogCreateSprint,
+  setCurrentSprint
 } = sprintSlice.actions
 export default sprintSlice

@@ -2,10 +2,12 @@ import { createSlice } from '@reduxjs/toolkit'
 
 type TriggerState = {
   isCreateProject: boolean
+  isCreateIssue: boolean
 }
 
 const initialState: TriggerState = {
-  isCreateProject: false
+  isCreateProject: false,
+  isCreateIssue: false
 }
 
 const triggerSlice = createSlice({
@@ -17,12 +19,22 @@ const triggerSlice = createSlice({
     },
     disableCreateProject: (state: TriggerState) => {
       state.isCreateProject = false
+    },
+    enableCreateIssue: (state: TriggerState) => {
+      state.isCreateIssue = true
+    },
+    disableCreateIssue: (state: TriggerState) => {
+      state.isCreateIssue = false
     }
   }
 })
 
 const triggerReducer = triggerSlice.reducer
 export { triggerReducer }
-export const { enableCreateProject, disableCreateProject } =
-  triggerSlice.actions
+export const {
+  enableCreateProject,
+  disableCreateProject,
+  disableCreateIssue,
+  enableCreateIssue
+} = triggerSlice.actions
 export default triggerSlice

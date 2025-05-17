@@ -33,7 +33,6 @@ const authService = {
 
     if (!response.ok) {
       tokenService.removeTokenLocal()
-      go(HOME_PATH)
       throw new Error('UnAuthorization')
     }
 

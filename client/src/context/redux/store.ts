@@ -20,7 +20,8 @@ export const store = configureStore({
     },
     projectSlice: {
       token: tokenService.getTokenProjectSession()?.token || undefined,
-      projectIdsAllowed: tokenService.getTokenProjectSession()?.ids || []
+      projectIds: tokenService.getTokenProjectSession()?.projectIds || [],
+      projectId: tokenService.getTokenProjectSession()?.projectId
     }
   },
   middleware: (getDefaultMiddleware) =>
