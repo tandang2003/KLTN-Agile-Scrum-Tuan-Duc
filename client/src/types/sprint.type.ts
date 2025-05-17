@@ -14,7 +14,7 @@ const CreateSprintFormSchema = z
     message: 'Date end need after date start',
     path: ['end']
   })
-  .refine((data) => data.start <= data.predict && data.predict <= data.end, {
+  .refine((data) => data.start < data.predict && data.predict < data.end, {
     message: 'Date predict need between date start and date end',
     path: ['predict']
   })

@@ -19,7 +19,7 @@ type CardModelType = {
 }
 
 type BoardModelType = {
-  columns: Record<IssueStatus, ColumnModelType>
+  columns: Record<Id, ColumnModelType>
   cards: CardModelType[]
 }
 

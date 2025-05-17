@@ -10,6 +10,10 @@ type SprintName =
   | 'sprint-003'
   | 'sprint-004'
   | 'sprint-005'
+  | 'sprint-006'
+  | 'sprint-007'
+  | 'sprint-008'
+  | 'sprint-009'
 
 const sprintData: Record<SprintName, SprintResponse> = {
   'sprint-001': {
@@ -42,7 +46,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
   'sprint-004': {
     id: 'sprint-004',
     position: 3,
-    title: 'Implementation Auth Module, Error handling global',
+    title: 'Implementation core business (product)',
     miniumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
@@ -51,7 +55,43 @@ const sprintData: Record<SprintName, SprintResponse> = {
   'sprint-005': {
     id: 'sprint-004',
     position: 3,
-    title: 'Implementation core business (product)',
+    title: 'Implementation core business (order)',
+    miniumStoryPoint: 10,
+    start: currentDay,
+    predict: addDays(currentDay, 7),
+    end: addDays(currentDay, 10)
+  },
+  'sprint-006': {
+    id: 'sprint-007',
+    position: 3,
+    title: 'Implementation Admin business (user)',
+    miniumStoryPoint: 10,
+    start: currentDay,
+    predict: addDays(currentDay, 7),
+    end: addDays(currentDay, 10)
+  },
+  'sprint-007': {
+    id: 'sprint-008',
+    position: 3,
+    title: 'Implementation Admin business (product)',
+    miniumStoryPoint: 10,
+    start: currentDay,
+    predict: addDays(currentDay, 7),
+    end: addDays(currentDay, 10)
+  },
+  'sprint-008': {
+    id: 'sprint-009',
+    position: 3,
+    title: 'Implementation Admin business (order)',
+    miniumStoryPoint: 10,
+    start: currentDay,
+    predict: addDays(currentDay, 7),
+    end: addDays(currentDay, 10)
+  },
+  'sprint-009': {
+    id: 'sprint-010',
+    position: 3,
+    title: 'Full test flow',
     miniumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
@@ -249,7 +289,6 @@ const issueData: Record<SprintName, IssueDemo[]> = {
       }
     },
     {
-      id: 'issue-101',
       title: 'Thực hiện front-end',
       position: 1,
       status: 'BACKLOG',
@@ -297,8 +336,304 @@ const issueData: Record<SprintName, IssueDemo[]> = {
       }
     }
   ],
-  'sprint-004': [],
-  'sprint-005': []
+  'sprint-004': [
+    {
+      title: 'Workflow từ sản phẩm đến đơn hàng',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực sản phẩm (front-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực sản phẩm (back-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực giỏ hàng (front-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực giỏ hàng (back-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title:
+        'Hiện thực tìm hiếm sản phẩm cho khách hàng (front-end & back-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    }
+  ],
+  'sprint-005': [
+    {
+      title: 'Tìm hiểu các phương pháp thanh toán phổ biến',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Các ràng buộc về dữ liệu với đơn hàng',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực hóa đơn (front-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực hóa đơn (backend-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Kiểm thực flow hoàn chỉnh từ sản phẩm đến đơn hàng',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    }
+  ],
+  'sprint-006': [
+    {
+      title: 'Hiện thực  quản lý user (front-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực  quản lý user (backend-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    }
+  ],
+  'sprint-007': [
+    {
+      title: 'Hiện thực  quản lý product (front-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực  quản lý product (backend-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    }
+  ],
+  'sprint-008': [
+    {
+      title: 'Hiện thực  quản lý order (front-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Hiện thực  quản lý order (backend-end)',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    }
+  ],
+  'sprint-009': [
+    {
+      title: 'Kiểm tra flow admin ',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    },
+    {
+      title: 'Document',
+      position: 1,
+      status: 'BACKLOG',
+      assigner: {
+        id: 'user-001',
+        email: '21130001@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van A'
+      },
+      reviewer: {
+        id: 'user-002',
+        email: '21130002@st.hcmuaf.edu.vn',
+        name: 'Nguyen Van B'
+      }
+    }
+  ]
 }
 
 const convertIssueData = (

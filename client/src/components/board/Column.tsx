@@ -15,10 +15,9 @@ type ColumnProps = {
   id: Id
   name: string
   items: CardModelType[]
-  container?: string
 }
 
-const Column = ({ id, name, items, container }: ColumnProps) => {
+const Column = ({ id, name, items }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -36,52 +35,47 @@ const Column = ({ id, name, items, container }: ColumnProps) => {
   }, [isAdding])
 
   return (
-    <div
-      ref={(node) => {
-        setNodeRef(node)
-        // columnRef.current = node
-      }}
-      className={(cn('h-fit rounded-xl p-2 py-2'), container)}
-    >
-      <span className='mb-3.5 flex items-center border-b-1 py-3.5 pr-4 pl-2'>
+    <>
+      <span className='sticky top-0 z-10 flex items-center border-b-2 bg-white px-2 py-3.5'>
         <span className='title h3 px-1.5'>{name}</span>
         <span className='ml-auto text-sm font-bold text-gray-500'>
           {items.length}
         </span>
       </span>
-      <ScrollArea>
-        <div className='flex flex-col pr-4 pb-4 pl-2'>
+      <div
+        ref={(node) => {
+          setNodeRef(node)
+        }}
+        className={cn('rounded-sm rounded-xl px-2')}
+      >
+        <div className='flex flex-col'>
           {items?.map((item: CardModelType) => {
             return (
               <Card
                 key={item.id}
                 data={{ ...item }}
-                container={cn('m-1 bg-white')}
+                container={cn('mt-2 bg-white')}
               />
             )
           })}
-
-          {isAdding ? (
-            <CardAdding id={id} ref={cardRef} />
-          ) : (
-            <Button
-              onClick={() => {
-                setIsAdding(true)
-              }}
-              className={
-                'w-full justify-start border-none bg-inherit p-1 text-black'
-              }
-            >
-              <Icon icon='ic:baseline-plus' size={24} />
-              Add Card
-            </Button>
-          )}
-
-          <div className='m-1 w-full bg-gray-100 pr-2'></div>
         </div>
-        <ScrollBar orientation='vertical' />
-      </ScrollArea>
-    </div>
+        {isAdding ? (
+          <CardAdding id={id} ref={cardRef} />
+        ) : (
+          <Button
+            onClick={() => {
+              setIsAdding(true)
+            }}
+            className={
+              'mt-2 w-full justify-start border-none bg-inherit p-1 text-black hover:text-white'
+            }
+          >
+            <Icon icon='ic:baseline-plus' size={24} />
+            Add Card
+          </Button>
+        )}
+      </div>
+    </>
   )
 }
 export default Column

@@ -1,4 +1,5 @@
 import ListView from '@/components/ListView'
+import SprintAccordionProductBacklog from '@/components/SprintAccordionProductBacklog'
 import {
   Accordion,
   AccordionContent,
@@ -12,8 +13,7 @@ import { cn } from '@/lib/utils'
 import { IssueResponse } from '@/types/issue.type'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
-import { divide } from 'lodash'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
@@ -23,29 +23,39 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
   const [sprintId, setSprintId] = useState<Id | null>(null)
 
   return (
-    <Accordion type='single' collapsible className='bg-accent w-full px-2'>
-      {sprints.map((item, index) => {
-        return (
-          <AccordionItem key={item.id} value={item.id}>
-            <AccordionTrigger
-              value={`sprint-00${index + 1}`}
-              onClick={(e) => {
-                if (refContent.current) {
-                  setSprintId(e.currentTarget.value)
-                }
-              }}
-            >
-              Sprint {index + 1}: {item.title}
-            </AccordionTrigger>
-            <AccordionContent ref={refContent}>
-              {sprintId && <ListIssue sprintId={sprintId} />}
-            </AccordionContent>
-          </AccordionItem>
-        )
-      })}
-    </Accordion>
+    <div>
+      <Accordion type='single' collapsible className='bg-accent w-full px-2'>
+        {sprints.map((item, index) => {
+          return (
+            <AccordionItem key={item.id} value={item.id}>
+              <AccordionTrigger
+                value={`sprint-00${index + 1}`}
+                onClick={(e) => {
+                  if (refContent.current) {
+                    setSprintId(e.currentTarget.value)
+                  }
+                }}
+              >
+                Sprint {index + 1}: {item.title}
+              </AccordionTrigger>
+              <AccordionContent ref={refContent}>
+                {sprintId && <ListIssue sprintId={sprintId} />}
+              </AccordionContent>
+            </AccordionItem>
+          )
+        })}
+      </Accordion>
+      <Accordion
+        type='single'
+        collapsible
+        className='bg-accent mt-[50px] w-full px-2'
+      >
+        <SprintAccordionProductBacklog />
+      </Accordion>
+    </div>
   )
 }
+
 type ListIssueProps = {
   sprintId: Id
 }

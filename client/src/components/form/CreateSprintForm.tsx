@@ -20,6 +20,7 @@ import {
 import { useAppSelector } from '@/context/redux/hook'
 import { useCreateSprintMutation } from '@/feature/sprint/sprint.api'
 import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
+import { handleErrorApi } from '@/lib/form'
 import {
   CreateSprintFormSchema,
   CreateSprintFormType
@@ -87,7 +88,11 @@ const CreateSprintForm = () => {
       .then(() => {
         dispatch(closeDialogCreateSprint())
       })
-      .catch(() => {
+      .catch((error) => {
+        handleErrorApi({
+          error: error,
+          setError: form.setError
+        })
         toast.error('Create sprint failed')
       })
   }
