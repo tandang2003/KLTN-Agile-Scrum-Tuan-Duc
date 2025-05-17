@@ -22,7 +22,8 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 
-type BoardType = {
+type BoardProps = {
+  data: BoardModelType
   onMove?: ({
     active,
     columnTo,
@@ -34,7 +35,7 @@ type BoardType = {
   }) => void
 }
 
-const Board = ({ onMove }: BoardType) => {
+const Board = ({ data: board, onMove }: BoardProps) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10
@@ -81,7 +82,7 @@ const Board = ({ onMove }: BoardType) => {
     // Xác đinh card id đang được kéo
     const activeDragId = event.active.id
     console.log('drag start', activeDragId)
-    activeItemRef.current = activeDragId
+    activeItemRef.current = activeDragId as string
     activeDragTypeRef.current = 'card'
   }, [])
 
@@ -292,27 +293,24 @@ const Board = ({ onMove }: BoardType) => {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <ClickOutsideProvider>
-        <div className='flex gap-3 bg-white'>
-          {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
-            <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
-              <div className='w-[350px]'>
-                <Column
-                  id={keyColumn}
-                  name={valueColumn.name}
-                  items={valueColumn.cardIds
-                    .map((cardId) =>
-                      data.cards.find((card) => card.id === cardId)
-                    )
-                    .filter((item) => item !== undefined)}
-                  container=' bg-column rounded-sm h-full'
-                  key={keyColumn}
-                />
-              </div>
-            </SortableContext>
-          ))}
-        </div>
-      </ClickOutsideProvider>
+      <div className='flex bg-transparent'>
+        {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
+          <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
+            <div className='relative z-20 shrink-0 basis-[350px] border'>
+              <Column
+                id={keyColumn}
+                name={valueColumn.name}
+                items={valueColumn.cardIds
+                  .map((cardId) =>
+                    data.cards.find((card) => card.id === cardId)
+                  )
+                  .filter((item) => item !== undefined)}
+                key={keyColumn}
+              />
+            </div>
+          </SortableContext>
+        ))}
+      </div>
       <DragOverlay dropAnimation={dropAnimation}>
         {activeDragTypeRef.current === 'card' && activeItemData && (
           <Card

@@ -5,17 +5,17 @@ const THUMBNAIL_CARD =
 
 export const board: BoardModelType = {
   columns: {
-    backlog: {
+    BACKLOG: {
       name: 'Backlog',
       cardIds: ['card-2', 'card-1']
     },
-    todo: {
+    TODO: {
       name: 'To do',
       cardIds: ['card-7', 'card-8']
     },
-    doing: { name: 'Doing', cardIds: [] },
-    review: { name: 'Review', cardIds: [] },
-    done: { name: 'Done', cardIds: [] }
+    INPROCESS: { name: 'Doing', cardIds: [] },
+    REVIEW: { name: 'Review', cardIds: [] },
+    DONE: { name: 'Done', cardIds: [] }
   },
   cards: [
     { id: 'card-2', name: 'Phân tích nghiệp vụ', point: 3 },

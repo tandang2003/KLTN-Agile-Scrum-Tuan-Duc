@@ -1,8 +1,8 @@
 import {
-  CardHeader,
   Card,
   CardDescription,
-  CardFooter
+  CardFooter,
+  CardHeader
 } from '@/components/ui/card'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { NavLink } from 'react-router-dom'

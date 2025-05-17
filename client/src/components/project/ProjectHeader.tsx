@@ -23,7 +23,9 @@ const ProjectHeader = ({
 }: OverviewHeaderProps) => {
   return (
     <div className={className}>
-      <h2 className='h2 pb-2'>{name}</h2>
+      <h2 className='h2 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 pb-2 text-white'>
+        {name}
+      </h2>
       <BreadcrumbHeader breadcrumbs={breadcrumbs} />
     </div>
   )

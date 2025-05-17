@@ -1,4 +1,5 @@
 import { logoutThunk } from '@/feature/auth/auth.slice'
+import tokenService from '@/services/token.service'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
@@ -11,6 +12,7 @@ type WorkspaceState = {
   listItemSideBar: Pick<WorkSpaceModel, 'id' | 'name'>[]
 }
 const initialState: WorkspaceState = {
+  currentId: tokenService.getWorkspaceLatest() ?? undefined,
   isDialogCreateOpen: false,
   listItemSideBar: [],
   isFetching: false,

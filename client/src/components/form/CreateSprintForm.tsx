@@ -18,6 +18,9 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useAppSelector } from '@/context/redux/hook'
+import { useCreateSprintMutation } from '@/feature/sprint/sprint.api'
+import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
+import { handleErrorApi } from '@/lib/form'
 import {
   CreateSprintFormSchema,
   CreateSprintFormType
@@ -25,13 +28,19 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
 import { isNumber } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import { toast } from 'sonner'
 
 type DurationType = 1 | 2 | 3 | 4 | 'custom'
 
 const CreateSprintForm = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
+  const [createSprint] = useCreateSprintMutation()
+
+  const dispatch = useDispatch()
+
   const [durationValue, setDurationValue] = useState<{
     active: DurationType
     list: DurationType[]
@@ -43,16 +52,13 @@ const CreateSprintForm = () => {
   const form = useForm<CreateSprintFormType>({
     resolver: zodResolver(CreateSprintFormSchema),
     defaultValues: {
-      workspaceId: workspaceId as string,
       title: '',
       predict: new Date(),
-      storyPoint: 0,
+      minimumStoryPoint: 0,
       start: new Date(),
       end: addDays(new Date(), 7)
     }
   })
-
-  useEffect(() => {}, [])
 
   const handleSelectDurationChange = (value: string) => {
     if (value) {
@@ -67,7 +73,29 @@ const CreateSprintForm = () => {
     }
   }
 
-  const handleSubmit = (values: CreateSprintFormType) => {}
+  const handleSubmit = (values: CreateSprintFormType) => {
+    if (!workspaceId) return
+    createSprint({
+      ...values,
+      workspaceId: workspaceId
+    })
+      .unwrap()
+      .then(({ id, title }) => {
+        toast.success('Create sprint success', {
+          description: `Sprint #${id} - ${title}`
+        })
+      })
+      .then(() => {
+        dispatch(closeDialogCreateSprint())
+      })
+      .catch((error) => {
+        handleErrorApi({
+          error: error,
+          setError: form.setError
+        })
+        toast.error('Create sprint failed')
+      })
+  }
 
   return (
     <div>
@@ -89,7 +117,7 @@ const CreateSprintForm = () => {
             />
             <FormField
               control={form.control}
-              name='storyPoint'
+              name='minimumStoryPoint'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Minimum Story Point</FormLabel>
@@ -103,7 +131,10 @@ const CreateSprintForm = () => {
                       placeholder='1'
                       {...field}
                       onChange={(event) =>
-                        form.setValue('storyPoint', event.target.valueAsNumber)
+                        form.setValue(
+                          'minimumStoryPoint',
+                          event.target.valueAsNumber
+                        )
                       }
                     />
                   </FormControl>
