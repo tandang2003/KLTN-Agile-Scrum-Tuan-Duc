@@ -1,3 +1,4 @@
+import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 
 type ColumnModelType = {

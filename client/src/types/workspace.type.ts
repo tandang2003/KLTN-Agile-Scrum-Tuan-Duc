@@ -1,6 +1,5 @@
 import { PageRequest } from '@/types/http.type'
 import { ProjectModel } from '@/types/model/project.model'
-import { SprintModel } from '@/types/model/sprint.model'
 import { UserModel } from '@/types/model/user.model'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
@@ -90,8 +89,6 @@ type ProjectWorkspaceDataTable = Pick<
   'id' | 'name' | 'description' | 'createdAt'
 >
 
-type SprintWorkspaceDataTable = SprintModel
-
 type InviteStudentWorkspaceReqType = {
   workspaceId: Id
   studentIds: Id[]
@@ -110,8 +107,7 @@ export type {
   UpdateWorkspaceSchemaType,
   UpdateWorkspaceReqType,
   ListProjectWorkspaceReq,
-  ProjectWorkspaceDataTable,
-  SprintWorkspaceDataTable
+  ProjectWorkspaceDataTable
 }
 
 export { CreateWorkspaceSchema, UpdateWorkspaceSchema }

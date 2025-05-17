@@ -7,10 +7,6 @@ type RestoreTokenProps = {
 }
 
 const RestoreToken = ({ children }: RestoreTokenProps) => {
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    dispatch(restoreUserThunk())
-  }, [dispatch])
   return children
 }
 

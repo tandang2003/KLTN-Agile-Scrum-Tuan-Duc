@@ -43,4 +43,37 @@ const formatDate = (
 
   return format(date, resolvedPattern)
 }
-export { cn, formatDate, invertColor, toQueryString, uuid }
+// Function overload signatures
+function loadSessionStorage<T>(key: string, fallback: T, isObj?: false): T // Case where not parsing JSON, returning raw value
+function loadSessionStorage<T>(
+  key: string,
+  fallback: T,
+  isObj: true
+): T extends object ? T : never // Case where parsing JSON, returning object
+function loadSessionStorage<T>(
+  key: string,
+  fallback: T,
+  isObj: boolean = false
+): T {
+  // Default function implementation
+  try {
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return fallback
+
+    if (isObj) {
+      try {
+        return JSON.parse(raw) as T
+      } catch (parseError) {
+        console.warn(`Failed to parse JSON for key "${key}"`, parseError)
+        return fallback
+      }
+    }
+
+    return raw as T
+  } catch (e) {
+    console.warn(`Failed to load key "${key}" from sessionStorage`, e)
+    return fallback
+  }
+}
+
+export { cn, formatDate, invertColor, toQueryString, uuid, loadSessionStorage }

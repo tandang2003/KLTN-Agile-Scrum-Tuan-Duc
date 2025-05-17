@@ -1,8 +1,8 @@
 import { UserModel } from '@/types/model/user.model'
-import { UniqueIdentifier } from '@dnd-kit/core'
+import { Id } from '@/types/other.type'
 
 type WorkSpaceModel = {
-  id: UniqueIdentifier
+  id: Id
   name: string
   owner: UserModel
   description?: string

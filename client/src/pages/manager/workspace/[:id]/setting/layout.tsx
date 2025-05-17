@@ -1,4 +1,4 @@
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,19 +6,10 @@ import {
   BreadcrumbList
 } from '@/components/ui/breadcrumb'
 import Icon from '@/components/Icon'
-import { useAppDispatch } from '@/context/redux/hook'
-import { useEffect } from 'react'
-import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
+import { useAppSelector } from '@/context/redux/hook'
 
 const SettingLayout = () => {
-  const { workspaceId } = useParams()
-
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    if (workspaceId) {
-      dispatch(setCurrentWorkspaceId(workspaceId))
-    }
-  }, [dispatch, workspaceId])
+  const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   return (
     <section className='container-sidebar'>
       <Breadcrumb className='py-3 pt-2'>
