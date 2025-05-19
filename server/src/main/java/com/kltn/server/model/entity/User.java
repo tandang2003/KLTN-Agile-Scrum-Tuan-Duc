@@ -45,7 +45,7 @@ public class User extends BaseEntity implements UserDetails {
 //    @ManyToMany(mappedBy = "members")
 //    private List<Workspace> workspacesJoined;
 
-    @OneToMany(mappedBy = "assigner")
+    @OneToMany(mappedBy = "assignee")
     private Set<Issue> assignedIssues;
     // One user can review multiple tasks
     @OneToMany(mappedBy = "reviewer")

@@ -9,6 +9,7 @@ import com.kltn.server.model.type.task.IssueTag;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
@@ -21,7 +22,7 @@ public class IssueCreateRequest {
     private String name;
     @NotEmpty
     private String projectId;
-    @NotEmpty
+//    @NotEmpty
     private String sprintId;
     @Enumerated(EnumType.STRING)
     private IssueStatus status;
@@ -33,11 +34,11 @@ public class IssueCreateRequest {
     private List<Topic> topics;
     private List<SubTask> subTasks;
     private List<Attachment> attachments;
-    @NotEmpty
+//    @NotEmpty
     private String description;
-    @NotEmpty
+//    @NotEmpty
     private String assigneeId;
-    @NotEmpty
+//    @NotEmpty
     private String reviewerId;
     @DateTimeFormat(pattern = LOCAL_DATE_TIME)
     private Instant start;

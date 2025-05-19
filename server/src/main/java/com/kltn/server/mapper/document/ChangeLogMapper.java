@@ -8,7 +8,7 @@ import com.kltn.server.model.entity.Project;
 public interface ChangeLogMapper {
     ChangeLogRequest taskToCreateLogRequest(com.kltn.server.model.entity.Issue task, Issue issueMongo);
 
-    ChangeLog ProjectToCreateLog(Project task, com.kltn.server.model.collection.Project taskMongo);
+    ChangeLogRequest ProjectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo);
 
     ChangeLog TaskToUpdate( String[] properties,com.kltn.server.model.entity.Issue task, Issue issueMongo );
 

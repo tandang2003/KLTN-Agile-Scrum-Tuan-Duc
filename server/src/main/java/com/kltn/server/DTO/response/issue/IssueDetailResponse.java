@@ -17,9 +17,9 @@ public class IssueDetailResponse {
     private int position;
     private String description;
     private List<ResourceResponse> resources;
-    private AuthenticationResponse.UserDetailDTO assigner;
+    private AuthenticationResponse.UserDetailDTO assignee;
     private AuthenticationResponse.UserDetailDTO reviewer;
-    private String title;
+    private String name;
     private int storyPoint;
     private IssueStatus status;
     private IssuePriority priority;
@@ -40,9 +40,9 @@ public class IssueDetailResponse {
         private int position;
         private String description;
         private List<ResourceResponse> resources;
-        private     AuthenticationResponse.UserDetailDTO assigner;
+        private     AuthenticationResponse.UserDetailDTO assignee;
         private     AuthenticationResponse.UserDetailDTO reviewer;
-        private String title;
+        private String name;
         private int storyPoint;
         private IssueStatus status;
         private IssuePriority priority;
@@ -69,8 +69,8 @@ public class IssueDetailResponse {
             return this;
         }
 
-        public IssueDetailResponseBuilder assigner(    AuthenticationResponse.UserDetailDTO assigner) {
-            this.assigner = assigner;
+        public IssueDetailResponseBuilder assignee(    AuthenticationResponse.UserDetailDTO assignee) {
+            this.assignee = assignee;
             return this;
         }
 
@@ -79,8 +79,8 @@ public class IssueDetailResponse {
             return this;
         }
 
-        public IssueDetailResponseBuilder title(String title) {
-            this.title = title;
+        public IssueDetailResponseBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -149,9 +149,9 @@ public class IssueDetailResponse {
         this.position = builder.position;
         this.description = builder.description;
         this.resources = builder.resources;
-        this.assigner = builder.assigner;
+        this.assignee = builder.assignee;
         this.reviewer = builder.reviewer;
-        this.title = builder.title;
+        this.name = builder.name;
         this.storyPoint = builder.storyPoint;
         this.status = builder.status;
         this.priority = builder.priority;
@@ -195,12 +195,12 @@ public class IssueDetailResponse {
         this.resources = resources;
     }
 
-    public AuthenticationResponse.UserDetailDTO getAssigner() {
-        return assigner;
+    public AuthenticationResponse.UserDetailDTO getAssignee() {
+        return assignee;
     }
 
-    public void setAssigner(AuthenticationResponse.UserDetailDTO assigner) {
-        this.assigner = assigner;
+    public void setAssigner(AuthenticationResponse.UserDetailDTO assignee) {
+        this.assignee = assignee;
     }
 
     public AuthenticationResponse.UserDetailDTO getReviewer() {
@@ -211,12 +211,12 @@ public class IssueDetailResponse {
         this.reviewer = reviewer;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String title) {
+        this.name = title;
     }
 
     public int getStoryPoint() {
