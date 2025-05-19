@@ -6,6 +6,7 @@ import com.kltn.server.model.collection.Issue;
 import com.kltn.server.repository.document.IssueLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class IssueMongoService {
         this.issueLogRepository = issueLogRepository;
     }
 
+    @Transactional
     public Issue save(Issue issue) {
         var taskSaved = issueLogRepository.save(issue);
         if (taskSaved == null || taskSaved.getId() == null)

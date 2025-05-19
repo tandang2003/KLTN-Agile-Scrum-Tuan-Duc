@@ -20,7 +20,7 @@ public class LogProject extends ILog {
         super();
     }
 
-    public LogProjectBuilder builder() {
+    public static LogProjectBuilder builder() {
         return new LogProjectBuilder();
     }
 

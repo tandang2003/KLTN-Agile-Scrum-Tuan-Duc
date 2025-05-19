@@ -30,8 +30,8 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
     }
 
     @Override
-    public ChangeLog ProjectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo) {
-        ChangeLog.ChangeLogBuilder changeLogBuilder = ChangeLog.builder();
+    public ChangeLogRequest ProjectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo) {
+        ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
         changeLogBuilder.type(LogType.CREATE)
                 .idRef(project.getId())
                 .entityTarget(EntityTarget.PROJECT.name())
