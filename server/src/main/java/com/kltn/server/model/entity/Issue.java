@@ -17,20 +17,26 @@ public class Issue extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
-            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id")
-    })
-    private ProjectSprint projectSprint;
+    @JoinColumn(name = "project_id", updatable = false, nullable = false)
+    private Project project;
+    @ManyToOne
+    @JoinColumn(name = "sprint_id", updatable = false)
+    private Sprint sprint;
+    //    @ManyToOne
+//    @JoinColumns({
+//            @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
+//            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id", nullable = true)
+//    })
+//    private ProjectSprint projectSprint;
     @OneToMany(mappedBy = "issue")
     private List<Resource> resources;
     @ManyToOne
-    @JoinColumn(name = "assigner")
-    private User assigner;
+    @JoinColumn(name = "assignee_id")
+    private User assignee;
     @ManyToOne
-    @JoinColumn(name = "reviewer")
+    @JoinColumn(name = "reviewer_id")
     private User reviewer;
-    private String title;
+    private String name;
     @Enumerated(EnumType.STRING)
     private IssueStatus status;
     private int storyPoint;
@@ -54,7 +60,7 @@ public class Issue extends BaseEntity {
 
     public Issue(IssueEntityBuilder builder) {
         super(builder);
-        this.title = builder.title;
+        this.name = builder.name;
         this.position = builder.position;
         this.description = builder.description;
         this.status = builder.status;
@@ -64,15 +70,15 @@ public class Issue extends BaseEntity {
         this.numChangeOfPriority = builder.numChangeOfPriority;
         this.numChangeOfDescription = builder.numChangeOfDescription;
         this.complexOfDescription = builder.complexOfDescription;
-        this.assigner = builder.assigner;
+        this.assignee = builder.assignee;
         this.reviewer = builder.reviewer;
-//        this.project = builder.project;
-//        this.sprint = builder.sprint;
         this.dtStart = builder.dtStart;
         this.dtEnd = builder.dtEnd;
         this.dtPlanning = builder.dtPlanning;
         this.resources = builder.resources;
-        this.projectSprint = builder.projectSprint;
+//        this.projectSprint = builder.projectSprint;
+        this.project = builder.project;
+        this.sprint = builder.sprint;
     }
 
     public Issue() {
@@ -85,7 +91,7 @@ public class Issue extends BaseEntity {
     public static class IssueEntityBuilder extends BaseEntityBuilder<Issue, IssueEntityBuilder> {
         private int position;
         private List<Resource> resources;
-        private String title;
+        private String name;
         private String description;
         private IssueStatus status;
         private int storyPoint;
@@ -97,15 +103,27 @@ public class Issue extends BaseEntity {
 
         //        private Sprint sprint;
 //        private Project project;
-        private User assigner;
+        private User assignee;
         private User reviewer;
         private Instant dtStart;
         private Instant dtEnd;
         private Instant dtPlanning;
-        private ProjectSprint projectSprint;
+        private Project project;
+        private Sprint sprint;
+//        private ProjectSprint projectSprint;
 
-        public IssueEntityBuilder title(String title) {
-            this.title = title;
+        public IssueEntityBuilder project(Project project) {
+            this.project = project;
+            return this;
+        }
+
+        public IssueEntityBuilder sprint(Sprint sprint) {
+            this.sprint = sprint;
+            return this;
+        }
+
+        public IssueEntityBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -159,8 +177,8 @@ public class Issue extends BaseEntity {
             return this;
         }
 
-        public IssueEntityBuilder assigner(User assigner) {
-            this.assigner = assigner;
+        public IssueEntityBuilder assignee(User assignee) {
+            this.assignee = assignee;
             return this;
         }
 
@@ -194,10 +212,10 @@ public class Issue extends BaseEntity {
             return this;
         }
 
-        public IssueEntityBuilder projectSprint(ProjectSprint projectSprint) {
-            this.projectSprint = projectSprint;
-            return this;
-        }
+//        public IssueEntityBuilder projectSprint(ProjectSprint projectSprint) {
+//            this.projectSprint = projectSprint;
+//            return this;
+//        }
 
         @Override
         protected IssueEntityBuilder self() {
@@ -226,12 +244,12 @@ public class Issue extends BaseEntity {
 //        this.project = project;
 //    }
 
-    public User getAssigner() {
-        return assigner;
+    public User getAssignee() {
+        return assignee;
     }
 
-    public void setAssigner(User assigner) {
-        this.assigner = assigner;
+    public void setAssignee(User assignee) {
+        this.assignee = assignee;
     }
 
     public User getReviewer() {
@@ -242,12 +260,12 @@ public class Issue extends BaseEntity {
         this.reviewer = reviewer;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public IssueStatus getStatus() {
@@ -311,13 +329,13 @@ public class Issue extends BaseEntity {
         return resources;
     }
 
-    public ProjectSprint getProjectSprint() {
-        return projectSprint;
-    }
-
-    public void setProjectSprint(ProjectSprint projectSprint) {
-        this.projectSprint = projectSprint;
-    }
+//    public ProjectSprint getProjectSprint() {
+//        return projectSprint;
+//    }
+//
+//    public void setProjectSprint(ProjectSprint projectSprint) {
+//        this.projectSprint = projectSprint;
+//    }
 
     public void setResources(List<Resource> resources) {
 
@@ -364,4 +382,19 @@ public class Issue extends BaseEntity {
         this.dtPlanning = dtPlanning;
     }
 
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Sprint getSprint() {
+        return sprint;
+    }
+
+    public void setSprint(Sprint sprint) {
+        this.sprint = sprint;
+    }
 }

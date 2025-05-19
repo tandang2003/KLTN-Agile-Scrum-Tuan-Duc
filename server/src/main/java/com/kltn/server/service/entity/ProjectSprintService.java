@@ -9,6 +9,9 @@ import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ProjectSprintService {
@@ -36,11 +39,39 @@ public class ProjectSprintService {
         return projectSprintRepository.findById(projectSprintId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_SPRINT_PROJECT_RELATION).build());
     }
 
-    public ProjectSprint save(ProjectSprint projectSprint){
+    public ProjectSprint save(ProjectSprint projectSprint) {
         ProjectSprint savedProjectSprint = projectSprintRepository.save(projectSprint);
         if (savedProjectSprint == null || savedProjectSprint.getId() == null) {
             throw AppException.builder().error(Error.SERVER_ERROR).build();
         }
         return savedProjectSprint;
+    }
+
+    @Transactional
+    public void save(String project, List<String> sprints) {
+//        var projectSprintId = ProjectSprintId.builder();
+//        projectSprintId.projectId(project);
+        sprints.forEach(
+                sprintId -> {
+//                    projectSprintId.sprintId(sprintId);
+//                    ProjectSprint projectSprint = ProjectSprint.builder().id(projectSprintId.build()).build();
+                    projectSprintRepository.save(project, sprintId);
+                }
+        );
+
+    }
+
+//    @Transactional
+    public void save(List<String> projectIds, String sprintId) {
+//        var projectSprintId = ProjectSprintId.builder();
+//        projectSprintId.sprintId(sprintId);
+        projectIds.forEach(
+                projectId -> {
+//                    projectSprintId.projectId(projectId);
+//                    ProjectSprint projectSprint = ProjectSprint.builder().id(projectSprintId.build()).build();
+                    projectSprintRepository.save(projectId, sprintId);
+
+                }
+        );
     }
 }
