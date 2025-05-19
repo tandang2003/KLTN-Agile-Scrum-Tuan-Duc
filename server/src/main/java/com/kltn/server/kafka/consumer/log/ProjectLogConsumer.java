@@ -17,7 +17,7 @@ public class ProjectLogConsumer {
     }
 
     @KafkaListener(topics = "project-created", groupId = "create-1")
-    public void consumeObj1(ChangeLogRequest project) {
+    public void consumeProjectLog(ChangeLogRequest project) {
         var projectLog = ChangeLog.builder()
                 .type(project.type())
                 .idRef(project.idRef())
