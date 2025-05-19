@@ -1,35 +1,27 @@
 package com.kltn.server.service.entity;
 
-import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.mapper.entity.IssueMapperImpl;
 import com.kltn.server.mapper.entity.SprintMapper;
-import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.SprintRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class SprintService {

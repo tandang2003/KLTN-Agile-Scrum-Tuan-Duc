@@ -15,22 +15,15 @@ import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.model.Attachment;
 import com.kltn.server.model.entity.*;
-import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
-import com.kltn.server.model.entity.relationship.ProjectSprint;
-import com.kltn.server.model.type.task.EntityTarget;
-import com.kltn.server.model.type.task.LogType;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.stream.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class IssueService {

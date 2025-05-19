@@ -1,11 +1,9 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintCreationRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.service.entity.SprintService;
 import jakarta.validation.Valid;
@@ -13,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
