@@ -5,6 +5,7 @@ import com.kltn.server.model.collection.model.Topic;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document
@@ -78,6 +79,9 @@ public class Project extends BaseDocument {
     }
 
     public List<Topic> getTopics() {
+        if (topics == null) {
+            return new ArrayList<>();
+        }
         return topics;
     }
 

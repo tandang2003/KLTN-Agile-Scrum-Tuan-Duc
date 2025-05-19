@@ -12,6 +12,7 @@ import com.kltn.server.error.Error;
 import com.kltn.server.mapper.entity.IssueMapperImpl;
 import com.kltn.server.mapper.entity.SprintMapper;
 import com.kltn.server.model.entity.Issue;
+import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
@@ -23,6 +24,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +54,10 @@ public class SprintService {
         // sprint.setProject(project);
         sprint.setWorkspace(workspace);
         sprint = sprintRepository.save(sprint);
-        Sprint finalSprint = sprint;
-        workspace.getProjects().forEach(prj -> {
-            projectSprintService.create(prj, finalSprint);
-        });
+        Set<Project> projects = workspace.getProjects();
+        if (projects != null && !projects.isEmpty()) {
+            projectSprintService.save(projects.stream().map(Project::getId).toList(), sprint.getId());
+        }
 
         return ApiResponse.<SprintResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -65,6 +67,7 @@ public class SprintService {
 
     }
 
+    //TODO: FIX
     public ApiResponse<SprintResponse> studentUpdateSprint(
             SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
         ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
@@ -80,7 +83,7 @@ public class SprintService {
                 .message("Update sprint successfully")
                 .build();
     }
-
+//TODO: checking make it change cron job
     public ApiResponse<SprintResponse> teacherUpdateSprint(
             SprintTeacherUpdateTimeRequest updateRequest) {
         Sprint sprint = getSprintById(updateRequest.id());
@@ -121,7 +124,7 @@ public class SprintService {
 
     public Sprint saveSprint(Sprint sprint) {
         try {
-            return sprintRepository.save(sprint);
+            return sprintRepository.saveAndFlush(sprint);
         } catch (Exception e) {
             throw AppException.builder().error(Error.SERVER_ERROR).build();
         }

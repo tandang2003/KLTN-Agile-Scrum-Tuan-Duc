@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Primary;
 import java.util.ArrayList;
 @Primary
 public class LogTaskMapperIml implements LogTaskMapper {
-
+//TODO: Fix
     public LogTask entityToLogDomain(com.kltn.server.model.entity.Issue entity, Issue document) {
         var builder = LogTask.builder();
         if (entity != null) {
@@ -21,11 +21,11 @@ public class LogTaskMapperIml implements LogTaskMapper {
             builder.dtEnd(entity.getDtEnd());
             builder.dtPlanning(entity.getDtPlanning());
             builder.complexDescription(entity.getComplexOfDescription());
-            if (entity.getAssigner() != null) builder.assigner(entity.getAssigner().getId());
+            if (entity.getAssignee() != null) builder.assigner(entity.getAssignee().getId());
             if (entity.getReviewer() != null) builder.reviewer(entity.getReviewer().getId());
             if (entity.getPriority() != null) {
-                builder.projectId(entity.getProjectSprint().getId().getProjectId());
-                builder.sprintId(entity.getProjectSprint().getId().getSprintId());
+//                builder.projectId(entity.getProjectSprint().getId().getProjectId());
+//                builder.sprintId(entity.getProjectSprint().getId().getSprintId());
             }
             if (document.getTopics() != null) builder.topics(new ArrayList<>(document.getTopics()));
             if (document.getAttachment() != null) builder.attachment(new ArrayList<>(document.getAttachment()));

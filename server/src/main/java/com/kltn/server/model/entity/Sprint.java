@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "sprints")
@@ -28,7 +29,8 @@ public class Sprint extends BaseEntity {
     private int miniumStoryPoint;
     @Column(name = "dt_predict")
     private Instant dtPredict;
-
+    @OneToMany(mappedBy = "sprint")
+    private List<Issue> issues;
     public Sprint(SprintEntityBuilder sprintBuilder) {
         super(sprintBuilder);
 //        this.project = sprintBuilder.project;
@@ -173,6 +175,7 @@ public class Sprint extends BaseEntity {
     public List<ProjectSprint> getProjectSprints() {
         return projectSprints;
     }
+
     public void setProjectSprints(List<ProjectSprint> projectSprints) {
         this.projectSprints = projectSprints;
     }

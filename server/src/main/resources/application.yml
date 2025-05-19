@@ -34,7 +34,7 @@ spring:
           json:
             type:
               mapping:
-                "send_project_customer: com.kltn.server.DTO.request.log.ProjectLogRequest, task-create: com.kltn.server.DTO.request.log.ChangeLogRequest"
+                "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-create: com.kltn.server.DTO.request.log.ChangeLogRequest"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -45,7 +45,7 @@ spring:
               packages: send_project_customer, send_mail
             type:
               mapping:
-                "send_project_customer: com.kltn.server.DTO.request.log.ProjectLogRequest, task-create: com.kltn.server.DTO.request.log.ChangeLogRequest"
+                "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-create: com.kltn.server.DTO.request.log.ChangeLogRequest"
     bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
 
 springdoc:
