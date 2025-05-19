@@ -23,8 +23,8 @@ public class ProjectSprint {
     @JoinColumn(name = "sprint_id", nullable = false)
     private Sprint sprint;
 
-    @OneToMany(mappedBy = "projectSprint", fetch = FetchType.LAZY)
-    private List<Issue> issues;
+//    @OneToMany(mappedBy = "projectSprint", fetch = FetchType.LAZY)
+//    private List<Issue> issues;
 
     @Column(name = "dt_planning")
     private Instant dtPlanning;
@@ -42,7 +42,7 @@ public class ProjectSprint {
         this.id = builder.id;
         this.project = builder.project;
         this.sprint = builder.sprint;
-        this.issues = builder.issues;
+//        this.issues = builder.issues;
         this.dtPlanning = builder.DTPlanning;
         this.dtPreview = builder.DTPreview;
     }
@@ -114,13 +114,13 @@ public class ProjectSprint {
         this.sprint = sprint;
     }
 
-    public List<Issue> getTasks() {
-        return issues;
-    }
-
-    public void setTasks(List<Issue> issues) {
-        this.issues = issues;
-    }
+//    public List<Issue> getTasks() {
+//        return issues;
+//    }
+//
+//    public void setTasks(List<Issue> issues) {
+//        this.issues = issues;
+//    }
 
     public Instant getDtPlanning() {
         return dtPlanning;

@@ -17,7 +17,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-//Todo find way better
 @Component
 public class TokenKeyUtils {
     @Value("${spring.application.security.access-token.key.private-key}")

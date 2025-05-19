@@ -17,12 +17,16 @@ public class Project extends BaseEntity {
     private List<WorkspacesUsersProjects> workspacesUserProjects;
     @OneToMany(mappedBy = "project")
     private List<ProjectSprint> projectSprints;
+    @OneToMany(mappedBy = "project")
+    private List<Issue> issues;
 
     public Project(ProjectEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
         this.description = builder.description;
         this.projectSprints = builder.projectSprints;
+        this.workspacesUserProjects = builder.workspacesUserProjects;
+        this.issues = builder.issues;
     }
 
     public Project() {
@@ -35,6 +39,8 @@ public class Project extends BaseEntity {
         private String description;
         private List<ProjectSprint> projectSprints;
         private List<WorkspacesUsersProjects> workspacesUserProjects;
+        private List<Issue> issues;
+
         @Override
         protected ProjectEntityBuilder self() {
             return this;
@@ -52,6 +58,11 @@ public class Project extends BaseEntity {
 
         public ProjectEntityBuilder projectSprints(List<ProjectSprint> projectSprints) {
             this.projectSprints = projectSprints;
+            return this;
+        }
+
+        public ProjectEntityBuilder issues(List<Issue> issues) {
+            this.issues = issues;
             return this;
         }
 

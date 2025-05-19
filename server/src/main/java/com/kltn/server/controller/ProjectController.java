@@ -5,11 +5,10 @@ import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
-import com.kltn.server.model.entity.User;
 import com.kltn.server.service.entity.ProjectService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,11 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProjectResponse>> createProject(
             @RequestBody @Valid ProjectCreationRequest creationRequest) {
-        return ResponseEntity.ok().body(projectService.createProject(creationRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(creationRequest));
     }
+
+//    TODO update project
+
 
     @PostMapping("/invite")
     public ResponseEntity<ApiResponse<Void>> addUserToProject(
@@ -51,5 +53,6 @@ public class ProjectController {
         ApiResponse<List<UserResponse>> members = projectService.getMembersOfProject(projectId);
         return ResponseEntity.status(members.getCode()).body(members);
     }
+
 
 }
