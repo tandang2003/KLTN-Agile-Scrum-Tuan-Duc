@@ -25,7 +25,7 @@ public record IssueResponse(String id,
                             List<SubTaskResponse> subTasks,
                             List<AttachmentResponse> attachments,
                             String description,
-                            AuthenticationResponse.UserDetailDTO assigner,
+                            AuthenticationResponse.UserDetailDTO assignee,
                             AuthenticationResponse.UserDetailDTO reviewer,
                             Instant start,
                             Instant end
@@ -47,13 +47,13 @@ public record IssueResponse(String id,
         private List<SubTaskResponse> subTasks;
         private List<AttachmentResponse> attachments;
         private String description;
-        private AuthenticationResponse.UserDetailDTO assigner;
+        private AuthenticationResponse.UserDetailDTO assignee;
         private AuthenticationResponse.UserDetailDTO reviewer;
         private Instant start;
         private Instant end;
 
         public IssueResponse build() {
-            return new IssueResponse(id,name, projectId, sprintId, status, priority, tag, position, topics, subTasks, attachments, description, assigner, reviewer, start, end);
+            return new IssueResponse(id,name, projectId, sprintId, status, priority, tag, position, topics, subTasks, attachments, description, assignee, reviewer, start, end);
         }
 
         public IssueResponseBuilder id(String id) {
@@ -115,8 +115,8 @@ public record IssueResponse(String id,
             return this;
         }
 
-        public IssueResponseBuilder assigner(AuthenticationResponse.UserDetailDTO assigner) {
-            this.assigner = assigner;
+        public IssueResponseBuilder assignee(AuthenticationResponse.UserDetailDTO assignee) {
+            this.assignee = assignee;
             return this;
         }
 

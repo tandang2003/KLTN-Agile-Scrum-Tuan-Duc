@@ -14,27 +14,20 @@ import com.kltn.server.mapper.entity.IssueMapper;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.model.Attachment;
-import com.kltn.server.model.entity.Issue;
-import com.kltn.server.model.entity.Resource;
-import com.kltn.server.model.entity.User;
-import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
-import com.kltn.server.model.entity.relationship.ProjectSprint;
-import com.kltn.server.model.type.task.EntityTarget;
-import com.kltn.server.model.type.task.LogType;
+import com.kltn.server.model.entity.*;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.stream.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class IssueService {
+    private final SprintService sprintService;
     private IssueMapper taskMapper;
     private ProjectSprintService projectSprintService;
     private IssueRepository taskRepository;
@@ -42,9 +35,10 @@ public class IssueService {
     private ResourceService resourceService;
     private IssueMongoService issueMongoService;
     private ChangeLogMapper changeLogMapper;
+    private ProjectService projectService;
 
     @Autowired
-    public IssueService(ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository) {
+    public IssueService(ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService) {
         this.taskMapper = taskMapper;
         this.taskRepository = taskRepository;
         this.projectSprintService = projectSprintService;
@@ -52,20 +46,32 @@ public class IssueService {
         this.issueMongoService = issueMongoService;
         this.changeLogMapper = changeLogMapper;
         this.resourceService = resourceService;
+        this.projectService = projectService;
+        this.sprintService = sprintService;
     }
 
     @SendKafkaEvent(topic = "task-create")
+    @Transactional
     public ApiResponse<IssueResponse> createTask(IssueCreateRequest issueCreateRequest) {
-        ProjectSprintId projectSprintId = ProjectSprintId.builder().projectId(issueCreateRequest.getProjectId()).sprintId(issueCreateRequest.getSprintId()).build();
-        ProjectSprint projectSprint = projectSprintService.getProjectSprintById(projectSprintId);
-        User assigner = userService.getUserByUniId(issueCreateRequest.getAssigneeId());
-        User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
+        Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
         var task = taskMapper.toEntity(issueCreateRequest);
-        task.setAssigner(assigner);
-        task.setReviewer(reviewer);
-        task.setProjectSprint(projectSprint);
-        List<Resource> resources = issueCreateRequest.getAttachments().stream().map(id -> resourceService.getById(id.getResourceId())).toList();
-        task.setResources(resources);
+        task.setProject(project);
+        if (issueCreateRequest.getAssigneeId() != null && !issueCreateRequest.getAssigneeId().isEmpty()) {
+            User assignee = userService.getUserByUniId(issueCreateRequest.getAssigneeId());
+            task.setAssignee(assignee);
+        }
+        if (issueCreateRequest.getReviewerId() != null && !issueCreateRequest.getReviewerId().isEmpty()) {
+            User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
+            task.setReviewer(reviewer);
+        }
+        if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
+            Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
+            task.setSprint(sprint);
+        }
+        if (issueCreateRequest.getAttachments()!=null&& !issueCreateRequest.getAttachments().isEmpty()) {
+            List<Resource> resources = issueCreateRequest.getAttachments().stream().map(id -> resourceService.getById(id.getResourceId())).toList();
+            task.setResources(resources);
+        }
         task = taskRepository.save(task);
         if (task == null || task.getId() == null) {
             throw AppException.builder().error(Error.SERVER_ERROR).build();
@@ -99,7 +105,7 @@ public class IssueService {
 
     }
 
-    //    @SendKafkaEvent(topic = "update-task")
+    @SendKafkaEvent(topic = "update-task")
     @Transactional
     public ApiResponse<IssueResponse> updateTask(IssueUpdateRequest updateRequest) {
         String id = updateRequest.getId();
@@ -109,7 +115,7 @@ public class IssueService {
         ChangeLog changeLog;
         switch (fliedChanged) {
             case "name":
-                task.setTitle(updateRequest.getName());
+                task.setName(updateRequest.getName());
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"name"}, task, taskMongo);
                 break;
@@ -163,7 +169,7 @@ public class IssueService {
                 break;
             case "assignee":
                 User assignee = userService.getUserByUniId(updateRequest.getAssignee());
-                task.setAssigner(assignee);
+                task.setAssignee(assignee);
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"assignee"}, task, taskMongo);
                 break;
@@ -196,8 +202,10 @@ public class IssueService {
 
     @Transactional
     public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
-        ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder().projectId(request.getProjectId()).sprintId(request.getSprintId()).build());
-        List<Issue> issues = projectSprint.getTasks();
+        List<Issue> issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        if (issues.isEmpty()) {
+            return ApiResponse.<List<IssueResponse>>builder().code(HttpStatus.OK.value()).message("No task found").data(null).build();
+        }
 
         List<IssueResponse> issueResponses = new ArrayList<>();
         for (Issue issue : issues) {
@@ -206,7 +214,7 @@ public class IssueService {
             issueResponses.add(response);
         }
         return ApiResponse.<List<IssueResponse>>builder().message("Get issues successfully").data(issueResponses).build();
-
+//        return null;
     }
 
 

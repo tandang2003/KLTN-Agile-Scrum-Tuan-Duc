@@ -22,8 +22,7 @@ import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
-import com.kltn.server.repository.document.ProjectLogRepository;
-import com.kltn.server.repository.entity.ProjectRepository;
+import com.kltn.server.repository.document.ProjectMongoRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
 import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsRepository;
@@ -34,15 +33,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -54,14 +47,14 @@ public class WorkspaceService {
     private WorkspaceMapper workspaceMapper;
     private UserMapper userMapper;
     private ProjectMapper projectMapper;
-    private ProjectLogRepository projectLogRepository;
+    private ProjectMongoRepository projectMongoRepository;
     private WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository;
     private WorkspacesUsersProjectsService workspacesUsersProjectsService;
     private RoleService roleService;
     private TokenUtils tokenUtils;
 
     @Autowired
-    public WorkspaceService(TokenUtils tokenUtils, RoleService roleService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMapper projectMapper, ProjectLogRepository projectLogRepository, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, UserRepository userRepository, UserMapper userMapper, WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper) {
+    public WorkspaceService(TokenUtils tokenUtils, RoleService roleService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMapper projectMapper, ProjectMongoRepository projectMongoRepository, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, UserRepository userRepository, UserMapper userMapper, WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper) {
         this.tokenUtils = tokenUtils;
         this.roleService = roleService;
         this.userRepository = userRepository;
@@ -70,7 +63,7 @@ public class WorkspaceService {
         this.userMapper = userMapper;
         this.workspacesUsersProjectsRepository = workspacesUsersProjectsRepository;
         this.projectMapper = projectMapper;
-        this.projectLogRepository = projectLogRepository;
+        this.projectMongoRepository = projectMongoRepository;
         this.workspacesUsersProjectsService = workspacesUsersProjectsService;
     }
 
@@ -168,7 +161,7 @@ public class WorkspaceService {
         Page<Project> projects = workspacesUsersProjectsRepository.getProjecByWorkspaceId(workspaceId, PageRequest.of(page, size, WorkspacesUsersProjectsRepository.DEFAULT_SORT));
         List<ProjectResponse> projectResponses = new ArrayList<>();
         projects.getContent().forEach(project -> {
-            var project1 = projectLogRepository.findByNkProjectId(project.getId());
+            var project1 = projectMongoRepository.findByNkProjectId(project.getId());
             List<Topic> topics;
             if (project1.isPresent()) topics = project1.get().getTopics();
             else topics = new ArrayList<>();
