@@ -13,13 +13,16 @@ import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.SprintRepository;
+import com.kltn.server.schedular.SprintScheduler;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -29,14 +32,16 @@ public class SprintService {
     private SprintRepository sprintRepository;
     private WorkspaceService workspaceService;
     private ProjectSprintService projectSprintService;
+    private SprintScheduler sprintScheduler;
 
     @Autowired
-    public SprintService(WorkspaceService workspaceService, ProjectSprintService projectSprintService,
+    public SprintService(SprintScheduler sprintScheduler, WorkspaceService workspaceService, ProjectSprintService projectSprintService,
                          SprintMapper sprintMapper, SprintRepository sprintRepository) {
         this.sprintMapper = sprintMapper;
         this.sprintRepository = sprintRepository;
         this.projectSprintService = projectSprintService;
         this.workspaceService = workspaceService;
+        this.sprintScheduler = sprintScheduler;
     }
 
     @Transactional
@@ -49,6 +54,9 @@ public class SprintService {
         Set<Project> projects = workspace.getProjects();
         if (projects != null && !projects.isEmpty()) {
             projectSprintService.save(projects.stream().map(Project::getId).toList(), sprint.getId());
+        }
+        if (sprint.getDtEnd() != null) {
+            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.from(sprint.getDtEnd()));
         }
 
         return ApiResponse.<SprintResponse>builder()
@@ -75,7 +83,7 @@ public class SprintService {
                 .message("Update sprint successfully")
                 .build();
     }
-//TODO: checking make it change cron job
+
     public ApiResponse<SprintResponse> teacherUpdateSprint(
             SprintTeacherUpdateTimeRequest updateRequest) {
         Sprint sprint = getSprintById(updateRequest.id());
@@ -90,8 +98,10 @@ public class SprintService {
         if (end.isBefore(now)) throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
 
         sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
-
         sprintRepository.save(sprint);
+        if (sprint.getDtEnd() != null) {
+            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.from(sprint.getDtEnd()));
+        }
 
         SprintResponse sprintResponse = sprintMapper.toSprintCreateResponse(sprint);
 

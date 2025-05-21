@@ -1,6 +1,7 @@
 package com.kltn.server.model.entity.relationship;
 
 import com.kltn.server.model.entity.Project;
+import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
@@ -19,10 +20,12 @@ public class ProjectSprint {
     @JoinColumn(name = "project_id", insertable = false)
     private Project project;
     @MapsId("sprintId")
-    @ManyToOne(optional = false)
+    @ManyToOne()
     @JoinColumn(name = "sprint_id", nullable = false)
     private Sprint sprint;
-
+    @OneToOne
+    @JoinColumn(name = "file_backlog_id", referencedColumnName = "id")
+    private Resource fileBackLog;
 //    @OneToMany(mappedBy = "projectSprint", fetch = FetchType.LAZY)
 //    private List<Issue> issues;
 
