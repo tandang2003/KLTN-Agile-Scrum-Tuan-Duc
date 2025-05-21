@@ -1,5 +1,8 @@
 package com.kltn.server.DTO.request.entity.issue;
 
+import com.kltn.server.DTO.request.base.AttachmentRequest;
+import com.kltn.server.DTO.request.base.SubTaskRequest;
+import com.kltn.server.DTO.request.base.TopicRequest;
 import com.kltn.server.model.collection.model.Attachment;
 import com.kltn.server.model.collection.model.SubTask;
 import com.kltn.server.model.collection.model.Topic;
@@ -20,9 +23,9 @@ public class IssueUpdateRequest {
     IssueStatus status;
     IssueTag tag;
     int position;
-    List<Topic> topics;
-    List<SubTask> subTasks;
-    List<Attachment> attachments;
+    List<TopicRequest> topics;
+    List<SubTaskRequest> subTasks;
+    List<AttachmentRequest> attachments;
     String assignee;
     String reviewer;
     Instant start;
@@ -104,27 +107,27 @@ public class IssueUpdateRequest {
         this.position = position;
     }
 
-    public List<Topic> getTopics() {
+    public List<TopicRequest> getTopics() {
         return topics;
     }
 
-    public void setTopics(List<Topic> topics) {
+    public void setTopics(List<TopicRequest> topics) {
         this.topics = topics;
     }
 
-    public List<SubTask> getSubTasks() {
+    public List<SubTaskRequest> getSubTasks() {
         return subTasks;
     }
 
-    public void setSubTasks(List<SubTask> subTasks) {
+    public void setSubTasks(List<SubTaskRequest> subTasks) {
         this.subTasks = subTasks;
     }
 
-    public List<Attachment> getAttachments() {
+    public List<AttachmentRequest> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(List<Attachment> attachments) {
+    public void setAttachments(List<AttachmentRequest> attachments) {
         this.attachments = attachments;
     }
 
