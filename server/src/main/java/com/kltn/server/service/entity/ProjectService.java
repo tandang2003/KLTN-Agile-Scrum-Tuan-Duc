@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +93,7 @@ public class ProjectService {
             projectSprintService.save(savedProject.getId(), sprints.stream().map(Sprint::getId).toList());
             sprints.forEach(sprint -> {
                 if (sprint.getDtEnd() != null) {
-                    sprintScheduler.scheduleSprintWithProject(sprint.getId(), savedProject.getId(), LocalDateTime.from(sprint.getDtEnd()));
+                    sprintScheduler.scheduleSprintWithProject(sprint.getId(), savedProject.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asisa/Ho_Chi_Minh")));
                 }
             });
         }

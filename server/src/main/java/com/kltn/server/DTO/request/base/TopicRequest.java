@@ -2,8 +2,8 @@ package com.kltn.server.DTO.request.base;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record TopicRequest( String name, String color) {
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+public record TopicRequest(String name, String color) {
 
     public static class TopicRequestBuilder {
         private String name;
@@ -21,7 +21,7 @@ public record TopicRequest( String name, String color) {
         }
 
         public TopicRequest build() {
-            return new TopicRequest( name, color);
+            return new TopicRequest(name, color);
         }
     }
 
