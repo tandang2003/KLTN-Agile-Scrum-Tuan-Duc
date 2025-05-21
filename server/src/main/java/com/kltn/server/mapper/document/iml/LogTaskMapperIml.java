@@ -4,10 +4,11 @@ import com.kltn.server.mapper.document.LogTaskMapper;
 import com.kltn.server.model.collection.Issue;
 import com.kltn.server.model.collection.model.LogTask;
 import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
-@Primary
+@Component
 public class LogTaskMapperIml implements LogTaskMapper {
     //TODO: Fix
     public LogTask entityToLogDomain(com.kltn.server.model.entity.Issue entity, Issue document) {

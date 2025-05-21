@@ -50,7 +50,7 @@ public class IssueService {
         this.sprintService = sprintService;
     }
 
-    @SendKafkaEvent(topic = "task-create")
+    @SendKafkaEvent(topic = "task-log")
     @Transactional
     public ApiResponse<IssueResponse> createTask(IssueCreateRequest issueCreateRequest) {
         Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
@@ -105,7 +105,7 @@ public class IssueService {
 
     }
 
-    @SendKafkaEvent(topic = "update-task")
+    @SendKafkaEvent(topic = "task-log")
     @Transactional
     public ApiResponse<IssueResponse> updateTask(IssueUpdateRequest updateRequest) {
         String id = updateRequest.getId();
@@ -199,7 +199,6 @@ public class IssueService {
         }
         return ApiResponse.<IssueResponse>builder().code(HttpStatus.OK.value()).message("Update task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
     }
-
     @Transactional
     public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
         List<Issue> issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());

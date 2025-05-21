@@ -9,7 +9,10 @@ import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.type.task.EntityTarget;
 import com.kltn.server.model.type.task.LogType;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ChangeLogMapperIml implements ChangeLogMapper {
     private final LogTaskMapper logTaskMapper;
     private final LogProjectMapper logProjectMapper;
