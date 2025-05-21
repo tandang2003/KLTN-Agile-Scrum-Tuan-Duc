@@ -12,6 +12,7 @@ import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
+import com.kltn.server.mapper.document.iml.ChangeLogMapperIml;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.Project;
@@ -21,6 +22,7 @@ import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsRepository;
+import com.kltn.server.schedular.SprintScheduler;
 import com.kltn.server.service.EmailService;
 import com.kltn.server.service.entity.relation.WorkspacesUsersProjectsService;
 import com.kltn.server.service.mongo.ProjectMongoService;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +52,12 @@ public class ProjectService {
     @Value("${verify.invite-project-link}")
     private String link;
     private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
+    private final SprintScheduler sprintScheduler;
 
     @Autowired
-    public ProjectService(ProjectSprintService projectSprintService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMongoService projectMongoService, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService, ChangeLogMapper changeLogMapper) {
+    public ProjectService(SprintScheduler sprintScheduler, ProjectSprintService projectSprintService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMongoService projectMongoService, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService, ChangeLogMapper changeLogMapper) {
         this.projectMongoService = projectMongoService;
+        this.sprintScheduler = sprintScheduler;
         this.roleInit = roleInit;
         this.topicMapper = topicMapper;
         this.projectMapper = projectMapper;
@@ -84,7 +89,12 @@ public class ProjectService {
         Workspace workspace = workspacesUsersProjects.getWorkspace();
         List<Sprint> sprints = workspace.getSprints();
         if (sprints != null && !sprints.isEmpty()) {
-                projectSprintService.save(savedProject.getId(), sprints.stream().map(Sprint::getId).toList());
+            projectSprintService.save(savedProject.getId(), sprints.stream().map(Sprint::getId).toList());
+            sprints.forEach(sprint -> {
+                if (sprint.getDtEnd() != null) {
+                    sprintScheduler.scheduleSprintWithProject(sprint.getId(), savedProject.getId(), LocalDateTime.from(sprint.getDtEnd()));
+                }
+            });
         }
 
 
