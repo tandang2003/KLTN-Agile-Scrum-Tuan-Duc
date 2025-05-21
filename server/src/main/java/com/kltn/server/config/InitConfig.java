@@ -103,19 +103,19 @@ public class InitConfig {
         return decoder;
     }
 
-    //    @Bean
-    public LogTaskMapper logTaskMapper() {
-        return new LogTaskMapperIml();
-    }
-
-    //    @Bean
-    public LogProjectMapper logProjectMapper() {
-        return new LogProjectMapperIml();
-    }
-
-    @Bean
-    public ChangeLogMapper getChangeLogMapper() {
-        return new ChangeLogMapperIml(logTaskMapper(), logProjectMapper());
-    }
+//    //    @Bean
+//    public LogTaskMapper logTaskMapper() {
+//        return new LogTaskMapperIml();
+//    }
+//
+//    //    @Bean
+//    public LogProjectMapper logProjectMapper() {
+//        return new LogProjectMapperIml();
+//    }
+//
+//    @Bean
+//    public ChangeLogMapper getChangeLogMapper() {
+//        return new ChangeLogMapperIml(logTaskMapper(), logProjectMapper());
+//    }
 
 }

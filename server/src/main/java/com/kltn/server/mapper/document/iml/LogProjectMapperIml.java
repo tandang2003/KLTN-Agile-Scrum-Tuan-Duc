@@ -5,8 +5,9 @@ import com.kltn.server.model.collection.model.LogProject;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.Project;
 import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
-@Primary
+@Component
 public class LogProjectMapperIml implements LogProjectMapper {
 
     @Override
