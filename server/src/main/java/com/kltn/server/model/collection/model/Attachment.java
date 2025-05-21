@@ -1,6 +1,5 @@
 package com.kltn.server.model.collection.model;
 
-import jakarta.persistence.PrePersist;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,6 +12,9 @@ public class Attachment {
 
     public String getResourceId() {
         return resourceId;
+    }
+
+    public Attachment() {
     }
 
     private Attachment(AttachmentBuilder builder) {

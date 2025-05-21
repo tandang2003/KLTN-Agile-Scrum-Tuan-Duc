@@ -12,6 +12,9 @@ public class SubTask {
     @Field
     private boolean checked;
 
+    public SubTask() {
+    }
+
     private SubTask(SubTagBuilder builder) {
         this.id = builder.id;
         this.name = builder.name;

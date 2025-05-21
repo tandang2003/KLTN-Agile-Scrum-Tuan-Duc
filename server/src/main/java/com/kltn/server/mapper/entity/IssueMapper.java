@@ -31,9 +31,9 @@ public interface IssueMapper {
             @Mapping(target = "nkTaskId", source = "task.id"),
             @Mapping(target = "description", source = "task.description"),
 //            @Mapping(target = "tag", source = "task.name"),
-            @Mapping(target = "subTasks", source = "issueCreateRequest.subTasks"),
-            @Mapping(target = "attachment", source = "issueCreateRequest.attachments"),
-            @Mapping(target = "topics", source = "issueCreateRequest.topics")
+            @Mapping(target = "subTasks", source = "issueCreateRequest.subTasks",qualifiedByName = "toListDocument"),
+            @Mapping(target = "attachment", source = "issueCreateRequest.attachments",qualifiedByName = "toListDocument"),
+            @Mapping(target = "topics", source = "issueCreateRequest.topics", qualifiedByName = "toTopicList")
     })
     @BeanMapping(ignoreByDefault = true)
     com.kltn.server.model.collection.Issue toCollection(Issue task, IssueCreateRequest issueCreateRequest);
