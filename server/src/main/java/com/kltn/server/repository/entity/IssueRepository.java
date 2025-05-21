@@ -11,4 +11,6 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
 
     Optional<List<Issue>> findAllByProjectIdAndSprintId(String projectId, String sprintId);
 
+
+
 }
