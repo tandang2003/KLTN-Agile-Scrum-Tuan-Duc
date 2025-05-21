@@ -20,6 +20,7 @@ public class Resource extends BaseEntity {
 
     private String name;
     private String extension;
+    private String sail;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     @Enumerated(EnumType.STRING)
@@ -103,20 +104,28 @@ public class Resource extends BaseEntity {
         }
     }
 
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
+    }
+
+    public String getSail() {
+        return sail;
+    }
+
+    public void setSail(String sail) {
+        this.sail = sail;
+    }
+
     public Project getProject() {
         return project;
     }
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public Issue getTask() {
-        return issue;
-    }
-
-    public void setTask(Issue issue) {
-        this.issue = issue;
     }
 
     public User getUser() {
