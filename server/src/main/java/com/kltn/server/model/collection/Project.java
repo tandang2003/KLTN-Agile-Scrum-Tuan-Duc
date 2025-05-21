@@ -10,6 +10,7 @@ import java.util.List;
 
 @Document
 public class Project extends BaseDocument {
+
     @Field("nk_project_id")
     private String nkProjectId;
     @Field("description")

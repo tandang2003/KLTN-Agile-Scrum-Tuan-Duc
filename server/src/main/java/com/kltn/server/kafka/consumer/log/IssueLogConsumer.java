@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class IssueLogConsumer {
     private ChangeLogRepository changeLogRepository;
 
-    public IssueLogConsumer(ProjectLogMapper projectLogMapper, ChangeLogRepository changeLogRepository) {
+    public IssueLogConsumer(ChangeLogRepository changeLogRepository) {
         this.changeLogRepository = changeLogRepository;
     }
 
-    @KafkaListener(topics = "task-create", groupId = "task-create-1")
+    @KafkaListener(topics = "task-log", groupId = "task-log-1")
     public void createTask1(ChangeLogRequest project) {
         var projectLog = ChangeLog.builder()
                 .type(project.type())
@@ -28,7 +28,7 @@ public class IssueLogConsumer {
         changeLogRepository.save(projectLog);
     }
 
-    @KafkaListener(topics = "task-create", groupId = "task-create-1")
+    @KafkaListener(topics = "task-log", groupId = "task-log-1")
     public void createTask2(ChangeLogRequest project) {
         var projectLog = ChangeLog.builder()
                 .type(project.type())
@@ -40,7 +40,7 @@ public class IssueLogConsumer {
         changeLogRepository.save(projectLog);
     }
 
-    @KafkaListener(topics = "task-create", groupId = "task-create-1")
+    @KafkaListener(topics = "task-log", groupId = "task-log-1")
     public void createTask3(ChangeLogRequest project) {
         var projectLog = ChangeLog.builder()
                 .type(project.type())
@@ -53,39 +53,4 @@ public class IssueLogConsumer {
     }
 
 
-    @KafkaListener(topics = "task-update", groupId = "task-update-1")
-    public void updateTask1(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change(project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
-
-    @KafkaListener(topics = "task-update", groupId = "task-update-1")
-    public void updateTask2(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change((LogTask) project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
-
-    @KafkaListener(topics = "task-update", groupId = "task-update-1")
-    public void updateTask3(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change((LogTask) project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
 }

@@ -23,7 +23,7 @@ public class Issue extends BaseDocument {
     @Field("attachments")
     private List<Attachment> attachment;
     @Field("comments")
-    private Comment[] comments;
+    private List<Comment> comments;
 
     public Issue(IssueBuilder issueBuilder) {
         super(issueBuilder);
@@ -45,7 +45,7 @@ public class Issue extends BaseDocument {
         private String description;
         private List<Topic> topics;
         private List<Attachment> attachment;
-        private Comment[] comment;
+        private List<Comment> comment;
         private List<SubTask> subTasks;
 
 
@@ -69,7 +69,7 @@ public class Issue extends BaseDocument {
             return this;
         }
 
-        public IssueBuilder comment(Comment[] comment) {
+        public IssueBuilder comment(List<Comment> comment) {
             this.comment = comment;
             return this;
         }
@@ -129,11 +129,11 @@ public class Issue extends BaseDocument {
         this.attachment = attachment;
     }
 
-    public Comment[] getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(Comment[] comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 }
