@@ -56,7 +56,7 @@ public class SprintService {
             projectSprintService.save(projects.stream().map(Project::getId).toList(), sprint.getId());
         }
         if (sprint.getDtEnd() != null) {
-            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asisa/Ho_Chi_Minh")));
+            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asia/Ho_Chi_Minh")));
         }
 
         return ApiResponse.<SprintResponse>builder()
@@ -100,7 +100,7 @@ public class SprintService {
         sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
         sprintRepository.save(sprint);
         if (sprint.getDtEnd() != null) {
-            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asisa/Ho_Chi_Minh")));
+            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asia/Ho_Chi_Minh")));
 
         }
 
@@ -129,9 +129,30 @@ public class SprintService {
         try {
             return sprintRepository.saveAndFlush(sprint);
         } catch (Exception e) {
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
         }
     }
 
+@Transactional
+    public ApiResponse<Void> deleteSprint(String id) {
+        Sprint sprint = sprintRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.MINUTES);
+        Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.MINUTES);
+        if (now.isAfter(start) && now.isBefore(end))
+            throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+        if (end.isBefore(now)) throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+        List<ProjectSprint> projectSprints = sprint.getProjectSprints();
+        if (projectSprints != null && !projectSprints.isEmpty()) {
+            for (ProjectSprint projectSprint : projectSprints) {
+                projectSprintService.delete(projectSprint.getId());
+            }
+        }
 
+        sprintRepository.delete(sprint);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Delete sprint successfully")
+                .build();
+    }
 }
