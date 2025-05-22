@@ -37,12 +37,17 @@ const SelectMember = ({ control, name, label }: SelectMemberProps) => {
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select a verified email to display' />
+                <SelectValue placeholder='Select a member' />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
+              <SelectItem value={null!}>Not assign</SelectItem>
               {data?.map((item) => {
-                return <SelectItem value={item.id}>{item.name}</SelectItem>
+                return (
+                  <SelectItem key={item.id} value={item.uniId}>
+                    {item.name}
+                  </SelectItem>
+                )
               })}
             </SelectContent>
           </Select>

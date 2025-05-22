@@ -2,7 +2,6 @@ import { BaseModel } from '@/types/model/base.model'
 import { IssuePriority, IssueStatus, IssueTag } from '@/types/model/typeOf'
 
 import { UserModel } from '@/types/model/user.model'
-import { Id } from '@/types/other.type'
 
 type IssueModel = BaseModel & {
   title: string
@@ -22,11 +21,4 @@ type IssueModel = BaseModel & {
   dtPlanning: Date
 }
 
-type SubTask = {
-  id: Id
-  name: string
-  color: string
-}
-
-export default IssueModel
-export type { SubTask }
+export type { IssueModel }

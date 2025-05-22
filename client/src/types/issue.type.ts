@@ -1,4 +1,5 @@
-import IssueModel from '@/types/model/issue.model'
+import { string } from '@/types/common.type'
+import { IssueModel } from '@/types/model/issue.model'
 import { IssuePriority, IssueStatus, IssueTag } from '@/types/model/typeOf'
 import { UserModel } from '@/types/model/user.model'
 import { Id } from '@/types/other.type'
@@ -14,20 +15,79 @@ type IssueResponse = Pick<
   reviewer?: Pick<UserModel, 'id' | 'email' | 'name'>
 }
 
+type TopicResponse = {
+  id: string
+  name: string
+  color: string
+}
+
+type SubTaskResponse = {
+  id: string
+  name: string
+  order: number
+  checked: boolean
+}
+
+type AttachmentResponse = {
+  id: string
+  resourceId: string
+}
+
+type UserDetail = {
+  id: string
+  name: string
+  email: string
+  uniId: string
+  role: string
+}
+
+type IssueResponse1 = {
+  id: string
+  name: string
+  projectId: string
+  sprintId: string
+  status: IssueStatus
+  priority: IssuePriority
+  tag: IssueTag
+  position: number
+  description: string
+  assignee: UserDetail
+  reviewer: UserDetail
+  topics: TopicResponse[]
+  subTasks: SubTaskResponse[]
+  attachments: AttachmentResponse[]
+  start: Date
+  end: Date
+}
+const CreateSubTaskSchema = z.object({
+  name: string
+})
+
+const TopicModel = z.object({
+  id: z.string(),
+  name: z.string()
+})
+
 const CreateIssueSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  status: z.string().optional(),
-  storyPoint: z.coerce.number(),
-  priority: z.string().optional(),
-  tag: z.string().optional(),
-  assignerId: z.string().optional(),
+  name: string,
+  description: string.optional(),
+  status: string.optional(),
+  priority: string.optional(),
+  tag: string.optional(),
+  topics: z.array(TopicModel).optional(),
+  assigneeId: z.string().optional(),
   reviewerId: z.string().optional(),
+  subTasks: z.array(CreateSubTaskSchema).optional(),
   start: z.date(),
   end: z.date()
 })
 
-type CreateIssueRequest = z.infer<typeof CreateIssueSchema>
+type CreateIssueType = z.infer<typeof CreateIssueSchema>
+
+type CreateIssueRequest = CreateIssueType & {
+  sprintId: Id
+  projectId: Id
+}
 
 type FieldChangingIssue = Partial<{
   name: string
@@ -55,9 +115,11 @@ type UpdateIssueRequest = {
 
 export type {
   IssueResponse,
-  CreateIssueRequest,
+  CreateIssueType,
   UpdateIssueRequest,
   FieldChangingIssue,
-  KeyOfFieldChangingIssue
+  KeyOfFieldChangingIssue,
+  CreateIssueRequest
 }
 export { CreateIssueSchema }
+export type { IssueResponse1 }

@@ -1,5 +1,6 @@
 import DialogCreateIssue from '@/components/dialog/DialogCreateIssue'
-import ListView from '@/components/ListView'
+import ListIssue from '@/components/sprint/ListIssue'
+
 import SprintAccordionProductBacklog from '@/components/sprint/SprintAccordionProductBacklog'
 import {
   Accordion,
@@ -7,18 +8,11 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
-import { useGetListIssueQuery } from '@/feature/sprint/sprint.api'
-import { setCurrentSprint } from '@/feature/sprint/sprint.slice'
-import {
-  disableCreateIssue,
-  enableCreateIssue
-} from '@/feature/trigger/trigger.slice'
-import { cn } from '@/lib/utils'
-import { IssueResponse } from '@/types/issue.type'
+
+import { disableCreateIssue } from '@/feature/trigger/trigger.slice'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
@@ -40,7 +34,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           return (
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger
-                value={`sprint-00${index + 1}`}
+                value={item.id}
                 onClick={(e) => {
                   if (refContent.current) {
                     setSprintId(e.currentTarget.value)
@@ -75,64 +69,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
         onOpen={() => dispatch(disableCreateIssue())}
       />
     </div>
-  )
-}
-
-type ListIssueProps = {
-  sprintId: Id
-  start: Date
-  end: Date
-}
-
-const ListIssue = ({ sprintId, start, end }: ListIssueProps) => {
-  const dispatch = useAppDispatch()
-
-  const { data, isFetching } = useGetListIssueQuery(sprintId, {
-    skip: !sprintId
-  })
-  return (
-    <ListView<IssueResponse>
-      data={data}
-      loading={isFetching}
-      className={cn(
-        'gap-3',
-        !data?.length &&
-          'h-[100px] items-center justify-center rounded-sm bg-gray-200'
-      )}
-      render={(item) => {
-        return (
-          <div
-            className='flex rounded-sm border-2 bg-white px-4 py-2'
-            key={item.id}
-          >
-            <div className='font-semibold'>
-              {item.id}: <span>{item.title}</span>
-            </div>
-            <div className='ml-auto'>
-              <Badge status={item.status}>{item.status}</Badge>
-            </div>
-          </div>
-        )
-      }}
-      append={
-        <Button
-          className='mt-2 w-full justify-start border-none'
-          variant={'default'}
-          onClick={() => {
-            dispatch(enableCreateIssue())
-            dispatch(
-              setCurrentSprint({
-                id: sprintId,
-                start: new Date(start).toISOString(),
-                end: new Date(end).toISOString()
-              })
-            )
-          }}
-        >
-          Create issue
-        </Button>
-      }
-    />
   )
 }
 

@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 
 const appAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
-  timeout: 1000,
+  // timeout: 5000,
   withCredentials: true
 })
 const manualAxios = axios.create({

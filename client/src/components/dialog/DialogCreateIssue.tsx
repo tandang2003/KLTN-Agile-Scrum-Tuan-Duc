@@ -23,7 +23,10 @@ const DialogCreateIssue = ({ open, onOpen }: DialogCreateIssueProps) => {
         <DialogHeader>
           <DialogTitle>Create Issue</DialogTitle>
         </DialogHeader>
-        <CreateIssueForm />
+        <DialogDescription />
+        <ScrollArea className='h-[65vh] py-4'>
+          <CreateIssueForm onSubmit={() => onOpen(false)} />
+        </ScrollArea>
 
         {/* <InlineEdit<string>
               className='flex-1 opacity-65'

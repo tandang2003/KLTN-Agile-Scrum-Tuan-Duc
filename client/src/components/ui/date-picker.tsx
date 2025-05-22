@@ -77,6 +77,7 @@ type DatePickerWithPresetsProps = {
   setDate?: (date: Date | undefined) => void
   className?: string
   disabled?: boolean
+  min?: Date
   max?: Date
 }
 
@@ -85,8 +86,22 @@ export function DatePickerWithPresets({
   setDate,
   className,
   disabled = false,
-  max
+  max,
+  min
 }: DatePickerWithPresetsProps) {
+  const isDisable = (date: Date) => {
+    if (min && max) {
+      return date > new Date(max) || date < new Date(min)
+    }
+    if (max) {
+      return date > new Date(max)
+    }
+    if (min) {
+      return date < new Date(min)
+    }
+    return false
+  }
+
   return (
     <Popover>
       <PopoverTrigger disabled={disabled} className={cn(className)} asChild>
@@ -125,7 +140,7 @@ export function DatePickerWithPresets({
             mode='single'
             selected={date}
             onSelect={setDate}
-            disabled={(date) => (max ? date < new Date(max) : false)}
+            disabled={(date) => isDisable(date)}
           />
         </div>
       </PopoverContent>

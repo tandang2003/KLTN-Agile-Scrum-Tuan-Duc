@@ -3,10 +3,6 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion'
-import { ReactNode } from 'react'
-type SprintAccordionProductBacklogProps = {
-  children: ReactNode
-}
 
 const SprintAccordionProductBacklog = () => {
   return (

@@ -1,4 +1,6 @@
 import Editor from '@/components/Editor'
+import CreateSubTaskForm from '@/components/form/CreateSubTaskForm'
+import CreateTopic from '@/components/form/CreateTopicForm'
 import SelectMember from '@/components/issue/SelectMember'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
@@ -20,27 +22,63 @@ import {
 } from '@/components/ui/select'
 import { useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
-import { CreateIssueRequest, CreateIssueSchema } from '@/types/issue.type'
+import useAppId from '@/hooks/use-app-id'
+import issueService from '@/services/issue.service'
+import {
+  CreateIssueRequest,
+  CreateIssueSchema,
+  CreateIssueType
+} from '@/types/issue.type'
 import { issuePriorityList, issueTagList } from '@/types/model/typeOf'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ReactNode } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 type CreateIssueFormProps = {
-  children: ReactNode
+  onSubmit?: () => void
 }
 
-const CreateIssueForm = () => {
-  const form = useForm<CreateIssueRequest>({
-    resolver: zodResolver(CreateIssueSchema)
+const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
+  const form = useForm<CreateIssueType>({
+    resolver: zodResolver(CreateIssueSchema),
+    defaultValues: {}
   })
   const sprintCurrent = useAppSelector(
     (state: RootState) => state.sprintSlice.current
   )
+  const { projectId } = useAppId()
 
   if (!sprintCurrent) return null
 
-  const handleSubmit = (values: CreateIssueRequest) => {
-    console.log(values)
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log('❌ Form Errors:', form.formState.errors)
+
+      // Optional: log each field error
+      Object.entries(form.formState.errors).forEach(([fieldName, error]) => {
+        console.log(`Field "${fieldName}" has error:`, error?.message)
+      })
+    }
+  }, [form.formState.errors])
+
+  const handleSubmit = (values: CreateIssueType) => {
+    if (!projectId) return
+    const req: CreateIssueRequest = {
+      projectId: projectId,
+      sprintId: sprintCurrent.id,
+      ...values
+    }
+    issueService
+      .createIssue(req)
+      .then((response) => {
+        toast.success('Create issue success', {
+          description: `Issue - ${response.name}`
+        })
+      })
+      .catch((_) => toast.error('Create issue failed'))
+      .finally(() => {
+        onSubmit?.()
+      })
   }
   return (
     <Form {...form}>
@@ -49,7 +87,7 @@ const CreateIssueForm = () => {
           <div className='flex-1 [&>*:not(:first-element)]:mt-3'>
             <FormField
               control={form.control}
-              name='title'
+              name='name'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
@@ -77,6 +115,7 @@ const CreateIssueForm = () => {
                 </FormItem>
               )}
             />
+            <CreateSubTaskForm />
           </div>
           <div className='basis-[450px] [&>*:not(:first-child)]:mt-3'>
             <div className='flex gap-3'>
@@ -87,6 +126,8 @@ const CreateIssueForm = () => {
                   <FormItem className=''>
                     <FormLabel>Time start</FormLabel>
                     <DatePickerWithPresets
+                      min={new Date(sprintCurrent.start)}
+                      max={new Date(sprintCurrent.end)}
                       date={field.value}
                       setDate={(date) => {
                         if (date) {
@@ -109,6 +150,8 @@ const CreateIssueForm = () => {
                     <FormLabel>Time end</FormLabel>
                     <DatePickerWithPresets
                       date={field.value}
+                      min={new Date(sprintCurrent.start)}
+                      max={new Date(sprintCurrent.end)}
                       setDate={(date) => {
                         if (date) {
                           field.onChange(new Date(date))
@@ -122,67 +165,78 @@ const CreateIssueForm = () => {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name='priority'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className='w-full'>
-                        <SelectValue placeholder='Select a verified email to display' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {issuePriorityList.map((item) => {
-                        return <SelectItem value={item}>{item}</SelectItem>
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='tag'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tag</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className='w-full'>
-                        <SelectValue placeholder='Select a verified email to display' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {issueTagList.map((item) => {
-                        return <SelectItem value={item}>{item}</SelectItem>
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='grid grid-cols-2 grid-rows-2 gap-3'>
+              <FormField
+                control={form.control}
+                name='priority'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className='w-full'>
+                          <SelectValue placeholder='Select a priority' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {issuePriorityList.map((item, index) => {
+                          return (
+                            <SelectItem key={index} value={item}>
+                              {item}
+                            </SelectItem>
+                          )
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='tag'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tag</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className='w-full'>
+                          <SelectValue placeholder='Select a tag' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {issueTagList.map((item, index) => {
+                          return (
+                            <SelectItem key={index} value={item}>
+                              {item}
+                            </SelectItem>
+                          )
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <SelectMember
-              control={form.control}
-              name='assignerId'
-              label='Assigner'
-            />
-            <SelectMember
-              control={form.control}
-              name='reviewerId'
-              label='Reviewer'
-            />
+              <SelectMember
+                control={form.control}
+                name='assigneeId'
+                label='Assignee'
+              />
+              <SelectMember
+                control={form.control}
+                name='reviewerId'
+                label='Reviewer'
+              />
+            </div>
+            <CreateTopic form={form} />
           </div>
         </div>
 

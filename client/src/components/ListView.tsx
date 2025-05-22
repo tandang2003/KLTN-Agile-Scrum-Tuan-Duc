@@ -41,27 +41,29 @@ const ListView = <T,>({
     )
   }
   return (
-    <div
-      className={cn(
-        display,
-        orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',
-        className
-      )}
-    >
-      {loading &&
-        loadingItems &&
-        Array(loadingItems.items)
-          .fill(null)
-          .map(
-            (_, index) =>
-              loadingItems.loadingComponent ?? (
-                <Skeleton key={index} className='h-[100px] w-full' />
-              )
-          )}
-      {data && data.map((item, index) => render(item, index))}
+    <>
+      <div
+        className={cn(
+          display,
+          orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',
+          className
+        )}
+      >
+        {loading &&
+          loadingItems &&
+          Array(loadingItems.items)
+            .fill(null)
+            .map(
+              (_, index) =>
+                loadingItems.loadingComponent ?? (
+                  <Skeleton key={index} className='h-[100px] w-full' />
+                )
+            )}
+        {data && data.map((item, index) => render(item, index))}
+      </div>
       {((loading && !data) || data?.length == 0) && emptyComponent}
       {append && append}
-    </div>
+    </>
   )
 }
 
