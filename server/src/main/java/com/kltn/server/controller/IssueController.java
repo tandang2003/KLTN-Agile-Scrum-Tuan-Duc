@@ -46,7 +46,7 @@ public class IssueController {
         return ResponseEntity.status(task.getCode()).body(task);
     }
 
-    @GetMapping("/list")
+    @GetMapping("{workspace_id}/{sprint_id}/list")
     public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("workspace_id") String workspaceId, @RequestParam("sprint_id") String sprintId) {
         var isssues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(workspaceId, sprintId));
         return ResponseEntity.status(isssues.getCode()).body(isssues);
