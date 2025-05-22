@@ -42,7 +42,7 @@ public class ProjectSprintService {
     public ProjectSprint save(ProjectSprint projectSprint) {
         ProjectSprint savedProjectSprint = projectSprintRepository.save(projectSprint);
         if (savedProjectSprint == null || savedProjectSprint.getId() == null) {
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
         }
         return savedProjectSprint;
     }
