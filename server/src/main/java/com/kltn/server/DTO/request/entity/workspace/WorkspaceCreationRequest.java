@@ -15,7 +15,7 @@ import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 public record WorkspaceCreationRequest(
         @NotEmpty String name,
         @NotEmpty String description,
-        @Min(1) int sprintNum,
+//        @Min(1) int sprintNum,
         @Min(1) int timePerSprint,
         @DateTimeFormat(pattern = LOCAL_DATE_TIME)
         Instant start,
@@ -32,10 +32,10 @@ public record WorkspaceCreationRequest(
         return description;
     }
 
-    @Override
-    public int sprintNum() {
-        return sprintNum;
-    }
+//    @Override
+//    public int sprintNum() {
+//        return sprintNum;
+//    }
 
     @Override
     public int timePerSprint() {
