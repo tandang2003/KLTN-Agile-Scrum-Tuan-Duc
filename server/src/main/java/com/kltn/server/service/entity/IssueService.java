@@ -212,7 +212,7 @@ public class IssueService {
     public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
         List<Issue> issues;
         if (request.getSprintId() == null || request.getSprintId().isEmpty())
-            issues = projectService.getProjectById(request.getProjectId()).getIssues();
+            issues = projectService.getProjectById(request.getProjectId()).getIssues().stream().filter(issue -> issue.getSprint() == null).toList();
         else
             issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         if (issues.isEmpty())
