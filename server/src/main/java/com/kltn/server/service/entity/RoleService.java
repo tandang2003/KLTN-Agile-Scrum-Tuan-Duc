@@ -34,7 +34,7 @@ public class RoleService {
         if (roles.containsKey(roleName)) {
             return roles.get(roleName);
         }
-        Role role = roleRepository.getByName(roleName).orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build());
+        Role role = roleRepository.getByName(roleName).orElseThrow(() -> AppException.builder().error(Error.DB_SERVER_MISSING_DATA).build());
         roles.put(roleName, role);
         return role;
     }

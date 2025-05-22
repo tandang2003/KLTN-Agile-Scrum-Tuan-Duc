@@ -129,7 +129,7 @@ public class SprintService {
         try {
             return sprintRepository.saveAndFlush(sprint);
         } catch (Exception e) {
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
         }
     }
 
