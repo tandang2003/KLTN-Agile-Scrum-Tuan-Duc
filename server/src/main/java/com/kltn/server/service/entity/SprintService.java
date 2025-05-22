@@ -133,5 +133,26 @@ public class SprintService {
         }
     }
 
+@Transactional
+    public ApiResponse<Void> deleteSprint(String id) {
+        Sprint sprint = sprintRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.MINUTES);
+        Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.MINUTES);
+        if (now.isAfter(start) && now.isBefore(end))
+            throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+        if (end.isBefore(now)) throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+        List<ProjectSprint> projectSprints = sprint.getProjectSprints();
+        if (projectSprints != null && !projectSprints.isEmpty()) {
+            for (ProjectSprint projectSprint : projectSprints) {
+                projectSprintService.delete(projectSprint.getId());
+            }
+        }
 
+        sprintRepository.delete(sprint);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Delete sprint successfully")
+                .build();
+    }
 }

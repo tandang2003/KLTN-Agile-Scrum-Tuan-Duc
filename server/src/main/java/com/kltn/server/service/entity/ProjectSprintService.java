@@ -61,7 +61,7 @@ public class ProjectSprintService {
 
     }
 
-//    @Transactional
+    //    @Transactional
     public void save(List<String> projectIds, String sprintId) {
 //        var projectSprintId = ProjectSprintId.builder();
 //        projectSprintId.sprintId(sprintId);
@@ -73,5 +73,9 @@ public class ProjectSprintService {
 
                 }
         );
+    }
+
+    public void delete(ProjectSprintId id) {
+        projectSprintRepository.deleteById(id);
     }
 }

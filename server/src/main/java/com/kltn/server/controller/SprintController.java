@@ -54,6 +54,12 @@ public class SprintController {
         return ResponseEntity.status(sprint.getCode()).body(sprint);
     }
 
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('delete_sprint')")
+    public ResponseEntity<ApiResponse<Void>> deleteSprint(@PathVariable String id) {
+        var sprint = sprintService.deleteSprint(id);
+        return ResponseEntity.status(sprint.getCode()).body(sprint);
+    }
 
 
 }
