@@ -131,7 +131,7 @@ public class ProjectService {
                 emailService.inviteToProject(mailRequest.rebuild(user.getEmail(), Map.of("userId",
                         workspacesUsersId.getUserId(), "workspaceId", workspacesUsersId.getWorkspaceId())));
             } catch (Exception e) {
-                throw AppException.builder().error(Error.SERVER_ERROR).build();
+                throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
             }
         });
         return ApiResponse.<Void>builder().message("Invite student to project").build();

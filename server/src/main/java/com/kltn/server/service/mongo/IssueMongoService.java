@@ -23,7 +23,7 @@ public class IssueMongoService {
     public Issue save(Issue issue) {
         var taskSaved = issueLogRepository.save(issue);
         if (taskSaved == null || taskSaved.getId() == null)
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
         return taskSaved;
     }
 
