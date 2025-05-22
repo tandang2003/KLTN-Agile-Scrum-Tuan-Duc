@@ -8,6 +8,13 @@ public class IssueOfSprintRequest {
     @NotEmpty
     private String projectId;
 
+    public IssueOfSprintRequest(String sprintId, String projectId) {
+        this.sprintId = sprintId;
+        this.projectId = projectId;
+    }
+
+    public IssueOfSprintRequest() {
+    }
 
     public String getSprintId() {
         return sprintId;
