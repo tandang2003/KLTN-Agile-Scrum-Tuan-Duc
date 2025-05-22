@@ -5,10 +5,13 @@ import { CreateIssueRequest, IssueResponse1 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
 const issueService = {
-  getIssues: async (sprintId: Id, projectId: Id): Promise<IssueResponse1[]> => {
+  getIssues: async (
+    projectId: Id,
+    sprintId?: Id
+  ): Promise<IssueResponse1[]> => {
     const query = toQueryString({
-      projectId: projectId,
-      sprintId: sprintId
+      project_id: projectId,
+      sprint_id: sprintId
     })
     const res = await httpService.get<ResponseApi<IssueResponse1[]>>(
       `/issue/list?${query}`

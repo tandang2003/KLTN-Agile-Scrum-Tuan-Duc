@@ -71,6 +71,7 @@ const TopicModel = z.object({
 const CreateIssueSchema = z.object({
   name: string,
   description: string.optional(),
+  sprintId: string.optional(),
   status: string.optional(),
   priority: string.optional(),
   tag: string.optional(),
@@ -85,7 +86,6 @@ const CreateIssueSchema = z.object({
 type CreateIssueType = z.infer<typeof CreateIssueSchema>
 
 type CreateIssueRequest = CreateIssueType & {
-  sprintId: Id
   projectId: Id
 }
 

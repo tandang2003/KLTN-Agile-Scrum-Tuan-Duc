@@ -2,6 +2,7 @@ import Editor from '@/components/Editor'
 import CreateSubTaskForm from '@/components/form/CreateSubTaskForm'
 import CreateTopic from '@/components/form/CreateTopicForm'
 import SelectMember from '@/components/issue/SelectMember'
+import SelectSprint from '@/components/issue/SelectSprint'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
@@ -39,16 +40,17 @@ type CreateIssueFormProps = {
 }
 
 const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
-  const form = useForm<CreateIssueType>({
-    resolver: zodResolver(CreateIssueSchema),
-    defaultValues: {}
-  })
   const sprintCurrent = useAppSelector(
     (state: RootState) => state.sprintSlice.current
   )
-  const { projectId } = useAppId()
+  const form = useForm<CreateIssueType>({
+    resolver: zodResolver(CreateIssueSchema),
+    defaultValues: {
+      sprintId: sprintCurrent?.id
+    }
+  })
 
-  if (!sprintCurrent) return null
+  const { projectId } = useAppId()
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -65,7 +67,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     if (!projectId) return
     const req: CreateIssueRequest = {
       projectId: projectId,
-      sprintId: sprintCurrent.id,
+      sprintId: sprintCurrent?.id,
       ...values
     }
     issueService
@@ -126,8 +128,16 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
                   <FormItem className=''>
                     <FormLabel>Time start</FormLabel>
                     <DatePickerWithPresets
-                      min={new Date(sprintCurrent.start)}
-                      max={new Date(sprintCurrent.end)}
+                      min={
+                        sprintCurrent?.start
+                          ? new Date(sprintCurrent.start)
+                          : undefined
+                      }
+                      max={
+                        sprintCurrent?.end
+                          ? new Date(sprintCurrent.end)
+                          : undefined
+                      }
                       date={field.value}
                       setDate={(date) => {
                         if (date) {
@@ -150,8 +160,16 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
                     <FormLabel>Time end</FormLabel>
                     <DatePickerWithPresets
                       date={field.value}
-                      min={new Date(sprintCurrent.start)}
-                      max={new Date(sprintCurrent.end)}
+                      min={
+                        sprintCurrent?.start
+                          ? new Date(sprintCurrent.start)
+                          : undefined
+                      }
+                      max={
+                        sprintCurrent?.end
+                          ? new Date(sprintCurrent.end)
+                          : undefined
+                      }
                       setDate={(date) => {
                         if (date) {
                           field.onChange(new Date(date))
@@ -236,6 +254,11 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
                 label='Reviewer'
               />
             </div>
+            <SelectSprint
+              control={form.control}
+              name='sprintId'
+              label='Sprint'
+            />
             <CreateTopic form={form} />
           </div>
         </div>

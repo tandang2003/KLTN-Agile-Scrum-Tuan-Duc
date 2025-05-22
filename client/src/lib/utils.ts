@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from 'clsx'
 import { format } from 'date-fns'
 import { twMerge } from 'tailwind-merge'
 import { v4 as uuidv4 } from 'uuid'
-import { formatInTimeZone } from 'date-fns-tz'
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -23,10 +22,19 @@ type AnyObject = { [key: string]: any }
 
 const toQueryString = (obj: AnyObject) => {
   return Object.entries(obj)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
-    )
+    .flatMap(([key, value]) => {
+      if (value === undefined || value === null || value === '') {
+        return [] // skip empty values
+      }
+      if (Array.isArray(value)) {
+        // generate multiple key=value pairs for array items
+        return value.map(
+          (v) => `${encodeURIComponent(key)}=${encodeURIComponent(String(v))}`
+        )
+      }
+      // normal single value
+      return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
+    })
     .join('&')
 }
 

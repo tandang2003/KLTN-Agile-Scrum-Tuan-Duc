@@ -1,7 +1,8 @@
 import DialogCreateIssue from '@/components/dialog/DialogCreateIssue'
-import ListIssue from '@/components/sprint/ListIssue'
+import ListIssue from '@/components/issue/ListIssue'
 
-import SprintAccordionProductBacklog from '@/components/sprint/SprintAccordionProductBacklog'
+import ListIssueProductBacklog from '@/components/issue/ListIssueProductBacklog'
+import ToolTip from '@/components/Tooltip'
 import {
   Accordion,
   AccordionContent,
@@ -13,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 
 import { disableCreateIssue } from '@/feature/trigger/trigger.slice'
+import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
@@ -41,7 +43,18 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   }
                 }}
               >
-                Sprint {index + 1}: {item.title}
+                <ToolTip
+                  trigger={
+                    <span>
+                      Sprint {index + 1} : {item.title}
+                    </span>
+                  }
+                >
+                  {item.id}
+                </ToolTip>
+                <span className='mr-3 ml-auto'>
+                  {formatDate(item.start)} - {formatDate(item.end)}
+                </span>
               </AccordionTrigger>
               <AccordionContent ref={refContent}>
                 {sprintId && (
@@ -61,7 +74,12 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
         collapsible
         className='bg-accent mt-[50px] w-full px-2'
       >
-        <SprintAccordionProductBacklog />
+        <AccordionItem key={'backlog'} value={'backlog'}>
+          <AccordionTrigger>Product Backlog</AccordionTrigger>
+          <AccordionContent>
+            <ListIssueProductBacklog />
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
 
       <DialogCreateIssue

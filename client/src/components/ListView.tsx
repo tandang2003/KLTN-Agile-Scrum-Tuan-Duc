@@ -61,7 +61,7 @@ const ListView = <T,>({
             )}
         {data && data.map((item, index) => render(item, index))}
       </div>
-      {((loading && !data) || data?.length == 0) && emptyComponent}
+      {((!loading && !data) || data?.length == 0) && emptyComponent}
       {append && append}
     </>
   )

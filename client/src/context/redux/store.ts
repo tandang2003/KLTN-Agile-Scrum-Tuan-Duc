@@ -4,6 +4,7 @@ import {
 } from '@/context/redux/middleware'
 import rootReducer from '@/context/redux/reducer'
 import boardApi from '@/feature/board/board.api'
+import issueApi from '@/feature/issue/issue.api'
 import projectApi from '@/feature/project/project.api'
 import sprintApi from '@/feature/sprint/sprint.api'
 import workspaceApi from '@/feature/workspace/workspace.api'
@@ -32,6 +33,7 @@ export const store = configureStore({
       .concat(workspaceApi.middleware)
       .concat(projectApi.middleware)
       .concat(sprintApi.middleware)
+      .concat(issueApi.middleware)
 })
 
 setupListeners(store.dispatch)
