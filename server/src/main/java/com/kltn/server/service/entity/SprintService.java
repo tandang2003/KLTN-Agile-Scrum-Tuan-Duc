@@ -21,8 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class SprintService {
             projectSprintService.save(projects.stream().map(Project::getId).toList(), sprint.getId());
         }
         if (sprint.getDtEnd() != null) {
-            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.from(sprint.getDtEnd()));
+            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asisa/Ho_Chi_Minh")));
         }
 
         return ApiResponse.<SprintResponse>builder()
@@ -100,7 +100,8 @@ public class SprintService {
         sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
         sprintRepository.save(sprint);
         if (sprint.getDtEnd() != null) {
-            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.from(sprint.getDtEnd()));
+            sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asisa/Ho_Chi_Minh")));
+
         }
 
         SprintResponse sprintResponse = sprintMapper.toSprintCreateResponse(sprint);

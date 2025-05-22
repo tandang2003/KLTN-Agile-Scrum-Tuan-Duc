@@ -27,6 +27,9 @@ public class Comment {
         this.deletedBy = builder.deletedBy;
     }
 
+    public Comment() {
+    }
+
     public static CommentBuilder builder() {
         return new CommentBuilder();
     }

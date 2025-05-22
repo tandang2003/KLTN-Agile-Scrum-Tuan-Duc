@@ -1,5 +1,6 @@
 package com.kltn.server.service.entity;
 
+import com.kltn.server.DTO.request.base.AttachmentRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
@@ -9,6 +10,9 @@ import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
+import com.kltn.server.mapper.base.AttachmentMapper;
+import com.kltn.server.mapper.base.SubTaskMapper;
+import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.IssueMapper;
 import com.kltn.server.model.base.BaseEntity;
@@ -36,9 +40,11 @@ public class IssueService {
     private IssueMongoService issueMongoService;
     private ChangeLogMapper changeLogMapper;
     private ProjectService projectService;
+    private TopicMapper topicMapper;
+    private SubTaskMapper subTaskMapper;
 
     @Autowired
-    public IssueService(ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService) {
+    public IssueService(TopicMapper topicMapper, SubTaskMapper subTaskMapper,  ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService) {
         this.taskMapper = taskMapper;
         this.taskRepository = taskRepository;
         this.projectSprintService = projectSprintService;
@@ -48,6 +54,8 @@ public class IssueService {
         this.resourceService = resourceService;
         this.projectService = projectService;
         this.sprintService = sprintService;
+        this.topicMapper = topicMapper;
+        this.subTaskMapper = subTaskMapper;
     }
 
     @SendKafkaEvent(topic = "task-log")
@@ -68,7 +76,7 @@ public class IssueService {
             Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
             task.setSprint(sprint);
         }
-        if (issueCreateRequest.getAttachments()!=null&& !issueCreateRequest.getAttachments().isEmpty()) {
+        if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
             List<Resource> resources = issueCreateRequest.getAttachments().stream().map(id -> resourceService.getById(id.getResourceId())).toList();
             task.setResources(resources);
         }
@@ -145,18 +153,18 @@ public class IssueService {
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
                 break;
             case "topics":
-                taskMongo.setTopics(updateRequest.getTopics());
+                taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"topics"}, task, taskMongo);
                 break;
             case "subTasks":
-                taskMongo.setSubTasks(updateRequest.getSubTasks());
+                taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubTasks()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"priority"}, task, taskMongo);
                 break;
             case "attachments":
                 List<Resource> resources = task.getResources();
-                List<String> newResource = new ArrayList<>(updateRequest.getAttachments().stream().map(Attachment::getResourceId).toList());
+                List<String> newResource = new ArrayList<>(updateRequest.getAttachments().stream().map(AttachmentRequest::getResourceId).toList());
                 resources = resources.stream().filter(r -> !newResource.contains(r.getId())).toList();
                 newResource.removeAll(resources.stream().map(BaseEntity::getId).toList());
                 for (String resourceId : newResource) {
@@ -199,6 +207,7 @@ public class IssueService {
         }
         return ApiResponse.<IssueResponse>builder().code(HttpStatus.OK.value()).message("Update task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
     }
+
     @Transactional
     public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
         List<Issue> issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
