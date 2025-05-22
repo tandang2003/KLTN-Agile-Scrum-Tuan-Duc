@@ -40,8 +40,13 @@ public enum Error {
     TOKEN_MISSING(442, "Token is missing"),
     SESSION_EXPIRED(443, "User session has expired"),
 
+
     // 5xx Server Errors
+
+
     SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error"),
+    DB_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server error"),
+    DB_SERVER_MISSING_DATA(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server missing data"),
     INTERNAL_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error"),
     NOT_IMPLEMENTED(HttpServletResponse.SC_NOT_IMPLEMENTED, "Feature not implemented"),
     BAD_GATEWAY(HttpServletResponse.SC_BAD_GATEWAY, "Bad gateway"),

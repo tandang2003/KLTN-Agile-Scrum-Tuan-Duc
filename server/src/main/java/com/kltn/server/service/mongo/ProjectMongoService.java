@@ -20,7 +20,7 @@ public class ProjectMongoService {
         try {
             return projectMongoRepository.save(project);
         } catch (Exception e) {
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
         }
     }
 

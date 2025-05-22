@@ -82,7 +82,7 @@ public class IssueService {
         }
         task = taskRepository.save(task);
         if (task == null || task.getId() == null) {
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
         }
         var taskMongo = taskMapper.toCollection(task, issueCreateRequest);
         taskMongo = issueMongoService.save(taskMongo);
@@ -99,7 +99,7 @@ public class IssueService {
         try {
             issue = taskRepository.save(issue);
         } catch (RuntimeException e) {
-            throw AppException.builder().error(Error.SERVER_ERROR).build();
+            throw AppException.builder().error(Error.DB_SERVER_MISSING_DATA).build();
         }
         return issue;
 
