@@ -50,7 +50,7 @@ public class AuthenticationService {
         boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
         if (!check) {
             Role role = roleRepository.getByName("student")
-                    .orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build());
+                    .orElseThrow(() -> AppException.builder().error(Error.DB_SERVER_MISSING_DATA).build());
             user.setPassword(pwEncoder.encode(user.getPassword()));
             user.setRole(role);
             userRepository.save(user);
