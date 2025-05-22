@@ -44,7 +44,7 @@ public class IssueService {
     private SubTaskMapper subTaskMapper;
 
     @Autowired
-    public IssueService(TopicMapper topicMapper, SubTaskMapper subTaskMapper,  ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService) {
+    public IssueService(TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService) {
         this.taskMapper = taskMapper;
         this.taskRepository = taskRepository;
         this.projectSprintService = projectSprintService;
@@ -210,10 +210,14 @@ public class IssueService {
 
     @Transactional
     public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
-        List<Issue> issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        if (issues.isEmpty()) {
+        List<Issue> issues;
+        if (request.getSprintId() == null || request.getSprintId().isEmpty())
+            issues = projectService.getProjectById(request.getProjectId()).getIssues();
+        else
+            issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        if (issues.isEmpty())
             return ApiResponse.<List<IssueResponse>>builder().code(HttpStatus.OK.value()).message("No task found").data(null).build();
-        }
+
 
         List<IssueResponse> issueResponses = new ArrayList<>();
         for (Issue issue : issues) {
