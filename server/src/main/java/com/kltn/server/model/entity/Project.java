@@ -4,6 +4,7 @@ import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import jakarta.persistence.*;
+import org.mapstruct.Mappings;
 
 import java.util.List;
 
@@ -144,7 +145,16 @@ public class Project extends BaseEntity {
         return projectSprints;
     }
 
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
+    }
+
     public void setProjectSprints(List<ProjectSprint> projectSprints) {
+
         this.projectSprints = projectSprints;
     }
 }
