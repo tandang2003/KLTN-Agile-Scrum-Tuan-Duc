@@ -3,7 +3,7 @@ spring:
     name: server
     security:
       access-token:
-        time-of-life: 15M
+        time-of-life: 30M
         key:
           private-key: key/access/private_key.pem
           public-key: key/access/public_key.pem

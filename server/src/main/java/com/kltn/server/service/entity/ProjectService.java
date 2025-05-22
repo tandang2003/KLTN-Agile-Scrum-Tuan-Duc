@@ -93,7 +93,7 @@ public class ProjectService {
             projectSprintService.save(savedProject.getId(), sprints.stream().map(Sprint::getId).toList());
             sprints.forEach(sprint -> {
                 if (sprint.getDtEnd() != null) {
-                    sprintScheduler.scheduleSprintWithProject(sprint.getId(), savedProject.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asisa/Ho_Chi_Minh")));
+                    sprintScheduler.scheduleSprintWithProject(sprint.getId(), savedProject.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asia/Ho_Chi_Minh")));
                 }
             });
         }
