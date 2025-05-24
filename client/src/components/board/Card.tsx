@@ -16,11 +16,13 @@ import { memo } from 'react'
 type CardProps = {
   data: CardModelType
   container?: string
+  onClick?: () => void
 }
 
 const Card = ({
   data: { id, name, numAttach, numComment, numAssigner = 0, thumbnail },
-  container
+  container,
+  onClick
 }: CardProps) => {
   const {
     attributes,
@@ -71,7 +73,10 @@ const Card = ({
       >
         <Icon icon={'lsicon:drag-filled'} className='text-black' />
       </Button>
-      <CardUI className='rounded-none border-none bg-transparent p-0 shadow-none'>
+      <CardUI
+        className='rounded-none border-none bg-transparent p-0 shadow-none'
+        onClick={() => onClick?.()}
+      >
         <CardHeader className='p-0'>
           <CardTitle className='line-clamp-2 overflow-hidden text-lg leading-[1.67] text-wrap text-ellipsis'>
             {name}

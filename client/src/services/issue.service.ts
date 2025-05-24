@@ -1,7 +1,11 @@
 import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
-import { CreateIssueRequest, IssueResponse1 } from '@/types/issue.type'
+import {
+  CreateIssueRequest,
+  IssueDetailResponse,
+  IssueResponse1
+} from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
 const issueService = {
@@ -29,6 +33,13 @@ const issueService = {
       ResponseApi<IssueResponse1>,
       CreateIssueRequest
     >('/issue', req)
+    return res.data.data
+  },
+  getIssue: async (id: Id): Promise<IssueDetailResponse> => {
+    const res = await httpService.get<ResponseApi<IssueDetailResponse>>(
+      `/issue/${id}`
+    )
+
     return res.data.data
   }
 }

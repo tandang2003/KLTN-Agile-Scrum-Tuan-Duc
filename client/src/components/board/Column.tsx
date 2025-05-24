@@ -1,7 +1,6 @@
 import Icon from '@/components/Icon'
 
 import { Button } from '@/components/ui/button'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 import Card from '@/components/board/Card'
 import CardAdding from '@/components/board/CardAdding'
@@ -10,6 +9,10 @@ import { CardModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import { useDroppable } from '@dnd-kit/core'
 import { useEffect, useRef, useState } from 'react'
+import ListView from '@/components/ListView'
+import { useAppDispatch } from '@/context/redux/hook'
+import { enableUpdateIssue } from '@/feature/trigger/trigger.slice'
+import { setCurrentIssue } from '@/feature/issue/issue.slice'
 
 type ColumnProps = {
   id: Id
@@ -21,7 +24,7 @@ const Column = ({ id, name, items }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const cardRef = useRef<HTMLDivElement>(null)
-
+  const dispatch = useAppDispatch()
   useEffect(() => {
     const handleClickOutSide = (e: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
@@ -48,17 +51,24 @@ const Column = ({ id, name, items }: ColumnProps) => {
         }}
         className={cn('rounded-sm px-2')}
       >
-        <div className='flex flex-col'>
-          {items?.map((item: CardModelType) => {
+        <ListView<CardModelType>
+          emptyComponent={''}
+          data={items}
+          className='flex flex-col'
+          render={(item) => {
             return (
               <Card
                 key={item.id}
                 data={{ ...item }}
                 container={cn('mt-2 bg-white')}
+                onClick={() => {
+                  dispatch(enableUpdateIssue())
+                  dispatch(setCurrentIssue(item.id))
+                }}
               />
             )
-          })}
-        </div>
+          }}
+        />
         {isAdding ? (
           <CardAdding id={id} ref={cardRef} />
         ) : (

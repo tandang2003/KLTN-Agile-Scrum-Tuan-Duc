@@ -1,5 +1,9 @@
 import issueService from '@/services/issue.service'
-import { CreateIssueRequest, IssueResponse1 } from '@/types/issue.type'
+import {
+  CreateIssueRequest,
+  IssueDetailResponse,
+  IssueResponse1
+} from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
@@ -58,9 +62,23 @@ const issueApi = createApi({
       invalidatesTags: () => {
         return [{ type: 'Issues', id: 'LIST' }]
       }
+    }),
+    getIssue: builder.query<IssueDetailResponse, Id>({
+      async queryFn(arg) {
+        try {
+          const data = await issueService.getIssue(arg)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
 export default issueApi
 
-export const { useCreateProjectMutation, useGetListIssueQuery } = issueApi
+export const {
+  useCreateProjectMutation,
+  useGetListIssueQuery,
+  useGetIssueQuery
+} = issueApi

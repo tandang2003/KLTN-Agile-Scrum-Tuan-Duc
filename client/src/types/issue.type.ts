@@ -50,7 +50,6 @@ type IssueResponse1 = {
   priority: IssuePriority
   tag: IssueTag
   position: number
-  description: string
   assignee: UserDetail
   reviewer: UserDetail
   topics: TopicResponse[]
@@ -89,6 +88,10 @@ type CreateIssueRequest = CreateIssueType & {
   projectId: Id
 }
 
+type IssueDetailResponse = IssueResponse1 & {
+  description: string
+}
+
 type FieldChangingIssue = Partial<{
   name: string
   description: string
@@ -122,4 +125,4 @@ export type {
   CreateIssueRequest
 }
 export { CreateIssueSchema }
-export type { IssueResponse1 }
+export type { IssueResponse1, IssueDetailResponse }
