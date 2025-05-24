@@ -74,7 +74,7 @@ const AppRoutes = () => {
                 <Route path=':projectId' element={<ProjectPage />}>
                   <Route index element={<Navigate to='backlog' replace />} />
                   {/* http://localhost:3000/manager/workspace/project/1/board */}
-                  {/* <Route path='board' index element={<BoardPage />} /> */}
+                  <Route path='board' index element={<BoardPage />} />
                   <Route path='backlog' element={<BacklogPage />} />
                 </Route>
               </Route>

@@ -1,25 +1,25 @@
 import { ReactNode } from 'react'
 
-type Falsy = false | 0 | '' | null | undefined | any[]
+type Falsy = false | 0 | '' | null | undefined
 
-type LoadingBoundaryProps = {
+type LoadingBoundaryProps<T> = {
+  data: T | Falsy
   isLoading?: boolean
-  fallbackCondition?: boolean | Falsy
   loading?: ReactNode
   fallback: ReactNode
-  children: ReactNode
+  children: (data: T) => ReactNode
 }
 
-const LoadingBoundary = ({
+const LoadingBoundary = <T,>({
+  data,
   isLoading,
-  fallbackCondition,
   loading,
   fallback,
   children
-}: LoadingBoundaryProps) => {
+}: LoadingBoundaryProps<T>) => {
   if (isLoading) return <>{loading}</>
-  if (fallbackCondition) return <>{fallback}</>
-  return <>{children}</>
+  if (data) return <>{children(data)}</>
+  else return <>{fallback}</>
 }
 
 export default LoadingBoundary

@@ -1,9 +1,5 @@
 import issueService from '@/services/issue.service'
-import {
-  CreateIssueRequest,
-  IssueResponse,
-  IssueResponse1
-} from '@/types/issue.type'
+import { CreateIssueRequest, IssueResponse1 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
 

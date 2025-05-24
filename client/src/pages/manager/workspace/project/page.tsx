@@ -12,7 +12,7 @@ const ProjectPage = () => {
     skip: !projectId
   })
   return (
-    <SectionContainer>
+    <SectionContainer className='flex flex-col'>
       {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
       {!isFetching && data && (
         <>

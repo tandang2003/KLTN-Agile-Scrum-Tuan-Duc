@@ -46,7 +46,7 @@ const Column = ({ id, name, items }: ColumnProps) => {
         ref={(node) => {
           setNodeRef(node)
         }}
-        className={cn('rounded-sm rounded-xl px-2')}
+        className={cn('rounded-sm px-2')}
       >
         <div className='flex flex-col'>
           {items?.map((item: CardModelType) => {
