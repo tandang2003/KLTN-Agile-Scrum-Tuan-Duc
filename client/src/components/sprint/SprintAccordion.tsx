@@ -69,6 +69,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           )
         })}
       </Accordion>
+      {/* Sprint backlog */}
       <Accordion
         type='single'
         collapsible

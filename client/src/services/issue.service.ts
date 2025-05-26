@@ -4,20 +4,18 @@ import { ResponseApi } from '@/types/http.type'
 import {
   CreateIssueRequest,
   IssueDetailResponse,
-  IssueResponse1
+  IssueResponse,
+  UpdateIssueRequest
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
 const issueService = {
-  getIssues: async (
-    projectId: Id,
-    sprintId?: Id
-  ): Promise<IssueResponse1[]> => {
+  getIssues: async (projectId: Id, sprintId?: Id): Promise<IssueResponse[]> => {
     const query = toQueryString({
       project_id: projectId,
       sprint_id: sprintId
     })
-    const res = await httpService.get<ResponseApi<IssueResponse1[]>>(
+    const res = await httpService.get<ResponseApi<IssueResponse[]>>(
       `/issue/list?${query}`
     )
     return res.data.data
@@ -28,9 +26,9 @@ const issueService = {
     //   }, 500)
     // })
   },
-  createIssue: async (req: CreateIssueRequest): Promise<IssueResponse1> => {
+  createIssue: async (req: CreateIssueRequest): Promise<IssueResponse> => {
     const res = await httpService.post<
-      ResponseApi<IssueResponse1>,
+      ResponseApi<IssueResponse>,
       CreateIssueRequest
     >('/issue', req)
     return res.data.data
@@ -39,7 +37,15 @@ const issueService = {
     const res = await httpService.get<ResponseApi<IssueDetailResponse>>(
       `/issue/${id}`
     )
-
+    return res.data.data
+  },
+  updateIssue: async (
+    req: UpdateIssueRequest
+  ): Promise<IssueDetailResponse> => {
+    const res = await httpService.put<
+      ResponseApi<IssueDetailResponse>,
+      UpdateIssueRequest
+    >(`/issue`, req)
     return res.data.data
   }
 }

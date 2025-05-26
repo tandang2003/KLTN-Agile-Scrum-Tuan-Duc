@@ -1,7 +1,7 @@
 import DialogController, {
   DialogControllerProps
 } from '@/components/dialog/DialogController'
-import CreateIssueForm from '@/components/form/CreateIssueForm'
+import CreateIssueForm from '@/components/issue/CreateIssueForm'
 import {
   DialogContent,
   DialogDescription,

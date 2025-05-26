@@ -1,35 +1,43 @@
 import Board from '@/components/board/Board'
-import DialogUpdateIssue from '@/components/dialog/DialogUpdateIssue'
+import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
-import { useGetListIssueQuery } from '@/feature/issue/issue.api'
+import { useLazyGetListIssueQuery } from '@/feature/issue/issue.api'
 import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { toBoardModel } from '@/lib/board'
-import { IssueResponse1 } from '@/types/issue.type'
-import { Id } from '@/types/other.type'
+import { IssueResponse } from '@/types/issue.type'
 import { cloneDeep } from 'lodash'
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 const BoardPage = () => {
   const { projectId } = useAppId()
-  const { data, isFetching } = useGetListIssueQuery(
-    { projectId: projectId as Id },
-    {
-      skip: !projectId
-    }
-  )
+
+  const [trigger, { data, isFetching }] = useLazyGetListIssueQuery()
+
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const isUpdateIssue = useAppSelector(
     (state: RootState) => state.triggerSlice.isUpdateIssue
   )
+
+  const resetData = useCallback(() => {
+    if (projectId)
+      trigger({
+        projectId
+      })
+  }, [trigger])
+
+  useEffect(() => {
+    resetData()
+  }, [trigger])
+
   const dispatch = useAppDispatch()
 
   return (
-    <LoadingBoundary<IssueResponse1[]>
+    <LoadingBoundary<IssueResponse[]>
       data={data}
       fallback={<div>No result</div>}
       isLoading={isFetching}
@@ -55,7 +63,14 @@ const BoardPage = () => {
                 </ScrollArea>
                 <DialogUpdateIssue
                   open={isUpdateIssue}
-                  onOpen={() => dispatch(disableUpdateIssue())}
+                  onOpen={() => {
+                    dispatch(disableUpdateIssue())
+                    if (projectId) {
+                      trigger({
+                        projectId
+                      })
+                    }
+                  }}
                 />
               </>
             )}

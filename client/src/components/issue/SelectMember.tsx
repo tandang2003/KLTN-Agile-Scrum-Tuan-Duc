@@ -33,7 +33,7 @@ const SelectMember = ({ control, name, label }: SelectMemberProps) => {
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label || name}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>

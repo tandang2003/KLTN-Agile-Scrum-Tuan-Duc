@@ -5,16 +5,6 @@ import { UserModel } from '@/types/model/user.model'
 import { Id } from '@/types/other.type'
 import { z } from 'zod'
 
-type IssueResponse = Pick<
-  IssueModel,
-  'id' | 'title' | 'position' | 'status' | 'dtStart' | 'dtEnd' | 'storyPoint'
-> & {
-  projectId: Id
-  sprintId: Id
-  assigner?: Pick<UserModel, 'id' | 'email' | 'name'>
-  reviewer?: Pick<UserModel, 'id' | 'email' | 'name'>
-}
-
 type TopicResponse = {
   id: string
   name: string
@@ -41,7 +31,7 @@ type UserDetail = {
   role: string
 }
 
-type IssueResponse1 = {
+type IssueResponse = {
   id: string
   name: string
   projectId: string
@@ -62,67 +52,81 @@ const CreateSubTaskSchema = z.object({
   name: string
 })
 
-const TopicModel = z.object({
+const TopicModelSchema = z.object({
   id: z.string(),
   name: z.string()
 })
 
-const CreateIssueSchema = z.object({
-  name: string,
-  description: string.optional(),
-  sprintId: string.optional(),
-  status: string.optional(),
-  priority: string.optional(),
-  tag: string.optional(),
-  topics: z.array(TopicModel).optional(),
-  assigneeId: z.string().optional(),
-  reviewerId: z.string().optional(),
-  subTasks: z.array(CreateSubTaskSchema).optional(),
-  start: z.date(),
-  end: z.date()
+type TopicModelType = z.infer<typeof TopicModelSchema>
+
+const BaseIssueSchema = z
+  .object({
+    description: string,
+    sprintId: string,
+    status: string,
+    priority: string,
+    tag: string,
+    topics: z.array(TopicModelSchema),
+    assigneeId: z.string(),
+    reviewerId: z.string(),
+    subTasks: z.array(CreateSubTaskSchema)
+  })
+  .partial()
+  .extend({
+    name: string,
+    start: z.date(),
+    end: z.date()
+  })
+
+const CreateIssueSchema = BaseIssueSchema
+
+const UpdateIssueSchema = BaseIssueSchema.extend({
+  id: string,
+  name: string.optional(),
+  start: z.date().optional(),
+  end: z.date().optional()
 })
 
+type BaseIssueFormType = z.infer<typeof BaseIssueSchema>
+
 type CreateIssueType = z.infer<typeof CreateIssueSchema>
+
+type UpdateIssueType = z.infer<typeof UpdateIssueSchema>
 
 type CreateIssueRequest = CreateIssueType & {
   projectId: Id
 }
 
-type IssueDetailResponse = IssueResponse1 & {
+type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
+  storyPoint: number
   description: string
+  dtStart: Date
+  dtEnd: Date
 }
 
-type FieldChangingIssue = Partial<{
-  name: string
-  description: string
-  priority: IssuePriority
-  status: IssueStatus
-  tag: IssueTag
-  position: number
-  topics: { id: Id; name: string; color: string }[]
-  subTask: { id: Id; name: string; order: number; checked: boolean }[]
-  attachments: string[]
-  start: Date
-  end: Date
-  planning: Date
-  complexOfDescription: number
-  fieldChanging: FieldChangingIssue
-}>
-
-type KeyOfFieldChangingIssue = keyof FieldChangingIssue
+type KeyOfFieldChangingIssue = keyof UpdateIssueType
 
 type UpdateIssueRequest = {
   id: Id
   fieldChanging: KeyOfFieldChangingIssue
-} & FieldChangingIssue
+} & UpdateIssueType
 
 export type {
-  IssueResponse,
   CreateIssueType,
   UpdateIssueRequest,
-  FieldChangingIssue,
   KeyOfFieldChangingIssue,
   CreateIssueRequest
 }
-export { CreateIssueSchema }
-export type { IssueResponse1, IssueDetailResponse }
+export {
+  BaseIssueSchema,
+  CreateIssueSchema,
+  UpdateIssueSchema,
+  TopicModelSchema
+}
+export type {
+  IssueResponse,
+  IssueDetailResponse,
+  UpdateIssueType,
+  TopicModelType,
+  BaseIssueFormType
+}

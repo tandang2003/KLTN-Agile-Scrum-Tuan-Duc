@@ -8,7 +8,7 @@ import { setCurrentSprint } from '@/feature/sprint/sprint.slice'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { cn } from '@/lib/utils'
-import { IssueResponse1 } from '@/types/issue.type'
+import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 type ListIssueProps = {
   sprintId: Id
@@ -29,7 +29,7 @@ const ListIssue = ({ sprintId, start, end }: ListIssueProps) => {
     }
   )
   return (
-    <ListView<IssueResponse1>
+    <ListView<IssueResponse>
       data={data}
       loading={isFetching}
       className={cn('gap-3')}

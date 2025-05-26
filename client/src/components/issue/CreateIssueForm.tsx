@@ -1,8 +1,8 @@
 import Editor from '@/components/Editor'
-import CreateSubTaskForm from '@/components/form/CreateSubTaskForm'
-import CreateTopic from '@/components/form/CreateTopicForm'
 import SelectMember from '@/components/issue/SelectMember'
 import SelectSprint from '@/components/issue/SelectSprint'
+import CreateSubTaskForm from '@/components/issue/subTasks/CreateSubTaskForm'
+import CreateTopicForm from '@/components/issue/topic/CreateTopicForm'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
@@ -23,11 +23,13 @@ import {
 } from '@/components/ui/select'
 import { useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
+import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
 import issueService from '@/services/issue.service'
 import {
+  BaseIssueFormType,
+  BaseIssueSchema,
   CreateIssueRequest,
-  CreateIssueSchema,
   CreateIssueType
 } from '@/types/issue.type'
 import { issuePriorityList, issueTagList } from '@/types/model/typeOf'
@@ -43,8 +45,10 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
   const sprintCurrent = useAppSelector(
     (state: RootState) => state.sprintSlice.current
   )
-  const form = useForm<CreateIssueType>({
-    resolver: zodResolver(CreateIssueSchema),
+
+  const [create] = useCreateIssueMutation()
+  const form = useForm<BaseIssueFormType>({
+    resolver: zodResolver(BaseIssueSchema),
     defaultValues: {
       sprintId: sprintCurrent?.id
     }
@@ -70,8 +74,8 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
       sprintId: sprintCurrent?.id,
       ...values
     }
-    issueService
-      .createIssue(req)
+    create(req)
+      .unwrap()
       .then((response) => {
         toast.success('Create issue success', {
           description: `Issue - ${response.name}`
@@ -109,7 +113,6 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
 
                   <FormControl>
                     <Editor
-                      markdown=''
                       {...field}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
@@ -259,7 +262,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
               name='sprintId'
               label='Sprint'
             />
-            <CreateTopic form={form} />
+            <CreateTopicForm />
           </div>
         </div>
 

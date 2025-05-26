@@ -2,7 +2,8 @@ import issueService from '@/services/issue.service'
 import {
   CreateIssueRequest,
   IssueDetailResponse,
-  IssueResponse1
+  IssueResponse,
+  UpdateIssueRequest
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -13,7 +14,7 @@ const issueApi = createApi({
   tagTypes: ['Issues'],
   endpoints: (builder) => ({
     getListIssue: builder.query<
-      IssueResponse1[],
+      IssueResponse[],
       {
         projectId: Id
         sprintId?: Id
@@ -50,7 +51,7 @@ const issueApi = createApi({
         return final
       }
     }),
-    createProject: builder.mutation<IssueResponse1, CreateIssueRequest>({
+    createIssue: builder.mutation<IssueResponse, CreateIssueRequest>({
       async queryFn(arg) {
         try {
           const data = await issueService.createIssue(arg)
@@ -72,13 +73,25 @@ const issueApi = createApi({
           return { error }
         }
       }
+    }),
+    updateIssue: builder.mutation<IssueDetailResponse, UpdateIssueRequest>({
+      async queryFn(arg) {
+        try {
+          const data = await issueService.updateIssue(arg)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
 export default issueApi
 
 export const {
-  useCreateProjectMutation,
+  useCreateIssueMutation,
   useGetListIssueQuery,
-  useGetIssueQuery
+  useGetIssueQuery,
+  useUpdateIssueMutation,
+  useLazyGetListIssueQuery
 } = issueApi

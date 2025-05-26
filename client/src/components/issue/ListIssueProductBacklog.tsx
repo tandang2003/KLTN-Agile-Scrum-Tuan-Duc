@@ -7,7 +7,7 @@ import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { cn } from '@/lib/utils'
-import { IssueResponse1 } from '@/types/issue.type'
+import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
 const ListIssueProductBacklog = () => {
@@ -22,9 +22,10 @@ const ListIssueProductBacklog = () => {
     }
   )
   return (
-    <ListView<IssueResponse1>
+    <ListView<IssueResponse>
       data={data}
       loading={isFetching}
+      emptyComponent={''}
       className={cn('gap-3')}
       render={(item) => {
         return (

@@ -1,8 +1,8 @@
 import { BoardModelType, CardModelType, ColumnsType } from '@/types/card.type'
-import { IssueResponse1 } from '@/types/issue.type'
-import { issueStatusList, statusOrder } from '@/types/model/typeOf'
+import { IssueResponse } from '@/types/issue.type'
+import { issueStatusList } from '@/types/model/typeOf'
 
-const toBoardModel = (apiResponse: IssueResponse1[]): BoardModelType => {
+const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
   const columns: ColumnsType = {}
   const cards: CardModelType[] = []
   apiResponse.forEach((item, index) => {

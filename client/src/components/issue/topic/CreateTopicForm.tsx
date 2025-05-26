@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/popover'
 
 import Icon from '@/components/Icon'
+import { Badge } from '@/components/ui/badge'
 import {
   Command,
   CommandInput,
@@ -13,15 +14,11 @@ import {
   CommandList
 } from '@/components/ui/command'
 import { cn } from '@/lib/utils'
-import { CreateIssueType } from '@/types/issue.type'
 import { TopicModel } from '@/types/model/common.model'
-import { Id } from '@/types/other.type'
-import { useEffect, useState } from 'react'
-import { useFieldArray, UseFormReturn } from 'react-hook-form'
-import { Badge } from '@/components/ui/badge'
-type CreateTopicProps = {
-  form: UseFormReturn<CreateIssueType>
-}
+import { useEffect } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { BaseIssueFormType } from '@/types/issue.type'
+type CreateTopicProps = {}
 
 const topicData: TopicModel[] = [
   {
@@ -38,9 +35,10 @@ const topicData: TopicModel[] = [
   }
 ]
 
-const CreateTopic = ({ form }: CreateTopicProps) => {
+const CreateTopicForm = ({}: CreateTopicProps) => {
+  const { control } = useFormContext<BaseIssueFormType>()
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control: control,
     name: 'topics',
     keyName: 'fieldId'
   })
@@ -52,13 +50,13 @@ const CreateTopic = ({ form }: CreateTopicProps) => {
   return (
     <>
       <FormField
-        control={form.control}
+        control={control}
         name='topics'
         render={() => {
           return (
             <div className='flex'>
               <Popover>
-                <PopoverTrigger className='rounded border px-4 py-2 [&>*:not(:first-child)]:ml-2'>
+                <PopoverTrigger className='w-full rounded border px-4 py-2 [&>*:not(:first-child)]:ml-2'>
                   {fields.length ? (
                     fields.map((item) => {
                       return <Badge className='inline-block'>{item.name}</Badge>
@@ -71,7 +69,7 @@ const CreateTopic = ({ form }: CreateTopicProps) => {
                   <Command>
                     <CommandInput placeholder='Search items...' />
                     <CommandList>
-                      {topicData.map((item, index) => {
+                      {topicData.map((item) => {
                         const isSelected = fields
                           .map((field) => field.id)
                           .includes(item.id)
@@ -121,4 +119,4 @@ const CreateTopic = ({ form }: CreateTopicProps) => {
   )
 }
 
-export default CreateTopic
+export default CreateTopicForm
