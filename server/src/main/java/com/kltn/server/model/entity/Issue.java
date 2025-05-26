@@ -39,7 +39,7 @@ public class Issue extends BaseEntity {
     private String name;
     @Enumerated(EnumType.STRING)
     private IssueStatus status;
-    private int storyPoint;
+//    private int storyPoint;
     @Enumerated(EnumType.STRING)
     private IssuePriority priority;
     @Enumerated(EnumType.STRING)
@@ -54,8 +54,8 @@ public class Issue extends BaseEntity {
     private Instant dtStart;
     @Column(name = "dt_end")
     private Instant dtEnd;
-    @Column(name = "dt_planning")
-    private Instant dtPlanning;
+//    @Column(name = "dt_planning")
+//    private Instant dtPlanning;
 
 
     public Issue(IssueEntityBuilder builder) {
@@ -64,7 +64,7 @@ public class Issue extends BaseEntity {
         this.position = builder.position;
         this.description = builder.description;
         this.status = builder.status;
-        this.storyPoint = builder.storyPoint;
+//        this.storyPoint = builder.storyPoint;
         this.priority = builder.priority;
         this.tag = builder.tag;
         this.numChangeOfPriority = builder.numChangeOfPriority;
@@ -74,7 +74,7 @@ public class Issue extends BaseEntity {
         this.reviewer = builder.reviewer;
         this.dtStart = builder.dtStart;
         this.dtEnd = builder.dtEnd;
-        this.dtPlanning = builder.dtPlanning;
+//        this.dtPlanning = builder.dtPlanning;
         this.resources = builder.resources;
 //        this.projectSprint = builder.projectSprint;
         this.project = builder.project;
@@ -107,7 +107,7 @@ public class Issue extends BaseEntity {
         private User reviewer;
         private Instant dtStart;
         private Instant dtEnd;
-        private Instant dtPlanning;
+//        private Instant dtPlanning;
         private Project project;
         private Sprint sprint;
 //        private ProjectSprint projectSprint;
@@ -142,10 +142,10 @@ public class Issue extends BaseEntity {
             return this;
         }
 
-        public IssueEntityBuilder storyPoint(int storyPoint) {
-            this.storyPoint = storyPoint;
-            return this;
-        }
+//        public IssueEntityBuilder storyPoint(int storyPoint) {
+//            this.storyPoint = storyPoint;
+//            return this;
+//        }
 
         public IssueEntityBuilder resource(List<Resource> resources) {
             this.resources = resources;
@@ -207,10 +207,10 @@ public class Issue extends BaseEntity {
             return this;
         }
 
-        public IssueEntityBuilder dtPlanning(Instant dtPlanning) {
-            this.dtPlanning = dtPlanning;
-            return this;
-        }
+//        public IssueEntityBuilder dtPlanning(Instant dtPlanning) {
+//            this.dtPlanning = dtPlanning;
+//            return this;
+//        }
 
 //        public IssueEntityBuilder projectSprint(ProjectSprint projectSprint) {
 //            this.projectSprint = projectSprint;
@@ -276,13 +276,13 @@ public class Issue extends BaseEntity {
         this.status = status;
     }
 
-    public int getStoryPoint() {
-        return storyPoint;
-    }
-
-    public void setStoryPoint(int storyPoint) {
-        this.storyPoint = storyPoint;
-    }
+//    public int getStoryPoint() {
+//        return storyPoint;
+//    }
+//
+//    public void setStoryPoint(int storyPoint) {
+//        this.storyPoint = storyPoint;
+//    }
 
     public IssuePriority getPriority() {
         return priority;
@@ -374,13 +374,13 @@ public class Issue extends BaseEntity {
         this.dtEnd = dtEnd;
     }
 
-    public Instant getDtPlanning() {
-        return dtPlanning;
-    }
-
-    public void setDtPlanning(Instant dtPlanning) {
-        this.dtPlanning = dtPlanning;
-    }
+//    public Instant getDtPlanning() {
+//        return dtPlanning;
+//    }
+//
+//    public void setDtPlanning(Instant dtPlanning) {
+//        this.dtPlanning = dtPlanning;
+//    }
 
     public Project getProject() {
         return project;
