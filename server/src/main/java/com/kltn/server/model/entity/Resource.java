@@ -4,7 +4,6 @@ import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.type.resource.ContentType;
 import com.kltn.server.model.type.resource.PlaceContent;
 import jakarta.persistence.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "resources")
@@ -13,14 +12,15 @@ public class Resource extends BaseEntity {
     @JoinColumn(name = "project_id")
     private Project project;
     @ManyToOne
-    @JoinColumn(name = "task_id")
-    private Task task;
+    @JoinColumn(name = "issue_id")
+    private Issue issue;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     private String name;
     private String extension;
+    private String sail;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     @Enumerated(EnumType.STRING)
@@ -35,7 +35,7 @@ public class Resource extends BaseEntity {
         this.extension = resourceBuilder.extension;
         this.placeContent = resourceBuilder.placeContent;
         this.size = resourceBuilder.size;
-        this.task = resourceBuilder.task;
+        this.issue = resourceBuilder.issue;
         this.user = resourceBuilder.user;
     }
 
@@ -45,7 +45,7 @@ public class Resource extends BaseEntity {
 
     public static class ResourceEntityBuilder extends BaseEntityBuilder<Resource, ResourceEntityBuilder> {
         private Project project;
-        private Task task;
+        private Issue issue;
         private User user;
         private String name;
         private String extension;
@@ -58,8 +58,8 @@ public class Resource extends BaseEntity {
             return this;
         }
 
-        public ResourceEntityBuilder task(Task task) {
-            this.task = task;
+        public ResourceEntityBuilder task(Issue issue) {
+            this.issue = issue;
             return this;
         }
 
@@ -104,20 +104,28 @@ public class Resource extends BaseEntity {
         }
     }
 
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
+    }
+
+    public String getSail() {
+        return sail;
+    }
+
+    public void setSail(String sail) {
+        this.sail = sail;
+    }
+
     public Project getProject() {
         return project;
     }
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
     }
 
     public User getUser() {

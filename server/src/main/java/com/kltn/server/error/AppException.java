@@ -2,6 +2,7 @@ package com.kltn.server.error;
 
 public class AppException extends RuntimeException {
     Error error;
+
     private AppException(Error error) {
         this.error = error;
     }
@@ -26,6 +27,15 @@ public class AppException extends RuntimeException {
             this.error = error;
             return this;
         }
+
+        public AppExceptionBuilder message(String message) {
+            this.error.setMessage(message);
+            return this;
+        }
+    }
+
+    public void setMessage(String message) {
+        this.error.setMessage(message);
     }
 
     public Error getError() {

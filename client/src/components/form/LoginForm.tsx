@@ -20,21 +20,26 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { loginThunk } from '@/feature/auth/auth.slice'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { useAppDispatch } from '@/context/redux/hook'
 import { handleErrorApi } from '@/lib/form'
 import { ValidationError } from '@/types/http.type'
 import { HOME_PATH } from '@/lib/const'
 import { toast } from 'sonner'
+import { store } from '@/context/redux/store'
 
 const LoginForm = ({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
   const dispatch = useAppDispatch()
-  const selector = useAppSelector((state) => state.authSlice)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // fallback path if no previous location
+  const from = location.state?.from?.pathname || HOME_PATH
+
   const form = useForm<LoginsSchemaType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -43,21 +48,24 @@ const LoginForm = ({
     }
   })
 
-  const handleSubmit = async (value: LoginsSchemaType) => {
-    const resultAction = await dispatch(loginThunk(value))
-    if (loginThunk.rejected.match(resultAction)) {
-      if (selector.error)
-        handleErrorApi({
-          error: new ValidationError({
-            error: [selector.error]
-          }),
-          setError: form.setError
-        })
-    }
-    if (loginThunk.fulfilled.match(resultAction)) {
-      toast.success('Login success, welcome to TaskFlow')
-      navigate(HOME_PATH)
-    }
+  const handleSubmit = (value: LoginsSchemaType) => {
+    dispatch(loginThunk(value))
+      .unwrap()
+      .then(() => {
+        toast.success('Login success, welcome to TaskFlow')
+        navigate(from, { replace: true })
+      })
+      .catch(() => {
+        const error = store.getState().authSlice.error
+        if (error) {
+          handleErrorApi({
+            error: new ValidationError({
+              error: [error]
+            }),
+            setError: form.setError
+          })
+        }
+      })
   }
 
   return (
@@ -66,7 +74,7 @@ const LoginForm = ({
         <CardHeader>
           <CardTitle className='text-2xl'>Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your university id below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -105,7 +113,11 @@ const LoginForm = ({
                 >
                   Forgot your password?
                 </a>
-                <Button type='submit' className='w-full'>
+                <Button
+                  type='submit'
+                  className='w-full'
+                  loading={form.formState.isSubmitting}
+                >
                   Login
                 </Button>
               </div>

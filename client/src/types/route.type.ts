@@ -1,5 +1,13 @@
 type ProjectParams = {
-  id: string
+  projectId: string
 }
 
-export type { ProjectParams }
+type WorkspaceParams = {
+  workspaceId: string
+}
+
+type InviteProjectParams = {
+  token: string
+}
+
+export type { ProjectParams, WorkspaceParams, InviteProjectParams }

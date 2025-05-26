@@ -1,3 +1,5 @@
-import { UniqueIdentifier } from '@dnd-kit/core'
+import { z } from 'zod'
 
-export type Id = UniqueIdentifier
+export type Id = string
+export const stringSchema = () =>
+  z.string().trim().min(1, { message: 'Not Blank' })

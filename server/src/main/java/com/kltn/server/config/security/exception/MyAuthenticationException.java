@@ -1,7 +1,5 @@
 package com.kltn.server.config.security.exception;
 
-import com.kltn.server.error.AppException;
-import com.kltn.server.error.Error;
 import org.springframework.security.core.AuthenticationException;
 
 public class MyAuthenticationException extends AuthenticationException {

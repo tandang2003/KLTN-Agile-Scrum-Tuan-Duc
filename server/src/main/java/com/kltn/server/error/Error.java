@@ -16,14 +16,37 @@ public enum Error {
     TOO_MANY_REQUESTS(429, "Too many requests, please try again later"),
     INVALID_PARAMETER_REQUEST(422, "Invalid parameter request"),
 
+    CREATE_FAILED(410, "Failure to create resource"),
+    INVITED_FAILED(411, "Failure to invite user"),
+
+    ALREADY_EXISTS(HttpServletResponse.SC_CONFLICT, "User already have project"),
+    SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
+    SPRINT_ALREADY_END(HttpServletResponse.SC_CONFLICT, "Sprint already ended"),
+
+    NOT_FOUND_WORKSPACE(404, "Workspace not found"),
+
+    NOT_FOUND_PROJECT(404, "Project not found"),
+
+    NOT_FOUND_USER_IN_WORKSPACE(404, "User not found in workspace"),
+    NOT_FOUND_SPECIFYING_PROJECT_TEACHER(404, "Project not found in any workspace"),
+
+    NOT_FOUND_USER_PROJECT_RELATION(404, "User-Project relation not found"),
+
+    NOT_FOUND_SPRINT_PROJECT_RELATION(404, "Sprint-Project relation not found"),
+
     // Authentication & Token Errors
     TOKEN_EXPIRED(440, "Token has expired"),
     TOKEN_INVALID(441, "Invalid token"),
     TOKEN_MISSING(442, "Token is missing"),
     SESSION_EXPIRED(443, "User session has expired"),
 
+
     // 5xx Server Errors
+
+
     SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error"),
+    DB_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server error"),
+    DB_SERVER_MISSING_DATA(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server missing data"),
     INTERNAL_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error"),
     NOT_IMPLEMENTED(HttpServletResponse.SC_NOT_IMPLEMENTED, "Feature not implemented"),
     BAD_GATEWAY(HttpServletResponse.SC_BAD_GATEWAY, "Bad gateway"),

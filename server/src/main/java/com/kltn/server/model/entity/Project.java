@@ -1,32 +1,33 @@
 package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.entity.relationship.ProjectSprint;
+import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import jakarta.persistence.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.mapstruct.Mappings;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "projects")
 public class Project extends BaseEntity {
     private String name;
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "workspace_id")
-    private Workspace workspace;
-    @ManyToMany(mappedBy = "projects")
-    private Set<User> users;
     @OneToMany(mappedBy = "project")
-    private List<Sprint> sprints;
+    private List<WorkspacesUsersProjects> workspacesUserProjects;
+    @OneToMany(mappedBy = "project")
+    private List<ProjectSprint> projectSprints;
+    @OneToMany(mappedBy = "project")
+    private List<Issue> issues;
 
     public Project(ProjectEntityBuilder builder) {
         super(builder);
         this.name = builder.name;
         this.description = builder.description;
-        this.workspace = builder.workspace;
-        this.users = builder.users;
-        this.sprints = builder.sprints;
+        this.projectSprints = builder.projectSprints;
+        this.workspacesUserProjects = builder.workspacesUserProjects;
+        this.issues = builder.issues;
     }
 
     public Project() {
@@ -37,9 +38,9 @@ public class Project extends BaseEntity {
     public static class ProjectEntityBuilder extends BaseEntityBuilder<Project, ProjectEntityBuilder> {
         private String name;
         private String description;
-        private Workspace workspace;
-        private Set<User> users;
-        private List<Sprint> sprints;
+        private List<ProjectSprint> projectSprints;
+        private List<WorkspacesUsersProjects> workspacesUserProjects;
+        private List<Issue> issues;
 
         @Override
         protected ProjectEntityBuilder self() {
@@ -56,25 +57,26 @@ public class Project extends BaseEntity {
             return this;
         }
 
+        public ProjectEntityBuilder projectSprints(List<ProjectSprint> projectSprints) {
+            this.projectSprints = projectSprints;
+            return this;
+        }
+
+        public ProjectEntityBuilder issues(List<Issue> issues) {
+            this.issues = issues;
+            return this;
+        }
+
+        public ProjectEntityBuilder workspacesUserProjects(List<WorkspacesUsersProjects> workspacesUserProjects) {
+            this.workspacesUserProjects = workspacesUserProjects;
+            return this;
+        }
+
         public ProjectEntityBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public ProjectEntityBuilder workspace(Workspace workspace) {
-            this.workspace = workspace;
-            return this;
-        }
-
-        public ProjectEntityBuilder member(Set<User> users) {
-            this.users = users;
-            return this;
-        }
-
-        public ProjectEntityBuilder sprints(List<Sprint> sprints) {
-            this.sprints = sprints;
-            return this;
-        }
     }
 
     public String getName() {
@@ -93,27 +95,66 @@ public class Project extends BaseEntity {
         this.description = description;
     }
 
+//    public List<Sprint> getSprints() {
+//        return sprints;
+//    }
+//
+
+    public List<WorkspacesUsersProjects> getWorkspacesUserProjects() {
+        return workspacesUserProjects;
+    }
+
+    public void setWorkspacesUserProjects(List<WorkspacesUsersProjects> workspacesUserProjects) {
+        this.workspacesUserProjects = workspacesUserProjects;
+    }
+
+    @Transient
     public Workspace getWorkspace() {
-        return workspace;
+        return workspacesUserProjects == null
+                || workspacesUserProjects.isEmpty() ? null :
+                workspacesUserProjects.get(0).getWorkspace();
     }
 
-    public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
+    @Transient
+    public List<User> getMembers() {
+        return workspacesUserProjects.stream()
+                .map(WorkspacesUsersProjects::getUser)
+                .toList();
     }
 
-    public Set<User> getMember() {
-        return users;
+    @Transient
+    public Role getMemberRole(String userId) {
+        return workspacesUserProjects.stream()
+                .filter(
+                        workspacesUsersProjects ->
+                                workspacesUsersProjects.getUser().getId().equals(userId))
+                .map(WorkspacesUsersProjects::getRole)
+                .findFirst()
+                .orElse(null);
     }
 
-    public void setMember(Set<User> users) {
-        this.users = users;
-    }
 
+    @Transient
     public List<Sprint> getSprints() {
-        return sprints;
+        return projectSprints.stream()
+                .map(ProjectSprint::getSprint)
+                .toList();
     }
 
-    public void setSprints(List<Sprint> sprints) {
-        this.sprints = sprints;
+    public List<ProjectSprint> getProjectSprints() {
+        return projectSprints;
+    }
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
+    }
+
+    public void setProjectSprints(List<ProjectSprint> projectSprints) {
+
+        this.projectSprints = projectSprints;
     }
 }

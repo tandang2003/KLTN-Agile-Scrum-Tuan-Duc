@@ -7,7 +7,14 @@ import eslintPluginPrettier from 'eslint-plugin-prettier'
 import unusedImports from 'eslint-plugin-unused-imports'
 
 export default tseslint.config(
-  { ignores: ['dist', 'vite.config.ts'] },
+  {
+    ignores: [
+      'dist',
+      'vite.config.ts',
+      'src/components/ui/**',
+      'src/components/sidebar/**'
+    ]
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -56,7 +63,23 @@ export default tseslint.config(
           plugins: ['prettier-plugin-tailwindcss']
         }
       ],
-      '@typescript-eslint/no-empty-object-type': 'error'
+      '@typescript-eslint/no-empty-object-type': 'error',
+      '@typescript-eslint/ban-types': [
+        'error',
+        {
+          types: {
+            String: false,
+            Boolean: false,
+            Number: false,
+            Symbol: false,
+            '{}': false,
+            Object: false,
+            object: false,
+            Function: false
+          },
+          extendDefaults: true
+        }
+      ]
     }
   }
 )

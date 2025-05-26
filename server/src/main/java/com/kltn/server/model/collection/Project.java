@@ -1,30 +1,38 @@
 package com.kltn.server.model.collection;
 
 import com.kltn.server.model.base.BaseDocument;
-import com.kltn.server.model.collection.model.Tag;
+import com.kltn.server.model.collection.model.Topic;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document
 public class Project extends BaseDocument {
+
     @Field("nk_project_id")
     private String nkProjectId;
     @Field("description")
     private String description;
-    @Field("tags")
-    private Tag[] tags;
+    @Field("topics")
+    private List<Topic> topics;
+
+    public Project() {
+        super();
+    }
 
     public Project(ProjectBuilder builder) {
         super(builder);
         this.nkProjectId = builder.nkProjectId;
         this.description = builder.description;
-        this.tags = builder.tags;
+        this.topics = builder.topics;
     }
 
     public static class ProjectBuilder extends BaseDocument.BaseDocumentBuilder<Project, ProjectBuilder> {
         private String nkProjectId;
         private String description;
-        private Tag[] tags;
+        private List<Topic> topics;
 
         public ProjectBuilder nkProjectId(String nkProjectId) {
             this.nkProjectId = nkProjectId;
@@ -36,8 +44,8 @@ public class Project extends BaseDocument {
             return this;
         }
 
-        public ProjectBuilder tags(Tag[] tags) {
-            this.tags = tags;
+        public ProjectBuilder topics(List<Topic> topics) {
+            this.topics = topics;
             return this;
         }
 
@@ -71,11 +79,14 @@ public class Project extends BaseDocument {
         this.description = description;
     }
 
-    public Tag[] getTags() {
-        return tags;
+    public List<Topic> getTopics() {
+        if (topics == null) {
+            return new ArrayList<>();
+        }
+        return topics;
     }
 
-    public void setTags(Tag[] tags) {
-        this.tags = tags;
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
     }
 }

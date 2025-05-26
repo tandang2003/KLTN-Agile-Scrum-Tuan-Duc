@@ -20,11 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class BasicAuthenticationProvider implements AuthenticationProvider {
-    @Autowired
-    private LoadUserService loadUserService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final LoadUserService loadUserService;
+    private final PasswordEncoder passwordEncoder;
 
+    @Autowired
+    public BasicAuthenticationProvider(LoadUserService loadUserService, PasswordEncoder passwordEncoder) {
+        this.loadUserService = loadUserService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional

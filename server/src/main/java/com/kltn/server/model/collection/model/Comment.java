@@ -1,8 +1,10 @@
 package com.kltn.server.model.collection.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Comment {
+    private ObjectId id;
     @Field
     private String to;
     @Field
@@ -25,17 +27,27 @@ public class Comment {
         this.deletedBy = builder.deletedBy;
     }
 
+    public Comment() {
+    }
+
     public static CommentBuilder builder() {
         return new CommentBuilder();
     }
 
     public static class CommentBuilder {
+        private ObjectId id;
         private String to;
         private String from;
         private String message;
         private Attachment attachment;
         private boolean deleted;
         private String deletedBy;
+
+        public void prePersist() {
+            if (this.id == null) {
+                this.id = new ObjectId();
+            }
+        }
 
         public CommentBuilder to(String to) {
             this.to = to;
@@ -68,6 +80,7 @@ public class Comment {
         }
 
         public Comment build() {
+            prePersist();
             return new Comment(this);
         }
     }

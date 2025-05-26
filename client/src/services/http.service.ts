@@ -1,20 +1,21 @@
 import axiosInstance, { manualAxios } from '@/configuration/http.config'
+import { AxiosRequestConfig } from 'axios'
 
 const httpService = {
-  get: <R>(url: string) => {
-    return axiosInstance.get<R>(url)
+  get: <R>(url: string, config?: AxiosRequestConfig) => {
+    return axiosInstance.get<R>(url, config)
   },
-  post: <R, B>(url: string, body: B) => {
-    return axiosInstance.post<R>(url, body)
+  post: <R, B>(url: string, body: B, config?: AxiosRequestConfig) => {
+    return axiosInstance.post<R>(url, body, config)
   },
-  put: <R, B>(url: string, body: B) => {
-    return axiosInstance.put<R>(url, body)
+  put: <R, B>(url: string, body: B, config?: AxiosRequestConfig) => {
+    return axiosInstance.put<R>(url, body, config)
   },
-  patch: <R, B>(url: string, body: B) => {
-    return axiosInstance.put<R>(url, body)
+  patch: <R, B>(url: string, body: B, config?: AxiosRequestConfig) => {
+    return axiosInstance.put<R>(url, body, config)
   },
-  delete: <R>(url: string) => {
-    return axiosInstance.delete<R>(url)
+  delete: <R>(url: string, config?: AxiosRequestConfig) => {
+    return axiosInstance.delete<R>(url, config)
   },
   manual: () => {
     return manualAxios

@@ -7,64 +7,77 @@ import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 import Icon from '@/components/Icon'
 import Logo from '@/components/Logo'
 import { NavMain } from '@/components/sidebar/nav-main'
+import { useAppSelector } from '@/context/redux/hook'
+import { RootState } from '@/context/redux/store'
 
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg'
-  },
-  header: {
-    name: 'Task Flow',
-    logo: Logo
-  },
-  navMain: {
-    items: [
-      {
-        title: 'Overview',
-        url: '#',
-        isActive: true,
-        icon: <Icon icon={'lucide:album'} />,
+function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { listItemSideBar } = useAppSelector(
+    (state: RootState) => state.workspaceSlice
+  )
+
+  const data = React.useMemo(() => {
+    return {
+      header: {
+        name: 'Task Flow',
+        logo: Logo
+      },
+      navMain: {
         items: [
           {
-            title: 'History',
-            url: '#'
+            title: 'Overview',
+            url: '/manager',
+            isActive: true,
+            icon: <Icon icon={'lucide:album'} />,
+            items: [
+              {
+                title: 'History',
+                url: '#'
+              },
+              {
+                title: 'Starred',
+                url: '#'
+              },
+              {
+                title: 'Settings',
+                url: '#'
+              }
+            ]
           },
           {
-            title: 'Starred',
-            url: '#'
+            title: 'Workspaces',
+            url: '/manager/workspace',
+            icon: <Icon icon={'carbon:workspace'} />,
+            items:
+              listItemSideBar
+                ?.filter((item) => item)
+                .map(
+                  (item) =>
+                    item && {
+                      title: item.name,
+                      url: `/manager/workspace/${item.id}`
+                    }
+                ) ?? []
           },
           {
-            title: 'Settings',
-            url: '#'
+            title: 'Project',
+            url: '/manager/workspace/project/1',
+            icon: <Icon icon={'ant-design:project-twotone'} />
           }
         ]
       },
-      {
-        title: 'Workspaces',
-        url: '#',
-        icon: <Icon icon={'carbon:workspace'} />
-      },
-      {
-        title: 'Projects',
-        url: '#',
-        icon: <Icon icon={'ant-design:project-twotone'} />
+      recent: {
+        items: [
+          {
+            name: 'Workspaces',
+            url: '#'
+          }
+        ]
       }
-    ]
-  },
-  recent: {
-    items: [
-      {
-        name: 'Workspaces',
-        url: '#'
-      }
-    ]
-  }
-}
+    }
+  }, [listItemSideBar])
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible='icon' {...props} className=''>
+    <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
         <TeamSwitcher team={data.header} />
       </SidebarHeader>
@@ -75,3 +88,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
+
+export default React.memo(AppSidebar)

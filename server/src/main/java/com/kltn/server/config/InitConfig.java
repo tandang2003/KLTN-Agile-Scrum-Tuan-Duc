@@ -1,7 +1,14 @@
 package com.kltn.server.config;
 
+import com.kltn.server.config.properties.CacheProperties;
 import com.kltn.server.config.security.CustomJWTValidation;
-import com.kltn.server.util.TokenKeyUtils;
+import com.kltn.server.mapper.document.ChangeLogMapper;
+import com.kltn.server.mapper.document.LogProjectMapper;
+import com.kltn.server.mapper.document.LogTaskMapper;
+import com.kltn.server.mapper.document.iml.ChangeLogMapperIml;
+import com.kltn.server.mapper.document.iml.LogProjectMapperIml;
+import com.kltn.server.mapper.document.iml.LogTaskMapperIml;
+import com.kltn.server.util.token.TokenKeyUtils;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -10,6 +17,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -24,10 +32,7 @@ import org.springframework.security.oauth2.jwt.*;
 @EnableAspectJAutoProxy
 @EnableJpaAuditing
 public class InitConfig {
-    //    @Bean
-//    public AuditorAware<User> auditorConfig() {
-//        return new AuditorConfig();
-//    }
+
     private TokenKeyUtils tokenKeyUtils;
 
     @Autowired
@@ -81,4 +86,36 @@ public class InitConfig {
         decoder.setJwtValidator(tokenValidator());
         return decoder;
     }
+
+    @Bean
+    @Qualifier("verifyTokenEncoder")
+    JwtEncoder verifyTokenEncoder() {
+        JWK jwk = new RSAKey.Builder(tokenKeyUtils.getVerifyPublicKey()).privateKey(tokenKeyUtils.getVerifyPrivateKey()).build();
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSource);
+    }
+
+    @Bean
+    @Qualifier("verifyTokenDecoder")
+    JwtDecoder verifyTokenDecoder() {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getVerifyPublicKey()).build();
+//        decoder.setJwtValidator(tokenValidator());
+        return decoder;
+    }
+
+//    //    @Bean
+//    public LogTaskMapper logTaskMapper() {
+//        return new LogTaskMapperIml();
+//    }
+//
+//    //    @Bean
+//    public LogProjectMapper logProjectMapper() {
+//        return new LogProjectMapperIml();
+//    }
+//
+//    @Bean
+//    public ChangeLogMapper getChangeLogMapper() {
+//        return new ChangeLogMapperIml(logTaskMapper(), logProjectMapper());
+//    }
+
 }

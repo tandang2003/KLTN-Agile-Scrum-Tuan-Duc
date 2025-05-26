@@ -1,7 +1,10 @@
-import { StorageItem } from '@/lib/const'
+import workspaceApi from '@/feature/workspace/workspace.api'
 import authService from '@/services/auth.service'
-import { AuthState, LoginReq, LoginRes, LogoutReq } from '@/types/auth.type'
-import { ValidationError } from '@/types/http.type'
+import tokenService from '@/services/token.service'
+import { LoginReq, LoginRes, LogoutReq, RoleType } from '@/types/auth.type'
+import { FieldError } from '@/types/http.type'
+import { Id } from '@/types/other.type'
+import { UserInfoResponse } from '@/types/user.type'
 import {
   createAsyncThunk,
   createSlice,
@@ -10,12 +13,25 @@ import {
   isRejected,
   PayloadAction
 } from '@reduxjs/toolkit'
+import { toast } from 'sonner'
+
+type AuthState = {
+  loading: boolean
+  isAuth?: boolean
+  error?: FieldError
+  accessToken?: string
+  user?: UserAuthType
+}
+
+type UserAuthType = {
+  id: Id
+  name: string
+  uniId: string
+  role: RoleType
+}
 
 const initialState: AuthState = {
-  loading: false,
-  accessToken: undefined,
-  user: undefined,
-  error: undefined
+  loading: false
 }
 
 const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
@@ -23,39 +39,38 @@ const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
   async (req, { rejectWithValue }) => {
     try {
       const data = await authService.login(req)
+      tokenService.setTokenLocal(data.data.access_token)
       return data.data
-    } catch (e) {
-      if (e instanceof ValidationError) return rejectWithValue(e.message)
-      return rejectWithValue('Can not handle')
+    } catch (_) {
+      return rejectWithValue('Email or password not right')
     }
   }
 )
 
-const restoreSessionThunk = createAsyncThunk<
-  {
-    accessToken: string
-  },
-  void
->('auth/restoreSession', async (_, thunkAPI) => {
-  const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
-  if (!accessToken) return thunkAPI.rejectWithValue('No token')
-
-  // Optional: call backend to fetch user info
-  try {
-    // const user = await api.getCurrentUser(token)
-    return { accessToken: accessToken }
-  } catch (_) {
-    return thunkAPI.rejectWithValue('Token invalid')
+const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
+  'auth/user',
+  async (_, { rejectWithValue, signal }) => {
+    try {
+      const data = await authService.getInfo(signal)
+      return data.data
+    } catch (_) {
+      tokenService.removeTokenLocal()
+      return rejectWithValue('Get user workspace failed')
+    }
   }
-})
+)
 
 const logoutThunk = createAsyncThunk<void, LogoutReq>(
   'auth/logout',
-  async (req, thunkAPI) => {
+  async (req, { dispatch, rejectWithValue }) => {
     try {
       await authService.logout(req)
     } catch (_) {
-      return thunkAPI.rejectWithValue('Token invalid')
+      return rejectWithValue('Token invalid')
+    } finally {
+      tokenService.removeTokenLocal()
+      toast.success('Logout')
+      dispatch(workspaceApi.util.resetApiState())
     }
   }
 )
@@ -63,7 +78,11 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setUser: (state: AuthState, action: PayloadAction<UserAuthType>) => {
+      state.user = action.payload
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(loginThunk.pending, (state: AuthState) => {
       state.loading = true
@@ -72,44 +91,38 @@ const authSlice = createSlice({
     builder.addCase(
       loginThunk.fulfilled,
       (state: AuthState, action: PayloadAction<LoginRes>) => {
-        state.accessToken = action.payload.access_token
-        state.user = action.payload.user
-        sessionStorage.setItem(
-          StorageItem.AccessToken,
-          action.payload.access_token
-        )
+        const { user } = action.payload
+        state.user = user
+        state.isAuth = true
       }
     )
     builder.addCase(loginThunk.rejected, (state: AuthState, action) => {
       state.accessToken = undefined
       state.user = undefined
+      state.isAuth = false
       state.error = action.payload
         ? { field: 'password', message: action.payload as string }
         : { field: 'password', message: 'Email or password not valid' }
-      sessionStorage.removeItem(StorageItem.AccessToken)
     })
     builder.addCase(
-      restoreSessionThunk.fulfilled,
-      (
-        state: AuthState,
-        action: PayloadAction<{
-          accessToken: string
-        }>
-      ) => {
-        state.accessToken = action.payload.accessToken
-        state.user = undefined
-        state.error = undefined
+      restoreUserThunk.fulfilled,
+      (state: AuthState, action: PayloadAction<UserInfoResponse>) => {
+        state.user = action.payload
+        state.isAuth = true
       }
     )
+    builder.addCase(restoreUserThunk.rejected, (state: AuthState) => {
+      state.user = undefined
+      state.isAuth = false
+    })
+    // logout
     builder.addMatcher(
       (action) =>
         action.type === logoutThunk.rejected.type ||
         action.type === logoutThunk.fulfilled.type,
-      (state) => {
-        state.accessToken = undefined
-        sessionStorage.removeItem(StorageItem.AccessToken)
-      }
+      () => initialState
     )
+
     builder.addMatcher(isPending, (state) => {
       state.loading = true
     })
@@ -121,6 +134,7 @@ const authSlice = createSlice({
     })
   }
 })
-export { loginThunk, restoreSessionThunk, logoutThunk }
 const authReducer = authSlice.reducer
+const { setUser } = authSlice.actions
+export { loginThunk, logoutThunk, restoreUserThunk, setUser }
 export default authReducer

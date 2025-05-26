@@ -1,17 +1,3 @@
-import { FieldError } from '@/types/http.type'
-
-type AuthState = {
-  loading: boolean
-  error?: FieldError
-  accessToken?: string
-  user?: {
-    id: string
-    name: string
-    uniId: string
-    role: string
-  }
-}
-
 type RegisterReq = {
   uniId: string
   name: string
@@ -24,13 +10,15 @@ type LoginRes = {
     id: string
     name: string
     uniId: string
-    role: string
+    role: RoleType
   }
 }
+
+type RoleType = 'teacher' | 'student'
 
 type LogoutReq = {
   accessToken: string
 }
 
 type LoginReq = Omit<RegisterReq, 'name'>
-export type { RegisterReq, LoginRes, LoginReq, AuthState, LogoutReq }
+export type { RegisterReq, LoginRes, LoginReq, LogoutReq, RoleType }

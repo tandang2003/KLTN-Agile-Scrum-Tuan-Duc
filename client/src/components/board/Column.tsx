@@ -1,93 +1,81 @@
-import { BaseCardProps, ColumnProps } from '@/components/board/type'
 import Icon from '@/components/Icon'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
+import Card from '@/components/board/Card'
 import CardAdding from '@/components/board/CardAdding'
 import { cn } from '@/lib/utils'
+import { CardModelType } from '@/types/card.type'
+import { Id } from '@/types/other.type'
 import { useDroppable } from '@dnd-kit/core'
 import { useEffect, useRef, useState } from 'react'
-import Card from '@/components/board/Card'
-import { useClickManager } from '@/context/click/click-manager-hook'
 
-const Column = ({
-  id,
-  name,
-  items,
-  container = undefined
-}: ColumnProps & {
-  container?: string
-}) => {
+type ColumnProps = {
+  id: Id
+  name: string
+  items: CardModelType[]
+}
+
+const Column = ({ id, name, items }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
-  const scrollRef = useRef<HTMLDivElement | null>(null)
-  const [heightToBottom, setHeightToBottom] = useState<number>(0)
+  const [isAdding, setIsAdding] = useState<boolean>(false)
+  const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (scrollRef.current) {
-      const rect = scrollRef.current.getBoundingClientRect()
-      const viewportHeight = window.innerHeight
-      setHeightToBottom(() => viewportHeight - rect.bottom)
+    const handleClickOutSide = (e: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        setIsAdding(false)
+      }
     }
-  }, [])
+    document.addEventListener('mousedown', handleClickOutSide)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutSide)
+    }
+  }, [isAdding])
 
-  return (
-    <div ref={setNodeRef} className={(cn('h-fit rounded-xl p-2'), container)}>
-      <span className='mb-3.5 flex items-center border-b-1 pb-3.5'>
-        <Icon
-          className='text-purple-700'
-          icon={'icon-park-outline:dot'}
-          size={20}
-        />
-        <span className='title px-1.5'>{name}</span>
-        <span className='text-sm font-bold text-gray-500'>3</span>
-        <Button variant={'ghost'} className='ml-auto p-0'>
-          <Icon size={25} icon={'material-symbols:add-rounded'} />
-        </Button>
-      </span>
-      <ScrollArea
-        style={{
-          height: `${heightToBottom}px`
-        }}
-        ref={scrollRef}
-      >
-        <div
-          style={{
-            '--card': 'white'
-          }}
-          className='p-l4 flex flex-col pr-4 pb-4 pl-2'
-        >
-          {items?.map((item: BaseCardProps) => (
-            <Card key={item.id} {...item} container={cn('m-1 bg-white')} />
-          ))}
-
-          <ButtonCreateCard id={id as string} />
-        </div>
-        <ScrollBar orientation='vertical' />
-      </ScrollArea>
-    </div>
-  )
-}
-export default Column
-
-const ButtonCreateCard = ({ id }: { id: string }) => {
-  const { setActiveId } = useClickManager()
   return (
     <>
-      <CardAdding id={id} />
-      <div className='m-1 w-full bg-gray-100 pr-2'>
-        <Button
-          onClick={() => {
-            setActiveId(id)
-          }}
-          className={
-            'w-full justify-start border-none bg-inherit p-1 text-black'
-          }
-        >
-          <Icon icon='ic:baseline-plus' size={24} />
-          Add Card
-        </Button>
+      <span className='sticky top-0 z-10 flex items-center border-b-2 bg-white px-2 py-3.5'>
+        <span className='title h3 px-1.5'>{name}</span>
+        <span className='ml-auto text-sm font-bold text-gray-500'>
+          {items.length}
+        </span>
+      </span>
+      <div
+        ref={(node) => {
+          setNodeRef(node)
+        }}
+        className={cn('rounded-sm rounded-xl px-2')}
+      >
+        <div className='flex flex-col'>
+          {items?.map((item: CardModelType) => {
+            return (
+              <Card
+                key={item.id}
+                data={{ ...item }}
+                container={cn('mt-2 bg-white')}
+              />
+            )
+          })}
+        </div>
+        {isAdding ? (
+          <CardAdding id={id} ref={cardRef} />
+        ) : (
+          <Button
+            onClick={() => {
+              setIsAdding(true)
+            }}
+            className={
+              'mt-2 w-full justify-start border-none bg-inherit p-1 text-black hover:text-white'
+            }
+          >
+            <Icon icon='ic:baseline-plus' size={24} />
+            Add Card
+          </Button>
+        )}
       </div>
     </>
   )
 }
+export default Column

@@ -1,6 +1,4 @@
-import React from 'react'
-
-const CardEditing = (props) => {
+const CardEditing = () => {
   return <div></div>
 }
 

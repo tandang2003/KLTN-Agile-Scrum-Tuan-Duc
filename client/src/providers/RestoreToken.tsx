@@ -1,5 +1,5 @@
 import { useAppDispatch } from '@/context/redux/hook'
-import { restoreSessionThunk } from '@/feature/auth/auth.slice'
+import { restoreUserThunk } from '@/feature/auth/auth.slice'
 import { ReactNode, useEffect } from 'react'
 
 type RestoreTokenProps = {
@@ -7,10 +7,6 @@ type RestoreTokenProps = {
 }
 
 const RestoreToken = ({ children }: RestoreTokenProps) => {
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    dispatch(restoreSessionThunk())
-  }, [dispatch])
   return children
 }
 

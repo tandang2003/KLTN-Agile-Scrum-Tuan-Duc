@@ -1,18 +1,23 @@
 package com.kltn.server.config.security;
 
+import com.kltn.server.config.properties.ApplicationProps;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
+import com.kltn.server.config.security.filter.ProjectRoleAuthorizationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
+import com.kltn.server.config.security.provider.ProjectAuthorizationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,12 +28,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-//@EnableWebSecurity(debug = true)
+@EnableMethodSecurity
 public class SecurityConfig {
-
     @Autowired
     private JwtDecoder accessTokenDecoder;
-
+    @Qualifier("verifyTokenDecoder")
+    @Autowired
+    private JwtDecoder verifyTokenDecoder;
     @Autowired
     private BasicAuthenticationProvider basicAuthenticationProvider;
 
@@ -39,31 +45,51 @@ public class SecurityConfig {
     private CustomAccessDenyHandler customAccessDenyHandler;
 
     @Autowired
+    private ProjectAuthorizationProvider projectAuthorizationProvider;
+
+
+    @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     @Autowired
     private CustomConverterJwtToUser customConverterJwtToUser;
+    @Autowired
+    private CustomLogoutHandler customLogoutHandler;
+    @Autowired
+    private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    @Autowired
+    private ApplicationProps applicationProps;
 
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(List.of(basicAuthenticationProvider));
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter = projectRoleAuthorizationFilter();
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         http.securityContext(contextConfig -> {
                     contextConfig.requireExplicitSave(false);
                 })
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(logoutConfig -> {
+                    logoutConfig
+                            .logoutUrl("/auth/logout")
+                            .addLogoutHandler(customLogoutHandler)
+                            .logoutSuccessHandler(customLogoutSuccessHandler)
+                            .deleteCookies("refresh_token");
+                })
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
+                .addFilterAfter(projectRoleAuthorizationFilter, BearerTokenAuthenticationFilter.class)
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers("user/**").authenticated();
-                    authorizeRequests.anyRequest().permitAll();
+                    authorizeRequests.requestMatchers(applicationProps.getWhitelist().toArray(String[]::new))
+                            .permitAll();
+                    authorizeRequests.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {
@@ -75,19 +101,15 @@ public class SecurityConfig {
                 .exceptionHandling(exc -> {
                     exc.accessDeniedHandler(customAccessDenyHandler);
                     exc.authenticationEntryPoint(customAuthenticationEntryPoint);
-                })
-        ;
+                });
 
-
-        http.httpBasic(AbstractHttpConfigurer::disable);
-        http.formLogin(c -> c.disable());
         return http.build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -96,5 +118,14 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    @Bean
+    ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter() {
+        ProjectRoleAuthorizationFilter filter = new ProjectRoleAuthorizationFilter(verifyTokenDecoder);
+        filter.setAuthenticationManager(new ProviderManager(List.of(projectAuthorizationProvider)));
+        filter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+        return filter;
+    }
+
 
 }

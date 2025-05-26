@@ -1,4 +1,6 @@
-export type ResponseApi<T> = {
+import { HttpStatusCode } from 'axios'
+
+type ResponseApi<T> = {
   code: number
   data: T & {
     createdAt?: Date | undefined
@@ -10,18 +12,30 @@ export type ResponseApi<T> = {
   }
   message: string
 }
-export type ResponseApiError = {
+type ResponseApiError = {
   code: number
   message: string
   error: FieldError[]
 }
 
-export type FieldError = {
+type FieldError = {
   field: string
   message: string
 }
 
-export class ValidationError extends Error {
+type Page<T> = {
+  items: T[]
+  currentPage: number
+  totalPages: number
+  totalItems: number
+}
+
+type PageRequest = {
+  page: number
+  size: number
+}
+
+class ValidationError extends Error {
   code: number
   message: string
   error: FieldError[]
@@ -39,3 +53,19 @@ export class ValidationError extends Error {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+class UnauthorizedError extends Error {
+  code: number
+  message: string
+  constructor() {
+    super('Unauthorized')
+    this.code = HttpStatusCode.Unauthorized
+    this.message = 'Unauthorized'
+
+    // Restore prototype chain
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+export type { ResponseApi, ResponseApiError, FieldError, Page, PageRequest }
+
+export { ValidationError, UnauthorizedError }
