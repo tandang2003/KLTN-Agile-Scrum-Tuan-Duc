@@ -27,7 +27,7 @@ public class SnapshotMapperImpl implements SnapshotMapper {
         builder.tag(entity.getTag().name());
         builder.dtStart(entity.getDtStart());
         builder.dtEnd(entity.getDtEnd());
-        builder.dtPlanning(entity.getDtPlanning());
+//        builder.dtPlanning(entity.getDtPlanning());
         builder.complexOfDescription(entity.getComplexOfDescription());
         builder.numChangeOfPriority(entity.getNumChangeOfPriority());
         builder.numChangeOfDescription(entity.getNumChangeOfDescription());

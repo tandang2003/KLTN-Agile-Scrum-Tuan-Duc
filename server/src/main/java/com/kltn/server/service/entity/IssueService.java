@@ -4,6 +4,8 @@ import com.kltn.server.DTO.request.base.AttachmentRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
+import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
+import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
@@ -21,6 +23,7 @@ import com.kltn.server.model.collection.model.Attachment;
 import com.kltn.server.model.entity.*;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -120,7 +123,7 @@ public class IssueService {
         String fliedChanged = updateRequest.getFieldChanging();
         var task = getEntityById(id);
         var taskMongo = issueMongoService.getById(id);
-        ChangeLog changeLog;
+        ChangeLogRequest changeLog;
         switch (fliedChanged) {
             case "name":
                 task.setName(updateRequest.getName());
@@ -142,16 +145,16 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"status"}, task, taskMongo);
                 break;
-            case "tag":
-                task.setTag(updateRequest.getTag());
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"tag"}, task, taskMongo);
-                break;
-            case "position":
-                task.setPosition(updateRequest.getPosition());
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
-                break;
+//            case "tag":
+//                task.setTag(updateRequest.getTag());
+//                task = saveEntity(task);
+//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"tag"}, task, taskMongo);
+//                break;
+//            case "position":
+//                task.setPosition(updateRequest.getPosition());
+//                task = saveEntity(task);
+//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
+//                break;
             case "topics":
                 taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
@@ -197,11 +200,11 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
                 break;
-            case "planning":
-                task.setDtPlanning(updateRequest.getPlanning());
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"planning"}, task, taskMongo);
-                break;
+//            case "planning":
+//                task.setDtPlanning(updateRequest.getPlanning());
+//                task = saveEntity(task);
+//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"planning"}, task, taskMongo);
+//                break;
             default:
                 throw AppException.builder().error(Error.INVALID_PARAMETER_REQUEST).build();
         }
@@ -229,5 +232,16 @@ public class IssueService {
 //        return null;
     }
 
-
+    @SendKafkaEvent(topic = "task-log")
+    public ApiResponse<IssueResponse> updateTask(@Valid IssueUpdateStatusRequest request) {
+        String id = request.getId();
+        var task = getEntityById(id);
+        var taskMongo = issueMongoService.getById(id);
+        ChangeLogRequest changeLog;
+        task.setStatus(request.getStatus());
+        task.setPosition(request.getPosition());
+        task = saveEntity(task);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"status","position"}, task, taskMongo);
+        return ApiResponse.<IssueResponse>builder().code(HttpStatus.OK.value()).message("Update task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
+    }
 }

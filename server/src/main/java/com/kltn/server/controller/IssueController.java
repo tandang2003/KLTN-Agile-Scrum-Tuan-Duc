@@ -3,6 +3,7 @@ package com.kltn.server.controller;
 import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
+import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
@@ -43,6 +44,13 @@ public class IssueController {
     @PreAuthorize("hasAuthority('update_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateRequest taskResponse) {
         var task = taskService.updateTask(taskResponse);
+        return ResponseEntity.status(task.getCode()).body(task);
+    }
+
+    @PutMapping("/update-status")
+    @PreAuthorize("hasAuthority('update_task')")
+    public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateStatusRequest request) {
+        var task = taskService.updateTask(request);
         return ResponseEntity.status(task.getCode()).body(task);
     }
 
