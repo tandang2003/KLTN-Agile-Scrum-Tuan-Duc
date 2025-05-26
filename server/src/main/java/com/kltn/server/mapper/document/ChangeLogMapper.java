@@ -12,7 +12,7 @@ public interface ChangeLogMapper {
 
     ChangeLogRequest ProjectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo);
 
-    ChangeLog TaskToUpdate(String[] properties, com.kltn.server.model.entity.Issue task, Issue issueMongo);
+    ChangeLogRequest TaskToUpdate(String[] properties, com.kltn.server.model.entity.Issue task, Issue issueMongo);
 
 
 }

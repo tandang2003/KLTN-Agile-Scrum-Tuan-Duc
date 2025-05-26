@@ -43,8 +43,8 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
     }
 
     @Override
-    public ChangeLog TaskToUpdate(String[] properties, Issue task, com.kltn.server.model.collection.Issue issueMongo) {
-        ChangeLog.ChangeLogBuilder changeLogBuilder = ChangeLog.builder();
+    public ChangeLogRequest TaskToUpdate(String[] properties, Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+        ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
         changeLogBuilder.type(LogType.UPDATE)
                 .idRef(task.getId())
                 .entityTarget(EntityTarget.TASK.name())
