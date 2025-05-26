@@ -24,6 +24,7 @@ type SelectSprintProps = {
 
 const SelectSprint = ({ control, name, label }: SelectSprintProps) => {
   const { workspaceId } = useAppId()
+
   const { data } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
@@ -34,7 +35,12 @@ const SelectSprint = ({ control, name, label }: SelectSprintProps) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label || name}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            onValueChange={(value) => {
+              field.onChange(value)
+            }}
+            defaultValue={field.value}
+          >
             <FormControl>
               <SelectTrigger className='w-full'>
                 <SelectValue placeholder='Select a member' />

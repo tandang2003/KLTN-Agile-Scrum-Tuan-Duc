@@ -1,10 +1,11 @@
 import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
 import { BaseIssueFormType } from '@/types/issue.type'
 import { useEffect } from 'react'
-import { useWatch, Control } from 'react-hook-form'
+import { useWatch, Control, UseFormTrigger } from 'react-hook-form'
 
 type UseAutoUpdateFieldProps = {
   control: Control<BaseIssueFormType>
+  trigger?: UseFormTrigger<BaseIssueFormType>
   field: keyof BaseIssueFormType
   id?: string
   enabled?: boolean
@@ -14,6 +15,7 @@ type UseAutoUpdateFieldProps = {
 
 export function useAutoUpdateField({
   control,
+  trigger,
   field,
   id,
   enabled = true,
@@ -28,21 +30,30 @@ export function useAutoUpdateField({
   })
 
   useEffect(() => {
-    if (!enabled || !id) return
-    console.log('render')
-    // update({
-    //   id,
-    //   [field]: value,
-    //   fieldChanging: field
-    // })
-    //   .unwrap()
-    //   .then((res) => {
-    //     console.log(`Updated ${field}:`, res)
-    //     onSuccess?.(res)
-    //   })
-    //   .catch((err) => {
-    //     console.error(`Failed to update ${field}:`, err)
-    //     onError?.(err)
-    //   })
+    const handle = async () => {
+      if (!enabled || !id) return
+      if (trigger) {
+        const isValid = await trigger(field)
+        if (!isValid) {
+          return
+        }
+      }
+
+      try {
+        const res = await update({
+          id,
+          [field]: value,
+          fieldChanging: field
+        }).unwrap()
+
+        console.log(`Updated ${field}:`, res)
+        onSuccess?.(res)
+      } catch (err) {
+        console.error(`Failed to update ${field}:`, err)
+        onError?.(err)
+      }
+    }
+
+    handle()
   }, [value])
 }

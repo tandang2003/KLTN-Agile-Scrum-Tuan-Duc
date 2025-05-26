@@ -6,9 +6,7 @@ import HtmlViewer from '@/components/HtmlViewer'
 import Icon from '@/components/Icon'
 import InlineEdit from '@/components/InlineEdit'
 import SelectMember from '@/components/issue/SelectMember'
-import CreateSubTaskForm from '@/components/issue/subTasks/CreateSubTaskForm'
 import UpdateSubTaskForm from '@/components/issue/subTasks/UpdateSubTaskForm'
-import CreateTopicForm from '@/components/issue/topic/CreateTopicForm'
 import UpdateTopicForm from '@/components/issue/topic/UpdateTopicForm'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ToolTip from '@/components/Tooltip'
@@ -42,8 +40,7 @@ import { formatDateRange } from '@/lib/date'
 import {
   BaseIssueFormType,
   BaseIssueSchema,
-  IssueDetailResponse,
-  KeyOfFieldChangingIssue
+  IssueDetailResponse
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -64,34 +61,16 @@ const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
     defaultValues: data
   })
 
-  // const name = useWatch({
-  //   control: form.control,
-  //   name: 'name'
-  // })
-
-  // useEffect(() => {
-  //   if (data) {
-  //     update({
-  //       id: data.id,
-  //       name: name,
-  //       fieldChanging: 'name'
-  //     })
-  //       .unwrap()
-  //       .then((response) => {
-  //         console.log(response)
-  //       })
-  //       .catch((err) => console.log(err))
-  //   }
-  // }, [name])
+  const { control, setValue } = form
 
   useAutoUpdateField({
-    control: form.control,
+    control: control,
     field: 'name',
     id: data?.id,
     enabled: !!data,
     onSuccess: (res) => {
       console.log('Successfully updated name')
-      toast.success('Name updated') // e.g. using react-toastify
+      toast.success('Name updated')
     },
     onError: (err) => {
       toast.error('Failed to update name')
@@ -99,7 +78,7 @@ const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
   })
 
   const description = useWatch({
-    control: form.control,
+    control: control,
     name: 'description'
   })
 
@@ -156,7 +135,7 @@ const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
                     <InlineEdit<string>
                       value={data.name}
                       onSave={(val) => {
-                        form.setValue('name', val)
+                        setValue('name', val, { shouldValidate: true })
                       }}
                       displayComponent={(value) => (
                         <h1 className='text-2xl'>{value}</h1>
@@ -186,7 +165,7 @@ const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
                       <InlineEdit<string>
                         value={data.description}
                         onSave={(val) => {
-                          form.setValue('description', val)
+                          setValue('description', val)
                         }}
                         className='block'
                         displayComponent={(value) => {
@@ -236,15 +215,9 @@ const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
                         <AccordionContent>
                           <div className='grid grid-cols-2 items-center gap-x-2 gap-y-3'>
                             <div>Assignee</div>
-                            <SelectMember
-                              control={form.control}
-                              name='assigneeId'
-                            />
+                            <SelectMember control={control} name='assigneeId' />
                             <div>Reviewer</div>
-                            <SelectMember
-                              control={form.control}
-                              name='reviewId'
-                            />
+                            <SelectMember control={control} name='reviewId' />
                             <div>Story point estimate</div>
                             <Badge>{data.storyPoint}</Badge>
                             <div>Duration</div>

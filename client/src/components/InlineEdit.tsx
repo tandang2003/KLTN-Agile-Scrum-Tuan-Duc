@@ -18,6 +18,7 @@ type RenderEditorProps<T> = {
 
 type InlineEditProps<T> = {
   value: T
+  validate?: (value: T) => boolean
   onSave: (value: T) => void
   renderEditor: (props: RenderEditorProps<T>) => ReactNode
   displayComponent?: (value: T) => ReactNode
@@ -25,6 +26,7 @@ type InlineEditProps<T> = {
 
 const InlineEdit = <T,>({
   value: initialValue,
+  validate,
   onSave,
   renderEditor,
   displayComponent,
@@ -38,6 +40,9 @@ const InlineEdit = <T,>({
   const handleBlur = () => {
     setEditing(false)
     if (value !== initialValue) {
+      if (validate && !validate(value)) {
+        return
+      }
       onSave(value)
     }
   }

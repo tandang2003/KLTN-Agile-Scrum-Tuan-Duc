@@ -1,7 +1,12 @@
 import { string } from '@/types/common.type'
-import { IssueModel } from '@/types/model/issue.model'
-import { IssuePriority, IssueStatus, IssueTag } from '@/types/model/typeOf'
-import { UserModel } from '@/types/model/user.model'
+import {
+  IssuePriority,
+  issuePriorityList,
+  IssueStatus,
+  issueStatusList,
+  IssueTag,
+  issueTagList
+} from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import { z } from 'zod'
 
@@ -64,8 +69,8 @@ const BaseIssueSchema = z
     description: string,
     sprintId: string,
     status: string,
-    priority: string,
-    tag: string,
+    priority: z.enum(issuePriorityList),
+    tag: z.enum(issueTagList),
     topics: z.array(TopicModelSchema),
     assigneeId: z.string(),
     reviewerId: z.string(),
@@ -111,22 +116,20 @@ type UpdateIssueRequest = {
   fieldChanging: KeyOfFieldChangingIssue
 } & UpdateIssueType
 
-export type {
-  CreateIssueType,
-  UpdateIssueRequest,
-  KeyOfFieldChangingIssue,
-  CreateIssueRequest
-}
 export {
   BaseIssueSchema,
   CreateIssueSchema,
-  UpdateIssueSchema,
-  TopicModelSchema
+  TopicModelSchema,
+  UpdateIssueSchema
 }
 export type {
-  IssueResponse,
+  BaseIssueFormType,
+  CreateIssueRequest,
+  CreateIssueType,
   IssueDetailResponse,
-  UpdateIssueType,
+  IssueResponse,
+  KeyOfFieldChangingIssue,
   TopicModelType,
-  BaseIssueFormType
+  UpdateIssueRequest,
+  UpdateIssueType
 }

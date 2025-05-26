@@ -26,7 +26,7 @@ const issuePriorityList = [
 
 type IssuePriority = (typeof issuePriorityList)[number]
 
-const issueTagList = ['THEORY', ' PRACTICE']
+const issueTagList = ['THEORY', 'PRACTICE'] as const
 
 type IssueTag = (typeof issueTagList)[number]
 

@@ -22,7 +22,10 @@ const sprintSlice = createSlice({
   name: 'sprint',
   initialState: initialState,
   reducers: {
-    setCurrentSprint(state: SprintState, action: PayloadAction<SprintCurrent>) {
+    setCurrentSprint(
+      state: SprintState,
+      action: PayloadAction<SprintCurrent | undefined>
+    ) {
       state.current = action.payload
     },
     enableDragMode(state: SprintState) {

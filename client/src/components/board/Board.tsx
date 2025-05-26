@@ -277,9 +277,9 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     activeNewIndex.current = null
     activeNewColumn.current = null
   }
-  useEffect(() => {
-    console.log(data.columns)
-  }, [data.columns])
+  // useEffect(() => {
+  //   console.log(data.columns)
+  // }, [data.columns])
 
   // console.log(activeDragTypeRef.current === 'card', activeItemData)
   return (

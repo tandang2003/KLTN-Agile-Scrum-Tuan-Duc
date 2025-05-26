@@ -5,75 +5,70 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
-import { useLazyGetListIssueQuery } from '@/feature/issue/issue.api'
+import { saveIssues } from '@/feature/board/board.slice'
+import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { toBoardModel } from '@/lib/board'
 import { IssueResponse } from '@/types/issue.type'
+import { Id } from '@/types/other.type'
 import { cloneDeep } from 'lodash'
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 const BoardPage = () => {
   const { projectId } = useAppId()
+  const dispatch = useAppDispatch()
+  const { data, isFetching } = useGetListIssueQuery(
+    {
+      projectId: projectId as Id
+    },
+    {
+      skip: !projectId
+    }
+  )
+  const { isLoading, items } = useAppSelector((state) => state.boardSlice)
 
-  const [trigger, { data, isFetching }] = useLazyGetListIssueQuery()
-
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
   const isUpdateIssue = useAppSelector(
     (state: RootState) => state.triggerSlice.isUpdateIssue
   )
 
-  const resetData = useCallback(() => {
-    if (projectId)
-      trigger({
-        projectId
-      })
-  }, [trigger])
-
   useEffect(() => {
-    resetData()
-  }, [trigger])
-
-  const dispatch = useAppDispatch()
+    if (!isFetching && data) {
+      dispatch(saveIssues(data))
+    }
+  }, [data, isFetching])
 
   return (
     <LoadingBoundary<IssueResponse[]>
-      data={data}
+      data={items}
       fallback={<div>No result</div>}
-      isLoading={isFetching}
+      isLoading={isLoading}
       loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
     >
       {(data) => {
+        console.log(data)
         const boardData = toBoardModel(cloneDeep(data))
+
         return (
-          <div ref={scrollAreaRef} className='flex-1'>
-            {data && (
-              <>
-                <ScrollArea className='h-full'>
-                  <Board
-                    data={boardData}
-                    onMove={({ active, columnTo, indexTo }) => {
-                      console.log('active', active)
-                      console.log('columnTo', columnTo)
-                      console.log('indexTo', indexTo)
-                    }}
-                  />
-                  <ScrollBar orientation='vertical' />
-                  <ScrollBar orientation='horizontal' />
-                </ScrollArea>
-                <DialogUpdateIssue
-                  open={isUpdateIssue}
-                  onOpen={() => {
-                    dispatch(disableUpdateIssue())
-                    if (projectId) {
-                      trigger({
-                        projectId
-                      })
-                    }
-                  }}
-                />
-              </>
-            )}
+          <div className='flex-1'>
+            <ScrollArea className='h-full'>
+              <Board
+                data={boardData}
+                onMove={({ active, columnTo, indexTo }) => {
+                  console.log('active', active)
+                  console.log('columnTo', columnTo)
+                  console.log('indexTo', indexTo)
+                }}
+              />
+              <ScrollBar orientation='vertical' />
+              <ScrollBar orientation='horizontal' />
+            </ScrollArea>
+            <DialogUpdateIssue
+              open={isUpdateIssue}
+              onOpen={() => {
+                dispatch(disableUpdateIssue())
+              }}
+            />
           </div>
         )
       }}
