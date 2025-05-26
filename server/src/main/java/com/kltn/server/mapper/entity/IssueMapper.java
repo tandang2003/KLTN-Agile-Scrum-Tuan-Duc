@@ -76,7 +76,7 @@ public interface IssueMapper {
             @Mapping(target = "complexOfDescription", source = "task.complexOfDescription"),
             @Mapping(target = "dtStart", source = "task.dtStart"),
             @Mapping(target = "dtEnd", source = "task.dtEnd"),
-            @Mapping(target = "dtPlanning", source = "task.dtPlanning"),
+//            @Mapping(target = "dtPlanning", source = "task.dtPlanning"),
     })
     @BeanMapping(ignoreByDefault = true)
     IssueDetailResponse toIssueDetailResponse(Issue task, com.kltn.server.model.collection.Issue issueMongo);
