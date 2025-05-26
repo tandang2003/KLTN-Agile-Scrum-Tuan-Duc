@@ -35,17 +35,17 @@ public class KafkaSendObject<T> {
             Object logData = apiResponse.getLogData() != null
                     ? apiResponse.getLogData()
                     : apiResponse.getData();
-            try {
+//            try {
                 CompletionStage<SendResult<String, Object>> sendResult = kafkaTemplate.send(sendKafkaEvent.topic(), logData);
-                sendResult.thenAccept(re -> {
+                sendResult.whenComplete((re,ex)-> {
                     System.out.println("Sent message=[" + logData + "] to with offset=[" + re.getRecordMetadata().offset() + "]");
                 }).exceptionally(e -> {
                     System.out.println("Unable to send message=[" + logData + "] due to : " + e.getMessage());
                     return null;
                 });
-            } catch (Exception e) {
-                System.out.println("ERROR :  " + e.getMessage());
-            }
+//            } catch (Exception e) {
+//                System.out.println("ERROR :  " + e.getMessage());
+//            }
         }
     }
 
