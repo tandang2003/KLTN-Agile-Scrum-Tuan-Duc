@@ -1,9 +1,8 @@
-import { string } from '@/types/common.type'
+import { dateRange, string } from '@/types/common.type'
 import {
   IssuePriority,
   issuePriorityList,
   IssueStatus,
-  issueStatusList,
   IssueTag,
   issueTagList
 } from '@/types/model/typeOf'
@@ -50,8 +49,8 @@ type IssueResponse = {
   topics: TopicResponse[]
   subTasks: SubTaskResponse[]
   attachments: AttachmentResponse[]
-  start: Date
-  end: Date
+  start?: Date
+  end?: Date
 }
 const CreateSubTaskSchema = z.object({
   name: string
@@ -74,22 +73,19 @@ const BaseIssueSchema = z
     topics: z.array(TopicModelSchema),
     assigneeId: z.string(),
     reviewerId: z.string(),
-    subTasks: z.array(CreateSubTaskSchema)
+    subTasks: z.array(CreateSubTaskSchema).optional(),
+    date: dateRange
   })
   .partial()
   .extend({
-    name: string,
-    start: z.date(),
-    end: z.date()
+    name: string
   })
 
 const CreateIssueSchema = BaseIssueSchema
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
   id: string,
-  name: string.optional(),
-  start: z.date().optional(),
-  end: z.date().optional()
+  name: string.optional()
 })
 
 type BaseIssueFormType = z.infer<typeof BaseIssueSchema>
@@ -102,11 +98,9 @@ type CreateIssueRequest = CreateIssueType & {
   projectId: Id
 }
 
-type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
+type IssueDetailResponse = IssueResponse & {
   storyPoint: number
   description: string
-  dtStart: Date
-  dtEnd: Date
 }
 
 type KeyOfFieldChangingIssue = keyof UpdateIssueType

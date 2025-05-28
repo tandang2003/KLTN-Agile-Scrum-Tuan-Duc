@@ -1,3 +1,4 @@
+import { dateRange } from '@/types/common.type'
 import { PageRequest } from '@/types/http.type'
 import { ProjectModel } from '@/types/model/project.model'
 import { UserModel } from '@/types/model/user.model'
@@ -10,15 +11,10 @@ const CreateWorkspaceSchema = z.object({
   description: z.string().optional(),
   sprintNum: z.number().positive(),
   timePerSprint: z.number().positive(),
-  date: z
-    .object({
-      from: z.date(),
-      to: z.date()
-    })
-    .refine((data) => data.from <= data.to, {
-      message: 'Date end need after date start',
-      path: ['to']
-    })
+  date: dateRange.refine((data) => data.from <= data.to, {
+    message: 'Date end need after date start',
+    path: ['to']
+  })
 })
 
 const UpdateWorkspaceSchema = z.object({

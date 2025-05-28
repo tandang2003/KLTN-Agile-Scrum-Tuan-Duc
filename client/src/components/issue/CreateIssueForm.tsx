@@ -53,6 +53,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
   const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+
   const [create] = useCreateIssueMutation()
 
   const form = useForm<BaseIssueFormType>({
@@ -69,16 +70,16 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     name: 'sprintId'
   })
 
-  useEffect(() => {
-    if (Object.keys(form.formState.errors).length > 0) {
-      console.log('❌ Form Errors:', form.formState.errors)
+  // useEffect(() => {
+  //   if (Object.keys(form.formState.errors).length > 0) {
+  //     console.log('❌ Form Errors:', form.formState.errors)
 
-      // Optional: log each field error
-      Object.entries(form.formState.errors).forEach(([fieldName, error]) => {
-        console.log(`Field "${fieldName}" has error:`, error?.message)
-      })
-    }
-  }, [form.formState.errors])
+  //     // Optional: log each field error
+  //     Object.entries(form.formState.errors).forEach(([fieldName, error]) => {
+  //       console.log(`Field "${fieldName}" has error:`, error?.message)
+  //     })
+  //   }
+  // }, [form.formState.errors])
 
   useEffect(() => {
     const selectedSprint = sprints?.find((item) => item.id === value)
@@ -155,7 +156,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
             <div className='flex gap-3'>
               <FormField
                 control={form.control}
-                name='start'
+                name='date.from'
                 render={({ field }) => (
                   <FormItem className=''>
                     <FormLabel>Time start</FormLabel>
@@ -173,7 +174,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
                       date={field.value}
                       setDate={(date) => {
                         if (date) {
-                          field.onChange(new Date(date))
+                          field.onChange(date)
                         }
                       }}
                     />
@@ -186,33 +187,36 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
 
               <FormField
                 control={form.control}
-                name='end'
-                render={({ field }) => (
-                  <FormItem className=''>
-                    <FormLabel>Time end</FormLabel>
-                    <DatePickerWithPresets
-                      date={field.value}
-                      min={
-                        sprintCurrent?.start
-                          ? new Date(sprintCurrent.start)
-                          : undefined
-                      }
-                      max={
-                        sprintCurrent?.end
-                          ? new Date(sprintCurrent.end)
-                          : undefined
-                      }
-                      setDate={(date) => {
-                        if (date) {
-                          field.onChange(new Date(date))
+                name='date.to'
+                render={({ field }) => {
+                  console.log(field)
+                  return (
+                    <FormItem className=''>
+                      <FormLabel>Time end</FormLabel>
+                      <DatePickerWithPresets
+                        date={field.value}
+                        min={
+                          sprintCurrent?.start
+                            ? new Date(sprintCurrent.start)
+                            : undefined
                         }
-                      }}
-                    />
-                    <div className='h-[20px]'>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
+                        max={
+                          sprintCurrent?.end
+                            ? new Date(sprintCurrent.end)
+                            : undefined
+                        }
+                        setDate={(date) => {
+                          if (date) {
+                            field.onChange(date)
+                          }
+                        }}
+                      />
+                      <div className='h-[20px]'>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )
+                }}
               />
             </div>
             <div className='grid grid-cols-2 grid-rows-2 gap-3'>

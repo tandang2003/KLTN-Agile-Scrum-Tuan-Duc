@@ -42,10 +42,6 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
     name: 'topics',
     keyName: 'fieldId'
   })
-  useEffect(() => {
-    console.log(fields)
-    console.log(fields.map((field) => field.id))
-  }, [fields])
 
   return (
     <>

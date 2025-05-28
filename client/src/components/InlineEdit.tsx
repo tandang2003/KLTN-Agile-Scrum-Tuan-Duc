@@ -4,6 +4,7 @@ import {
   KeyboardEvent,
   ReactNode,
   RefObject,
+  useEffect,
   useRef,
   useState
 } from 'react'
@@ -38,6 +39,7 @@ const InlineEdit = <T,>({
   const inputRef = useRef<any>(null)
 
   const handleBlur = () => {
+    console.log('blur')
     setEditing(false)
     if (value !== initialValue) {
       if (validate && !validate(value)) {
@@ -56,6 +58,17 @@ const InlineEdit = <T,>({
       setEditing(false)
     }
   }
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus()
+      // Move cursor to end (optional)
+      if (typeof inputRef.current?.setSelectionRange === 'function') {
+        const length = inputRef.current.value?.length || 0
+        inputRef.current.setSelectionRange(length, length)
+      }
+    }
+  }, [editing])
 
   return editing ? (
     renderEditor({

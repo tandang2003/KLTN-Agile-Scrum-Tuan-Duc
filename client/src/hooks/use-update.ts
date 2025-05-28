@@ -1,59 +1,78 @@
-import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
-import { BaseIssueFormType } from '@/types/issue.type'
-import { useEffect } from 'react'
-import { useWatch, Control, UseFormTrigger } from 'react-hook-form'
+import { KeyOfFieldChangingIssue, UpdateIssueType } from '@/types/issue.type'
+import { isEqual } from 'lodash'
+import { useEffect, useRef } from 'react'
+import { UseFormReturn, useWatch } from 'react-hook-form'
 
-type UseAutoUpdateFieldProps = {
-  control: Control<BaseIssueFormType>
-  trigger?: UseFormTrigger<BaseIssueFormType>
-  field: keyof BaseIssueFormType
-  id?: string
-  enabled?: boolean
+type UseAutoUpdateFieldProps<K extends KeyOfFieldChangingIssue> = {
+  form: UseFormReturn<UpdateIssueType>
+  field: K
+  condition?: (field: K, value: UpdateIssueType[K]) => boolean
+  onPending?: (field: K, value: UpdateIssueType[K]) => Promise<void>
   onSuccess?: (response: any) => void
   onError?: (error: any) => void
 }
 
-export function useAutoUpdateField({
-  control,
-  trigger,
+export function useAutoUpdateField<K extends KeyOfFieldChangingIssue>({
+  form,
   field,
-  id,
-  enabled = true,
+  condition,
+  onPending,
   onSuccess,
   onError
-}: UseAutoUpdateFieldProps) {
-  const [update] = useUpdateIssueMutation()
-
-  const value = useWatch({
-    control,
+}: UseAutoUpdateFieldProps<K>) {
+  const { control, setValue, trigger } = form
+  const watched = useWatch<UpdateIssueType>({
+    control: control,
     name: field
-  })
+  }) as UpdateIssueType[K]
+  const hasMounted = useRef(false)
+  const previousValue = useRef<UpdateIssueType[K] | undefined>(watched)
+  const isRollingBack = useRef(false)
 
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return
+    }
+
+    // Skip when it's transitioning from [] → [item]
+    if (
+      watched == undefined ||
+      watched == null ||
+      (Array.isArray(watched) && watched.length === 0)
+    ) {
+      return
+    }
+
+    if (isRollingBack.current) {
+      isRollingBack.current = false
+      return
+    }
+
+    if (isEqual(previousValue.current, watched)) return
+
+    if (condition) {
+      const passed = condition(field, watched)
+      if (!passed) return
+    }
+
     const handle = async () => {
-      if (!enabled || !id) return
-      if (trigger) {
-        const isValid = await trigger(field)
-        if (!isValid) {
-          return
-        }
-      }
-
+      const isValid = await trigger(field)
+      if (!isValid) return
       try {
-        const res = await update({
-          id,
-          [field]: value,
-          fieldChanging: field
-        }).unwrap()
+        await onPending?.(field, watched)
+        previousValue.current = watched
 
-        console.log(`Updated ${field}:`, res)
-        onSuccess?.(res)
+        onSuccess?.(watched)
       } catch (err) {
+        isRollingBack.current = true
+        setValue(field, previousValue.current as any)
+
         console.error(`Failed to update ${field}:`, err)
         onError?.(err)
       }
     }
 
     handle()
-  }, [value])
+  }, [watched])
 }

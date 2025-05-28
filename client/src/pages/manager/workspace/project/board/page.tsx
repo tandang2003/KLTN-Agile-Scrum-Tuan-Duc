@@ -46,7 +46,6 @@ const BoardPage = () => {
       loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
     >
       {(data) => {
-        console.log(data)
         const boardData = toBoardModel(cloneDeep(data))
 
         return (
