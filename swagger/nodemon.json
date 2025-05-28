@@ -5,5 +5,5 @@
         "swagger.yml"
     ],
     "ext": "js,yml",
-    "exec": "node index.js"
+    "exec": "npm run start"
 }
