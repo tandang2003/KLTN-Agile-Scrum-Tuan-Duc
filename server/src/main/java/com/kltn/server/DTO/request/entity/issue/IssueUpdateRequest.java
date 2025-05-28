@@ -20,9 +20,9 @@ public class IssueUpdateRequest {
     String name;
     String description;
     IssuePriority priority;
-    IssueStatus status;
-    IssueTag tag;
-    int position;
+//    IssueStatus status;
+//    IssueTag tag;
+//    int position;
     List<TopicRequest> topics;
     List<SubTaskRequest> subTasks;
     List<AttachmentRequest> attachments;
@@ -91,21 +91,21 @@ public class IssueUpdateRequest {
         this.priority = priority;
     }
 
-    public IssueTag getTag() {
-        return tag;
-    }
+//    public IssueTag getTag() {
+//        return tag;
+//    }
+//
+//    public void setTag(IssueTag tag) {
+//        this.tag = tag;
+//    }
 
-    public void setTag(IssueTag tag) {
-        this.tag = tag;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
+//    public int getPosition() {
+//        return position;
+//    }
+//
+//    public void setPosition(int position) {
+//        this.position = position;
+//    }
 
     public List<TopicRequest> getTopics() {
         return topics;
@@ -163,11 +163,11 @@ public class IssueUpdateRequest {
         this.end = end;
     }
 
-    public IssueStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(IssueStatus status) {
-        this.status = status;
-    }
+//    public IssueStatus getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(IssueStatus status) {
+//        this.status = status;
+//    }
 }
