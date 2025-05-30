@@ -2,7 +2,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import React, { forwardRef } from 'react'
+import issueService from '@/services/issue.service'
+import React, { forwardRef, useRef } from 'react'
+import { toast } from 'sonner'
 
 type CardAddingProps = {
   id: string
@@ -10,6 +12,20 @@ type CardAddingProps = {
 
 const CardAdding = forwardRef<HTMLDivElement, CardAddingProps>(
   ({ id, className, ...props }, ref) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    const handleClick = () => {
+      if (!textareaRef.current?.value) {
+        toast.warning('Please input name issue')
+        return
+      }
+
+      const value = textareaRef.current.value
+      // issueService.createIssue({
+      //   name: value,
+      //   projectId:,
+      // })
+    }
     return (
       <Card
         ref={ref}
@@ -20,6 +36,7 @@ const CardAdding = forwardRef<HTMLDivElement, CardAddingProps>(
           <form>
             <ScrollArea className='w-full'>
               <textarea
+                ref={textareaRef}
                 placeholder='What needs to done?'
                 className='h-[60px] w-full resize-none outline-none'
               />

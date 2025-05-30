@@ -7,7 +7,6 @@ type IssueModel = BaseModel & {
   title: string
   position: number
   description: string
-  projectSprint: any
   status: IssueStatus
   storyPoint: number
   priority: IssuePriority
@@ -21,4 +20,5 @@ type IssueModel = BaseModel & {
   dtEnd: Date
   dtPlanning: Date
 }
-export default IssueModel
+
+export type { IssueModel }

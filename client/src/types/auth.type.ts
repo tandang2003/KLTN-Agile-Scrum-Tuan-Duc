@@ -14,7 +14,7 @@ type LoginRes = {
   }
 }
 
-type RoleType = 'teacher' | 'student'
+type RoleType = 'teacher' | 'student' | 'anonymous'
 
 type LogoutReq = {
   accessToken: string

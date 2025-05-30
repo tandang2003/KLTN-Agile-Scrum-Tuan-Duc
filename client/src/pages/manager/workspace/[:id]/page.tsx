@@ -24,7 +24,9 @@ import { NavLink } from 'react-router-dom'
 const WorkspaceDetailPage = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { user } = useAppSelector((state) => state.authSlice)
-  const { projectIdsAllowed } = useAppSelector((state) => state.projectSlice)
+  const { projectIds, projectId } = useAppSelector(
+    (state) => state.projectSlice
+  )
 
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId
@@ -96,11 +98,9 @@ const WorkspaceDetailPage = () => {
             </RequiredAuth>
             <TabsTrigger value='student'>Student</TabsTrigger>
           </TabsList>
-          {projectIdsAllowed.length === 1 && user?.role === 'student' ? (
+          {projectId && user?.role === 'student' ? (
             <Button variant='default' size='sm' asChild>
-              <NavLink
-                to={`/manager/workspace/project/${projectIdsAllowed[0]}`}
-              >
+              <NavLink to={`/manager/workspace/project/${projectId}`}>
                 Your Project
               </NavLink>
             </Button>

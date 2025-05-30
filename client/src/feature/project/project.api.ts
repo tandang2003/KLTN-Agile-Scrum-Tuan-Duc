@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import projectService from '@/services/project.service'
 import { CreateProjectRequest, ProjectResponse } from '@/types/project.type'
 import { Id } from '@/types/other.type'
+import { UserResponse } from '@/types/user.type'
 
 const projectApi = createApi({
   reducerPath: 'projectApi',
@@ -27,10 +28,24 @@ const projectApi = createApi({
           return { error }
         }
       }
+    }),
+    getMembers: builder.query<UserResponse[], Id>({
+      async queryFn(arg) {
+        try {
+          const data = await projectService.getMembers(arg)
+          return { data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
 
 export default projectApi
 
-export const { useCreateProjectMutation, useGetProjectQuery } = projectApi
+export const {
+  useCreateProjectMutation,
+  useGetProjectQuery,
+  useGetMembersQuery
+} = projectApi

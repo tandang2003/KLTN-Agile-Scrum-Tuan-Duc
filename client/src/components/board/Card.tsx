@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import {
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -15,11 +16,13 @@ import { memo } from 'react'
 type CardProps = {
   data: CardModelType
   container?: string
+  onClick?: () => void
 }
 
 const Card = ({
   data: { id, name, numAttach, numComment, numAssigner = 0, thumbnail },
-  container
+  container,
+  onClick
 }: CardProps) => {
   const {
     attributes,
@@ -70,14 +73,16 @@ const Card = ({
       >
         <Icon icon={'lsicon:drag-filled'} className='text-black' />
       </Button>
-      <CardUI className='rounded-none border-none bg-transparent p-0 shadow-none'>
+      <CardUI
+        className='rounded-none border-none bg-transparent p-0 shadow-none'
+        onClick={() => onClick?.()}
+      >
         <CardHeader className='p-0'>
-          <span>#{id}</span>
-          <CardTitle className='line-clamp-2 overflow-hidden leading-[1.67] text-wrap text-ellipsis'>
+          <CardTitle className='line-clamp-2 overflow-hidden text-lg leading-[1.67] text-wrap text-ellipsis'>
             {name}
           </CardTitle>
         </CardHeader>
-
+        <CardDescription className='py-2'></CardDescription>
         <CardFooter className='p-0'>
           <span className='flex items-center gap-1'>
             <Icon icon={'material-symbols:chat-outline'} size={20} />
