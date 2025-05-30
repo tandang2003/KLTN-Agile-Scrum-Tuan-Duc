@@ -20,12 +20,10 @@ public class IssueUpdateRequest {
     String name;
     String description;
     IssuePriority priority;
-//    IssueStatus status;
-//    IssueTag tag;
-//    int position;
     List<TopicRequest> topics;
     List<SubTaskRequest> subTasks;
     List<AttachmentRequest> attachments;
+    String sprintId;
     String assignee;
     String reviewer;
     Instant start;
@@ -170,4 +168,12 @@ public class IssueUpdateRequest {
 //    public void setStatus(IssueStatus status) {
 //        this.status = status;
 //    }
+
+    public String getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(String sprintId) {
+        this.sprintId = sprintId;
+    }
 }

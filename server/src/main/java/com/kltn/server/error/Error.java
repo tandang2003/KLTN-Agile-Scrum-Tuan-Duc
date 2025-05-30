@@ -22,7 +22,6 @@ public enum Error {
     ALREADY_EXISTS(HttpServletResponse.SC_CONFLICT, "User already have project"),
     SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
     SPRINT_ALREADY_END(HttpServletResponse.SC_CONFLICT, "Sprint already ended"),
-
     NOT_FOUND_WORKSPACE(404, "Workspace not found"),
 
     NOT_FOUND_PROJECT(404, "Project not found"),
