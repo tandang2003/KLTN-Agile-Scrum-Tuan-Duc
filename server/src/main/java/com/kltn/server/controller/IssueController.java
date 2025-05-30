@@ -60,6 +60,13 @@ public class IssueController {
         return ResponseEntity.status(task.getCode()).body(task);
     }
 
+    @PostMapping("link")
+    @PreAuthorize("hasAuthority('update_task')")
+    public ResponseEntity<ApiResponse<IssueResponse>> linkIssue(@Valid @RequestBody IssueUpdateRequest request) {
+        var task = taskService.linkIssue(request);
+        return ResponseEntity.status(task.getCode()).body(task);
+    }
+
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("project_id") String projectId, @RequestParam(value = "sprint_id", required = false) String sprintId) {
         var isssues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(sprintId, projectId));
