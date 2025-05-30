@@ -2,10 +2,7 @@ package com.kltn.server.DTO.request.base;
 
 
 public class AttachmentRequest {
-
     private String resourceId;
-
-
     public String getResourceId() {
         return resourceId;
     }
