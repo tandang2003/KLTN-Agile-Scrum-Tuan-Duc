@@ -1,6 +1,5 @@
 package com.kltn.server.model.collection.model;
 
-import jakarta.persistence.PrePersist;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -16,6 +15,7 @@ public class Topic {
 
 
     private Topic(TagBuilder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.color = builder.color;
     }

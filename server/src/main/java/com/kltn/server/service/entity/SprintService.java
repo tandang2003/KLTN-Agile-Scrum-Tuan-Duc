@@ -73,8 +73,8 @@ public class SprintService {
         ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
                 .projectId(sprintStudentUpdateTimeRequest.projectId())
                 .sprintId(sprintStudentUpdateTimeRequest.sprintId()).build());
-        projectSprint.setDtPlanning(sprintStudentUpdateTimeRequest.dtPlanning());
-        projectSprint.setDtPreview(sprintStudentUpdateTimeRequest.dtPreview());
+//        projectSprint.setDtPlanning(sprintStudentUpdateTimeRequest.dtPlanning());
+//        projectSprint.setDtPreview(sprintStudentUpdateTimeRequest.dtPreview());
 
         projectSprint = projectSprintService.save(projectSprint);
         SprintResponse sprintResponse = sprintMapper.toSprintStudentUpdateResponse(projectSprint);

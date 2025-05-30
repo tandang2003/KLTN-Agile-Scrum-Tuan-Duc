@@ -42,8 +42,8 @@ public interface SprintMapper {
             @Mapping(target = "miniumStoryPoint", source = "projectSprint.sprint.miniumStoryPoint"),
             @Mapping(target = "start", source = "projectSprint.sprint.dtStart"),
             @Mapping(target = "end", source = "projectSprint.sprint.dtEnd"),
-            @Mapping(target = "planning", source = "projectSprint.dtPlanning"),
-            @Mapping(target = "preview", source = "projectSprint.dtPreview")
+//            @Mapping(target = "planning", source = "projectSprint.dtPlanning"),
+//            @Mapping(target = "preview", source = "projectSprint.dtPreview")
     })
     @BeanMapping(ignoreByDefault = true)
     SprintResponse toSprintStudentUpdateResponse(ProjectSprint projectSprint);
