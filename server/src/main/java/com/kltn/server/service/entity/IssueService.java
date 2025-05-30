@@ -124,6 +124,61 @@ public class IssueService {
         return ApiResponse.<IssueResponse>builder().code(HttpStatus.CREATED.value()).message("Create task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
     }
 
+    @SendKafkaEvent(topic = "task-log")
+    @Transactional
+    public ApiResponse<IssueResponse> createTaskBacklog(IssueCreateRequest issueCreateRequest) {
+        Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
+        var task = taskMapper.toEntity(issueCreateRequest);
+        task.setProject(project);
+        if (issueCreateRequest.getAssigneeId() != null && !issueCreateRequest.getAssigneeId().isEmpty()) {
+            User assignee = userService.getUserByUniId(issueCreateRequest.getAssigneeId());
+            task.setAssignee(assignee);
+        }
+        if (issueCreateRequest.getReviewerId() != null && !issueCreateRequest.getReviewerId().isEmpty()) {
+            User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
+            task.setReviewer(reviewer);
+        }
+        if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
+            Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
+            Instant now = Instant.now();
+            if (now.isAfter(sprint.getDtStart())) {
+                throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+            }
+            if (task.getDtStart() == null) {
+                task.setDtStart(sprint.getDtStart());
+            } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("start", "Start date cannot be before sprint start date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
+            if (task.getDtEnd() == null) {
+                task.setDtEnd(sprint.getDtEnd());
+            } else if (task.getDtEnd() != null && task.getDtEnd().isAfter(sprint.getDtEnd())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("end", "End date cannot be after sprint end date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
+            task.setSprint(sprint);
+        }
+        if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
+            List<Resource> resources = issueCreateRequest.getAttachments().stream().map(id -> resourceService.getById(id.getResourceId())).toList();
+            task.setResources(resources);
+        }
+        task = taskRepository.save(task);
+        if (task == null || task.getId() == null) {
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
+        }
+        var taskMongo = taskMapper.toCollection(task, issueCreateRequest);
+        taskMongo = issueMongoService.save(taskMongo);
+        var changeLog = changeLogMapper.taskToCreateLogRequest(task, taskMongo);
+
+        return ApiResponse.<IssueResponse>builder().code(HttpStatus.CREATED.value()).message("Create task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
+    }
+
     public Issue getEntityById(String id) {
         return taskRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     }
@@ -165,6 +220,18 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"description"}, task, taskMongo);
                 break;
+            case "sprint":
+                Sprint sprint = sprintService.getSprintById(updateRequest.getSprintId());
+                if (task.getDtStart() == null) {
+                    task.setDtStart(sprint.getDtStart());
+                }
+                if (task.getDtEnd() == null) {
+                    task.setDtEnd(sprint.getDtEnd());
+                }
+                task.setSprint(sprint);
+                task = saveEntity(task);
+                changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
+                break;
             case "priority":
                 task.setPriority(updateRequest.getPriority());
                 task = saveEntity(task);
@@ -175,16 +242,6 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"status"}, task, taskMongo);
                 break;
-//            case "tag":
-//                task.setTag(updateRequest.getTag());
-//                task = saveEntity(task);
-//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"tag"}, task, taskMongo);
-//                break;
-//            case "position":
-//                task.setPosition(updateRequest.getPosition());
-//                task = saveEntity(task);
-//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
-//                break;
             case "topics":
                 taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
@@ -244,11 +301,6 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
                 break;
-//            case "planning":
-//                task.setDtPlanning(updateRequest.getPlanning());
-//                task = saveEntity(task);
-//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"planning"}, task, taskMongo);
-//                break;
             default:
                 throw AppException.builder().error(Error.INVALID_PARAMETER_REQUEST).build();
         }

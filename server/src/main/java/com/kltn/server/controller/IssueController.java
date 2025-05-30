@@ -27,6 +27,12 @@ public class IssueController {
         this.taskService = taskService;
     }
 
+    @PostMapping("/backlog")
+    @PreAuthorize("hasAuthority('create_task')")
+    public ResponseEntity<ApiResponse<IssueResponse>> createTaskInBacklog(@Valid @RequestBody IssueCreateRequest taskResponse) {
+        var task = taskService.createTaskBacklog(taskResponse);
+        return ResponseEntity.ok().body(task);
+    }
     @PostMapping
     @PreAuthorize("hasAuthority('create_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> createTask(@Valid @RequestBody IssueCreateRequest taskResponse) {
