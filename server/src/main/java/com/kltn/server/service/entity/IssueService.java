@@ -257,9 +257,9 @@ public class IssueService {
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"topics"}, task, taskMongo);
                 break;
             case "subTasks":
-                taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubTasks()));
+                taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"priority"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[]{"subtasks"}, task, taskMongo);
                 break;
             case "attachments":
                 List<Resource> resources = task.getResources();

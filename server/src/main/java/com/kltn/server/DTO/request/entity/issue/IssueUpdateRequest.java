@@ -3,12 +3,7 @@ package com.kltn.server.DTO.request.entity.issue;
 import com.kltn.server.DTO.request.base.AttachmentRequest;
 import com.kltn.server.DTO.request.base.SubTaskRequest;
 import com.kltn.server.DTO.request.base.TopicRequest;
-import com.kltn.server.model.collection.model.Attachment;
-import com.kltn.server.model.collection.model.SubTask;
-import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.type.task.IssuePriority;
-import com.kltn.server.model.type.task.IssueStatus;
-import com.kltn.server.model.type.task.IssueTag;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.time.Instant;
@@ -21,7 +16,7 @@ public class IssueUpdateRequest {
     String description;
     IssuePriority priority;
     List<TopicRequest> topics;
-    List<SubTaskRequest> subTasks;
+    List<SubTaskRequest> subtasks;
     List<AttachmentRequest> attachments;
     String sprintId;
     String assignee;
@@ -113,12 +108,12 @@ public class IssueUpdateRequest {
         this.topics = topics;
     }
 
-    public List<SubTaskRequest> getSubTasks() {
-        return subTasks;
+    public List<SubTaskRequest> getSubtasks() {
+        return subtasks;
     }
 
-    public void setSubTasks(List<SubTaskRequest> subTasks) {
-        this.subTasks = subTasks;
+    public void setSubtasks(List<SubTaskRequest> subtasks) {
+        this.subtasks = subtasks;
     }
 
     public List<AttachmentRequest> getAttachments() {

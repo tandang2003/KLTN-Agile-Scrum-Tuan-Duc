@@ -32,7 +32,7 @@ public interface IssueMapper {
             @Mapping(target = "nkTaskId", source = "task.id"),
             @Mapping(target = "description", source = "task.description"),
 //            @Mapping(target = "tag", source = "task.name"),
-            @Mapping(target = "subTasks", source = "issueCreateRequest.subTasks",qualifiedByName = "toListDocument"),
+            @Mapping(target = "subTasks", source = "issueCreateRequest.subtasks",qualifiedByName = "toListDocument"),
             @Mapping(target = "attachment", source = "issueCreateRequest.attachments",qualifiedByName = "toListDocument"),
             @Mapping(target = "topics", source = "issueCreateRequest.topics", qualifiedByName = "toTopicList")
     })
