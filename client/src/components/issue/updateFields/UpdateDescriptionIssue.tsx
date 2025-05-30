@@ -7,7 +7,6 @@ import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { toast } from 'sonner'
 type UpdateDescriptionIssueProps = {
   children: ReactNode
 }

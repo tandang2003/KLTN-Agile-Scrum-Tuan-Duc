@@ -1,30 +1,25 @@
-import { KeyOfFieldChangingIssue, UpdateIssueType } from '@/types/issue.type'
+import { UpdateIssueType } from '@/types/issue.type'
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
-import { UseFormReturn, useWatch } from 'react-hook-form'
+import { Path, PathValue, UseFormReturn, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
-type UseAutoUpdateFieldProps<K extends KeyOfFieldChangingIssue> = {
+type FieldKey = Path<UpdateIssueType>
+type FieldValue<K extends Path<UpdateIssueType>> = PathValue<UpdateIssueType, K>
+
+type UseAutoUpdateFieldProps<K extends FieldKey> = {
   form: UseFormReturn<UpdateIssueType>
   field: K
-  condition?: (field: K, value: UpdateIssueType[K]) => boolean
-  preprocessing?: (
-    field: K,
-    value: UpdateIssueType[K]
-  ) => {
-    field: K
-    value: UpdateIssueType[K]
-  }
-  callApi?: (field: K, value: UpdateIssueType[K]) => Promise<any>
+  isPause?: (field: K, value: FieldValue<K>) => boolean
+  callApi?: (field: K, value: FieldValue<K>) => Promise<any> | undefined
   onSuccess?: (response: any) => void
   onError?: (error: any) => void
 }
 
-export function useAutoUpdateField<K extends KeyOfFieldChangingIssue>({
+export function useAutoUpdateField<K extends FieldKey>({
   form,
   field,
-  condition,
-  preprocessing,
+  isPause,
   callApi,
   onSuccess,
   onError
@@ -33,9 +28,11 @@ export function useAutoUpdateField<K extends KeyOfFieldChangingIssue>({
   const watched = useWatch<UpdateIssueType>({
     control: control,
     name: field
-  }) as UpdateIssueType[K]
+  }) as FieldValue<K>
   const hasMounted = useRef(false)
-  const previousValue = useRef<UpdateIssueType[K] | undefined>(watched)
+  const previousValue = useRef<PathValue<UpdateIssueType, K> | undefined>(
+    watched
+  )
   const isRollingBack = useRef(false)
 
   useEffect(() => {
@@ -60,13 +57,14 @@ export function useAutoUpdateField<K extends KeyOfFieldChangingIssue>({
 
     if (isEqual(previousValue.current, watched)) return
 
-    if (condition) {
-      const passed = condition(field, watched)
-      if (!passed) return
+    if (isPause) {
+      const passed = isPause(field, watched)
+      if (passed) return
     }
 
     const handle = async () => {
       const isValid = await trigger(field)
+      console.log('isValid', isValid)
       if (!isValid) return
       try {
         await callApi?.(field, watched)

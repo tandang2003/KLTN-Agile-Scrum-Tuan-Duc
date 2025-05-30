@@ -52,6 +52,14 @@ type IssueResponse = {
   start?: Date
   end?: Date
 }
+
+type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
+  storyPoint: number
+  description: string
+  dtStart?: Date
+  dtEnd?: Date
+}
+
 const CreateSubTaskSchema = z.object({
   name: string
 })
@@ -98,16 +106,13 @@ type CreateIssueRequest = CreateIssueType & {
   projectId: Id
 }
 
-type IssueDetailResponse = IssueResponse & {
-  storyPoint: number
-  description: string
-}
-
-type KeyOfFieldChangingIssue = keyof UpdateIssueType
+type KeyOfFieldChangingIssue = keyof UpdateIssueType | 'start' | 'end'
 
 type UpdateIssueRequest = {
   id: Id
   fieldChanging: KeyOfFieldChangingIssue
+  start?: Date
+  end?: Date
 } & UpdateIssueType
 
 export {

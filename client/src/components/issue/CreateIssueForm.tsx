@@ -189,7 +189,6 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
                 control={form.control}
                 name='date.to'
                 render={({ field }) => {
-                  console.log(field)
                   return (
                     <FormItem className=''>
                       <FormLabel>Time end</FormLabel>

@@ -1,77 +1,87 @@
-import { DatePickerWithRange } from '@/components/ui/date-picker'
-import { FormField } from '@/components/ui/form'
+import { DatePickerWithPresets } from '@/components/ui/date-picker'
+import { FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
-import { useState } from 'react'
-import { DateRange } from 'react-day-picker'
 import { useFormContext } from 'react-hook-form'
 
 const UpdateDateIssue = () => {
   const form = useFormContext<UpdateIssueType>()
 
-  const { control, getValues, setValue } = form
+  const { control, getValues } = form
 
-  const [date, setDate] = useState<DateRange | undefined>(() => {
-    const data = getValues('date')
-    if (data) {
-      return {
-        from: data?.from,
-        to: data?.to
-      }
+  useAutoUpdateField({
+    form: form,
+    field: 'date.from',
+    isPause: (_, value) => {
+      return value == undefined
+    },
+    callApi: (_, value) => {
+      return issueService.updateIssue({
+        id: getValues('id'),
+        fieldChanging: 'start',
+        start: value
+      })
     }
-    return undefined
   })
 
   useAutoUpdateField({
     form: form,
-    field: 'date',
-    condition: (field, value) => {
-      return value != undefined
+    field: 'date.to',
+    isPause: (_, value) => {
+      return value == undefined
     },
-    callApi: (field, value) => {
-      return Promise.all([
-        issueService.updateIssue({
-          id: getValues('id'),
-          fieldChanging: 'start',
-          start: value?.to
-        }),
-        issueService.updateIssue({
-          id: getValues('id'),
-          fieldChanging: field,
-          end: value?.to
-        })
-      ])
+    callApi: (_, value) => {
+      return issueService.updateIssue({
+        id: getValues('id'),
+        fieldChanging: 'end',
+        end: value
+      })
     }
   })
 
-  const handleOpenCalender = (open: boolean) => {
-    if (open == false)
-      if (date?.from && date.to)
-        setValue(
-          'date',
-          {
-            from: date.from,
-            to: date.to
-          },
-          { shouldValidate: true }
-        )
-  }
-
   return (
-    <FormField
-      control={control}
-      name='date'
-      render={({ field }) => {
-        return (
-          <DatePickerWithRange
-            date={date}
-            setDate={setDate}
-            onOpen={(open) => handleOpenCalender(open)}
-          />
-        )
-      }}
-    />
+    <div className=''>
+      <FormField
+        control={control}
+        name='date.from'
+        render={({ field }) => {
+          return (
+            <FormItem>
+              <DatePickerWithPresets
+                date={field.value}
+                onDayBlur={(date) => {
+                  if (date) {
+                    field.onChange(date)
+                  }
+                }}
+              />
+              <FormMessage />
+            </FormItem>
+          )
+        }}
+      />
+
+      <FormField
+        control={control}
+        name='date.to'
+        render={({ field }) => {
+          return (
+            <FormItem className='mt-2'>
+              <DatePickerWithPresets
+                date={field.value}
+                onDayBlur={(date) => {
+                  if (date) {
+                    field.onChange(date)
+                  }
+                }}
+              />
+              <FormMessage />
+            </FormItem>
+          )
+        }}
+      />
+    </div>
   )
 }
 

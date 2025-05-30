@@ -19,6 +19,7 @@ import {
   UpdateIssueType
 } from '@/types/issue.type'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 type UpdateIssueFormProps = {
   data: IssueDetailResponse
@@ -32,12 +33,23 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
       id: data.id,
       subTasks: data.subTasks ?? [],
       date: {
-        from: data.start,
-        to: data.end
+        from: data.dtStart,
+        to: data.dtEnd
       }
     }
   })
   const { control } = form
+
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log('❌ Form Errors:', form.formState.errors)
+
+      // Optional: log each field error
+      Object.entries(form.formState.errors).forEach(([fieldName, error]) => {
+        console.log(`Field "${fieldName}" has error:`, error?.message)
+      })
+    }
+  }, [form.formState.errors])
 
   return (
     <Form {...form}>

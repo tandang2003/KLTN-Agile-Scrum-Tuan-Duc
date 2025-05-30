@@ -81,7 +81,7 @@ type DatePickerWithPresetsProps = {
   disabled?: boolean
   min?: Date
   max?: Date
-}
+} & Pick<CalendarProps, 'onDayBlur'>
 
 export function DatePickerWithPresets({
   date,
@@ -89,7 +89,8 @@ export function DatePickerWithPresets({
   className,
   disabled = false,
   max,
-  min
+  min,
+  onDayBlur
 }: DatePickerWithPresetsProps) {
   const isDisable = (date: Date) => {
     if (min && max) {
@@ -143,6 +144,7 @@ export function DatePickerWithPresets({
             selected={date}
             onSelect={setDate}
             disabled={(date) => isDisable(date)}
+            onDayBlur={onDayBlur}
           />
         </div>
       </PopoverContent>
