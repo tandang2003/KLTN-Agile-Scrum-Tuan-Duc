@@ -40,8 +40,8 @@ public class IssueDetailResponse {
         private int position;
         private String description;
         private List<ResourceResponse> resources;
-        private     AuthenticationResponse.UserDetailDTO assignee;
-        private     AuthenticationResponse.UserDetailDTO reviewer;
+        private AuthenticationResponse.UserDetailDTO assignee;
+        private AuthenticationResponse.UserDetailDTO reviewer;
         private String name;
         private int storyPoint;
         private IssueStatus status;
@@ -69,12 +69,12 @@ public class IssueDetailResponse {
             return this;
         }
 
-        public IssueDetailResponseBuilder assignee(    AuthenticationResponse.UserDetailDTO assignee) {
+        public IssueDetailResponseBuilder assignee(AuthenticationResponse.UserDetailDTO assignee) {
             this.assignee = assignee;
             return this;
         }
 
-        public IssueDetailResponseBuilder reviewer(    AuthenticationResponse.UserDetailDTO reviewer) {
+        public IssueDetailResponseBuilder reviewer(AuthenticationResponse.UserDetailDTO reviewer) {
             this.reviewer = reviewer;
             return this;
         }
@@ -155,6 +155,7 @@ public class IssueDetailResponse {
         this.storyPoint = builder.storyPoint;
         this.status = builder.status;
         this.priority = builder.priority;
+        this.subTasks = builder.subTasks;
         this.tag = builder.tag;
         this.topics = builder.topics;
         this.complexOfDescription = builder.complexOfDescription;
@@ -265,6 +266,18 @@ public class IssueDetailResponse {
 
     public void setComplexOfDescription(int complexOfDescription) {
         this.complexOfDescription = complexOfDescription;
+    }
+
+    public void setAssignee(AuthenticationResponse.UserDetailDTO assignee) {
+        this.assignee = assignee;
+    }
+
+    public List<SubTaskResponse> getSubTasks() {
+        return subTasks;
+    }
+
+    public void setSubTasks(List<SubTaskResponse> subTasks) {
+        this.subTasks = subTasks;
     }
 
     public Instant getDtStart() {
