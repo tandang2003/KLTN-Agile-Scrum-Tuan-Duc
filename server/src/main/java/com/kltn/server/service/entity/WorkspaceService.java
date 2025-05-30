@@ -126,7 +126,6 @@ public class WorkspaceService {
     //    @SendMailEvent(topic = "send-mail")
     @Transactional
     public ApiResponse<Void> addStudentToWorkspace(String workspaceId, String[] uniIds) {
-//        String senderId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
         List<String> removedUniIds = new ArrayList<>();
         List<String> emails = new ArrayList<>();

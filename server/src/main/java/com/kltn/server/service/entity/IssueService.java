@@ -4,6 +4,8 @@ import com.kltn.server.DTO.request.base.AttachmentRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
 import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
+import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
+import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
@@ -15,23 +17,34 @@ import com.kltn.server.mapper.base.SubTaskMapper;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.IssueMapper;
+import com.kltn.server.mapper.entity.UserMapper;
+import com.kltn.server.mapper.snapshot.SnapshotMapper;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.model.Attachment;
+import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
+import com.kltn.server.model.type.task.IssuePriority;
+import com.kltn.server.model.type.task.IssueStatus;
+import com.kltn.server.model.type.task.IssueTag;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
+import com.kltn.server.service.mongo.snapshot.SnapshotService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IssueService {
     private final SprintService sprintService;
+    private final UserMapper userMapper;
     private IssueMapper taskMapper;
     private ProjectSprintService projectSprintService;
     private IssueRepository taskRepository;
@@ -42,9 +55,11 @@ public class IssueService {
     private ProjectService projectService;
     private TopicMapper topicMapper;
     private SubTaskMapper subTaskMapper;
+    private SnapshotService snapshotService;
 
     @Autowired
-    public IssueService(TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService) {
+    public IssueService(SnapshotService snapshotService, TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
+        this.snapshotService = snapshotService;
         this.taskMapper = taskMapper;
         this.taskRepository = taskRepository;
         this.projectSprintService = projectSprintService;
@@ -56,6 +71,7 @@ public class IssueService {
         this.sprintService = sprintService;
         this.topicMapper = topicMapper;
         this.subTaskMapper = subTaskMapper;
+        this.userMapper = userMapper;
     }
 
     @SendKafkaEvent(topic = "task-log")
@@ -120,7 +136,7 @@ public class IssueService {
         String fliedChanged = updateRequest.getFieldChanging();
         var task = getEntityById(id);
         var taskMongo = issueMongoService.getById(id);
-        ChangeLog changeLog;
+        ChangeLogRequest changeLog;
         switch (fliedChanged) {
             case "name":
                 task.setName(updateRequest.getName());
@@ -142,16 +158,16 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"status"}, task, taskMongo);
                 break;
-            case "tag":
-                task.setTag(updateRequest.getTag());
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"tag"}, task, taskMongo);
-                break;
-            case "position":
-                task.setPosition(updateRequest.getPosition());
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
-                break;
+//            case "tag":
+//                task.setTag(updateRequest.getTag());
+//                task = saveEntity(task);
+//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"tag"}, task, taskMongo);
+//                break;
+//            case "position":
+//                task.setPosition(updateRequest.getPosition());
+//                task = saveEntity(task);
+//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
+//                break;
             case "topics":
                 taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
@@ -197,11 +213,11 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
                 break;
-            case "planning":
-                task.setDtPlanning(updateRequest.getPlanning());
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"planning"}, task, taskMongo);
-                break;
+//            case "planning":
+//                task.setDtPlanning(updateRequest.getPlanning());
+//                task = saveEntity(task);
+//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"planning"}, task, taskMongo);
+//                break;
             default:
                 throw AppException.builder().error(Error.INVALID_PARAMETER_REQUEST).build();
         }
@@ -210,24 +226,84 @@ public class IssueService {
 
     @Transactional
     public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
-        List<Issue> issues;
-        if (request.getSprintId() == null || request.getSprintId().isEmpty())
-            issues = projectService.getProjectById(request.getProjectId()).getIssues().stream().filter(issue -> issue.getSprint() == null).toList();
-        else
-            issues = taskRepository.findAllByProjectIdAndSprintId(request.getProjectId(), request.getSprintId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-        if (issues.isEmpty())
-            return ApiResponse.<List<IssueResponse>>builder().code(HttpStatus.OK.value()).message("No task found").data(null).build();
+        String sprintId = request.getSprintId();
+        String projectId = request.getProjectId();
+        if (sprintId == null || sprintId.isEmpty()) {
+            List<Issue> issues = projectService.getProjectById(projectId).getIssues().stream()
+                    .filter(issue -> issue.getSprint() == null)
+                    .toList();
 
-
-        List<IssueResponse> issueResponses = new ArrayList<>();
-        for (Issue issue : issues) {
-            var issueMongo = issueMongoService.getById(issue.getId());
-            var response = taskMapper.toIssueResponse(issue, issueMongo);
-            issueResponses.add(response);
+            return buildResponseFromIssues(issues);
         }
-        return ApiResponse.<List<IssueResponse>>builder().message("Get issues successfully").data(issueResponses).build();
-//        return null;
+
+        Sprint sprint = sprintService.getSprintById(sprintId);
+        if (Instant.now().isAfter(sprint.getDtEnd())) {
+            List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(projectId, sprintId);
+            List<IssueResponse> responses = snapshots.stream().map(this::buildResponseFromSnapshot).toList();
+            return ApiResponse.<List<IssueResponse>>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Get issues successfully")
+                    .data(responses)
+                    .build();
+        }
+
+        List<Issue> issues = taskRepository.findAllByProjectIdAndSprintId(projectId, sprintId)
+                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+
+        return buildResponseFromIssues(issues);
+    }
+
+    @SendKafkaEvent(topic = "task-log")
+    public ApiResponse<IssueResponse> updateTask(@Valid IssueUpdateStatusRequest request) {
+        String id = request.getId();
+        var task = getEntityById(id);
+        var taskMongo = issueMongoService.getById(id);
+        ChangeLogRequest changeLog;
+        task.setStatus(request.getStatus());
+        task.setPosition(request.getPosition());
+        task = saveEntity(task);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"status", "position"}, task, taskMongo);
+        return ApiResponse.<IssueResponse>builder().code(HttpStatus.OK.value()).message("Update task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
     }
 
 
+    private IssueResponse buildResponseFromSnapshot(IssueSnapshot snapshot) {
+        User assignee = Optional.ofNullable(snapshot.getAssignee()).map(userService::getUserById).orElse(null);
+        User reviewer = Optional.ofNullable(snapshot.getReviewer()).map(userService::getUserById).orElse(null);
+
+        return IssueResponse.builder()
+                .id(snapshot.getNkTaskId())
+                .name(snapshot.getName())
+                .description(snapshot.getDescription())
+                .status(IssueStatus.fromString(snapshot.getStatus()))
+                .priority(IssuePriority.fromString(snapshot.getPriority()))
+                .tag(IssueTag.fromString(snapshot.getTag()))
+                .position(snapshot.getPosition())
+                .start(snapshot.getDtStart())
+                .end(snapshot.getDtEnd())
+                .assignee(userMapper.toUserDetailDTO(assignee))
+                .reviewer(userMapper.toUserDetailDTO(reviewer))
+                .build();
+    }
+
+    private ApiResponse<List<IssueResponse>> buildResponseFromIssues(List<Issue> issues) {
+        if (issues.isEmpty()) {
+            return ApiResponse.<List<IssueResponse>>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("No task found")
+                    .data(null)
+                    .build();
+        }
+
+        List<IssueResponse> responses = issues.stream().map(issue -> {
+            var issueMongo = issueMongoService.getById(issue.getId());
+            return taskMapper.toIssueResponse(issue, issueMongo);
+        }).toList();
+
+        return ApiResponse.<List<IssueResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get issues successfully")
+                .data(responses)
+                .build();
+    }
 }
