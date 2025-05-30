@@ -11,6 +11,7 @@ import java.util.List;
 
 public class IssueSnapshot {
     private String nkTaskId;
+    private String name;
     private String description;
     private List<Topic> topics;
     private String assignee;
@@ -27,9 +28,11 @@ public class IssueSnapshot {
     private List<Comment> comments;
     private int numChangeOfPriority;
     private int numChangeOfDescription;
+    private int position;
 
     public IssueSnapshot(IssueSnapshotBuilder issueSnapshotBuilder) {
         this.nkTaskId = issueSnapshotBuilder.nkTaskId;
+        this.name = issueSnapshotBuilder.name;
         this.description = issueSnapshotBuilder.description;
         this.topics = issueSnapshotBuilder.topics;
         this.assignee = issueSnapshotBuilder.assignee;
@@ -46,6 +49,7 @@ public class IssueSnapshot {
         this.comments = issueSnapshotBuilder.comments;
         this.numChangeOfPriority = issueSnapshotBuilder.numChangeOfPriority;
         this.numChangeOfDescription = issueSnapshotBuilder.numChangeOfDescription;
+        this.position = issueSnapshotBuilder.position;
     }
 
     public static IssueSnapshotBuilder builder() {
@@ -55,6 +59,8 @@ public class IssueSnapshot {
 
     public static class IssueSnapshotBuilder {
         private String nkTaskId;
+        private String name;
+        private int position;
         private String description;
         private List<Topic> topics;
         private String assignee;
@@ -75,6 +81,11 @@ public class IssueSnapshot {
 
         public IssueSnapshotBuilder numChangeOfPriority(int numChangeOfPriority) {
             this.numChangeOfPriority = numChangeOfPriority;
+            return this;
+        }
+
+        public IssueSnapshotBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -160,6 +171,11 @@ public class IssueSnapshot {
 
         public IssueSnapshot build() {
             return new IssueSnapshot(this);
+        }
+
+        public IssueSnapshotBuilder position(int position) {
+            this.position= position;
+            return this;
         }
     }
 
@@ -297,5 +313,13 @@ public class IssueSnapshot {
 
     public void setNumChangeOfDescription(int numChangeOfDescription) {
         this.numChangeOfDescription = numChangeOfDescription;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPosition() {
+        return position;
     }
 }

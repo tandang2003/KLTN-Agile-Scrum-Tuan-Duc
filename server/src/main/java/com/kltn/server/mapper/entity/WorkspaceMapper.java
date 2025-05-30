@@ -16,7 +16,7 @@ public interface WorkspaceMapper {
         @Mappings({
                         @Mapping(target = "name", source = "name"),
                         @Mapping(target = "description", source = "description"),
-                        @Mapping(target = "sprintNum", source = "sprintNum"),
+//                        @Mapping(target = "sprintNum", source = "sprintNum"),
                         @Mapping(target = "timePerSprint", source = "timePerSprint"),
                         @Mapping(target = "start", source = "start"),
                         @Mapping(target = "end", source = "end")

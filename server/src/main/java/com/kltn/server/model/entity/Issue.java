@@ -94,7 +94,7 @@ public class Issue extends BaseEntity {
         private String name;
         private String description;
         private IssueStatus status;
-        private int storyPoint;
+//        private int storyPoint;
         private IssuePriority priority;
         private IssueTag tag;
         private int numChangeOfPriority;

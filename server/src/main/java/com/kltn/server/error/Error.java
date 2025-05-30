@@ -46,6 +46,7 @@ public enum Error {
 
     SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error"),
     DB_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server error"),
+    SERVER_SNAPSHOT_SERVICE_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server had error with snapshot service "),
     DB_SERVER_MISSING_DATA(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server missing data"),
     INTERNAL_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error"),
     NOT_IMPLEMENTED(HttpServletResponse.SC_NOT_IMPLEMENTED, "Feature not implemented"),
