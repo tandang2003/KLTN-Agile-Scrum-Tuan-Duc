@@ -51,6 +51,9 @@ public class SnapshotConsumer {
                         issue -> issue,
                         issue -> issueLogRepository.findByNkTaskId(issue.getId()).orElseThrow(() -> new RuntimeException("Issue not found")))));
                 projectSnapshot = snapshotRepository.save(projectSnapshot);
+                issues.forEach(issue -> {
+                    issue.setSprint(null);
+                });
             }
         }
 

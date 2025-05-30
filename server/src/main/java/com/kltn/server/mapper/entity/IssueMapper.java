@@ -7,6 +7,7 @@ import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.mapper.base.AttachmentMapper;
 import com.kltn.server.mapper.base.SubTaskMapper;
 import com.kltn.server.mapper.base.TopicMapper;
+import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.type.task.IssueStatus;
 import org.mapstruct.*;
@@ -80,6 +81,8 @@ public interface IssueMapper {
     })
     @BeanMapping(ignoreByDefault = true)
     IssueDetailResponse toIssueDetailResponse(Issue task, com.kltn.server.model.collection.Issue issueMongo);
+
+//    List<IssueResponse> toIssueResponse(List<IssueSnapshot> issueSnapshots);
 
 
 //    @Mappings({
