@@ -4,12 +4,10 @@ import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.document.LogProjectMapper;
 import com.kltn.server.mapper.document.LogTaskMapper;
-import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.type.task.EntityTarget;
 import com.kltn.server.model.type.task.LogType;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
