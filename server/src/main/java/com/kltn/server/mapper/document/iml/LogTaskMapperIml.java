@@ -14,7 +14,7 @@ public class LogTaskMapperIml implements LogTaskMapper {
     public LogTask entityToLogDomain(com.kltn.server.model.entity.Issue entity, Issue document) {
         var builder = LogTask.builder();
         if (entity != null) {
-            builder.description(entity.getDescription());
+            builder.name(entity.getName());
             builder.description(entity.getDescription());
             builder.status(entity.getStatus().name());
             builder.priority(entity.getPriority().name());
