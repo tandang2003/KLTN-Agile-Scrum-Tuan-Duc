@@ -20,7 +20,8 @@ const StateLoader = ({ children, loading }: StateLoaderProps) => {
       dispatch(
         setProjectState({
           token: projectToken.token,
-          projectIdsAllowed: projectToken.ids
+          projectIds: projectToken.projectIds,
+          projectId: projectToken.projectId
         })
       )
       tokenService.setTokenProjectSession(projectToken)

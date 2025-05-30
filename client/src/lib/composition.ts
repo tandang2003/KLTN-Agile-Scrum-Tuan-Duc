@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react'
 
 /**
  * A utility to compose multiple event handlers into a single event handler.
@@ -7,37 +7,37 @@ import * as React from "react";
 function composeEventHandlers<E>(
   originalEventHandler?: (event: E) => void,
   ourEventHandler?: (event: E) => void,
-  { checkForDefaultPrevented = true } = {},
+  { checkForDefaultPrevented = true } = {}
 ) {
   return function handleEvent(event: E) {
-    originalEventHandler?.(event);
+    originalEventHandler?.(event)
 
     if (
       checkForDefaultPrevented === false ||
       !(event as unknown as Event).defaultPrevented
     ) {
-      return ourEventHandler?.(event);
+      return ourEventHandler?.(event)
     }
-  };
+  }
 }
 
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx
  */
 
-type PossibleRef<T> = React.Ref<T> | undefined;
+type PossibleRef<T> = React.Ref<T> | undefined
 
 /**
  * Set a given ref to a given value.
  * This utility takes care of different types of refs: callback refs and RefObject(s).
  */
 function setRef<T>(ref: PossibleRef<T>, value: T) {
-  if (typeof ref === "function") {
-    return ref(value);
+  if (typeof ref === 'function') {
+    return ref(value)
   }
 
   if (ref !== null && ref !== undefined) {
-    ref.current = value;
+    ref.current = value
   }
 }
 
@@ -47,14 +47,14 @@ function setRef<T>(ref: PossibleRef<T>, value: T) {
  */
 function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
   return (node) => {
-    let hasCleanup = false;
+    let hasCleanup = false
     const cleanups = refs.map((ref) => {
-      const cleanup = setRef(ref, node);
-      if (!hasCleanup && typeof cleanup === "function") {
-        hasCleanup = true;
+      const cleanup = setRef(ref, node)
+      if (!hasCleanup && typeof cleanup === 'function') {
+        hasCleanup = true
       }
-      return cleanup;
-    });
+      return cleanup
+    })
 
     // React <19 will log an error to the console if a callback ref returns a
     // value. We don't use ref cleanups internally so this will only happen if a
@@ -63,16 +63,16 @@ function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
     if (hasCleanup) {
       return () => {
         for (let i = 0; i < cleanups.length; i++) {
-          const cleanup = cleanups[i];
-          if (typeof cleanup === "function") {
-            cleanup();
+          const cleanup = cleanups[i]
+          if (typeof cleanup === 'function') {
+            cleanup()
           } else {
-            setRef(refs[i], null);
+            setRef(refs[i], null)
           }
         }
-      };
+      }
     }
-  };
+  }
 }
 
 /**
@@ -81,7 +81,7 @@ function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
  */
 function useComposedRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  return React.useCallback(composeRefs(...refs), refs);
+  return React.useCallback(composeRefs(...refs), refs)
 }
 
-export { composeEventHandlers, composeRefs, useComposedRefs };
+export { composeEventHandlers, composeRefs, useComposedRefs }

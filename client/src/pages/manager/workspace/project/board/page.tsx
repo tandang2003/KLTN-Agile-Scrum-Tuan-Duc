@@ -1,54 +1,77 @@
-import { board } from '@/assets/card.data'
 import Board from '@/components/board/Board'
+import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
+import LoadingBoundary from '@/components/LoadingBoundary'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetBoardByProjectIdQuery } from '@/feature/board/board.api'
-import { cn } from '@/lib/utils'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { RootState } from '@/context/redux/store'
+import { saveIssues } from '@/feature/board/board.slice'
+import { useGetListIssueQuery } from '@/feature/issue/issue.api'
+import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
+import useAppId from '@/hooks/use-app-id'
+import { toBoardModel } from '@/lib/board'
+import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { ProjectParams } from '@/types/route.type'
 import { cloneDeep } from 'lodash'
-import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const BoardPage = () => {
-  const { projectId } = useParams<ProjectParams>()
-  const { data, isFetching } = useGetBoardByProjectIdQuery(projectId as Id, {
-    skip: !projectId
-  })
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const [height, setHeight] = useState<number>(0)
+  const { projectId } = useAppId()
+  const dispatch = useAppDispatch()
+  const { data, isFetching } = useGetListIssueQuery(
+    {
+      projectId: projectId as Id
+    },
+    {
+      skip: !projectId
+    }
+  )
+  const { isLoading, items } = useAppSelector((state) => state.boardSlice)
+
+  const isUpdateIssue = useAppSelector(
+    (state: RootState) => state.triggerSlice.isUpdateIssue
+  )
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const bound = scrollAreaRef.current.getBoundingClientRect()
-      console.log(window.innerHeight - bound.y)
-      setHeight(window.innerHeight - bound.y)
+    if (!isFetching && data) {
+      dispatch(saveIssues(data))
     }
-  }, [])
+  }, [data, isFetching])
 
   return (
-    <div
-      ref={scrollAreaRef}
-      style={{
-        height: `${height}px`
-      }}
+    <LoadingBoundary<IssueResponse[]>
+      data={items}
+      fallback={<div>No result</div>}
+      isLoading={isLoading}
+      loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
     >
-      {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
-      {!isFetching && data && (
-        <ScrollArea className='h-full'>
-          <Board
-            data={cloneDeep(data)}
-            onMove={({ active, columnTo, indexTo }) => {
-              console.log('active', active)
-              console.log('columnTo', columnTo)
-              console.log('indexTo', indexTo)
-            }}
-          />
-          <ScrollBar orientation='vertical' />
-          <ScrollBar orientation='horizontal' />
-        </ScrollArea>
-      )}
-    </div>
+      {(data) => {
+        const boardData = toBoardModel(cloneDeep(data))
+
+        return (
+          <div className='flex-1'>
+            <ScrollArea className='h-full'>
+              <Board
+                data={boardData}
+                onMove={({ active, columnTo, indexTo }) => {
+                  console.log('active', active)
+                  console.log('columnTo', columnTo)
+                  console.log('indexTo', indexTo)
+                }}
+              />
+              <ScrollBar orientation='vertical' />
+              <ScrollBar orientation='horizontal' />
+            </ScrollArea>
+            <DialogUpdateIssue
+              open={isUpdateIssue}
+              onOpen={() => {
+                dispatch(disableUpdateIssue())
+              }}
+            />
+          </div>
+        )
+      }}
+    </LoadingBoundary>
   )
 }
 

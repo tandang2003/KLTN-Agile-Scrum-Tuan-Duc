@@ -1,6 +1,4 @@
-import issueService from '@/services/issue.service'
 import sprintService from '@/services/sprint.service'
-import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { CreateSprintRequest, SprintResponse } from '@/types/sprint.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -54,24 +52,10 @@ const sprintApi = createApi({
       invalidatesTags: () => {
         return [{ type: 'Sprints', id: 'LIST' }]
       }
-    }),
-    getListIssue: builder.query<IssueResponse[], Id>({
-      async queryFn(arg) {
-        try {
-          const data = await issueService.getIssues(arg)
-          return { data: data }
-        } catch (error) {
-          return { error }
-        }
-      }
     })
   })
 })
 
 export default sprintApi
 
-export const {
-  useCreateSprintMutation,
-  useGetListSprintQuery,
-  useGetListIssueQuery
-} = sprintApi
+export const { useCreateSprintMutation, useGetListSprintQuery } = sprintApi

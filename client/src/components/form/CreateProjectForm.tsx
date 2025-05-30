@@ -78,8 +78,8 @@ const CreateProjectForm = () => {
 
                   <FormControl>
                     <Editor
-                      markdown=''
                       {...field}
+                      value={field.value}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
                   </FormControl>

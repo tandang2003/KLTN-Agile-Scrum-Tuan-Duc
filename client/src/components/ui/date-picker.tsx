@@ -4,7 +4,7 @@ import * as React from 'react'
 import { DateRange } from 'react-day-picker'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Calendar, CalendarProps } from '@/components/ui/calendar'
 import {
   Popover,
   PopoverContent,
@@ -15,16 +15,18 @@ import { cn } from '@/lib/utils'
 type DatePickerWithRangeProps = {
   date?: DateRange
   setDate?: (date: DateRange | undefined) => void
+  onOpen?: (open: boolean) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
 export function DatePickerWithRange({
   date,
   setDate,
+  onOpen,
   className
 }: DatePickerWithRangeProps) {
   return (
     <div className={cn('grid gap-2', className)}>
-      <Popover>
+      <Popover onOpenChange={onOpen}>
         <PopoverTrigger asChild>
           <Button
             id='date'
@@ -77,14 +79,32 @@ type DatePickerWithPresetsProps = {
   setDate?: (date: Date | undefined) => void
   className?: string
   disabled?: boolean
-}
+  min?: Date
+  max?: Date
+} & Pick<CalendarProps, 'onDayBlur'>
 
 export function DatePickerWithPresets({
   date,
   setDate,
   className,
-  disabled = false
+  disabled = false,
+  max,
+  min,
+  onDayBlur
 }: DatePickerWithPresetsProps) {
+  const isDisable = (date: Date) => {
+    if (min && max) {
+      return date > new Date(max) || date < new Date(min)
+    }
+    if (max) {
+      return date > new Date(max)
+    }
+    if (min) {
+      return date < new Date(min)
+    }
+    return false
+  }
+
   return (
     <Popover>
       <PopoverTrigger disabled={disabled} className={cn(className)} asChild>
@@ -119,7 +139,13 @@ export function DatePickerWithPresets({
           </SelectContent>
         </Select>
         <div className='rounded-md border'>
-          <Calendar mode='single' selected={date} onSelect={setDate} />
+          <Calendar
+            mode='single'
+            selected={date}
+            onSelect={setDate}
+            disabled={(date) => isDisable(date)}
+            onDayBlur={onDayBlur}
+          />
         </div>
       </PopoverContent>
     </Popover>

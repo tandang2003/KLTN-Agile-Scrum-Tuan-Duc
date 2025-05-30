@@ -12,4 +12,5 @@ type MetaDataModel = {
   modifiedBy?: string
   deletedBy?: string
 }
+
 export type { BaseModel, MetaDataModel }
