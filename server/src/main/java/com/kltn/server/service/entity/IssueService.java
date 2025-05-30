@@ -144,6 +144,9 @@ public class IssueService {
             if (now.isAfter(sprint.getDtStart())) {
                 throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
             }
+            if (now.isAfter(sprint.getDtEnd())) {
+                throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+            }
             if (task.getDtStart() == null) {
                 task.setDtStart(sprint.getDtStart());
             } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
@@ -222,6 +225,12 @@ public class IssueService {
                 break;
             case "sprint":
                 Sprint sprint = sprintService.getSprintById(updateRequest.getSprintId());
+                Instant now = Instant.now();
+                if (now.isAfter(sprint.getDtStart())) {
+                    throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+                } else if (now.isAfter(sprint.getDtEnd())) {
+                    throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+                }
                 if (task.getDtStart() == null) {
                     task.setDtStart(sprint.getDtStart());
                 }
