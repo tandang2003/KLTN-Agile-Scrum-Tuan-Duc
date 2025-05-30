@@ -1,5 +1,6 @@
 package com.kltn.server.mapper.snapshot.impl;
 
+import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.mapper.snapshot.SnapshotMapper;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.collection.snapshot.ProjectSnapshot;
@@ -18,13 +19,16 @@ public class SnapshotMapperImpl implements SnapshotMapper {
         return builder.build();
     }
 
+
     private IssueSnapshot toIssueSnapshot(Issue entity, com.kltn.server.model.collection.Issue mongo) {
         IssueSnapshot.IssueSnapshotBuilder builder = IssueSnapshot.builder();
         builder.nkTaskId(entity.getId());
+        builder.name(entity.getName());
         builder.description(entity.getDescription());
         builder.status(entity.getStatus().name());
         builder.priority(entity.getPriority().name());
         builder.tag(entity.getTag().name());
+        builder.position(entity.getPosition());
         builder.dtStart(entity.getDtStart());
         builder.dtEnd(entity.getDtEnd());
 //        builder.dtPlanning(entity.getDtPlanning());
