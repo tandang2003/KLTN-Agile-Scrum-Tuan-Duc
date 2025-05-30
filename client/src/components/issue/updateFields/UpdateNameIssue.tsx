@@ -1,17 +1,13 @@
 import InlineEdit from '@/components/InlineEdit'
 import { FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import useAppId from '@/hooks/use-app-id'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
-import { ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
-type UpdateNameIssueProps = {
-  children: ReactNode
-}
+type UpdateNameIssueProps = {}
 
-const UpdateNameIssue = () => {
+const UpdateNameIssue = ({}: UpdateNameIssueProps) => {
   const form = useFormContext<UpdateIssueType>()
   const { control, setValue, getValues } = form
   useAutoUpdateField({

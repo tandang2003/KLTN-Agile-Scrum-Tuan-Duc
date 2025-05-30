@@ -6,17 +6,28 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { useAutoUpdateField } from '@/hooks/use-update'
+import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { issuePriorityList } from '@/types/model/typeOf'
-import { ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
-type UpdatePriorityIssueProps = {
-  children: ReactNode
-}
+type UpdatePriorityIssueProps = {}
 
-const UpdatePriorityIssue = () => {
+const UpdatePriorityIssue = ({}: UpdatePriorityIssueProps) => {
   const form = useFormContext<UpdateIssueType>()
-  const { control } = form
+  const { control, getValues } = form
+
+  useAutoUpdateField({
+    form: form,
+    field: 'priority',
+    callApi: (field, value) => {
+      return issueService.updateIssue({
+        id: getValues('id'),
+        fieldChanging: field,
+        [field]: value
+      })
+    }
+  })
 
   return (
     <FormField

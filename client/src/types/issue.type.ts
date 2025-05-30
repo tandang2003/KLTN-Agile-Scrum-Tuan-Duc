@@ -106,11 +106,18 @@ type CreateIssueRequest = CreateIssueType & {
   projectId: Id
 }
 
-type KeyOfFieldChangingIssue = keyof UpdateIssueType | 'start' | 'end'
+type KeyOfFieldChangingIssue =
+  | keyof UpdateIssueType
+  | 'start'
+  | 'end'
+  | 'assignee'
+  | 'reviewer'
 
 type UpdateIssueRequest = {
   id: Id
   fieldChanging: KeyOfFieldChangingIssue
+  assignee?: string
+  reviewer?: string
   start?: Date
   end?: Date
 } & UpdateIssueType

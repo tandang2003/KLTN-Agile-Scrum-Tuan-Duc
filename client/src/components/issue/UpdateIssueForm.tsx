@@ -2,10 +2,10 @@ import Icon from '@/components/Icon'
 import SelectMember from '@/components/issue/SelectMember'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
+import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'
 import UpdateNameIssue from '@/components/issue/updateFields/UpdateNameIssue'
 import UpdatePriorityIssue from '@/components/issue/updateFields/UpdatePriorityIssue'
 import UpdateSubTaskForm from '@/components/issue/updateFields/UpdateSubTaskIssue'
-import UpdateTagIssue from '@/components/issue/updateFields/UpdateTagIssue'
 import UpdateTopicForm from '@/components/issue/updateFields/UpdateTopicIssue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -31,14 +31,18 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
     defaultValues: {
       ...data,
       id: data.id,
+      name: data.name,
+      description: data.description,
+      priority: data.priority,
       subTasks: data.subTasks ?? [],
+      assigneeId: data.assignee.uniId,
+      reviewerId: data.reviewer.uniId,
       date: {
         from: data.dtStart,
         to: data.dtEnd
       }
     }
   })
-  const { control } = form
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -84,18 +88,15 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
 
           <div className='grid grid-cols-2 items-center gap-x-2 gap-y-3'>
             <div>Assignee</div>
-            <SelectMember control={control} name='assigneeId' />
+            <UpdateMemberIssue form={form} name='assigneeId' />
             <div>Reviewer</div>
-            <SelectMember control={control} name='reviewId' />
+            <UpdateMemberIssue form={form} name='reviewerId' />
             <div>Story point estimate</div>
             <Badge>{data.storyPoint}</Badge>
             <div>Duration</div>
             <UpdateDateIssue />
             <div>Priority</div>
             <UpdatePriorityIssue />
-
-            <div>Tag</div>
-            <UpdateTagIssue />
           </div>
           <div className='mt-4 flex items-center gap-2'>
             <UpdateTopicForm />

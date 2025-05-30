@@ -5,7 +5,7 @@ import { Path, PathValue, UseFormReturn, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
 type FieldKey = Path<UpdateIssueType>
-type FieldValue<K extends Path<UpdateIssueType>> = PathValue<UpdateIssueType, K>
+type FieldValue<K extends FieldKey> = PathValue<UpdateIssueType, K>
 
 type UseAutoUpdateFieldProps<K extends FieldKey> = {
   form: UseFormReturn<UpdateIssueType>
