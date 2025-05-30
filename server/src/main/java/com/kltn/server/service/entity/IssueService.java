@@ -10,6 +10,7 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.error.AppException;
+import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.AttachmentMapper;
@@ -37,9 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class IssueService {
@@ -90,6 +89,24 @@ public class IssueService {
         }
         if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
             Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
+            if (task.getDtStart() == null) {
+                task.setDtStart(sprint.getDtStart());
+            } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("start", "Start date cannot be before sprint start date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
+            if (task.getDtEnd() == null) {
+                task.setDtEnd(sprint.getDtEnd());
+            } else if (task.getDtEnd() != null && task.getDtEnd().isAfter(sprint.getDtEnd())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("end", "End date cannot be after sprint end date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
             task.setSprint(sprint);
         }
         if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
@@ -205,11 +222,25 @@ public class IssueService {
                 break;
             case "start":
                 task.setDtStart(updateRequest.getStart());
+                if (task.getSprint() != null && task.getDtStart().isBefore(task.getSprint().getDtStart())) {
+                    Map<String, String> error = new HashMap<>();
+                    error.put("start", "Start date cannot be before sprint start date");
+                    List<Map<String, String>> errors = new ArrayList<>();
+                    errors.add(error);
+                    throw AppMethodArgumentNotValidException.builder().error(errors).build();
+                }
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"start"}, task, taskMongo);
                 break;
             case "end":
                 task.setDtEnd(updateRequest.getEnd());
+                if (task.getSprint() != null && task.getDtEnd().isAfter(task.getSprint().getDtEnd())) {
+                    Map<String, String> error = new HashMap<>();
+                    error.put("end", "End date cannot be after sprint end date");
+                    List<Map<String, String>> errors = new ArrayList<>();
+                    errors.add(error);
+                    throw AppMethodArgumentNotValidException.builder().error(errors).build();
+                }
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
                 break;
