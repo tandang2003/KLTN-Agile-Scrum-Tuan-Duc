@@ -156,38 +156,10 @@ public class ProjectService {
         return ApiResponse.<ProjectResponse>builder().message("Get project by id").data(projectResponse).build();
     }
 
-//    private List<SprintResponse> getSprintResponses(Project project) {
-//        List<ProjectSprint> projectSprints = project.getProjectSprints();
-//        List<SprintResponse> sprintResponses = new ArrayList<>();
-//        if (projectSprints != null && !projectSprints.isEmpty()) {
-//
-//            projectSprints.forEach(ps -> {
-//                Sprint sprint = ps.getSprint();
-//                sprintResponses.add(SprintResponse.builder().id(sprint.getId()).process(
-//                                Map.of(
-//                                        "planning", ps.getDtPlanning() != null ? ps.getDtPlanning().toString() : "",
-//                                        "review", ps.getDtPreview() != null ? ps.getDtPreview().toString() : ""))
-//                        .start(sprint.getDtStart()).end(sprint.getDtEnd()).build());
-//            });
-//        }
-//        return sprintResponses;
-//    }
-
     public Project getProjectById(String id) {
         return projectRepository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build());
     }
 
-//    public ApiResponse<ProjectResponse> getWorkspaceByWorkspaceId(String workspaceId) {
-//        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-//        WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository
-//                .findByUserIdAndProjectId(userId, workspaceId).orElseThrow(() -> AppException.builder()
-//                        .error(Error.NOT_FOUND).message("Not found project in workspace").build());
-//        Project project = workspacesUsersProjects.getProject();
-//
-//        return ApiResponse.<ProjectResponse>builder()
-//                .data(projectMapper.toProjectResponseForUserJoined(project))
-//                .build();
-//    }
 
     public ApiResponse<List<UserResponse>> getMembersOfProject(String projectId) {
 

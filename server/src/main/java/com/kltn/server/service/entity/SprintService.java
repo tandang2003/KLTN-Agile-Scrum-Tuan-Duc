@@ -101,7 +101,6 @@ public class SprintService {
         sprintRepository.save(sprint);
         if (sprint.getDtEnd() != null) {
             sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(), ZoneId.of("Asia/Ho_Chi_Minh")));
-
         }
 
         SprintResponse sprintResponse = sprintMapper.toSprintCreateResponse(sprint);
