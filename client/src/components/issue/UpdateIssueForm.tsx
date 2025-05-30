@@ -1,5 +1,4 @@
 import Icon from '@/components/Icon'
-import SelectMember from '@/components/issue/SelectMember'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
 import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'

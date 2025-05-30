@@ -9,6 +9,7 @@ import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
 import {
   Command,
+  CommandEmpty,
   CommandInput,
   CommandItem,
   CommandList
@@ -16,7 +17,17 @@ import {
 import { cn } from '@/lib/utils'
 import { TopicModel } from '@/types/model/common.model'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { BaseIssueFormType } from '@/types/issue.type'
+import {
+  BaseIssueFormType,
+  TopicModelType,
+  UpdateIssueRequest,
+  UpdateIssueType
+} from '@/types/issue.type'
+import { useRef, useState } from 'react'
+import { useCommandState } from 'cmdk'
+import { Button } from '@/components/ui/button'
+import { useAutoUpdateField } from '@/hooks/use-update'
+import issueService from '@/services/issue.service'
 type UpdateTopicProps = {}
 
 const topicData: TopicModel[] = [
@@ -35,11 +46,28 @@ const topicData: TopicModel[] = [
 ]
 
 const UpdateTopicForm = ({}: UpdateTopicProps) => {
-  const { control } = useFormContext<BaseIssueFormType>()
+  const form = useFormContext<UpdateIssueType>()
+  const popoverOpenRef = useRef<boolean>(false)
+
+  const { control } = form
+
   const { fields, append, remove } = useFieldArray({
     control: control,
     name: 'topics',
     keyName: 'fieldId'
+  })
+  const [data, setData] = useState<TopicModelType[]>(fields)
+  const [selecteds, setSelecteds] = useState<TopicModelType[]>(fields)
+
+  useAutoUpdateField({
+    form: form,
+    field: 'topics',
+    isPause: (field, value) => {
+      console.log(popoverOpenRef)
+      if (popoverOpenRef.current) return true
+      console.log(field, value)
+      return false
+    }
   })
 
   return (
@@ -48,7 +76,7 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
       name='topics'
       render={() => {
         return (
-          <Popover>
+          <Popover onOpenChange={(open) => (popoverOpenRef.current = open)}>
             <PopoverTrigger className='flex w-full justify-start rounded border px-4 py-2 shadow-md [&>*:not(:first-child)]:ml-2'>
               {fields.length ? (
                 fields.map((item) => {
@@ -63,8 +91,14 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
               )}
             </PopoverTrigger>
             <PopoverContent align='start' className='w-72 p-0'>
-              <Command>
+              <Command
+                filter={(value, search) => {
+                  if (value.includes(search)) return 1
+                  return 0
+                }}
+              >
                 <CommandInput placeholder='Search items...' />
+                <CommandCreateButton />
                 <CommandList>
                   {topicData.map((item) => {
                     const isSelected = fields
@@ -111,6 +145,18 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
         )
       }}
     />
+  )
+}
+
+const CommandCreateButton = () => {
+  const search = useCommandState((state) => state.search)
+  return (
+    <CommandEmpty
+      className='hover:bg-accent flex px-1.5 py-2 pl-8 hover:cursor-pointer'
+      onClick={() => console.log('hello')}
+    >
+      <div>{search}</div>
+    </CommandEmpty>
   )
 }
 

@@ -61,6 +61,7 @@ type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
 }
 
 const CreateSubTaskSchema = z.object({
+  id: string,
   name: string
 })
 
@@ -93,7 +94,8 @@ const CreateIssueSchema = BaseIssueSchema
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
   id: string,
-  name: string.optional()
+  name: string.optional(),
+  subTasks: z.array(CreateSubTaskSchema).optional()
 })
 
 type BaseIssueFormType = z.infer<typeof BaseIssueSchema>
