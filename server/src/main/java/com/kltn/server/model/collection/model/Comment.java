@@ -19,6 +19,7 @@ public class Comment {
     private String deletedBy;
 
     private Comment(CommentBuilder builder) {
+        this.id = builder.id;
         this.to = builder.to;
         this.from = builder.from;
         this.message = builder.message;
@@ -131,5 +132,13 @@ public class Comment {
 
     public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 }
