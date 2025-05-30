@@ -2,12 +2,20 @@ import { KeyOfFieldChangingIssue, UpdateIssueType } from '@/types/issue.type'
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
 import { UseFormReturn, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
 
 type UseAutoUpdateFieldProps<K extends KeyOfFieldChangingIssue> = {
   form: UseFormReturn<UpdateIssueType>
   field: K
   condition?: (field: K, value: UpdateIssueType[K]) => boolean
-  onPending?: (field: K, value: UpdateIssueType[K]) => Promise<void>
+  preprocessing?: (
+    field: K,
+    value: UpdateIssueType[K]
+  ) => {
+    field: K
+    value: UpdateIssueType[K]
+  }
+  callApi?: (field: K, value: UpdateIssueType[K]) => Promise<any>
   onSuccess?: (response: any) => void
   onError?: (error: any) => void
 }
@@ -16,7 +24,8 @@ export function useAutoUpdateField<K extends KeyOfFieldChangingIssue>({
   form,
   field,
   condition,
-  onPending,
+  preprocessing,
+  callApi,
   onSuccess,
   onError
 }: UseAutoUpdateFieldProps<K>) {
@@ -60,16 +69,17 @@ export function useAutoUpdateField<K extends KeyOfFieldChangingIssue>({
       const isValid = await trigger(field)
       if (!isValid) return
       try {
-        await onPending?.(field, watched)
+        await callApi?.(field, watched)
         previousValue.current = watched
 
-        onSuccess?.(watched)
+        if (onSuccess) onSuccess?.(watched)
+        else toast.success(`${field} updated success`)
       } catch (err) {
         isRollingBack.current = true
         setValue(field, previousValue.current as any)
 
-        console.error(`Failed to update ${field}:`, err)
-        onError?.(err)
+        if (onError) onError?.(err)
+        else toast.error(`Failed to update ${field}`)
       }
     }
 

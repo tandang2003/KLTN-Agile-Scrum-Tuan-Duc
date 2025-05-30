@@ -4,7 +4,7 @@ import * as React from 'react'
 import { DateRange } from 'react-day-picker'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Calendar, CalendarProps } from '@/components/ui/calendar'
 import {
   Popover,
   PopoverContent,
@@ -15,16 +15,18 @@ import { cn } from '@/lib/utils'
 type DatePickerWithRangeProps = {
   date?: DateRange
   setDate?: (date: DateRange | undefined) => void
+  onOpen?: (open: boolean) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
 export function DatePickerWithRange({
   date,
   setDate,
+  onOpen,
   className
 }: DatePickerWithRangeProps) {
   return (
     <div className={cn('grid gap-2', className)}>
-      <Popover>
+      <Popover onOpenChange={onOpen}>
         <PopoverTrigger asChild>
           <Button
             id='date'
