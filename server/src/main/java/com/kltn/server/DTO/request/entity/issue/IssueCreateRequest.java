@@ -34,7 +34,7 @@ public class IssueCreateRequest {
     private IssueTag tag;
     private int position;
     private List<TopicRequest> topics;
-    private List<SubTaskRequest> subTasks;
+    private List<SubTaskRequest> subtasks;
     private List<AttachmentRequest> attachments;
     //    @NotEmpty
     private String description;
@@ -234,14 +234,6 @@ public class IssueCreateRequest {
         this.topics = topics;
     }
 
-    public List<SubTaskRequest> getSubTasks() {
-        return subTasks;
-    }
-
-    public void setSubTasks(List<SubTaskRequest> subTasks) {
-        this.subTasks = subTasks;
-    }
-
     public List<AttachmentRequest> getAttachments() {
         return attachments;
     }
@@ -288,5 +280,13 @@ public class IssueCreateRequest {
 
     public void setEnd(Instant end) {
         this.end = end;
+    }
+
+    public List<SubTaskRequest> getSubtasks() {
+        return subtasks;
+    }
+
+    public void setSubtasks(List<SubTaskRequest> subtasks) {
+        this.subtasks = subtasks;
     }
 }
