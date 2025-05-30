@@ -43,18 +43,20 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
     field: FieldName,
     value: PathValue<UpdateIssueType, FieldName>
   ) => Promise<any> | undefined = (field, value) => {
+    let selectedValue = value !== 'null' ? value : undefined
+    console.log('selectedValue', selectedValue)
     let req: UpdateIssueRequest
     if (field == 'assigneeId')
       req = {
         id: getValues('id'),
         fieldChanging: 'assignee',
-        assignee: value
+        assignee: selectedValue
       }
     else
       req = {
         id: getValues('id'),
         fieldChanging: 'reviewer',
-        reviewer: value
+        reviewer: selectedValue
       }
     return issueService.updateIssue(req)
   }
@@ -79,7 +81,7 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value={null!}>Not assign</SelectItem>
+              <SelectItem value='null'>Not assign</SelectItem>
               {data?.map((item) => {
                 return (
                   <SelectItem key={item.id} value={item.uniId}>

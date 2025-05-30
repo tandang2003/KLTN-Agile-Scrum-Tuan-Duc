@@ -3,8 +3,8 @@ import { date, z } from 'zod'
 const string = z.string().trim().min(1)
 const dateRange = z
   .object({
-    from: z.date(),
-    to: z.date()
+    from: z.date().optional(),
+    to: z.date().optional()
   })
   .refine(
     (data) => {

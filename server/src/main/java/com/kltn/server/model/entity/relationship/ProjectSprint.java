@@ -29,10 +29,10 @@ public class ProjectSprint {
 //    @OneToMany(mappedBy = "projectSprint", fetch = FetchType.LAZY)
 //    private List<Issue> issues;
 
-    @Column(name = "dt_planning")
-    private Instant dtPlanning;
-    @Column(name = "dt_preview")
-    private Instant dtPreview;
+//    @Column(name = "dt_planning")
+//    private Instant dtPlanning;
+//    @Column(name = "dt_preview")
+//    private Instant dtPreview;
 
     public ProjectSprint() {
     }
@@ -46,8 +46,8 @@ public class ProjectSprint {
         this.project = builder.project;
         this.sprint = builder.sprint;
 //        this.issues = builder.issues;
-        this.dtPlanning = builder.DTPlanning;
-        this.dtPreview = builder.DTPreview;
+//        this.dtPlanning = builder.DTPlanning;
+//        this.dtPreview = builder.DTPreview;
     }
 
     public static class ProjectSprintBuilder {
@@ -55,8 +55,8 @@ public class ProjectSprint {
         private Project project;
         private Sprint sprint;
         private List<Issue> issues;
-        private Instant DTPlanning;
-        private Instant DTPreview;
+//        private Instant DTPlanning;
+//        private Instant DTPreview;
 
         public ProjectSprintBuilder id(ProjectSprintId id) {
             this.id = id;
@@ -78,15 +78,15 @@ public class ProjectSprint {
             return this;
         }
 
-        public ProjectSprintBuilder dtPlanning(Instant dtPlanning) {
-            this.DTPlanning = dtPlanning;
-            return this;
-        }
+//        public ProjectSprintBuilder dtPlanning(Instant dtPlanning) {
+//            this.DTPlanning = dtPlanning;
+//            return this;
+//        }
 
-        public ProjectSprintBuilder dtPreview(Instant dtPreview) {
-            this.DTPreview = dtPreview;
-            return this;
-        }
+//        public ProjectSprintBuilder dtPreview(Instant dtPreview) {
+//            this.DTPreview = dtPreview;
+//            return this;
+//        }
 
         public ProjectSprint build() {
             return new ProjectSprint(this);
@@ -125,19 +125,19 @@ public class ProjectSprint {
 //        this.issues = issues;
 //    }
 
-    public Instant getDtPlanning() {
-        return dtPlanning;
-    }
-
-    public void setDtPlanning(Instant DTPlanning) {
-        this.dtPlanning = DTPlanning;
-    }
-
-    public Instant getDtPreview() {
-        return dtPreview;
-    }
-
-    public void setDtPreview(Instant DTPreview) {
-        this.dtPreview = DTPreview;
-    }
+//    public Instant getDtPlanning() {
+//        return dtPlanning;
+//    }
+//
+//    public void setDtPlanning(Instant DTPlanning) {
+//        this.dtPlanning = DTPlanning;
+//    }
+//
+//    public Instant getDtPreview() {
+//        return dtPreview;
+//    }
+//
+//    public void setDtPreview(Instant DTPreview) {
+//        this.dtPreview = DTPreview;
+//    }
 }

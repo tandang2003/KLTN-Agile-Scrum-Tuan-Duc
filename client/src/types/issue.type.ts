@@ -80,10 +80,10 @@ const BaseIssueSchema = z
     priority: z.enum(issuePriorityList),
     tag: z.enum(issueTagList),
     topics: z.array(TopicModelSchema),
-    assigneeId: z.string(),
-    reviewerId: z.string(),
+    assigneeId: z.string().optional(),
+    reviewerId: z.string().optional(),
     subTasks: z.array(CreateSubTaskSchema).optional(),
-    date: dateRange
+    date: dateRange.optional()
   })
   .partial()
   .extend({

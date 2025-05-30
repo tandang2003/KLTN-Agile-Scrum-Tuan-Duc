@@ -2,8 +2,8 @@ import Editor from '@/components/Editor'
 import SelectMember from '@/components/issue/SelectMember'
 import SelectEnum from '@/components/issue/SelectEnum'
 import SelectSprint from '@/components/issue/SelectSprint'
-import CreateSubTaskForm from '@/components/issue/subTasks/CreateSubTaskForm'
-import CreateTopicForm from '@/components/issue/topic/CreateTopicForm'
+import CreateSubTaskForm from '@/components/issue/createFields/CreateSubTaskForm'
+import CreateTopicForm from '@/components/issue/createFields/CreateTopicForm'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
@@ -61,7 +61,8 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     defaultValues: {
       sprintId: sprintCurrent?.id,
       priority: 'CRITICAL',
-      tag: 'THEORY'
+      tag: 'THEORY',
+      date: undefined
     }
   })
 
@@ -70,16 +71,17 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     name: 'sprintId'
   })
 
-  // useEffect(() => {
-  //   if (Object.keys(form.formState.errors).length > 0) {
-  //     console.log('❌ Form Errors:', form.formState.errors)
+  useEffect(() => {
+    console.log(form.getValues())
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log('❌ Form Errors:', form.formState.errors)
 
-  //     // Optional: log each field error
-  //     Object.entries(form.formState.errors).forEach(([fieldName, error]) => {
-  //       console.log(`Field "${fieldName}" has error:`, error?.message)
-  //     })
-  //   }
-  // }, [form.formState.errors])
+      // Optional: log each field error
+      Object.entries(form.formState.errors).forEach(([fieldName, error]) => {
+        console.log(`Field "${fieldName}" has error:`, error?.message)
+      })
+    }
+  }, [form.formState.errors])
 
   useEffect(() => {
     const selectedSprint = sprints?.find((item) => item.id === value)
