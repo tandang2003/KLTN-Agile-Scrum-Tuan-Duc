@@ -10,10 +10,12 @@ import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.entity.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class SprintScheduler {
@@ -30,6 +33,9 @@ public class SprintScheduler {
     private final TaskScheduler taskScheduler;
     private final Map<String, ScheduledFuture<?>> tasks;
     private KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Value("${app.time-speech}")
+    private long timeSpeech;
 
     @Autowired
     public SprintScheduler(ProjectSprintRepository projectSprintRepository, TaskScheduler taskScheduler, KafkaTemplate<String, Object> kafkaTemplate) {
@@ -45,8 +51,10 @@ public class SprintScheduler {
         Runnable task = () -> {
             kafkaTemplate.send("snapshot", SnapshotRequest.builder().projectId(projectId).sprintId(sprintId).build());
         };
-        Instant instant = endTime.atZone(ZoneId.systemDefault()).toInstant();
-        ScheduledFuture<?> future = taskScheduler.schedule(task, Date.from(instant));
+        long delay = Duration.between(LocalDateTime.now(), endTime).getSeconds();
+        delay = Math.max(0, delay);
+        Instant now = Instant.now().plusSeconds(delay / timeSpeech);
+        ScheduledFuture<?> future = taskScheduler.schedule(task, now);
         tasks.put(key, future);
     }
 

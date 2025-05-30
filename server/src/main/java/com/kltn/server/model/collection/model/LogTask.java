@@ -11,6 +11,8 @@ public class LogTask extends ILog {
     @Field
     private String sprintId;
     @Field
+    private String name;
+    @Field
     private String assignee;
     @Field
     private String reviewer;
@@ -49,6 +51,7 @@ public class LogTask extends ILog {
         this.projectId = builder.projectId;
         this.sprintId = builder.sprintId;
         this.assignee = builder.assignee;
+        this.name = builder.name;
         this.reviewer = builder.reviewer;
         this.description = builder.description;
         this.status = builder.status;
@@ -72,6 +75,7 @@ public class LogTask extends ILog {
     public static class LogTaskBuilder {
         private String projectId;
         private String sprintId;
+        private String name;
         private String assignee;
         private String reviewer;
         private String description;
@@ -96,6 +100,11 @@ public class LogTask extends ILog {
 
         public LogTaskBuilder sprintId(String sprintId) {
             this.sprintId = sprintId;
+            return this;
+        }
+
+        public LogTaskBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
