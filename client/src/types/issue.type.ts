@@ -58,6 +58,15 @@ type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
   description: string
   dtStart?: Date
   dtEnd?: Date
+  resources: ResourceResponse[]
+}
+
+type ResourceResponse = {
+  id: string
+  name: string
+  extension: string
+  contentType: string
+  size: number
 }
 
 const CreateSubTaskSchema = z.object({
