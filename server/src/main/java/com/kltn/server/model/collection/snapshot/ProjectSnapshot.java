@@ -10,17 +10,12 @@ import java.util.List;
 @Document
 public class ProjectSnapshot {
     @MongoId
-    protected ObjectId id;
+    private ObjectId id;
     @Field("nk_project_id")
     private String projectId;
     @Field("nk_sprint_id")
     private String sprintId;
     private List<IssueSnapshot> issues;
-//    private String[] member;
-//    private String fileBackLog;
-//    private Instant dtPlanning;
-//    private Instant dtPreview;
-//    private Topic[] topics;
 
     public ProjectSnapshot(ProjectSnapshotBuilder projectSnapshotBuilder) {
         this.projectId = projectSnapshotBuilder.projectId;
