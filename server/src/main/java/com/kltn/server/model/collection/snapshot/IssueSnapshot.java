@@ -25,7 +25,7 @@ public class IssueSnapshot {
     private Instant dtPlanning;
     private int complexOfDescription;
     private List<SubTask> subTasks;
-    private List<Resource> resources;
+    private List<ResourceSnapshot> resources;
     private List<Comment> comments;
     private int numChangeOfPriority;
     private int numChangeOfDescription;
@@ -74,7 +74,7 @@ public class IssueSnapshot {
         private Instant dtPlanning;
         private int complexOfDescription;
         private List<SubTask> subTasks;
-        private List<Resource> resources;
+        private List<ResourceSnapshot> resources;
         private List<Comment> comments;
         private int numChangeOfPriority;
         private int numChangeOfDescription;
@@ -160,7 +160,7 @@ public class IssueSnapshot {
             return this;
         }
 
-        public IssueSnapshotBuilder resources(List<Resource> resources) {
+        public IssueSnapshotBuilder resources(List<ResourceSnapshot> resources) {
             this.resources = resources;
             return this;
         }
@@ -284,11 +284,11 @@ public class IssueSnapshot {
         this.subTasks = subTasks;
     }
 
-    public List<Resource> getResources() {
+    public List<ResourceSnapshot> getResources() {
         return resources;
     }
 
-    public void setResources(List<Resource> resources) {
+    public void setResources(List<ResourceSnapshot> resources) {
         this.resources = resources;
     }
 

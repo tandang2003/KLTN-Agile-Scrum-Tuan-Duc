@@ -195,8 +195,9 @@ public class IssueService {
 
     public ApiResponse<IssueDetailResponse> getIssueDetailById(IssueDetailRequest request) {
         String id = request.getIssueId();
-        Sprint sprint = sprintService.getSprintById(id);
         var entity = getEntityById(id);
+        Sprint sprint = sprintService.getSprintById(id);
+
         if (sprint.getDtEnd().isBefore(Instant.now())) {
             List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject().getId(), sprint.getId());
             if (snapshots.isEmpty()) {
