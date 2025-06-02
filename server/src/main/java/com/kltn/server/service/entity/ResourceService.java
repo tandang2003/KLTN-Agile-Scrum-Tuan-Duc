@@ -1,7 +1,7 @@
 package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
-import com.kltn.server.DTO.request.entity.resource.ResourceTaskUploadRequest;
+import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
 import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
@@ -16,6 +16,7 @@ import com.kltn.server.service.file.FileService;
 import com.kltn.server.service.file.FileSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -43,6 +44,7 @@ public class ResourceService {
                 this.projectRepository = projectService;
                 this.issueRepository = issueService;
                 this.fileService = fileService;
+
         }
 
         public Resource getById(String id) {
@@ -51,17 +53,7 @@ public class ResourceService {
 
         public ApiResponse<ResourcePathResponse> getResourceById(String id) {
                 Resource resource = getById(id);
-                StringBuilder url = new StringBuilder();
-                url.append(resource.getUser().getUniId());
-                url.append("/");
-                url.append(resource.getPlaceContent());
-                url.append("/");
-                url.append(resource.getContentType());
-                url.append("/");
-                url.append(resource.getName());
-                url.append(".");
-                url.append(resource.getExtension());
-
+                String url = fileService.getUrl(resource.getPublicId());
                 String resourceUrl = url.toString();
 
                 return ApiResponse.<ResourcePathResponse>builder()
@@ -74,24 +66,12 @@ public class ResourceService {
                                 .build();
         }
 
-        public ApiResponse<Void> uploadFile(ResourceTaskUploadRequest request) {
-                Resource resource = resourceMapper.toResource(request);
-                resource.setPlaceContent(null);
-                resource.setUser(userService.getCurrentUser());
-                resource.setIssue(issueRepository.findById(request.getIssueId())
-                                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build()));
-                repository.save(resource);
-                return ApiResponse.<Void>builder()
-                                .code(HttpStatus.CREATED.value())
-                                .message("Upload file successfully")
-                                .build();
-
-        }
-
         public ApiResponse<ResourceSignatureResponse> getSignature(ResourceSignatureRequest request) {
                 Map<String, Object> paramsToSign = new HashMap<>();
 
-                String folder = Paths.get(request.getProjectId(), request.getIssueId(), request.getUserId()).toString();
+                String uniIdUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+
+                String folder = Paths.get(request.getProjectId(), request.getIssueId(), uniIdUser).toString();
                 paramsToSign.put("folder", folder);
 
                 String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
@@ -113,4 +93,18 @@ public class ResourceService {
                                 .build();
 
         }
+
+        public ApiResponse<Void> uploadFile(ResourceTaskStoringRequest request) {
+                Resource resource = resourceMapper.toResource(request);
+                resource.setUser(userService.getCurrentUser());
+                resource.setIssue(issueRepository.findById(request.getIssueId())
+                                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build()));
+                repository.save(resource);
+                return ApiResponse.<Void>builder()
+                                .code(HttpStatus.CREATED.value())
+                                .message("Upload file successfully")
+                                .build();
+
+        }
+
 }

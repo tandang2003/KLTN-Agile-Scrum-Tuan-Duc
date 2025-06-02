@@ -1,12 +1,10 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
+import com.kltn.server.DTO.request.entity.issue.*;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
+import com.kltn.server.model.entity.Issue;
 import com.kltn.server.service.entity.IssueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,12 @@ public class IssueController {
         this.taskService = taskService;
     }
 
+    @PostMapping("/backlog")
+    @PreAuthorize("hasAuthority('create_task')")
+    public ResponseEntity<ApiResponse<IssueResponse>> createTaskInBacklog(@Valid @RequestBody IssueCreateRequest taskResponse) {
+        var task = taskService.createTaskBacklog(taskResponse);
+        return ResponseEntity.ok().body(task);
+    }
     @PostMapping
     @PreAuthorize("hasAuthority('create_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> createTask(@Valid @RequestBody IssueCreateRequest taskResponse) {
@@ -34,9 +38,9 @@ public class IssueController {
         return ResponseEntity.ok().body(task);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@PathVariable String id) {
-        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(id);
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@RequestBody @Valid IssueDetailRequest request) {
+        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(request);
         return ResponseEntity.status(task.getCode()).body(task);
     }
 

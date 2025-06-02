@@ -10,6 +10,7 @@ import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.type.task.IssueStatus;
+import com.kltn.server.service.file.FileService;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -26,14 +27,15 @@ public interface IssueMapper {
             @Mapping(target = "dtStart", source = "start"),
             @Mapping(target = "dtEnd", source = "end"),
     })
+    @BeanMapping(ignoreByDefault = true)
     Issue toEntity(IssueCreateRequest issueCreateRequest);
 
     @Mappings({
             @Mapping(target = "nkTaskId", source = "task.id"),
             @Mapping(target = "description", source = "task.description"),
 //            @Mapping(target = "tag", source = "task.name"),
-            @Mapping(target = "subTasks", source = "issueCreateRequest.subTasks",qualifiedByName = "toListDocument"),
-            @Mapping(target = "attachment", source = "issueCreateRequest.attachments",qualifiedByName = "toListDocument"),
+            @Mapping(target = "subTasks", source = "issueCreateRequest.subtasks", qualifiedByName = "toListDocument"),
+            @Mapping(target = "attachment", source = "issueCreateRequest.attachments", qualifiedByName = "toListDocument"),
             @Mapping(target = "topics", source = "issueCreateRequest.topics", qualifiedByName = "toTopicList")
     })
     @BeanMapping(ignoreByDefault = true)
@@ -82,18 +84,22 @@ public interface IssueMapper {
     @BeanMapping(ignoreByDefault = true)
     IssueDetailResponse toIssueDetailResponse(Issue task, com.kltn.server.model.collection.Issue issueMongo);
 
-//    List<IssueResponse> toIssueResponse(List<IssueSnapshot> issueSnapshots);
+    @Mappings({
+            @Mapping(target = "id", source = "snapshot.nkTaskId"),
+            @Mapping(target = "name", source = "snapshot.name"),
+            @Mapping(target = "description", source = "snapshot.description"),
+            @Mapping(target = "status", source = "snapshot.status"),
+            @Mapping(target = "priority", source = "snapshot.priority"),
+            @Mapping(target = "tag", source = "snapshot.tag"),
+            @Mapping(target = "position", source = "snapshot.position"),
+            @Mapping(target = "topics", source = "snapshot.topics", qualifiedByName = "toListResponse"),
+            @Mapping(target = "subTasks", source = "snapshot.subTasks", qualifiedByName = "toListResponse"),
+            @Mapping(target = "resources", source = "snapshot.resources", qualifiedByName = "toListResponse"),
+            @Mapping(target = "complexOfDescription", source = "snapshot.complexOfDescription"),
+            @Mapping(target = "dtStart", source = "snapshot.dtStart"),
+            @Mapping(target = "dtEnd", source = "snapshot.dtEnd"),
+    })
+    @BeanMapping(ignoreByDefault = true)
+      IssueDetailResponse toIssueDetailResponseFromSnapshot(IssueSnapshot snapshot);
 
-
-//    @Mappings({
-//            @Mapping(target = "title", source = "updateRequest.name"),
-//            @Mapping(target = "description", source = "updateRequest.description"),
-//            @Mapping(target = "status", source = "updateRequest.status"),
-//            @Mapping(target = "priority", source = "updateRequest.priority"),
-////            @Mapping(target = "storyPoint", source = "updateRequest.storyPoint"),
-//            @Mapping(target = "dtStart", source = "updateRequest.start"),
-//            @Mapping(target = "dtEnd", source = "updateRequest.end"),
-//    })
-//    @BeanMapping(ignoreByDefault = true)
-//    Issue updateTask(@MappingTarget Issue task, IssueUpdateRequest updateRequest);
 }

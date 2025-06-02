@@ -11,7 +11,9 @@ public record ResourceResponse(String id,
                                @Enumerated(EnumType.STRING)
                                ContentType contentType,
                                @Enumerated(EnumType.STRING)
-                               PlaceContent placeContent, long size
+                               PlaceContent placeContent,
+                               long size,
+                               String url
 ) {
 
     public static ResourceResponseBuilder builder() {
@@ -27,6 +29,7 @@ public record ResourceResponse(String id,
         @Enumerated(EnumType.STRING)
         private PlaceContent placeContent;
         private long size;
+        public String url;
 
         public ResourceResponseBuilder id(String id) {
             this.id = id;
@@ -59,7 +62,7 @@ public record ResourceResponse(String id,
         }
 
         public ResourceResponse build() {
-            return new ResourceResponse(id, name, extension, contentType, placeContent, size);
+            return new ResourceResponse(id, name, extension, contentType, placeContent, size,url);
         }
     }
 }

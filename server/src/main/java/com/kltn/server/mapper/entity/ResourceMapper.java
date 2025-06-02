@@ -1,17 +1,23 @@
 package com.kltn.server.mapper.entity;
 
-import com.kltn.server.DTO.request.entity.resource.ResourceTaskUploadRequest;
+import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.model.entity.Resource;
-import com.kltn.server.model.type.resource.PlaceContent;
+import com.kltn.server.service.file.FileService;
 import org.mapstruct.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface ResourceMapper {
+public abstract class ResourceMapper {
+    @Autowired
+    protected FileService fileService;
 
+    @Named("toUrl")
+    public String toUrl(String publicId) {
+        return fileService.getUrl(publicId);
+    }
 
     @Mappings({
             @Mapping(target = "id", source = "id"),
@@ -19,22 +25,30 @@ public interface ResourceMapper {
             @Mapping(target = "extension", source = "extension"),
             @Mapping(target = "contentType", source = "contentType"),
             @Mapping(target = "placeContent", source = "placeContent"),
+            @Mapping(target = "size", source = "size"),
+            @Mapping(target = "url", source = "publicId",
+                    qualifiedByName = "toUrl"),
+//            @Mapping(target = "publicId", source = "publicId"),
     })
     @BeanMapping(ignoreByDefault = true)
     @Named("toResourceResponse")
-    ResourceResponse toResourceResponse(Resource resource);
+    public abstract ResourceResponse toResourceResponse(Resource resource);
+
 
     @Named("toListResponse")
-    List<ResourceResponse> toResourceResponseList(List<Resource> resources);
+    @IterableMapping(qualifiedByName = "toResourceResponse")
+    public abstract List<ResourceResponse> toResourceResponseList(List<Resource> resources);
 
     @Mappings({
             @Mapping(target = "name",
-                    expression = "java(request.getSail() != null && !request.getSail().isBlank() ? request.getName() + \"_\" + request.getSail() : request.getName())"),
+                    source = "request.name"),
             @Mapping(target = "extension", source = "extension"),
             @Mapping(target = "contentType", source = "contentType"),
             @Mapping(target = "placeContent", expression = "java(com.kltn.server.model.type.resource.PlaceContent.ISSUE)"),
             @Mapping(target = "size", source = "size"),
+            @Mapping(target = "publicId", source = "publicId"),
     })
-    Resource toResource(ResourceTaskUploadRequest request);
+    @BeanMapping(ignoreByDefault = true)
+    public abstract Resource toResource(ResourceTaskStoringRequest request);
 
 }
