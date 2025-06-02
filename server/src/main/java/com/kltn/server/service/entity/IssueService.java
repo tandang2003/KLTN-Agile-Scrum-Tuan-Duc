@@ -196,8 +196,8 @@ public class IssueService {
     public ApiResponse<IssueDetailResponse> getIssueDetailById(IssueDetailRequest request) {
         String id = request.getIssueId();
         var entity = getEntityById(id);
+        if (request.getSprintId() != null && !request.getSprintId().isEmpty()) {
         Sprint sprint = sprintService.getSprintById(id);
-
         if (sprint.getDtEnd().isBefore(Instant.now())) {
             List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject().getId(), sprint.getId());
             if (snapshots.isEmpty()) {
@@ -212,6 +212,7 @@ public class IssueService {
             response.setAssignee(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getAssignee())));
             response.setReviewer(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getReviewer())));
             return ApiResponse.<IssueDetailResponse>builder().code(HttpStatus.OK.value()).message("Get task detail successfully").data(response).build();
+        }
         }
         var taskMongo = issueMongoService.getById(id);
         var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
