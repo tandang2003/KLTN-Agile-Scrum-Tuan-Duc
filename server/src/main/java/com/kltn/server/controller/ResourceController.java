@@ -1,8 +1,10 @@
 package com.kltn.server.controller;
 
+import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskUploadRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
+import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
 import com.kltn.server.service.entity.ResourceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,12 @@ public class ResourceController {
     @PostMapping("/task/upload")
     public ResponseEntity<ApiResponse<Void>> uploadFile(@RequestBody @Valid ResourceTaskUploadRequest request) {
         var response = resourceService.uploadFile(request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("signature")
+    public ResponseEntity<ApiResponse<ResourceSignatureResponse>> getSignature (@RequestBody ResourceSignatureRequest request){
+        var response = resourceService.getSignature(request);
         return ResponseEntity.ok().body(response);
     }
 
