@@ -26,13 +26,6 @@ public class ProjectSprint {
     @OneToOne
     @JoinColumn(name = "file_backlog_id", referencedColumnName = "id")
     private Resource fileBackLog;
-//    @OneToMany(mappedBy = "projectSprint", fetch = FetchType.LAZY)
-//    private List<Issue> issues;
-
-//    @Column(name = "dt_planning")
-//    private Instant dtPlanning;
-//    @Column(name = "dt_preview")
-//    private Instant dtPreview;
 
     public ProjectSprint() {
     }
@@ -78,16 +71,6 @@ public class ProjectSprint {
             return this;
         }
 
-//        public ProjectSprintBuilder dtPlanning(Instant dtPlanning) {
-//            this.DTPlanning = dtPlanning;
-//            return this;
-//        }
-
-//        public ProjectSprintBuilder dtPreview(Instant dtPreview) {
-//            this.DTPreview = dtPreview;
-//            return this;
-//        }
-
         public ProjectSprint build() {
             return new ProjectSprint(this);
         }
@@ -117,27 +100,11 @@ public class ProjectSprint {
         this.sprint = sprint;
     }
 
-//    public List<Issue> getTasks() {
-//        return issues;
-//    }
-//
-//    public void setTasks(List<Issue> issues) {
-//        this.issues = issues;
-//    }
+    public Resource getFileBackLog() {
+        return fileBackLog;
+    }
 
-//    public Instant getDtPlanning() {
-//        return dtPlanning;
-//    }
-//
-//    public void setDtPlanning(Instant DTPlanning) {
-//        this.dtPlanning = DTPlanning;
-//    }
-//
-//    public Instant getDtPreview() {
-//        return dtPreview;
-//    }
-//
-//    public void setDtPreview(Instant DTPreview) {
-//        this.dtPreview = DTPreview;
-//    }
+    public void setFileBackLog(Resource fileBackLog) {
+        this.fileBackLog = fileBackLog;
+    }
 }

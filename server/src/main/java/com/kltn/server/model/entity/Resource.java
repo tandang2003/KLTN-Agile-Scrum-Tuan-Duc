@@ -8,9 +8,9 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "resources")
 public class Resource extends BaseEntity {
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    //    @ManyToOne
+//    @JoinColumn(name = "project_id")
+//    private Project project;
     @ManyToOne
     @JoinColumn(name = "issue_id")
     private Issue issue;
@@ -20,16 +20,18 @@ public class Resource extends BaseEntity {
 
     private String name;
     private String extension;
+    @Transient
     private String sail;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     @Enumerated(EnumType.STRING)
     private PlaceContent placeContent;
     private long size;
+    private String publicId;
 
     public Resource(ResourceEntityBuilder resourceBuilder) {
         super(resourceBuilder);
-        this.project = resourceBuilder.project;
+//        this.project = resourceBuilder.project;
         this.name = resourceBuilder.name;
         this.contentType = resourceBuilder.contentType;
         this.extension = resourceBuilder.extension;
@@ -37,14 +39,15 @@ public class Resource extends BaseEntity {
         this.size = resourceBuilder.size;
         this.issue = resourceBuilder.issue;
         this.user = resourceBuilder.user;
+        this.publicId = resourceBuilder.publicId;
+
     }
 
     public Resource() {
-
     }
 
     public static class ResourceEntityBuilder extends BaseEntityBuilder<Resource, ResourceEntityBuilder> {
-        private Project project;
+        //        private Project project;
         private Issue issue;
         private User user;
         private String name;
@@ -52,9 +55,15 @@ public class Resource extends BaseEntity {
         private ContentType contentType;
         private PlaceContent placeContent;
         private long size;
+        private String publicId;
 
-        public ResourceEntityBuilder project(Project project) {
-            this.project = project;
+//        public ResourceEntityBuilder project(Project project) {
+//            this.project = project;
+//            return this;
+//        }
+
+        public ResourceEntityBuilder publicId(String publicId) {
+            this.publicId = publicId;
             return this;
         }
 
@@ -103,6 +112,9 @@ public class Resource extends BaseEntity {
             return new Resource(this);
         }
     }
+    public static ResourceEntityBuilder builder() {
+        return new ResourceEntityBuilder();
+    }
 
     public Issue getIssue() {
         return issue;
@@ -120,13 +132,13 @@ public class Resource extends BaseEntity {
         this.sail = sail;
     }
 
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
+//    public Project getProject() {
+//        return project;
+//    }
+//
+//    public void setProject(Project project) {
+//        this.project = project;
+//    }
 
     public User getUser() {
         return user;
@@ -174,5 +186,13 @@ public class Resource extends BaseEntity {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 }

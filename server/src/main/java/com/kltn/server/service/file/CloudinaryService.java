@@ -34,4 +34,10 @@ public class CloudinaryService implements FileService {
                         signature, urlUpload, cloudinary.config.apiKey, cloudinary.config.cloudName);
     }
 
+    @Override
+    public String getUrl(String publishId) {
+        return cloudinary.url()
+                .generate(publishId);
+    }
+
 }

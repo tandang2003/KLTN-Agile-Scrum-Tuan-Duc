@@ -54,8 +54,8 @@ public class Issue extends BaseEntity {
     private Instant dtStart;
     @Column(name = "dt_end")
     private Instant dtEnd;
-//    @Column(name = "dt_planning")
-//    private Instant dtPlanning;
+    @Column(name = "dt_planning")
+    private Instant dtPlanning;
 
 
     public Issue(IssueEntityBuilder builder) {
@@ -64,7 +64,6 @@ public class Issue extends BaseEntity {
         this.position = builder.position;
         this.description = builder.description;
         this.status = builder.status;
-//        this.storyPoint = builder.storyPoint;
         this.priority = builder.priority;
         this.tag = builder.tag;
         this.numChangeOfPriority = builder.numChangeOfPriority;
@@ -74,9 +73,7 @@ public class Issue extends BaseEntity {
         this.reviewer = builder.reviewer;
         this.dtStart = builder.dtStart;
         this.dtEnd = builder.dtEnd;
-//        this.dtPlanning = builder.dtPlanning;
         this.resources = builder.resources;
-//        this.projectSprint = builder.projectSprint;
         this.project = builder.project;
         this.sprint = builder.sprint;
     }
@@ -86,6 +83,14 @@ public class Issue extends BaseEntity {
 
     public static IssueEntityBuilder builder() {
         return new IssueEntityBuilder();
+    }
+
+    public Instant getDtPlanning() {
+        return dtPlanning;
+    }
+
+    public void setDtPlanning(Instant dtPlanning) {
+        this.dtPlanning = dtPlanning;
     }
 
     public static class IssueEntityBuilder extends BaseEntityBuilder<Issue, IssueEntityBuilder> {
@@ -276,14 +281,6 @@ public class Issue extends BaseEntity {
         this.status = status;
     }
 
-//    public int getStoryPoint() {
-//        return storyPoint;
-//    }
-//
-//    public void setStoryPoint(int storyPoint) {
-//        this.storyPoint = storyPoint;
-//    }
-
     public IssuePriority getPriority() {
         return priority;
     }
@@ -329,13 +326,6 @@ public class Issue extends BaseEntity {
         return resources;
     }
 
-//    public ProjectSprint getProjectSprint() {
-//        return projectSprint;
-//    }
-//
-//    public void setProjectSprint(ProjectSprint projectSprint) {
-//        this.projectSprint = projectSprint;
-//    }
 
     public void setResources(List<Resource> resources) {
 

@@ -12,9 +12,11 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AttachmentMapper {
-    @Mappings({@Mapping(target = "resourceId", source = "resourceId"),})
+    @Mappings({@Mapping(target = "resourceId", source = "resourceId"),
+    })
     @Named("toDocument")
     Attachment toDocument(AttachmentRequest attachmentResponse);
+
     @Named("toListDocument")
     List<Attachment> toListDocument(List<AttachmentRequest> attachmentResponse);
 
