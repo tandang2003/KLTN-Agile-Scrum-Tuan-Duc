@@ -1,6 +1,5 @@
 package com.kltn.server.service.file;
 
-
 import java.util.Map;
 
 public interface FileService {

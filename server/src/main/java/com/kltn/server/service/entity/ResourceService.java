@@ -25,93 +25,92 @@ import java.util.Map;
 
 @Service
 public class ResourceService {
-    private ResourceRepository repository;
-    private ResourceMapper resourceMapper;
-    private UserService userService;
-    private ProjectRepository projectRepository;
-    private IssueRepository issueRepository;
-    private FileService fileService;
+        private ResourceRepository repository;
+        private ResourceMapper resourceMapper;
+        private UserService userService;
+        private ProjectRepository projectRepository;
+        private IssueRepository issueRepository;
+        private FileService fileService;
 
-    @Autowired
-    public ResourceService(ResourceRepository repository, ResourceMapper resourceMapper, UserService userService, ProjectRepository projectService, IssueRepository issueService,
+        @Autowired
+        public ResourceService(ResourceRepository repository, ResourceMapper resourceMapper, UserService userService,
+                        ProjectRepository projectService, IssueRepository issueService,
 
-                           FileService fileService) {
-        this.repository = repository;
-        this.resourceMapper = resourceMapper;
-        this.userService = userService;
-        this.projectRepository = projectService;
-        this.issueRepository = issueService;
-        this.fileService = fileService;
-    }
+                        FileService fileService) {
+                this.repository = repository;
+                this.resourceMapper = resourceMapper;
+                this.userService = userService;
+                this.projectRepository = projectService;
+                this.issueRepository = issueService;
+                this.fileService = fileService;
+        }
 
-    public Resource getById(String id) {
-        return repository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-    }
+        public Resource getById(String id) {
+                return repository.findById(id).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        }
 
-    public ApiResponse<ResourcePathResponse> getResourceById(String id) {
-        Resource resource = getById(id);
-        StringBuilder url = new StringBuilder();
-        url.append(resource.getUser().getUniId());
-        url.append("/");
-        url.append(resource.getPlaceContent());
-        url.append("/");
-        url.append(resource.getContentType());
-        url.append("/");
-        url.append(resource.getName());
-        url.append(".");
-        url.append(resource.getExtension());
+        public ApiResponse<ResourcePathResponse> getResourceById(String id) {
+                Resource resource = getById(id);
+                StringBuilder url = new StringBuilder();
+                url.append(resource.getUser().getUniId());
+                url.append("/");
+                url.append(resource.getPlaceContent());
+                url.append("/");
+                url.append(resource.getContentType());
+                url.append("/");
+                url.append(resource.getName());
+                url.append(".");
+                url.append(resource.getExtension());
 
-        String resourceUrl = url.toString();
+                String resourceUrl = url.toString();
 
+                return ApiResponse.<ResourcePathResponse>builder()
+                                .code(HttpStatus.OK.value())
+                                .message("Get resource successfully")
+                                .data(ResourcePathResponse.builder()
+                                                .path(resourceUrl)
+                                                .size(resource.getSize())
+                                                .build())
+                                .build();
+        }
 
-        return ApiResponse.<ResourcePathResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message("Get resource successfully")
-                .data(ResourcePathResponse.builder()
-                        .path(resourceUrl)
-                        .size(resource.getSize())
-                        .build()).build();
-    }
+        public ApiResponse<Void> uploadFile(ResourceTaskUploadRequest request) {
+                Resource resource = resourceMapper.toResource(request);
+                resource.setPlaceContent(null);
+                resource.setUser(userService.getCurrentUser());
+                resource.setIssue(issueRepository.findById(request.getIssueId())
+                                .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build()));
+                repository.save(resource);
+                return ApiResponse.<Void>builder()
+                                .code(HttpStatus.CREATED.value())
+                                .message("Upload file successfully")
+                                .build();
 
-    public ApiResponse<Void> uploadFile(ResourceTaskUploadRequest request) {
-        Resource resource = resourceMapper.toResource(request);
-        resource.setUser(userService.getCurrentUser());
-        resource.setIssue(issueRepository.findById(request.getIssueId()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build()));
-        repository.save(resource);
-        return ApiResponse.<Void>builder()
-                .code(HttpStatus.CREATED.value())
-                .message("Upload file successfully")
-                .build();
+        }
 
-    }
+        public ApiResponse<ResourceSignatureResponse> getSignature(ResourceSignatureRequest request) {
+                Map<String, Object> paramsToSign = new HashMap<>();
 
-    public ApiResponse<ResourceSignatureResponse> getSignature(ResourceSignatureRequest request) {
-        Map<String, Object> paramsToSign = new HashMap<>();
-        String name = request.getNameFile();
-        paramsToSign.put("public_id", name);
+                String folder = Paths.get(request.getProjectId(), request.getIssueId(), request.getUserId()).toString();
+                paramsToSign.put("folder", folder);
 
-        String folder = Paths.get(request.getProjectId(), request.getIssueId(), request.getUserId()).toString();
-        paramsToSign.put("folder", folder);
+                String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+                paramsToSign.put("timestamp", timestamp);
 
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
-        paramsToSign.put("timestamp", timestamp);
+                FileSignature fileSignature = fileService.getSignature(paramsToSign);
 
-        FileSignature fileSignature = fileService.getSignature(paramsToSign);
+                var data = new ResourceSignatureResponse(
+                                fileSignature.getFolder(),
+                                fileSignature.getSignature(),
+                                timestamp,
+                                fileSignature.getApiKey(),
+                                fileSignature.getCloudName(),
+                                fileSignature.getUrlUpload());
+                return ApiResponse.<ResourceSignatureResponse>builder()
+                                .code(HttpStatus.OK.value())
+                                .message("Get Signature")
+                                .data(data)
+                                .build();
 
-        var data = new ResourceSignatureResponse(
-                fileSignature.getFolder(),
-                fileSignature.getSignature(),
-                name,
-                timestamp,
-                fileSignature.getApiKey(),
-                fileSignature.getCloudName(),
-                fileSignature.getUrlUpload()
-        );
-        return ApiResponse.<ResourceSignatureResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message("Get Signature")
-                .data(data)
-                .build();
-
-    }
+        }
 }

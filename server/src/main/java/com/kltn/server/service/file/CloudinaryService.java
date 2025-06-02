@@ -15,7 +15,7 @@ public class CloudinaryService implements FileService {
 
     public CloudinaryService(Cloudinary cloudinary, @Qualifier("url-upload-file") String urlUpload,
 
-                             @Qualifier("root-folder") String rootFolder) {
+            @Qualifier("root-folder") String rootFolder) {
         this.cloudinary = cloudinary;
         this.urlUpload = urlUpload;
         this.rootFolder = rootFolder;
@@ -24,14 +24,16 @@ public class CloudinaryService implements FileService {
     @Override
     public FileSignature getSignature(Map<String, Object> paramsToSign) {
 
-        paramsToSign.compute("folder", (key, oldValue) -> (Paths.get(rootFolder, oldValue == null ? "" : oldValue.toString())));
-
+        paramsToSign.compute("folder",
+                (key, oldValue) -> (Paths.get(rootFolder, oldValue == null ? "" : oldValue.toString())));
+        paramsToSign.put("overwrite", false);
+        paramsToSign.put("unique_filename", true);
+        paramsToSign.put("use_filename", true);
         String signature = cloudinary.apiSignRequest(paramsToSign, cloudinary.config.apiSecret);
 
-        return
-                new FileSignature(
-                        paramsToSign.get("folder").toString(),
-                        signature, urlUpload, cloudinary.config.apiKey, cloudinary.config.cloudName);
+        return new FileSignature(
+                paramsToSign.get("folder").toString(),
+                signature, urlUpload, cloudinary.config.apiKey, cloudinary.config.cloudName);
     }
 
 }

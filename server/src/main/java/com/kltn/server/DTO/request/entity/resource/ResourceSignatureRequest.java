@@ -8,21 +8,16 @@ public class ResourceSignatureRequest {
     @NotBlank
     private String issueId;
     private String userId;
-    @NotBlank
-    private String nameFile;
-    private String extension;
 
     public ResourceSignatureRequest() {
     }
 
-    public ResourceSignatureRequest(String projectId, String issueId, String userId, String nameFile, String extension) {
+    public ResourceSignatureRequest(String projectId, String issueId, String userId) {
         this.projectId = projectId;
         this.issueId = issueId;
         this.userId = userId;
-        this.nameFile = nameFile;
-        this.extension = extension;
-    }
 
+    }
 
     public String getProjectId() {
         return projectId;
@@ -48,19 +43,4 @@ public class ResourceSignatureRequest {
         this.userId = userId;
     }
 
-    public String getNameFile() {
-        return nameFile;
-    }
-
-    public void setNameFile(String nameFile) {
-        this.nameFile = nameFile;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
 }
