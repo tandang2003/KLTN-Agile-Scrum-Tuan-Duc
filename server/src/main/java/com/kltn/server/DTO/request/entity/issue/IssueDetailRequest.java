@@ -7,6 +7,11 @@ public class IssueDetailRequest {
     private String issueId;
     @NotEmpty
     private String sprintId;
+    public IssueDetailRequest(){}
+    public IssueDetailRequest(String issueId, String sprintId) {
+        this.issueId = issueId;
+        this.sprintId = sprintId;
+    }
 
     public String getIssueId() {
         return issueId;
