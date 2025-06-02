@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useGetIssueQuery } from '@/feature/issue/issue.api'
+import useAppId from '@/hooks/use-app-id'
 import { IssueDetailResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
@@ -24,9 +25,14 @@ type DialogUpdateIssueProps = {} & DialogControllerProps
 
 const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
   const id = useAppSelector((state: RootState) => state.issueSlice.current?.id)
-  const { data, isFetching } = useGetIssueQuery(id as Id, {
-    skip: !id
-  })
+  const { data, isFetching } = useGetIssueQuery(
+    {
+      issueId: id as Id
+    },
+    {
+      skip: !id
+    }
+  )
 
   return (
     <DialogController open={open} onOpen={onOpen}>

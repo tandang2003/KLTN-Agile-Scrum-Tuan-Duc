@@ -33,9 +33,9 @@ const issueService = {
     >('/issue', req)
     return res.data.data
   },
-  getIssue: async (id: Id): Promise<IssueDetailResponse> => {
+  getIssue: async (issueId: Id, sprintId: Id): Promise<IssueDetailResponse> => {
     const res = await httpService.get<ResponseApi<IssueDetailResponse>>(
-      `/issue/${id}`
+      `/issue/${issueId}/${sprintId}`
     )
     return res.data.data
   },

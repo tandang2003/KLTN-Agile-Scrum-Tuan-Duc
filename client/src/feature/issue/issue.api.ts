@@ -64,10 +64,16 @@ const issueApi = createApi({
         return [{ type: 'Issues', id: 'LIST' }]
       }
     }),
-    getIssue: builder.query<IssueDetailResponse, Id>({
-      async queryFn(arg) {
+    getIssue: builder.query<
+      IssueDetailResponse,
+      {
+        issueId: Id
+        sprintId: Id
+      }
+    >({
+      async queryFn({ issueId, sprintId }) {
         try {
-          const data = await issueService.getIssue(arg)
+          const data = await issueService.getIssue(issueId, sprintId)
           return { data: data }
         } catch (error) {
           return { error }
