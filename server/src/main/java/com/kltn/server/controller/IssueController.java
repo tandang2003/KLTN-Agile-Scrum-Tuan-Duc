@@ -21,7 +21,7 @@ public class IssueController {
     private IssueService taskService;
 
     @Autowired
-    public IssueController(IssueService taskService, IssueService issueService) {
+    public IssueController(IssueService taskService) {
         this.taskService = taskService;
     }
 
@@ -38,9 +38,9 @@ public class IssueController {
         return ResponseEntity.ok().body(task);
     }
 
-    @GetMapping("")
-    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@RequestBody @Valid IssueDetailRequest request) {
-        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(request);
+    @GetMapping("{issueId}/{sprintId}")
+    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@PathVariable String issueId, @PathVariable String sprintId) {
+        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, sprintId));
         return ResponseEntity.status(task.getCode()).body(task);
     }
 
