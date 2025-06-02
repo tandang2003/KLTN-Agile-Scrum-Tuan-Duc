@@ -84,10 +84,13 @@ public class SnapshotConsumer {
         if (projectSprint.isPresent()) {
             Project project = projectSprint.get().getProject();
             Sprint sprint = projectSprint.get().getSprint();
+
             Optional<List<Issue>> tasks = issueRepository.findAllByProjectIdAndSprintId(project.getId(), sprint.getId());
             if (tasks.isPresent()) {
                 List<Issue> issues = tasks.get();
-                ProjectSnapshot projectSnapshot = snapshotMapper.toSnapshot(project.getId(), sprint.getId(), issues.stream().collect(Collectors.toMap(
+
+                ProjectSnapshot projectSnapshot = snapshotMapper.toSnapshot(project.getId(), sprint.getId(), issues.stream()
+                        .collect(Collectors.toMap(
                         issue -> issue,
                         issue -> issueLogRepository.findByNkTaskId(issue.getId()).orElseThrow(() -> new RuntimeException("Issue not found")))));
                 projectSnapshot = snapshotRepository.save(projectSnapshot);

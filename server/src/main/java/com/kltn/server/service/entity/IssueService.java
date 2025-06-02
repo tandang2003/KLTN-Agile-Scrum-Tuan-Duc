@@ -1,10 +1,7 @@
 package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.base.AttachmentRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
+import com.kltn.server.DTO.request.entity.issue.*;
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
@@ -196,8 +193,25 @@ public class IssueService {
 
     }
 
-    public ApiResponse<IssueDetailResponse> getIssueDetailById(String id) {
+    public ApiResponse<IssueDetailResponse> getIssueDetailById(IssueDetailRequest request) {
+        String id = request.getIssueId();
+        Sprint sprint = sprintService.getSprintById(id);
         var entity = getEntityById(id);
+        if (sprint.getDtEnd().isBefore(Instant.now())) {
+            List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject().getId(), sprint.getId());
+            if (snapshots.isEmpty()) {
+                throw AppException.builder().error(Error.NOT_FOUND).message("No task found in this sprint").build();
+            }
+            IssueSnapshot snapshot = snapshots.stream()
+                    .filter(s -> s.getNkTaskId().equals(id)).findFirst()
+                    .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND)
+                            .message("Task not found in this sprint").build());
+            IssueDetailResponse response = taskMapper.toIssueDetailResponseFromSnapshot(snapshot);
+
+            response.setAssignee(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getAssignee())));
+            response.setReviewer(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getReviewer())));
+            return ApiResponse.<IssueDetailResponse>builder().code(HttpStatus.OK.value()).message("Get task detail successfully").data(response).build();
+        }
         var taskMongo = issueMongoService.getById(id);
         var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
         return ApiResponse.<IssueDetailResponse>builder().code(HttpStatus.OK.value()).message("Get task detail successfully").data(taskResponse).build();
