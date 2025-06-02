@@ -28,7 +28,7 @@ public class Issue extends BaseEntity {
 //            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id", nullable = true)
 //    })
 //    private ProjectSprint projectSprint;
-    @OneToMany(mappedBy = "issue")
+    @OneToMany(mappedBy = "issue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Resource> resources;
     @ManyToOne
     @JoinColumn(name = "assignee_id")

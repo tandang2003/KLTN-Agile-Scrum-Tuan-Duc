@@ -36,7 +36,7 @@ public class ResourceController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/task")
+    @PostMapping("/issue")
     public ResponseEntity<ApiResponse<Void>> storeResource(@RequestBody @Valid ResourceTaskStoringRequest request) {
         var response = resourceService.uploadFile(request);
         return ResponseEntity.ok().body(response);

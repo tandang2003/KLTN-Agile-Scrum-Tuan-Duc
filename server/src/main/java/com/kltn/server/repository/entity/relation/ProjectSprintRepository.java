@@ -1,6 +1,5 @@
 package com.kltn.server.repository.entity.relation;
 
-import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -14,6 +13,8 @@ import java.util.Optional;
 
 public interface ProjectSprintRepository extends JpaRepository<ProjectSprint, ProjectSprintId> {
     Optional<ProjectSprint> findById(ProjectSprintId projectSprintId);
+
+    boolean existsById(ProjectSprintId projectSprintId);
 
     @Modifying
     @Transactional
