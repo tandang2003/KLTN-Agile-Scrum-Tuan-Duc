@@ -83,7 +83,6 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain.items} />
-        <NavRecent items={data.recent.items} />
       </SidebarContent>
     </Sidebar>
   )

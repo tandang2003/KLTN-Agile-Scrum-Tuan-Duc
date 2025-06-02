@@ -151,7 +151,6 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
 
                   <FormControl>
                     <Editor
-                      markdown={data.description ?? ''}
                       {...field}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />

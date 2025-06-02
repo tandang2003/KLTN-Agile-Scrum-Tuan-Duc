@@ -45,6 +45,8 @@ info:
     - `code`: status code
     - `message`: description about api
     - `error`: contain array present field and message error
+    ## API 
+    - [Issue API](./issues)
   version: 1.0.0
 servers:
   - url: http://localhost:8080
@@ -933,7 +935,7 @@ paths:
               example:
                 name: "workspace-LTW"
                 description: "Workspace for student in lab LTW NLU"
-                teamMember: [ 21130171, 21130172, 21130173 ]
+                teamMember: [21130171, 21130172, 21130173]
                 workspace: 1
                 tags:
                   [
@@ -1157,176 +1159,7 @@ paths:
       responses:
 
   /issue:
-    post:
-      summary: create issue
-      description: create issue by student
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: issue name
-                sprintId:
-                  type: string
-                  description: sprint id
-                projectId:
-                  type: string
-                  description: project id
-                workspaceId:
-                  type: string
-                  description: workspace id
-                storyPoint:
-                  type: integer
-                  description: story point
-                  required: true
-                status:
-                  allOf:
-                    - $ref: "#/components/schemas/Status"
-                  description: status
-                priority:
-                  allOf:
-                    - $ref: "#/components/schemas/Priority"
-                  description: priority
-                description:
-                  type: string
-                  description: description
-                position:
-                  type: number
-                  description: "position of issue,
-                    this is calculate in front-end and sent to server,
-                    position = (prevPosition + nextPosition) / 2 = (2000 + 1000) /2"
-                assignerId:
-                  type: string
-                  description: uniId of assigner
-                reviewId:
-                  type: string
-                  description: uniId of reviewer
-                start:
-                  type: string
-                  description: date time start
-                end:
-                  type: string
-                  description: date time end
-            example:
-              name: "Design database"
-              sprintId: "sprint-001"
-              projectId: "project-001"
-              workspaceId: "workspace-001"
-              status: "Backlog"
-              priority: "Major"
-              description: "Lorem"
-              position: 1200
-              assignerId: "uni-002"
-              reviewerId: "uni-001"
-              start: ""
-              end: ""
-
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-              example:
-                code: 200
-                message: "Create issue"
-    put:
-      summary: update issue
-      description: update issue by student
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: issue id
-                  required: true
-                name:
-                  type: string
-                  description: issue name
-                  required: true
-                description:
-                  type: string
-                  description: issue description
-                  required: true
-                status:
-                  $ref: "#/components/schemas/Status"
-                storyPoint:
-                  type: integer
-                  description: story point assigned to issue
-                  required: true
-                priority:
-                  type: string
-                  description: value allow in Critical, Major, Minor, Trivial, Blocked
-                  required: false
-                  default: Critical
-                start:
-                  type: number
-                  description: date time start issue
-                  required: true
-                end:
-                  type: number
-                  description: date time end issue
-                  required: true
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                  - $ref: "#/components/schemas/ResponseApi"
-                  - type: object
-
-              example:
-                code: 200
-                message: "Update Issue"
-                data:
-                  id: "project-001"
-                  name: "project-001"
-                  description: "..."
-                  storyPoint: 10
-                  priority: Critical
-    patch:
-      summary: change status issue (move card)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                issueId:
-                  type: string
-                  description: issue id
-                  required: true
-                status:
-                  $ref: "#/components/schemas/Status"
-                position:
-                  type: number
-                  description: use to decide order in list issue same status, front-end wil calculate it
-              example:
-                issueId: '10'
-                status: "Todo"
-                position: 2000
-      responses:
-        200:
-          description: Success
-        400:
-          description: Not found issue with id
-
+    $ref: "./paths/issue.yml"
 
 components:
   schemas:

@@ -1,5 +1,4 @@
 import AppSidebar from '@/components/AppSidebar'
-import { ScrollBar } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
@@ -7,7 +6,6 @@ import {
   SidebarTrigger
 } from '@/components/ui/sidebar'
 import UserDropdown from '@/components/UserDropdown'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Outlet } from 'react-router-dom'
 
 const ManagerLayout = () => {
@@ -26,7 +24,7 @@ const ManagerLayout = () => {
               </span>
             </div>
           </header>
-          <div className='flex-1'>
+          <div className='flex-1 overflow-y-auto'>
             <div className='h-[calc(100vh-4rem)] group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-[calc(100vh-3rem)]'>
               <Outlet />
             </div>

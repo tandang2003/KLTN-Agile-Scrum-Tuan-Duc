@@ -156,7 +156,6 @@ const CreateWorkspaceForm = () => {
 
                   <FormControl>
                     <Editor
-                      markdown=''
                       {...field}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
