@@ -14,44 +14,56 @@ type ListViewProps<T> = {
     loadingComponent?: ReactNode
   }
   emptyComponent?: ReactNode
+  append?: ReactNode
 } & React.ComponentProps<'div'>
 
 const ListView = <T,>({
   data,
   render,
-  loading = true,
-  loadingComponent = <Skeleton className='h-[300px] w-full bg-red-200' />,
+  loading,
+  loadingComponent,
   orientation,
   display = 'flex',
   loadingItems,
-  emptyComponent = <div>No result</div>,
-  className
+  emptyComponent = (
+    <div className='grid h-[300px] place-items-center rounded-md bg-gray-300'>
+      No result
+    </div>
+  ),
+  className,
+  append
 }: ListViewProps<T>) => {
-  if (loading) {
-    return loadingComponent
+  if (loading && !loadingItems) {
+    return loadingComponent ? (
+      loadingComponent
+    ) : (
+      <Skeleton className='h-[300px] w-full' />
+    )
   }
   return (
-    <div
-      className={cn(
-        display,
-        orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',
-        className
-      )}
-    >
-      {loading &&
-        loadingItems &&
-        Array(loadingItems.items)
-          .fill(null)
-          .map(
-            (_, index) =>
-              loadingItems.loadingComponent ?? (
-                <Skeleton key={index} className='h-[100px] w-full' />
-              )
-          )}
-      {data && data.map((item, index) => render(item, index))}
-
-      {((loading && !data) || data?.length == 0) && emptyComponent}
-    </div>
+    <>
+      <div
+        className={cn(
+          display,
+          orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',
+          className
+        )}
+      >
+        {loading &&
+          loadingItems &&
+          Array(loadingItems.items)
+            .fill(null)
+            .map(
+              (_, index) =>
+                loadingItems.loadingComponent ?? (
+                  <Skeleton key={index} className='h-[100px] w-full' />
+                )
+            )}
+        {data && data.map((item, index) => render(item, index))}
+      </div>
+      {((!loading && !data) || data?.length == 0) && emptyComponent}
+      {append && append}
+    </>
   )
 }
 

@@ -8,7 +8,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <AppGlobalState>
       <StateLoader loading={<Loading />}>
-        <Toaster richColors position='bottom-right' />
+        <Toaster expand={true} richColors position='bottom-right' />
         {children}
       </StateLoader>
     </AppGlobalState>

@@ -6,22 +6,21 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type ProjectState = {
   token?: Id
-  projectIdsAllowed: Id[]
+  projectIds?: Id[]
+  projectId?: Id
 }
-const initialState: ProjectState = {
-  projectIdsAllowed: []
-}
+const initialState: ProjectState = {}
 
 const getTokenProjectThunk = createAsyncThunk<TokenProject, Id>(
   'workspace/token',
   async (workspaceId, { rejectWithValue }) => {
     try {
       const data = (await tokenService.getTokenProject(workspaceId)).data
+      console.log(data)
       return {
         token: data.project_authorization_token,
-        ids: [...(data.project_ids || []), data.project_id].filter(
-          (id): id is string => typeof id === 'string' && id.trim() != ''
-        ),
+        projectIds: data.project_ids,
+        projectId: data.project_id,
         workspaceId: workspaceId
       }
     } catch (_) {
@@ -47,7 +46,8 @@ const projectSlice = createSlice({
       getTokenProjectThunk.fulfilled,
       (state: ProjectState, action: PayloadAction<TokenProject>) => {
         state.token = action.payload.token
-        state.projectIdsAllowed = action.payload.ids
+        state.projectIds = action.payload.projectIds
+        state.projectId = action.payload.projectId
       }
     )
     builder.addMatcher(

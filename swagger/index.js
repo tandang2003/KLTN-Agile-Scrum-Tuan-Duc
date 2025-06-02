@@ -1,30 +1,49 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
+const SwaggerParser = require("swagger-parser");
 const yaml = require("yamljs");
 const path = require("path");
-require("dotenv").config();
-
-const SwaggerParser = require("swagger-parser");
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
+// Load main swagger.yml
 const swaggerFilePath = path.join(__dirname, "swagger", "swagger.yml");
 
-// Use Swagger-Parser to resolve the references
+// Helper: Filter paths
+const filterSwaggerPaths = (swaggerDoc, prefix) => {
+  const filteredPaths = Object.keys(swaggerDoc.paths)
+    .filter((path) => path.startsWith(prefix))
+    .reduce((obj, key) => {
+      obj[key] = swaggerDoc.paths[key];
+      return obj;
+    }, {});
+
+  return {
+    ...swaggerDoc,
+    paths: filteredPaths,
+  };
+};
+
+// Dereference the full swagger file once
 SwaggerParser.dereference(swaggerFilePath)
-  .then((swaggerDocument) => {
-    // Serve Swagger UI
-    app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  .then((fullDoc) => {
+    // Full doc
+    app.use(
+      "/api-docs",
+      swaggerUi.serve,
+      swaggerUi.setup(fullDoc, { customSiteTitle: "Issue" })
+    );
 
-    // Serve static files (Swagger YAML and components) if needed
-    app.use("/swagger", express.static(path.join(__dirname, "swagger")));
+    // Issues docs
+    const issueDoc = filterSwaggerPaths(fullDoc, "/issue");
+    app.use("/api-docs/issues", swaggerUi.serve, swaggerUi.setup(issueDoc));
 
-    // Start the server
     app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}/api-docs`);
+      console.log(`Full docs:   http://localhost:${port}/api-docs`);
+      console.log(`Issue docs:  http://localhost:${port}/api-docs/issue`);
     });
   })
   .catch((err) => {
-    console.error("Error resolving Swagger file:", err);
+    console.error("Error loading Swagger:", err);
   });

@@ -648,8 +648,8 @@ const convertIssueData = (
         sprintId: name,
         storyPoint: 10,
         projectId: 'project-001',
-        dtStart: addDays(currentDay, 7),
-        dtEnd: addDays(currentDay, 10)
+        dtStart: addDays(currentDay, 7).toISOString(),
+        dtEnd: addDays(currentDay, 10).toISOString()
       }
     })
     result.push(...sprints)

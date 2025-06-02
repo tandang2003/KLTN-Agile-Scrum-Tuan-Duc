@@ -23,7 +23,8 @@ type TokenProjectResponse = {
 
 type TokenProject = {
   token: string
-  ids: Id[]
+  projectIds?: Id[]
+  projectId?: Id
 }
 
 export type {

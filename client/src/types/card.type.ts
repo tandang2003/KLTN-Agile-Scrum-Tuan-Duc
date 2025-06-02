@@ -1,4 +1,3 @@
-import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 
 type ColumnModelType = {
@@ -18,8 +17,10 @@ type CardModelType = {
   // tags?: { name: string; color: TagColorKey }[]
 }
 
+type ColumnsType = Record<Id, ColumnModelType>
+
 type BoardModelType = {
-  columns: Record<Id, ColumnModelType>
+  columns: ColumnsType
   cards: CardModelType[]
 }
 
@@ -39,5 +40,6 @@ export type {
   ColumnModelType,
   BoardModelType,
   Assigner,
-  CreateCardReqType
+  CreateCardReqType,
+  ColumnsType
 }

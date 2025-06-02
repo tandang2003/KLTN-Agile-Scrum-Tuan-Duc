@@ -1,6 +1,4 @@
-import { go } from '@/configuration/component.config'
 import envConfig from '@/configuration/env.config'
-import { HOME_PATH } from '@/lib/const'
 import httpService from '@/services/http.service'
 import tokenService from '@/services/token.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
@@ -33,7 +31,6 @@ const authService = {
 
     if (!response.ok) {
       tokenService.removeTokenLocal()
-      go(HOME_PATH)
       throw new Error('UnAuthorization')
     }
 

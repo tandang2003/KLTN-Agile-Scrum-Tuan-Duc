@@ -1,7 +1,5 @@
-import { board } from '@/assets/card.data'
 import Card from '@/components/board/Card'
 import Column from '@/components/board/Column'
-import ClickOutsideProvider from '@/context/click/ClickOutsideProvider'
 import { BoardModelType, ColumnModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import {
@@ -20,7 +18,7 @@ import {
 
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type BoardProps = {
   data: BoardModelType
@@ -193,9 +191,9 @@ const Board = ({ data: board, onMove }: BoardProps) => {
         if (activeIndex !== overIndex) {
           console.log('Drag card between 2 column')
           const orderedColumns = Object.keys(data.columns)
-          const newOrder = arrayMove(orderedColumns, activeIndex, overIndex)
+          // const newOrder = arrayMove(orderedColumns, activeIndex, overIndex)
           const newColumns: Record<Id, ColumnModelType> = {}
-          for (const key of newOrder) {
+          for (const key of orderedColumns) {
             const items = data.columns[key]
             if (items) {
               newColumns[key] = items
@@ -281,7 +279,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
   }
   // useEffect(() => {
   //   console.log(data.columns)
-  // }, [data])
+  // }, [data.columns])
 
   // console.log(activeDragTypeRef.current === 'card', activeItemData)
   return (
@@ -296,7 +294,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       <div className='flex bg-transparent'>
         {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
           <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
-            <div className='relative z-20 shrink-0 basis-[350px] border'>
+            <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
               <Column
                 id={keyColumn}
                 name={valueColumn.name}

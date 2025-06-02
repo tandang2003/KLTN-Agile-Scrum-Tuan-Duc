@@ -5,9 +5,9 @@ import { z } from 'zod'
 const CreateSprintFormSchema = z
   .object({
     title: stringSchema(),
-    predict: z.date(),
     minimumStoryPoint: z.number().positive(),
     start: z.date(),
+    predict: z.date(),
     end: z.date()
   })
   .refine((data) => data.start <= data.end, {
@@ -18,6 +18,7 @@ const CreateSprintFormSchema = z
     message: 'Date predict need between date start and date end',
     path: ['predict']
   })
+
 type CreateSprintFormType = z.infer<typeof CreateSprintFormSchema>
 type CreateSprintRequest = CreateSprintFormType & {
   workspaceId: Id
