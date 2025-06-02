@@ -1,12 +1,10 @@
 package com.kltn.server.controller;
 
-import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
+import com.kltn.server.DTO.request.entity.issue.*;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
+import com.kltn.server.model.entity.Issue;
 import com.kltn.server.service.entity.IssueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +38,9 @@ public class IssueController {
         return ResponseEntity.ok().body(task);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@PathVariable String id) {
-        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(id);
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@RequestBody @Valid IssueDetailRequest request) {
+        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(request);
         return ResponseEntity.status(task.getCode()).body(task);
     }
 
@@ -59,13 +57,6 @@ public class IssueController {
         var task = taskService.updateTask(request);
         return ResponseEntity.status(task.getCode()).body(task);
     }
-
-//    @PostMapping("link")
-//    @PreAuthorize("hasAuthority('update_task')")
-//    public ResponseEntity<ApiResponse<IssueResponse>> linkIssue(@Valid @RequestBody IssueUpdateRequest request) {
-//        var task = taskService.linkIssue(request);
-//        return ResponseEntity.status(task.getCode()).body(task);
-//    }
 
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("project_id") String projectId, @RequestParam(value = "sprint_id", required = false) String sprintId) {

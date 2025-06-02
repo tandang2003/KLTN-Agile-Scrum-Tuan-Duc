@@ -3,7 +3,7 @@ package com.kltn.server.DTO.response.base;
 
 import org.bson.types.ObjectId;
 
-public record AttachmentResponse(ObjectId id, String resourceId) {
+public record AttachmentResponse(ObjectId id, String resourceIdz) {
     public static AttachmentResponseBuilder builder() {
         return new AttachmentResponseBuilder();
     }

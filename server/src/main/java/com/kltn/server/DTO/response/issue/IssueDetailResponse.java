@@ -1,6 +1,7 @@
 package com.kltn.server.DTO.response.issue;
 
 import com.kltn.server.DTO.response.auth.AuthenticationResponse;
+import com.kltn.server.DTO.response.base.AttachmentResponse;
 import com.kltn.server.DTO.response.base.SubTaskResponse;
 import com.kltn.server.DTO.response.base.TopicResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
