@@ -1,15 +1,13 @@
 package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.base.AttachmentRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueOfSprintRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateStatusRequest;
+import com.kltn.server.DTO.request.entity.issue.*;
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.error.AppException;
+import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.AttachmentMapper;
@@ -37,9 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class IssueService {
@@ -90,6 +86,82 @@ public class IssueService {
         }
         if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
             Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
+            if (task.getDtStart() == null) {
+                task.setDtStart(sprint.getDtStart());
+            } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("start", "Start date cannot be before sprint start date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
+            if (task.getDtEnd() == null) {
+                task.setDtEnd(sprint.getDtEnd());
+            } else if (task.getDtEnd() != null && task.getDtEnd().isAfter(sprint.getDtEnd())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("end", "End date cannot be after sprint end date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
+            task.setSprint(sprint);
+        }
+        if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
+            List<Resource> resources = issueCreateRequest.getAttachments().stream().map(id -> resourceService.getById(id.getResourceId())).toList();
+            task.setResources(resources);
+        }
+        task = taskRepository.save(task);
+        if (task == null || task.getId() == null) {
+            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
+        }
+        var taskMongo = taskMapper.toCollection(task, issueCreateRequest);
+        taskMongo = issueMongoService.save(taskMongo);
+        var changeLog = changeLogMapper.taskToCreateLogRequest(task, taskMongo);
+
+        return ApiResponse.<IssueResponse>builder().code(HttpStatus.CREATED.value()).message("Create task successfully").data(taskMapper.toIssueResponse(task, taskMongo)).logData(changeLog).build();
+    }
+
+    @SendKafkaEvent(topic = "task-log")
+    @Transactional
+    public ApiResponse<IssueResponse> createTaskBacklog(IssueCreateRequest issueCreateRequest) {
+        Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
+        var task = taskMapper.toEntity(issueCreateRequest);
+        task.setProject(project);
+        if (issueCreateRequest.getAssigneeId() != null && !issueCreateRequest.getAssigneeId().isEmpty()) {
+            User assignee = userService.getUserByUniId(issueCreateRequest.getAssigneeId());
+            task.setAssignee(assignee);
+        }
+        if (issueCreateRequest.getReviewerId() != null && !issueCreateRequest.getReviewerId().isEmpty()) {
+            User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
+            task.setReviewer(reviewer);
+        }
+        if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
+            Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
+            Instant now = Instant.now();
+            if (now.isAfter(sprint.getDtStart())) {
+                throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+            }
+            if (now.isAfter(sprint.getDtEnd())) {
+                throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+            }
+            if (task.getDtStart() == null) {
+                task.setDtStart(sprint.getDtStart());
+            } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("start", "Start date cannot be before sprint start date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
+            if (task.getDtEnd() == null) {
+                task.setDtEnd(sprint.getDtEnd());
+            } else if (task.getDtEnd() != null && task.getDtEnd().isAfter(sprint.getDtEnd())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("end", "End date cannot be after sprint end date");
+                List<Map<String, String>> errors = new ArrayList<>();
+                errors.add(error);
+                throw AppMethodArgumentNotValidException.builder().error(errors).build();
+            }
             task.setSprint(sprint);
         }
         if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
@@ -121,8 +193,25 @@ public class IssueService {
 
     }
 
-    public ApiResponse<IssueDetailResponse> getIssueDetailById(String id) {
+    public ApiResponse<IssueDetailResponse> getIssueDetailById(IssueDetailRequest request) {
+        String id = request.getIssueId();
+        Sprint sprint = sprintService.getSprintById(id);
         var entity = getEntityById(id);
+        if (sprint.getDtEnd().isBefore(Instant.now())) {
+            List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject().getId(), sprint.getId());
+            if (snapshots.isEmpty()) {
+                throw AppException.builder().error(Error.NOT_FOUND).message("No task found in this sprint").build();
+            }
+            IssueSnapshot snapshot = snapshots.stream()
+                    .filter(s -> s.getNkTaskId().equals(id)).findFirst()
+                    .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND)
+                            .message("Task not found in this sprint").build());
+            IssueDetailResponse response = taskMapper.toIssueDetailResponseFromSnapshot(snapshot);
+
+            response.setAssignee(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getAssignee())));
+            response.setReviewer(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getReviewer())));
+            return ApiResponse.<IssueDetailResponse>builder().code(HttpStatus.OK.value()).message("Get task detail successfully").data(response).build();
+        }
         var taskMongo = issueMongoService.getById(id);
         var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
         return ApiResponse.<IssueDetailResponse>builder().code(HttpStatus.OK.value()).message("Get task detail successfully").data(taskResponse).build();
@@ -148,6 +237,24 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"description"}, task, taskMongo);
                 break;
+            case "sprint":
+                Sprint sprint = sprintService.getSprintById(updateRequest.getSprintId());
+                Instant now = Instant.now();
+                if (now.isAfter(sprint.getDtStart())) {
+                    throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+                } else if (now.isAfter(sprint.getDtEnd())) {
+                    throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+                }
+                if (task.getDtStart() == null) {
+                    task.setDtStart(sprint.getDtStart());
+                }
+                if (task.getDtEnd() == null) {
+                    task.setDtEnd(sprint.getDtEnd());
+                }
+                task.setSprint(sprint);
+                task = saveEntity(task);
+                changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
+                break;
             case "priority":
                 task.setPriority(updateRequest.getPriority());
                 task = saveEntity(task);
@@ -158,25 +265,15 @@ public class IssueService {
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"status"}, task, taskMongo);
                 break;
-//            case "tag":
-//                task.setTag(updateRequest.getTag());
-//                task = saveEntity(task);
-//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"tag"}, task, taskMongo);
-//                break;
-//            case "position":
-//                task.setPosition(updateRequest.getPosition());
-//                task = saveEntity(task);
-//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"position"}, task, taskMongo);
-//                break;
             case "topics":
                 taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"topics"}, task, taskMongo);
                 break;
             case "subTasks":
-                taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubTasks()));
+                taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"priority"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[]{"subtasks"}, task, taskMongo);
                 break;
             case "attachments":
                 List<Resource> resources = task.getResources();
@@ -205,19 +302,28 @@ public class IssueService {
                 break;
             case "start":
                 task.setDtStart(updateRequest.getStart());
+                if (task.getSprint() != null && task.getDtStart().isBefore(task.getSprint().getDtStart())) {
+                    Map<String, String> error = new HashMap<>();
+                    error.put("start", "Start date cannot be before sprint start date");
+                    List<Map<String, String>> errors = new ArrayList<>();
+                    errors.add(error);
+                    throw AppMethodArgumentNotValidException.builder().error(errors).build();
+                }
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"start"}, task, taskMongo);
                 break;
             case "end":
                 task.setDtEnd(updateRequest.getEnd());
+                if (task.getSprint() != null && task.getDtEnd().isAfter(task.getSprint().getDtEnd())) {
+                    Map<String, String> error = new HashMap<>();
+                    error.put("end", "End date cannot be after sprint end date");
+                    List<Map<String, String>> errors = new ArrayList<>();
+                    errors.add(error);
+                    throw AppMethodArgumentNotValidException.builder().error(errors).build();
+                }
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
                 break;
-//            case "planning":
-//                task.setDtPlanning(updateRequest.getPlanning());
-//                task = saveEntity(task);
-//                changeLog = changeLogMapper.TaskToUpdate(new String[]{"planning"}, task, taskMongo);
-//                break;
             default:
                 throw AppException.builder().error(Error.INVALID_PARAMETER_REQUEST).build();
         }

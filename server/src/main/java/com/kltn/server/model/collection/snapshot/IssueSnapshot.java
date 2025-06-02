@@ -4,6 +4,7 @@ import com.kltn.server.model.collection.model.Attachment;
 import com.kltn.server.model.collection.model.Comment;
 import com.kltn.server.model.collection.model.SubTask;
 import com.kltn.server.model.collection.model.Topic;
+import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.type.task.IssueStatus;
 
 import java.time.Instant;
@@ -24,7 +25,7 @@ public class IssueSnapshot {
     private Instant dtPlanning;
     private int complexOfDescription;
     private List<SubTask> subTasks;
-    private List<Attachment> attachments;
+    private List<Resource> resources;
     private List<Comment> comments;
     private int numChangeOfPriority;
     private int numChangeOfDescription;
@@ -45,7 +46,7 @@ public class IssueSnapshot {
         this.dtPlanning = issueSnapshotBuilder.dtPlanning;
         this.complexOfDescription = issueSnapshotBuilder.complexOfDescription;
         this.subTasks = issueSnapshotBuilder.subTasks;
-        this.attachments = issueSnapshotBuilder.attachments;
+        this.resources = issueSnapshotBuilder.resources;
         this.comments = issueSnapshotBuilder.comments;
         this.numChangeOfPriority = issueSnapshotBuilder.numChangeOfPriority;
         this.numChangeOfDescription = issueSnapshotBuilder.numChangeOfDescription;
@@ -73,7 +74,7 @@ public class IssueSnapshot {
         private Instant dtPlanning;
         private int complexOfDescription;
         private List<SubTask> subTasks;
-        private List<Attachment> attachments;
+        private List<Resource> resources;
         private List<Comment> comments;
         private int numChangeOfPriority;
         private int numChangeOfDescription;
@@ -159,8 +160,8 @@ public class IssueSnapshot {
             return this;
         }
 
-        public IssueSnapshotBuilder attachments(List<Attachment> attachments) {
-            this.attachments = attachments;
+        public IssueSnapshotBuilder resources(List<Resource> resources) {
+            this.resources = resources;
             return this;
         }
 
@@ -283,12 +284,12 @@ public class IssueSnapshot {
         this.subTasks = subTasks;
     }
 
-    public List<Attachment> getAttachments() {
-        return attachments;
+    public List<Resource> getResources() {
+        return resources;
     }
 
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 
     public List<Comment> getComments() {

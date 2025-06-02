@@ -1,7 +1,7 @@
 package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
-import com.kltn.server.DTO.request.entity.resource.ResourceTaskUploadRequest;
+import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
 import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -37,8 +36,8 @@ public class ResourceController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/task/upload")
-    public ResponseEntity<ApiResponse<Void>> uploadFile(@RequestBody @Valid ResourceTaskUploadRequest request) {
+    @PostMapping("/task")
+    public ResponseEntity<ApiResponse<Void>> storeResource(@RequestBody @Valid ResourceTaskStoringRequest request) {
         var response = resourceService.uploadFile(request);
         return ResponseEntity.ok().body(response);
     }
@@ -50,15 +49,4 @@ public class ResourceController {
     }
 
 
-//    @PostMapping("/project/upload")
-//    public ResponseEntity<ApiResponse<Void>> uploadFile(ResourceProjectUploadRequest request) {
-//        var response = resourceService.uploadFile(request);
-//        return ResponseEntity.ok().body(response);
-//    }
-//
-//    @PostMapping("/sprint/upload")
-//    public ResponseEntity<ApiResponse<Void>> uploadFile(ResourceSprintUploadRequest request) {
-//        var response = resourceService.uploadFile(request);
-//        return ResponseEntity.ok().body(response);
-//    }
 }
