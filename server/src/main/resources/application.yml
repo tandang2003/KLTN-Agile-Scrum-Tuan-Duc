@@ -65,6 +65,7 @@ logging:
     org:
       springframework:
         security: off
+#    root: OFF
 cache:
   redis:
     refresh-token:
@@ -93,7 +94,6 @@ app:
 
 verify:
   invite-project-link: https://localhost:3000/verify?token=
-
 
 #kafka:
 #  topic:

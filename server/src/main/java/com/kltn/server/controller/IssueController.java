@@ -43,7 +43,12 @@ public class IssueController {
         ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, sprintId));
         return ResponseEntity.status(task.getCode()).body(task);
     }
-
+    @GetMapping("{issueId}")
+    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailByIdWithoutSprintID
+            (@PathVariable String issueId) {
+        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, null));
+        return ResponseEntity.status(task.getCode()).body(task);
+    }
     @PutMapping
     @PreAuthorize("hasAuthority('update_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateRequest taskResponse) {
