@@ -7,5 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface SnapshotRepository extends MongoRepository<ProjectSnapshot, ObjectId> {
+
+    boolean existsByProjectIdAndSprintId(String projectId, String sprintId);
     Optional<ProjectSnapshot> findByProjectIdAndSprintId(String projectId, String sprintId);
 }

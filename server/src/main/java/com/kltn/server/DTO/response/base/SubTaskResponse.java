@@ -1,20 +1,18 @@
 package com.kltn.server.DTO.response.base;
 
-import org.bson.types.ObjectId;
-
-public record SubTaskResponse(ObjectId id, String name, int order, boolean checked) {
+public record SubTaskResponse(String id, String name, int order, boolean checked) {
 
     public static SubTaskResponseBuilder builder() {
         return new SubTaskResponseBuilder();
     }
 
     public static class SubTaskResponseBuilder {
-        private ObjectId id;
+        private String id;
         private String name;
         private int order;
         private boolean checked;
 
-        public SubTaskResponseBuilder setId(ObjectId id) {
+        public SubTaskResponseBuilder setId(String id) {
             this.id = id;
             return this;
         }
