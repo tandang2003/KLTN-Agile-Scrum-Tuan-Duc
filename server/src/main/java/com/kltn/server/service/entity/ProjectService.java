@@ -97,8 +97,6 @@ public class ProjectService {
                 }
             });
         }
-
-
         workspacesUsersProjects.setProject(savedProject);
         workspacesUsersProjects.setRole(roleInit.getRole(RoleType.LEADER.getName()));
         workspacesUsersProjects.setInProject(true);
