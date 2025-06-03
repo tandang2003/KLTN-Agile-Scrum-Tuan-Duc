@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.bson.types.ObjectId;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record TopicResponse(ObjectId id, String name, String color) {
+public record TopicResponse(String id, String name, String color) {
 
     public static class TopicResponseBuilder {
-        private ObjectId id;
+        private String id;
         private String name;
         private String color;
 
-        public TopicResponseBuilder id(ObjectId id) {
+        public TopicResponseBuilder id(String id) {
             this.id = id;
             return this;
         }
@@ -36,7 +36,7 @@ public record TopicResponse(ObjectId id, String name, String color) {
     }
 
     @Override
-    public ObjectId id() {
+    public String id() {
         return id;
     }
 
