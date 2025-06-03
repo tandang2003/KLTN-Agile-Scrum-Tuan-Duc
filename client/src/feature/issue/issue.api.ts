@@ -68,7 +68,7 @@ const issueApi = createApi({
       IssueDetailResponse,
       {
         issueId: Id
-        sprintId: Id
+        sprintId?: Id
       }
     >({
       async queryFn({ issueId, sprintId }) {

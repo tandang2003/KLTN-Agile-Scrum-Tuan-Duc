@@ -17,7 +17,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useGetIssueQuery } from '@/feature/issue/issue.api'
-import useAppId from '@/hooks/use-app-id'
 import { IssueDetailResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
@@ -33,7 +32,6 @@ const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
       skip: !id
     }
   )
-
   return (
     <DialogController open={open} onOpen={onOpen}>
       <LoadingBoundary<IssueDetailResponse>

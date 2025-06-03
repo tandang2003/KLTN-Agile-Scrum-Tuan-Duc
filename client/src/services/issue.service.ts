@@ -19,12 +19,6 @@ const issueService = {
       `/issue/list?${query}`
     )
     return res.data.data
-    // return new Promise((resolved, _) => {
-    //   const data = issueData.filter((item) => item.sprintId === sprintId)
-    //   setTimeout(() => {
-    //     resolved(data)
-    //   }, 500)
-    // })
   },
   createIssue: async (req: CreateIssueRequest): Promise<IssueResponse> => {
     const res = await httpService.post<
@@ -33,9 +27,12 @@ const issueService = {
     >('/issue', req)
     return res.data.data
   },
-  getIssue: async (issueId: Id, sprintId: Id): Promise<IssueDetailResponse> => {
+  getIssue: async (
+    issueId: Id,
+    sprintId?: Id
+  ): Promise<IssueDetailResponse> => {
     const res = await httpService.get<ResponseApi<IssueDetailResponse>>(
-      `/issue/${issueId}/${sprintId}`
+      `/issue/${issueId}${sprintId ? `/${sprintId}` : ''}`
     )
     return res.data.data
   },
