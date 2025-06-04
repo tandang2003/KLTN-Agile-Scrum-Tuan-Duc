@@ -17,30 +17,33 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useAppSelector } from '@/context/redux/hook'
-import { useCreateSprintMutation } from '@/feature/sprint/sprint.api'
-import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
-import { handleErrorApi } from '@/lib/form'
 import {
-  CreateSprintFormSchema,
+  BaseSprintFormSchema,
+  BaseSprintFormType,
   CreateSprintFormType
 } from '@/types/sprint.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
 import { isNumber } from 'lodash'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { toast } from 'sonner'
+import { useForm, UseFormReturn } from 'react-hook-form'
 
 type DurationType = 1 | 2 | 3 | 4 | 'custom'
 
-const CreateSprintForm = () => {
-  const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
-  const [createSprint] = useCreateSprintMutation()
+type SprintTemplateFormProps = {
+  initialValues?: BaseSprintFormType
+  onSubmit?: (
+    values: BaseSprintFormType,
+    form: UseFormReturn<BaseSprintFormType>
+  ) => void
+  submitText?: string
+}
 
-  const dispatch = useDispatch()
-
+const SprintTemplateBaseForm = ({
+  onSubmit,
+  initialValues,
+  submitText = 'Create Sprint'
+}: SprintTemplateFormProps) => {
   const [durationValue, setDurationValue] = useState<{
     active: DurationType
     list: DurationType[]
@@ -49,9 +52,9 @@ const CreateSprintForm = () => {
     list: [1, 2, 3, 4, 'custom']
   })
 
-  const form = useForm<CreateSprintFormType>({
-    resolver: zodResolver(CreateSprintFormSchema),
-    defaultValues: {
+  const form = useForm<BaseSprintFormType>({
+    resolver: zodResolver(BaseSprintFormSchema),
+    defaultValues: initialValues ?? {
       title: '',
       predict: new Date(),
       minimumStoryPoint: 0,
@@ -74,27 +77,7 @@ const CreateSprintForm = () => {
   }
 
   const handleSubmit = (values: CreateSprintFormType) => {
-    if (!workspaceId) return
-    createSprint({
-      ...values,
-      workspaceId: workspaceId
-    })
-      .unwrap()
-      .then(({ id, title }) => {
-        toast.success('Create sprint success', {
-          description: `Sprint #${id} - ${title}`
-        })
-      })
-      .then(() => {
-        dispatch(closeDialogCreateSprint())
-      })
-      .catch((error) => {
-        handleErrorApi({
-          error: error,
-          setError: form.setError
-        })
-        toast.error('Create sprint failed')
-      })
+    onSubmit?.(values, form)
   }
 
   return (
@@ -247,7 +230,7 @@ const CreateSprintForm = () => {
             type='submit'
             loading={form.formState.isSubmitting}
           >
-            Create
+            {submitText}
           </Button>
         </form>
       </Form>
@@ -255,4 +238,4 @@ const CreateSprintForm = () => {
   )
 }
 
-export default CreateSprintForm
+export default SprintTemplateBaseForm

@@ -1,4 +1,4 @@
-import SprintCard from '@/components/workspace/SprintCard'
+import SprintTemplateCard from '@/components/sprint/template/SprintTemplateCard'
 import { useAppSelector } from '@/context/redux/hook'
 
 import { SprintResponse } from '@/types/sprint.type'
@@ -14,18 +14,18 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 
 import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react'
 
-type WorkspaceTemplateRef = {
+type SprintTemplateRef = {
   rollback: () => void
 }
 
-type WorkspaceTemplateProps = {
+type SprintTemplateProps = {
   sprints: SprintResponse[]
   onChange?: (item: SprintResponse, position: number) => void
 }
-const WorkspaceTemplate = forwardRef(
+const SprintTemplate = forwardRef(
   (
-    { sprints, onChange }: WorkspaceTemplateProps,
-    ref: ForwardedRef<WorkspaceTemplateRef>
+    { sprints, onChange }: SprintTemplateProps,
+    ref: ForwardedRef<SprintTemplateRef>
   ) => {
     const [items, setItems] = useState<SprintResponse[]>(sprints)
     const isDragMode = useAppSelector((state) => state.sprintSlice.isDragMode)
@@ -56,29 +56,31 @@ const WorkspaceTemplate = forwardRef(
     }
 
     return (
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragEnd={handleDragEnd}
-      >
-        <div className='flex flex-col gap-2'>
-          <SortableContext
-            items={items.map((item) => item.id)}
-            disabled={!isDragMode}
-          >
-            {items.map((item) => (
-              <SprintCard
-                key={item.id}
-                id={item.id}
-                data={item}
-                isDisabled={!isDragMode}
-              />
-            ))}
-          </SortableContext>
-        </div>
-      </DndContext>
+      <>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragEnd={handleDragEnd}
+        >
+          <div className='flex flex-col gap-2'>
+            <SortableContext
+              items={items.map((item) => item.id)}
+              disabled={!isDragMode}
+            >
+              {items.map((item) => (
+                <SprintTemplateCard
+                  key={item.id}
+                  id={item.id}
+                  data={item}
+                  isDisabled={!isDragMode}
+                />
+              ))}
+            </SortableContext>
+          </div>
+        </DndContext>
+      </>
     )
   }
 )
-export type { WorkspaceTemplateRef }
-export default WorkspaceTemplate
+export type { SprintTemplateRef as WorkspaceTemplateRef }
+export default SprintTemplate

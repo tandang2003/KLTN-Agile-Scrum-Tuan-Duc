@@ -7,7 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { useAppDispatch } from '@/context/redux/hook'
 import { useDeleteSprintMutation } from '@/feature/sprint/sprint.api'
+import {
+  openDialogUpdateSprint,
+  setCurrentSprint
+} from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode } from '@/lib/const'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
@@ -15,13 +20,17 @@ import { SprintResponse } from '@/types/sprint.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'sonner'
-type SprintCardProps = {
+type SprintTemplateCardProps = {
   id: Id
   data: SprintResponse
   isDisabled?: boolean
 }
 
-const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
+const SprintTemplateCard = ({
+  id,
+  data,
+  isDisabled = false
+}: SprintTemplateCardProps) => {
   const {
     attributes,
     listeners,
@@ -45,6 +54,19 @@ const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
   }
 
   const [deleteSprint] = useDeleteSprintMutation()
+  const dispatch = useAppDispatch()
+
+  const handleUpdate = () => {
+    const { id, start, end } = data
+    dispatch(
+      setCurrentSprint({
+        id: id,
+        start: new Date(start).toISOString(),
+        end: new Date(end).toISOString()
+      })
+    )
+    dispatch(openDialogUpdateSprint())
+  }
 
   const handleDelete = () => {
     deleteSprint(data.id)
@@ -92,7 +114,7 @@ const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
                 <Icon icon={'ri:more-fill'} />
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleUpdate}>Edit</DropdownMenuItem>
                 <DropdownMenuItem
                   className='bg-red-500 text-white hover:cursor-pointer hover:opacity-80'
                   onClick={handleDelete}
@@ -107,4 +129,4 @@ const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
     </div>
   )
 }
-export default SprintCard
+export default SprintTemplateCard
