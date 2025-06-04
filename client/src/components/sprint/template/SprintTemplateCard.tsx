@@ -107,7 +107,7 @@ const SprintTemplateCard = ({
         </span>
         <span className='ml-auto flex items-center gap-4'>
           <span>min point: </span>
-          <Badge className='bg-green-500'>{data.miniumStoryPoint}</Badge>
+          <Badge className='bg-green-500'>{data.minimumStoryPoint}</Badge>
           {isDisabled && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
