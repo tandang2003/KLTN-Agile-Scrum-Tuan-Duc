@@ -14,18 +14,12 @@ import {
   CommandItem,
   CommandList
 } from '@/components/ui/command'
-import { cn } from '@/lib/utils'
+import { cn, uuid } from '@/lib/utils'
+import { TopicModelType, UpdateIssueType } from '@/types/issue.type'
 import { TopicModel } from '@/types/model/common.model'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import {
-  BaseIssueFormType,
-  TopicModelType,
-  UpdateIssueRequest,
-  UpdateIssueType
-} from '@/types/issue.type'
-import { useRef, useState } from 'react'
 import { useCommandState } from 'cmdk'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 type UpdateTopicProps = {}
@@ -47,26 +41,46 @@ const topicData: TopicModel[] = [
 
 const UpdateTopicForm = ({}: UpdateTopicProps) => {
   const form = useFormContext<UpdateIssueType>()
-  const popoverOpenRef = useRef<boolean>(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
-  const { control } = form
+  const { control, getValues } = form
 
   const { fields, append, remove } = useFieldArray({
     control: control,
-    name: 'topics',
-    keyName: 'fieldId'
+    name: 'topics'
   })
-  const [data, setData] = useState<TopicModelType[]>(fields)
-  const [selecteds, setSelecteds] = useState<TopicModelType[]>(fields)
+
+  const [data, setData] = useState<TopicModelType[]>(topicData)
+  const [selecteds, setSelecteds] = useState<TopicModelType[]>(
+    fields.map((item) => {
+      return {
+        id: item.id,
+        name: item.name
+      }
+    })
+  )
 
   useAutoUpdateField({
     form: form,
     field: 'topics',
-    isPause: (field, value) => {
-      console.log(popoverOpenRef)
-      if (popoverOpenRef.current) return true
-      console.log(field, value)
+    deps: [isPopoverOpen],
+    isPause: (_, __) => {
+      if (isPopoverOpen) return true
       return false
+    },
+    callApi: (field, value) => {
+      return issueService.updateIssue({
+        id: getValues('id'),
+        fieldChanging: 'topics',
+        topics:
+          value?.map((item) => {
+            return {
+              id: item.id,
+              name: item.name,
+              color: ''
+            }
+          }) ?? []
+      })
     }
   })
 
@@ -76,7 +90,7 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
       name='topics'
       render={() => {
         return (
-          <Popover onOpenChange={(open) => (popoverOpenRef.current = open)}>
+          <Popover onOpenChange={(open) => setIsPopoverOpen(open)}>
             <PopoverTrigger className='flex w-full justify-start rounded border px-4 py-2 shadow-md [&>*:not(:first-child)]:ml-2'>
               {fields.length ? (
                 fields.map((item) => {
@@ -98,25 +112,25 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
                 }}
               >
                 <CommandInput placeholder='Search items...' />
-                <CommandCreateButton />
+                <CommandCreateButton setData={setData} />
                 <CommandList>
-                  {topicData.map((item) => {
+                  {data.map((item) => {
                     const isSelected = fields
-                      .map((field) => field.id)
-                      .includes(item.id)
+                      .map((field) => field.name)
+                      .includes(item.name)
                     return (
                       <CommandItem
                         key={item.id}
-                        value={item.id}
+                        value={item.name}
                         onSelect={(value) => {
                           const index = fields.findIndex(
-                            (field) => field.id === value
+                            (field) => field.name === value
                           )
                           if (index > -1) {
                             remove(index)
                           } else {
                             const selected = topicData.find(
-                              (topic) => topic.id === value
+                              (topic) => topic.name === value
                             )
                             if (selected) {
                               append({
@@ -148,12 +162,37 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
   )
 }
 
-const CommandCreateButton = () => {
+type CommandCreateButtonProps = {
+  setData: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: string
+        name: string
+      }[]
+    >
+  >
+}
+const CommandCreateButton = ({ setData }: CommandCreateButtonProps) => {
   const search = useCommandState((state) => state.search)
+  const form = useFormContext<UpdateIssueType>()
+
+  const { control } = form
+
+  const { append } = useFieldArray({
+    control: control,
+    name: 'topics'
+  })
   return (
     <CommandEmpty
       className='hover:bg-accent flex px-1.5 py-2 pl-8 hover:cursor-pointer'
-      onClick={() => console.log('hello')}
+      onClick={() => {
+        const field = {
+          id: uuid(),
+          name: search
+        }
+        append(field)
+        setData((prev) => [...prev, field])
+      }}
     >
       <div>{search}</div>
     </CommandEmpty>

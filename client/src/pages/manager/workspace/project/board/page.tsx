@@ -1,4 +1,6 @@
 import Board from '@/components/board/Board'
+import FilterBoard from '@/components/board/FilterBoard'
+import Icon from '@/components/Icon'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -18,9 +20,11 @@ import { useEffect } from 'react'
 const BoardPage = () => {
   const { projectId } = useAppId()
   const dispatch = useAppDispatch()
+  const currentSprint = useAppSelector((state) => state.sprintSlice.current)
   const { data, isFetching } = useGetListIssueQuery(
     {
-      projectId: projectId as Id
+      projectId: projectId as Id,
+      sprintId: currentSprint?.id
     },
     {
       skip: !projectId
@@ -33,45 +37,49 @@ const BoardPage = () => {
   )
 
   useEffect(() => {
-    if (!isFetching && data) {
+    if (!isFetching) {
       dispatch(saveIssues(data))
     }
   }, [data, isFetching])
 
   return (
-    <LoadingBoundary<IssueResponse[]>
-      data={items}
-      fallback={<div>No result</div>}
-      isLoading={isLoading}
-      loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
-    >
-      {(data) => {
-        const boardData = toBoardModel(cloneDeep(data))
+    <div>
+      <FilterBoard />
 
-        return (
-          <div className='flex-1'>
-            <ScrollArea className='h-full'>
-              <Board
-                data={boardData}
-                onMove={({ active, columnTo, indexTo }) => {
-                  console.log('active', active)
-                  console.log('columnTo', columnTo)
-                  console.log('indexTo', indexTo)
+      <LoadingBoundary<IssueResponse[]>
+        data={items}
+        fallback={<div>No result</div>}
+        isLoading={isLoading}
+        loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
+      >
+        {(data) => {
+          const boardData = toBoardModel(cloneDeep(data))
+
+          return (
+            <div className='flex-1'>
+              <ScrollArea className='h-full'>
+                <Board
+                  data={boardData}
+                  onMove={({ active, columnTo, indexTo }) => {
+                    console.log('active', active)
+                    console.log('columnTo', columnTo)
+                    console.log('indexTo', indexTo)
+                  }}
+                />
+                <ScrollBar orientation='vertical' />
+                <ScrollBar orientation='horizontal' />
+              </ScrollArea>
+              <DialogUpdateIssue
+                open={isUpdateIssue}
+                onOpen={() => {
+                  dispatch(disableUpdateIssue())
                 }}
               />
-              <ScrollBar orientation='vertical' />
-              <ScrollBar orientation='horizontal' />
-            </ScrollArea>
-            <DialogUpdateIssue
-              open={isUpdateIssue}
-              onOpen={() => {
-                dispatch(disableUpdateIssue())
-              }}
-            />
-          </div>
-        )
-      }}
-    </LoadingBoundary>
+            </div>
+          )
+        }}
+      </LoadingBoundary>
+    </div>
   )
 }
 

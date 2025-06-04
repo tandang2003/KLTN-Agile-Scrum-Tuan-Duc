@@ -18,7 +18,7 @@ import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueRequest, UpdateIssueType } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { UseFormReturn, Path, FieldValue, PathValue } from 'react-hook-form'
+import { UseFormReturn, Path, PathValue } from 'react-hook-form'
 
 type FieldKey = Path<UpdateIssueType>
 type FieldName =

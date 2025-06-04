@@ -5,7 +5,10 @@ import jakarta.validation.constraints.NotEmpty;
 public class IssueDetailRequest {
     private String issueId;
     private String sprintId;
-    public IssueDetailRequest(){}
+
+    public IssueDetailRequest() {
+    }
+
     public IssueDetailRequest(String issueId, String sprintId) {
         this.issueId = issueId;
         this.sprintId = sprintId;

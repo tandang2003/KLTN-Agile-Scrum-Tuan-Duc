@@ -24,10 +24,14 @@ type DialogUpdateIssueProps = {} & DialogControllerProps
 
 const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
   const id = useAppSelector((state: RootState) => state.issueSlice.current?.id)
-  const { data, isFetching } = useGetIssueQuery(id as Id, {
-    skip: !id
-  })
-
+  const { data, isFetching } = useGetIssueQuery(
+    {
+      issueId: id as Id
+    },
+    {
+      skip: !id
+    }
+  )
   return (
     <DialogController open={open} onOpen={onOpen}>
       <LoadingBoundary<IssueDetailResponse>

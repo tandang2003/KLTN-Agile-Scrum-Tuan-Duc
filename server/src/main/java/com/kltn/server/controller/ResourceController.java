@@ -31,7 +31,7 @@ public class ResourceController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<ResourcePathResponse>> getResourceById(@PathVariable  String id) {
+    public ResponseEntity<ApiResponse<ResourcePathResponse>> getResourceById(@PathVariable String id) {
         var response = resourceService.getResourceById(id);
         return ResponseEntity.ok().body(response);
     }
@@ -43,10 +43,10 @@ public class ResourceController {
     }
 
     @PostMapping("signature")
-    public ResponseEntity<ApiResponse<ResourceSignatureResponse>> getSignature (@RequestBody ResourceSignatureRequest request){
+    public ResponseEntity<ApiResponse<ResourceSignatureResponse>> getSignature(
+            @RequestBody ResourceSignatureRequest request) {
         var response = resourceService.getSignature(request);
         return ResponseEntity.ok().body(response);
     }
-
 
 }
