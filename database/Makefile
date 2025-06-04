@@ -9,7 +9,7 @@ DB_NAME = kltn
 
 env:
 	@echo "Creating virtual environment..."
-	python -m venv venv
+	$(PYTHON) -m venv venv
 	@echo "Activating virtual environment..."
 	@echo "Run 'source venv/bin/activate' to activate the virtual environment."
 	
