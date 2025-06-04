@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import { NavRecent } from '@/components/sidebar/nav-recent'
 import { TeamSwitcher } from '@/components/sidebar/team-switcher'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 

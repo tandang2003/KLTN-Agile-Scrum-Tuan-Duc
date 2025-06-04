@@ -14,6 +14,7 @@ type UseAutoUpdateFieldProps<K extends FieldKey> = {
   callApi?: (field: K, value: FieldValue<K>) => Promise<any> | undefined
   onSuccess?: (response: any) => void
   onError?: (error: any) => void
+  deps?: any[]
 }
 
 export function useAutoUpdateField<K extends FieldKey>({
@@ -22,7 +23,8 @@ export function useAutoUpdateField<K extends FieldKey>({
   isPause,
   callApi,
   onSuccess,
-  onError
+  onError,
+  deps = []
 }: UseAutoUpdateFieldProps<K>) {
   const { control, setValue, trigger } = form
   const watched = useWatch<UpdateIssueType>({
@@ -63,6 +65,7 @@ export function useAutoUpdateField<K extends FieldKey>({
     }
 
     const handle = async () => {
+      console.log(watched)
       const isValid = await trigger(field)
       console.log('isValid', isValid)
       if (!isValid) return
@@ -82,5 +85,5 @@ export function useAutoUpdateField<K extends FieldKey>({
     }
 
     handle()
-  }, [watched])
+  }, [watched, ...deps])
 }

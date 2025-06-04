@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon'
+import UpdateAttachmentIssue from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
 import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'
@@ -12,6 +13,7 @@ import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { urlToFile } from '@/lib/utils'
 import {
   IssueDetailResponse,
   UpdateIssueSchema,
@@ -33,7 +35,14 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
       name: data.name,
       description: data.description,
       priority: data.priority,
-      subTasks: data.subTasks ?? [],
+      subTasks:
+        data?.subTasks?.map((item) => {
+          return {
+            name: item.name,
+            order: item.order,
+            checked: item.checked
+          }
+        }) ?? [],
       assigneeId: data.assignee.uniId,
       reviewerId: data.reviewer.uniId,
       date: {
@@ -66,10 +75,7 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <UpdateDescriptionIssue />
           </div>
           <div>
-            <Button type='button' variant={'outline'}>
-              <Icon icon={'ic:baseline-plus'} />
-              Add attachments
-            </Button>
+            <UpdateAttachmentIssue issueId={data.id} />
           </div>
           <UpdateSubTaskForm />
           <Tabs defaultValue='comment' className='mt-3'>

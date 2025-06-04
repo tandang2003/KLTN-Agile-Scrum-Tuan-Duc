@@ -20,7 +20,10 @@ const boardSlice = createSlice({
   name: 'boardSlice',
   initialState: initialState,
   reducers: {
-    saveIssues: (state: BoardState, action: PayloadAction<IssueResponse[]>) => {
+    saveIssues: (
+      state: BoardState,
+      action: PayloadAction<IssueResponse[] | undefined>
+    ) => {
       state.items = action.payload
       state.isLoading = false
     },

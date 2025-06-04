@@ -1,5 +1,6 @@
 import { RootState } from '@/context/redux/store'
 import { logoutThunk } from '@/feature/auth/auth.slice'
+import { saveIssues } from '@/feature/board/board.slice'
 import {
   getTokenProjectThunk,
   setProjectState
@@ -60,4 +61,5 @@ const persistAuthorizationMiddleware: Middleware<{}, RootState> =
     }
     return next(action)
   }
+
 export { localStorageMiddleware, persistAuthorizationMiddleware }

@@ -1,8 +1,8 @@
-import DialogCreateSprint from '@/components/dialog/DialogCreateSprint'
+import TemplateSprintDialog from '@/components/sprint/template/TemplateSprintDialog'
 import Icon from '@/components/Icon'
-import WorkspaceTemplate, {
+import SprintTemplate, {
   WorkspaceTemplateRef
-} from '@/components/workspace/WorkspaceTemplate'
+} from '@/components/sprint/template/SprintTemplate'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -101,7 +101,7 @@ const TemplateTab = () => {
         </span>
       </div>
       {data && (
-        <WorkspaceTemplate
+        <SprintTemplate
           ref={workspaceRef}
           sprints={data}
           onChange={(item, index) => {
@@ -110,7 +110,7 @@ const TemplateTab = () => {
           }}
         />
       )}
-      <DialogCreateSprint
+      <TemplateSprintDialog
         open={isOpenDialogCreate}
         onOpen={() => dispatch(closeDialogCreateSprint())}
       />

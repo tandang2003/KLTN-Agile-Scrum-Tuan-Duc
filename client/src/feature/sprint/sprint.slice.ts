@@ -12,10 +12,12 @@ type SprintState = {
   isDragMode: boolean
   isOpenDialogCreate: boolean
   current?: SprintCurrent
+  mode: 'create' | 'update'
 }
 const initialState: SprintState = {
   isDragMode: false,
-  isOpenDialogCreate: false
+  isOpenDialogCreate: false,
+  mode: 'create'
 }
 
 const sprintSlice = createSlice({
@@ -36,9 +38,15 @@ const sprintSlice = createSlice({
     },
     openDialogCreateSprint(state: SprintState) {
       state.isOpenDialogCreate = true
+      state.mode = 'create'
+    },
+    openDialogUpdateSprint(state: SprintState) {
+      state.isOpenDialogCreate = true
+      state.mode = 'update'
     },
     closeDialogCreateSprint(state: SprintState) {
       state.isOpenDialogCreate = false
+      state.mode = 'create'
     }
   },
   // reset state
@@ -59,6 +67,7 @@ export const {
   disableDragMode,
   openDialogCreateSprint,
   closeDialogCreateSprint,
-  setCurrentSprint
+  setCurrentSprint,
+  openDialogUpdateSprint
 } = sprintSlice.actions
 export default sprintSlice

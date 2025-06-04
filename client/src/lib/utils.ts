@@ -85,4 +85,18 @@ function loadSessionStorage<T>(
   }
 }
 
-export { cn, formatDate, invertColor, toQueryString, uuid, loadSessionStorage }
+async function urlToFile(url: string, filename: string, mimeType: string) {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  return new File([blob], filename, { type: mimeType })
+}
+
+export {
+  cn,
+  formatDate,
+  invertColor,
+  toQueryString,
+  uuid,
+  loadSessionStorage,
+  urlToFile
+}
