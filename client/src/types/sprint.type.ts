@@ -39,6 +39,7 @@ type UpdateSprintFormType = z.infer<typeof UpdateSprintFormSchema>
 type UpdateSprintRequest = UpdateSprintFormType
 type CreateSprintRequest = CreateSprintFormType & {
   workspaceId: Id
+  position?: number
 }
 type SprintResponse = SprintModel
 

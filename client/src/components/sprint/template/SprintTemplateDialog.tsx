@@ -15,14 +15,15 @@ import {
   useUpdateSprintMutation
 } from '@/feature/sprint/sprint.api'
 import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
+import { WEIGHT_POSITION } from '@/lib/const'
 import { handleErrorApi } from '@/lib/form'
 import { Id } from '@/types/other.type'
 import { BaseSprintFormType } from '@/types/sprint.type'
 import { UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner'
 
-type TemplateSprintDialogProps = {} & DialogControllerProps
-const TemplateSprintDialog = ({ open, onOpen }: TemplateSprintDialogProps) => {
+type SprintTemplateDialogProps = {} & DialogControllerProps
+const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
   const { mode } = useAppSelector((state) => state.sprintSlice)
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const sprintId = useAppSelector((state) => state.sprintSlice.current?.id)
@@ -39,8 +40,10 @@ const TemplateSprintDialog = ({ open, onOpen }: TemplateSprintDialogProps) => {
     form: UseFormReturn<BaseSprintFormType>
   ) => {
     if (!workspaceId) return
+    const position = (data?.length ?? 1) * WEIGHT_POSITION
     createSprint({
       ...values,
+      position: position,
       workspaceId: workspaceId
     })
       .unwrap()
@@ -50,6 +53,7 @@ const TemplateSprintDialog = ({ open, onOpen }: TemplateSprintDialogProps) => {
         })
       })
       .then(() => {
+        form.reset()
         dispatch(closeDialogCreateSprint())
       })
       .catch((error) => {
@@ -65,10 +69,11 @@ const TemplateSprintDialog = ({ open, onOpen }: TemplateSprintDialogProps) => {
     values: BaseSprintFormType,
     form: UseFormReturn<BaseSprintFormType>
   ) => {
-    if (!sprintId) return
+    if (!dataSprint) return
     updateSprint({
       ...values,
-      id: sprintId
+      position: dataSprint.position,
+      id: dataSprint.id
     })
       .unwrap()
       .then(({ id, title }) => {
@@ -110,7 +115,7 @@ const TemplateSprintDialog = ({ open, onOpen }: TemplateSprintDialogProps) => {
               start: new Date(dataSprint.start),
               predict: new Date(dataSprint.predict),
               end: new Date(dataSprint.end),
-              minimumStoryPoint: dataSprint.miniumStoryPoint
+              minimumStoryPoint: dataSprint.minimumStoryPoint
             }}
             onSubmit={(values, form) => {
               handleUpdateSprint(values, form)
@@ -123,4 +128,4 @@ const TemplateSprintDialog = ({ open, onOpen }: TemplateSprintDialogProps) => {
   )
 }
 
-export default TemplateSprintDialog
+export default SprintTemplateDialog

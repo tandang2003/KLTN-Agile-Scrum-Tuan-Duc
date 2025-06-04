@@ -1,6 +1,6 @@
 type SprintModel = {
   id: string
-  miniumStoryPoint: number
+  minimumStoryPoint: number
   title: string
   predict: Date
   start: Date

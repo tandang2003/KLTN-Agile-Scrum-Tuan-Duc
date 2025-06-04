@@ -56,7 +56,7 @@ const SprintTemplateBaseForm = ({
     resolver: zodResolver(BaseSprintFormSchema),
     defaultValues: initialValues ?? {
       title: '',
-      predict: new Date(),
+      predict: addDays(new Date(), 4),
       minimumStoryPoint: 0,
       start: new Date(),
       end: addDays(new Date(), 7)
@@ -213,6 +213,8 @@ const SprintTemplateBaseForm = ({
                   <FormLabel>Time predict</FormLabel>
                   <DatePickerWithPresets
                     date={field.value}
+                    min={form.getValues('start')}
+                    max={form.getValues('end')}
                     setDate={(date) => {
                       if (date) {
                         field.onChange(new Date(date))

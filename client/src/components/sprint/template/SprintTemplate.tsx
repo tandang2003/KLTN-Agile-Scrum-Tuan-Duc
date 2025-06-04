@@ -1,5 +1,6 @@
 import SprintTemplateCard from '@/components/sprint/template/SprintTemplateCard'
 import { useAppSelector } from '@/context/redux/hook'
+import { sortSprintsByPosition } from '@/lib/board'
 
 import { SprintResponse } from '@/types/sprint.type'
 import {
@@ -20,19 +21,22 @@ type SprintTemplateRef = {
 
 type SprintTemplateProps = {
   sprints: SprintResponse[]
-  onChange?: (item: SprintResponse, position: number) => void
+  onChange?: (updatedList: SprintResponse[]) => void
 }
 const SprintTemplate = forwardRef(
   (
     { sprints, onChange }: SprintTemplateProps,
     ref: ForwardedRef<SprintTemplateRef>
   ) => {
-    const [items, setItems] = useState<SprintResponse[]>(sprints)
+    const [items, setItems] = useState<SprintResponse[]>(
+      sortSprintsByPosition(sprints)
+    )
     const isDragMode = useAppSelector((state) => state.sprintSlice.isDragMode)
+
     useImperativeHandle(
       ref,
       () => ({
-        rollback: () => setItems(sprints)
+        rollback: () => setItems(sortSprintsByPosition(sprints))
       }),
       [sprints]
     )
@@ -46,12 +50,13 @@ const SprintTemplate = forwardRef(
 
     const handleDragEnd = (event: DragEndEvent) => {
       const { active, over } = event
-
+      console.log('Drag End:', active, over)
       if (over?.id != null && active.id !== over.id) {
         const oldIndex = items.findIndex((item) => item.id === active.id)
         const newIndex = items.findIndex((item) => item.id === over.id)
-        setItems((prev) => arrayMove(prev, oldIndex, newIndex))
-        onChange?.(items[oldIndex], newIndex)
+        const newItems = arrayMove(items, oldIndex, newIndex)
+        setItems(newItems)
+        onChange?.(newItems)
       }
     }
 

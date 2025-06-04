@@ -20,7 +20,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-001',
     position: 1,
     title: 'Tìm hiểu bài toán',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -29,7 +29,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-002',
     position: 2,
     title: 'Phân tích hệ thống',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -38,7 +38,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-003',
     position: 3,
     title: 'Implementation Auth Module, Error handling global',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -47,7 +47,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-004',
     position: 3,
     title: 'Implementation core business (product)',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -56,7 +56,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-004',
     position: 3,
     title: 'Implementation core business (order)',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -65,7 +65,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-007',
     position: 3,
     title: 'Implementation Admin business (user)',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -74,7 +74,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-008',
     position: 3,
     title: 'Implementation Admin business (product)',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -83,7 +83,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-009',
     position: 3,
     title: 'Implementation Admin business (order)',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
@@ -92,7 +92,7 @@ const sprintData: Record<SprintName, SprintResponse> = {
     id: 'sprint-010',
     position: 3,
     title: 'Full test flow',
-    miniumStoryPoint: 10,
+    minimumStoryPoint: 10,
     start: currentDay,
     predict: addDays(currentDay, 7),
     end: addDays(currentDay, 10)
