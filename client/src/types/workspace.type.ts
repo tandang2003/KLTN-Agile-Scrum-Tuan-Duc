@@ -9,7 +9,6 @@ import { z } from 'zod'
 const CreateWorkspaceSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  sprintNum: z.number().positive(),
   timePerSprint: z.number().positive(),
   date: dateRange.refine((data) => data.from <= data.to, {
     message: 'Date end need after date start',

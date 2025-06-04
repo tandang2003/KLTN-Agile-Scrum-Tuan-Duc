@@ -1,6 +1,7 @@
 import { BoardModelType, CardModelType, ColumnsType } from '@/types/card.type'
 import { IssueResponse } from '@/types/issue.type'
 import { issueStatusList } from '@/types/model/typeOf'
+import { SprintResponse } from '@/types/sprint.type'
 
 const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
   const columns: ColumnsType = {}
@@ -36,4 +37,8 @@ const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
 
   return result
 }
-export { toBoardModel }
+
+const sortSprintsByPosition = (sprints: SprintResponse[]) =>
+  [...sprints].sort((a, b) => a.position - b.position)
+
+export { toBoardModel, sortSprintsByPosition }
