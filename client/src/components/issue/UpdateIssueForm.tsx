@@ -35,7 +35,14 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
       name: data.name,
       description: data.description,
       priority: data.priority,
-      subTasks: data.subTasks ?? [],
+      subTasks:
+        data?.subTasks?.map((item) => {
+          return {
+            name: item.name,
+            order: item.order,
+            checked: item.checked
+          }
+        }) ?? [],
       assigneeId: data.assignee.uniId,
       reviewerId: data.reviewer.uniId,
       date: {

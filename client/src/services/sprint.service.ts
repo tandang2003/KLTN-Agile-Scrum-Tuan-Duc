@@ -16,6 +16,9 @@ const sprintService = {
       `/sprint/list?workspace_id=${workspaceId}`
     )
     return response.data.data
+  },
+  deleteSprint: async (sprintId: Id): Promise<void> => {
+    await httpService.delete<ResponseApi<void>>(`/sprint/${sprintId}`)
   }
 }
 export default sprintService

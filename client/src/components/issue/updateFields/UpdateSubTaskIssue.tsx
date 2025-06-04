@@ -30,6 +30,8 @@ import {
 import { forwardRef, useRef, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 const UpdateSubTaskForm = () => {
+  const orderRef = useRef<number>(0)
+
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10
@@ -42,7 +44,7 @@ const UpdateSubTaskForm = () => {
   const { fields, append, move } = useFieldArray({
     control: form.control,
     name: 'subTasks',
-    keyName: 'anotherId'
+    keyName: 'id'
   })
   const { getValues } = form
   const inputRef = useRef<HTMLInputElement>(null)
@@ -50,6 +52,7 @@ const UpdateSubTaskForm = () => {
   useAutoUpdateField({
     form: form,
     field: 'subTasks',
+
     // isPause: (field, value) => {
     //   console.log(fields)
     //   return false
@@ -61,8 +64,9 @@ const UpdateSubTaskForm = () => {
         subTasks:
           value?.map((item) => {
             return {
-              id: item.id,
-              name: item.name
+              name: item.name,
+              checked: item.checked,
+              order: item.order
             }
           }) ?? []
       })
@@ -78,9 +82,11 @@ const UpdateSubTaskForm = () => {
     if (!value) {
       inputRef.current?.focus()
     } else {
+      orderRef.current += 1
       append({
-        id: uuid(),
-        name: value
+        name: value,
+        checked: false,
+        order: orderRef.current
       })
       setAddMode(false)
     }
@@ -92,14 +98,13 @@ const UpdateSubTaskForm = () => {
 
     const oldIndex = fields.findIndex((f) => f.id === active.id)
     const newIndex = fields.findIndex((f) => f.id === over.id)
-    console.log(oldIndex, newIndex)
     if (oldIndex !== -1 && newIndex !== -1) {
       move(oldIndex, newIndex)
     }
   }
 
   return (
-    <div className='border-accent mt-4 border-2 p-2'>
+    <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

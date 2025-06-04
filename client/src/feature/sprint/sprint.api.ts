@@ -52,10 +52,27 @@ const sprintApi = createApi({
       invalidatesTags: () => {
         return [{ type: 'Sprints', id: 'LIST' }]
       }
+    }),
+    deleteSprint: builder.mutation<void, Id>({
+      async queryFn(arg) {
+        try {
+          const data = await sprintService.deleteSprint(arg)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: () => {
+        return [{ type: 'Sprints', id: 'LIST' }]
+      }
     })
   })
 })
 
 export default sprintApi
 
-export const { useCreateSprintMutation, useGetListSprintQuery } = sprintApi
+export const {
+  useGetListSprintQuery,
+  useCreateSprintMutation,
+  useDeleteSprintMutation
+} = sprintApi

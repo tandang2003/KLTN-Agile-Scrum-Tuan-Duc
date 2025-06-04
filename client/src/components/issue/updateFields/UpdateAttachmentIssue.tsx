@@ -13,11 +13,11 @@ import {
 import useAppId from '@/hooks/use-app-id'
 import resourceService from '@/services/resource.service'
 import { Upload, X } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 type UpdateAttachmentIssueProps = {
-  files?: File[]
+  files?: Promise<File>[]
   issueId: string
 }
 
@@ -26,7 +26,25 @@ const UpdateAttachmentIssue = ({
   issueId
 }: UpdateAttachmentIssueProps) => {
   const { projectId } = useAppId()
-  const [files, setFiles] = useState<File[]>(data ?? [])
+  const [files, setFiles] = useState<File[]>([])
+
+  // useEffect(() => {
+  //   if (!data) return
+  //   async function loadInit() {
+  //     const results = await Promise.allSettled(data)
+
+  //     const resolvedFiles = results
+  //       .filter(
+  //         (res): res is PromiseFulfilledResult<File> =>
+  //           res.status === 'fulfilled'
+  //       )
+  //       .map((res) => res.value)
+  //     setFiles((prev) => [...prev, ...resolvedFiles])
+  //   }
+
+  //   loadInit()
+  // }, [])
+
   const onFileValidate = useCallback(
     (file: File): string | null => {
       // Validate max files

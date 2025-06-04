@@ -16,7 +16,6 @@ type TopicResponse = {
 }
 
 type SubTaskResponse = {
-  id: string
   name: string
   order: number
   checked: boolean
@@ -46,8 +45,8 @@ type IssueResponse = {
   position: number
   assignee: UserDetail
   reviewer: UserDetail
-  topics: TopicResponse[]
-  subTasks: SubTaskResponse[]
+  topics?: TopicResponse[]
+  subTasks?: SubTaskResponse[]
   attachments: AttachmentResponse[]
   start?: Date
   end?: Date
@@ -69,9 +68,10 @@ type ResourceResponse = {
   size: number
 }
 
-const CreateSubTaskSchema = z.object({
-  id: string,
-  name: string
+const SubTaskModelSchema = z.object({
+  name: string,
+  order: z.number(),
+  checked: z.boolean()
 })
 
 const TopicModelSchema = z.object({
@@ -91,7 +91,7 @@ const BaseIssueSchema = z
     topics: z.array(TopicModelSchema),
     assigneeId: z.string().optional(),
     reviewerId: z.string().optional(),
-    subTasks: z.array(CreateSubTaskSchema).optional(),
+    subTasks: z.array(SubTaskModelSchema).optional(),
     date: dateRange.optional()
   })
   .partial()
@@ -104,7 +104,7 @@ const CreateIssueSchema = BaseIssueSchema
 const UpdateIssueSchema = BaseIssueSchema.extend({
   id: string,
   name: string.optional(),
-  subTasks: z.array(CreateSubTaskSchema).optional()
+  subTasks: z.array(SubTaskModelSchema).optional()
 })
 
 type BaseIssueFormType = z.infer<typeof BaseIssueSchema>

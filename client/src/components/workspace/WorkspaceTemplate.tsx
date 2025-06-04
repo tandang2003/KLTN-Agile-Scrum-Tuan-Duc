@@ -1,4 +1,4 @@
-import SprintCard from '@/components/card/SprintCard'
+import SprintCard from '@/components/workspace/SprintCard'
 import { useAppSelector } from '@/context/redux/hook'
 
 import { SprintResponse } from '@/types/sprint.type'

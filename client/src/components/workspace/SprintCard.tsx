@@ -7,11 +7,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { useDeleteSprintMutation } from '@/feature/sprint/sprint.api'
+import { HttpStatusCode } from '@/lib/const'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { toast } from 'sonner'
 type SprintCardProps = {
   id: Id
   data: SprintResponse
@@ -39,6 +42,21 @@ const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
     opacity: isDragging ? 0.7 : undefined,
     border: isDragging ? '1px solid red' : undefined
+  }
+
+  const [deleteSprint] = useDeleteSprintMutation()
+
+  const handleDelete = () => {
+    deleteSprint(data.id)
+      .unwrap()
+      .then(() => {
+        toast.success('Sprint deleted successfully')
+      })
+      .catch((error) => {
+        if (error.status === HttpStatusCode.Conflict) {
+          toast.error('Sprint is ended, cannot delete')
+        }
+      })
   }
 
   return (
@@ -75,6 +93,12 @@ const SprintCard = ({ id, data, isDisabled = false }: SprintCardProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem
+                  className='bg-red-500 text-white hover:cursor-pointer hover:opacity-80'
+                  onClick={handleDelete}
+                >
+                  Delete
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}

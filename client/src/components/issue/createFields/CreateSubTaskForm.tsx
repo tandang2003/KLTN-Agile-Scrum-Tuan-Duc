@@ -4,9 +4,11 @@ import { BaseIssueFormType } from '@/types/issue.type'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useRef } from 'react'
 
 const CreateSubTaskForm = () => {
   const { control } = useFormContext<BaseIssueFormType>()
+  const orderRef = useRef<number>(0)
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'subTasks'
@@ -14,8 +16,11 @@ const CreateSubTaskForm = () => {
 
   const handleAppend = () => {
     append({
-      name: ''
+      name: '',
+      checked: false,
+      order: orderRef.current
     })
+    orderRef.current = orderRef.current += 1
   }
   return (
     <div className='border-accent mt-4 border-2 p-2 shadow-lg'>
