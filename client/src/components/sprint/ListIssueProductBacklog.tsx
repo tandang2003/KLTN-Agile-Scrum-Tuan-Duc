@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import Icon from '@/components/Icon'
+import ToolTip from '@/components/Tooltip'
 const ListIssueProductBacklog = () => {
   const dispatch = useAppDispatch()
   const { projectId } = useAppId()
@@ -47,9 +48,16 @@ const ListIssueProductBacklog = () => {
             className='flex rounded-sm border-2 bg-white px-4 py-2'
             key={item.id}
           >
-            <div className='font-semibold'>
-              {item.id}: <span>{item.name}</span>
-            </div>
+            <ToolTip
+              trigger={
+                <div className='font-semibold'>
+                  <span>{item.name}</span>
+                </div>
+              }
+            >
+              {item.id}
+            </ToolTip>
+
             <div className='mr-3 ml-auto'>
               <Badge status={item.status}>{item.status}</Badge>
             </div>

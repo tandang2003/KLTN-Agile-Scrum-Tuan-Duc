@@ -38,9 +38,4 @@ const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
   return result
 }
 
-const sortSprintsByDateStart = (sprints: SprintResponse[]) =>
-  [...sprints].sort(
-    (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
-  )
-
-export { toBoardModel, sortSprintsByDateStart }
+export { toBoardModel }

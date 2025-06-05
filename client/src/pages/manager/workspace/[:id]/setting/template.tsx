@@ -3,11 +3,16 @@ import SprintTemplate, {
   WorkspaceTemplateRef
 } from '@/components/sprint/template/SprintTemplate'
 import SprintTemplateDialog from '@/components/sprint/template/SprintTemplateDialog'
+import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
-import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
+import {
+  closeDialogCreateSprint,
+  openDialogCreateSprint
+} from '@/feature/sprint/sprint.slice'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
+import { PlusIcon } from 'lucide-react'
 import { useRef } from 'react'
 
 const TemplateTab = () => {
@@ -24,6 +29,17 @@ const TemplateTab = () => {
 
   return (
     <div>
+      <Button
+        variant='default'
+        size='sm'
+        onClick={() => {
+          dispatch(openDialogCreateSprint())
+        }}
+      >
+        <PlusIcon />
+        Create Sprint
+      </Button>
+
       <LoadingBoundary<SprintModel[]>
         data={data}
         isLoading={isFetching}

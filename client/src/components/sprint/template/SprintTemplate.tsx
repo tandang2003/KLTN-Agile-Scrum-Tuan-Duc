@@ -1,5 +1,5 @@
 import SprintTemplateCard from '@/components/sprint/template/SprintTemplateCard'
-import { sortSprintsByDateStart } from '@/lib/board'
+import { sortSprintsByDateStart } from '@/lib/sprint'
 
 import { SprintResponse } from '@/types/sprint.type'
 

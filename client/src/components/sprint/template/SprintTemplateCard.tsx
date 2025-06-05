@@ -68,7 +68,7 @@ const SprintTemplateCard = ({
         </span>
         <span className='ml-auto flex items-center gap-4'>
           <span>Point: </span>
-          <Badge className='bg-green-500'>{data.minimumStoryPoint}</Badge>
+          <Badge className='bg-green-500'>{data.storyPoint}</Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Icon icon={'ri:more-fill'} />
