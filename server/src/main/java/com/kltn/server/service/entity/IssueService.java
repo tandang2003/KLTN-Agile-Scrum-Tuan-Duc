@@ -54,7 +54,11 @@ public class IssueService {
     private SnapshotService snapshotService;
 
     @Autowired
-    public IssueService(SnapshotService snapshotService, TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
+    public IssueService(SnapshotService snapshotService, TopicMapper topicMapper, SubTaskMapper subTaskMapper,
+                        ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper,
+                        IssueMongoService issueMongoService, UserService userService,
+                        ProjectSprintService projectSprintService, IssueMapper taskMapper,
+                        IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
 
         this.snapshotService = snapshotService;
         this.taskMapper = taskMapper;
@@ -261,7 +265,8 @@ public class IssueService {
             if (sprint.getDtEnd()
                       .isBefore(Instant.now())) {
                 List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject()
-                                                                                                .getId(), sprint.getId());
+                                                                                                .getId(),
+                                                                                          sprint.getId());
                 if (snapshots.isEmpty()) {
                     throw AppException.builder()
                                       .error(Error.NOT_FOUND)
@@ -274,7 +279,8 @@ public class IssueService {
                                                   .findFirst()
                                                   .orElseThrow(() -> AppException.builder()
                                                                                  .error(Error.NOT_FOUND)
-                                                                                 .message("Task not found in this sprint")
+                                                                                 .message(
+                                                                                         "Task not found in this sprint")
                                                                                  .build());
                 IssueDetailResponse response = taskMapper.toIssueDetailResponseFromSnapshot(snapshot);
 
@@ -300,7 +306,6 @@ public class IssueService {
     @SendKafkaEvent(topic = "task-log")
     @Transactional
     public ApiResponse<IssueResponse> updateTask(IssueUpdateRequest updateRequest) {
-
         String id = updateRequest.getId();
         String fliedChanged = updateRequest.getFieldChanging();
         var task = getEntityById(id);
@@ -381,14 +386,26 @@ public class IssueService {
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"attachments"}, task, taskMongo);
                 break;
             case "assignee":
-                User assignee = userService.getUserByUniId(updateRequest.getAssignee());
-                task.setAssignee(assignee);
+                if (updateRequest.getAssignee() == null || updateRequest.getAssignee()
+                                                                        .isEmpty()) {
+                    task.setAssignee(null);
+                }
+                else {
+                    User assignee = userService.getUserByUniId(updateRequest.getAssignee());
+                    task.setAssignee(assignee);
+                }
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"assignee"}, task, taskMongo);
                 break;
             case "reviewer":
-                User reviewer = userService.getUserByUniId(updateRequest.getReviewer());
-                task.setReviewer(reviewer);
+                if (updateRequest.getReviewer() == null || updateRequest.getReviewer()
+                                                                        .isEmpty()) {
+                    task.setReviewer(null);
+                }
+                else {
+                    User reviewer = userService.getUserByUniId(updateRequest.getReviewer());
+                    task.setReviewer(reviewer);
+                }
                 task = saveEntity(task);
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"reviewer"}, task, taskMongo);
                 break;
@@ -485,7 +502,8 @@ public class IssueService {
         task.setStatus(request.getStatus());
         task.setPosition(request.getPosition());
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[]{"status", "position"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"status",
+                                                              "position"}, task, taskMongo);
         return ApiResponse.<IssueResponse>builder()
                           .code(HttpStatus.OK.value())
                           .message("Update task successfully")
