@@ -84,7 +84,7 @@ type TopicModelType = z.infer<typeof TopicModelSchema>
 const BaseIssueSchema = z
   .object({
     description: string,
-    sprintId: string,
+    sprintId: z.string().nullable(),
     status: string,
     priority: z.enum(issuePriorityList),
     tag: z.enum(issueTagList),

@@ -1,5 +1,4 @@
 import SprintTemplateCard from '@/components/sprint/template/SprintTemplateCard'
-import { useAppSelector } from '@/context/redux/hook'
 import { sortSprintsByDateStart } from '@/lib/board'
 
 import { SprintResponse } from '@/types/sprint.type'
