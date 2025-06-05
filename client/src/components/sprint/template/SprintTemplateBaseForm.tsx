@@ -57,7 +57,7 @@ const SprintTemplateBaseForm = ({
     defaultValues: initialValues ?? {
       title: '',
       predict: addDays(new Date(), 4),
-      minimumStoryPoint: 0,
+      storyPoint: 0,
       start: new Date(),
       end: addDays(new Date(), 7)
     }
@@ -100,13 +100,13 @@ const SprintTemplateBaseForm = ({
             />
             <FormField
               control={form.control}
-              name='minimumStoryPoint'
+              name='storyPoint'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Minimum Story Point</FormLabel>
+                  <FormLabel>Story Point</FormLabel>
                   <FormDescription>
-                    This is a minimum story point that sprint is archived before
-                    end of sprint
+                    This is a story point that sprint is archived before end of
+                    sprint
                   </FormDescription>
                   <FormControl>
                     <Input
@@ -114,10 +114,7 @@ const SprintTemplateBaseForm = ({
                       placeholder='1'
                       {...field}
                       onChange={(event) =>
-                        form.setValue(
-                          'minimumStoryPoint',
-                          event.target.valueAsNumber
-                        )
+                        form.setValue('storyPoint', event.target.valueAsNumber)
                       }
                     />
                   </FormControl>

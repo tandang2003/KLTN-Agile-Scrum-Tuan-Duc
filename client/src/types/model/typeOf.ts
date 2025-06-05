@@ -30,5 +30,15 @@ const issueTagList = ['THEORY', 'PRACTICE'] as const
 
 type IssueTag = (typeof issueTagList)[number]
 
-export type { IssueStatus, IssuePriority, IssueTag }
-export { issueStatusList, statusOrder, issueTagList, issuePriorityList }
+const sprintStatusList = ['PENDING', 'COMPLETE', 'RUNNING'] as const
+
+type SprintStatusType = (typeof sprintStatusList)[number]
+
+export type { IssueStatus, IssuePriority, IssueTag, SprintStatusType }
+export {
+  issueStatusList,
+  statusOrder,
+  issueTagList,
+  issuePriorityList,
+  sprintStatusList
+}
