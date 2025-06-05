@@ -52,6 +52,11 @@ public class SprintService {
         var workspace = workspaceService.getWorkspaceById(sprintCreationRequest.workspaceId());
         // sprint.setProject(project);
         sprint.setWorkspace(workspace);
+        if (isConflictTime(sprint, workspace.getSprints())) {
+            throw AppException.builder()
+                              .error(Error.SPRINT_CONFLICT_TIME)
+                              .build();
+        }
         sprint = sprintRepository.save(sprint);
         Set<Project> projects = workspace.getProjects();
         if (projects != null && !projects.isEmpty()) {
@@ -114,6 +119,13 @@ public class SprintService {
                               .build();
 
         sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
+        List<Sprint> sprintList = sprintRepository.findAllByWorkspaceId(sprint.getWorkspace()
+                                                                              .getId());
+        if (isConflictTime(sprint, sprintList)) {
+            throw AppException.builder()
+                              .error(Error.SPRINT_CONFLICT_TIME)
+                              .build();
+        }
         sprintRepository.save(sprint);
         if (sprint.getDtEnd() != null) {
             sprintScheduler.scheduleSprintEnd(sprint.getId(), LocalDateTime.ofInstant(sprint.getDtEnd(),
@@ -194,6 +206,24 @@ public class SprintService {
                           .build();
     }
 
-    private boolean checkingTime(Sprint sprint){
+    private boolean isConflictTime(Sprint sprint, List<Sprint> sprintList) {
+        Instant start = sprint.getDtStart()
+                              .truncatedTo(ChronoUnit.MINUTES);
+        Instant end = sprint.getDtEnd()
+                            .truncatedTo(ChronoUnit.MINUTES);
+        for (Sprint s : sprintList) {
+            if (s.getId()
+                 .equals(sprint.getId()))
+                continue;
+            Instant sStart = s.getDtStart()
+                              .truncatedTo(ChronoUnit.MINUTES);
+            Instant sEnd = s.getDtEnd()
+                            .truncatedTo(ChronoUnit.MINUTES);
+            if ((start.isAfter(sStart) && start.isBefore(sEnd)) || (end.isAfter(sStart) && end.isBefore(
+                    sEnd)) || (start.equals(sStart) || end.equals(sEnd))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
