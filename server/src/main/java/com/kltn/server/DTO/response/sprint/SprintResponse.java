@@ -10,20 +10,20 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SprintResponse(String id,
-        String title,
-        Map<String, String> process,
-        int position,
-        @JsonProperty("minimumStoryPoint") int miniumStoryPoint,
-        Instant predict,
-        Instant start,
-        Instant end,
-        Instant planning,
-        Instant preview) {
+                             String title,
+                             Map<String, String> process,
+                             int position,
+                             int storyPoint,
+                             Instant predict,
+                             Instant start,
+                             Instant end,
+                             Instant planning,
+                             Instant preview) {
     public static class SprintResponseBuilder {
         private String id;
         private Map<String, String> process;
         private String title;
-        private int miniumStoryPoint;
+        private int storyPoint;
         private int position;
         private Instant predict;
         private Instant dtStart;
@@ -41,8 +41,8 @@ public record SprintResponse(String id,
             return this;
         }
 
-        public SprintResponseBuilder miniumStoryPoint(int miniumStoryPoint) {
-            this.miniumStoryPoint = miniumStoryPoint;
+        public SprintResponseBuilder storyPoint(int storyPoint) {
+            this.storyPoint = storyPoint;
             return this;
         }
 
@@ -82,7 +82,7 @@ public record SprintResponse(String id,
         }
 
         public SprintResponse build() {
-            return new SprintResponse(id, title, process, position, miniumStoryPoint, predict, dtStart, dtEnd, planning,
+            return new SprintResponse(id, title, process, position, storyPoint, predict, dtStart, dtEnd, planning,
                     preview);
         }
     }

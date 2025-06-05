@@ -19,7 +19,7 @@ public record SprintTeacherUpdateTimeRequest(String id,
                                              Instant start,
                                              @DateTimeFormat(pattern = LOCAL_DATE_TIME)
                                              Instant end,
-                                             int minimumStoryPoint,
+                                             int storyPoint,
                                              @DateTimeFormat(pattern = LOCAL_DATE_TIME)
                                              Instant predict,
                                              int position
@@ -31,7 +31,7 @@ public record SprintTeacherUpdateTimeRequest(String id,
         private Instant dtStart;
         private Instant dtEnd;
         private Instant predict;
-        private int miniummStoryPoint;
+        private int storyPoint;
         private int position;
 
 
@@ -51,8 +51,8 @@ public record SprintTeacherUpdateTimeRequest(String id,
             return this;
         }
 
-        public SprintTeacherUpdateTimeRequestBuilder minimumStoryPoint(int miniummStoryPoint) {
-            this.miniummStoryPoint = miniummStoryPoint;
+        public SprintTeacherUpdateTimeRequestBuilder storyPoint(int storyPoint) {
+            this.storyPoint = storyPoint;
             return this;
         }
 
@@ -73,7 +73,7 @@ public record SprintTeacherUpdateTimeRequest(String id,
 
 
         public SprintTeacherUpdateTimeRequest build() {
-            return new SprintTeacherUpdateTimeRequest(id, title, dtStart, dtEnd, miniummStoryPoint, predict, position);
+            return new SprintTeacherUpdateTimeRequest(id, title, dtStart, dtEnd, storyPoint, predict, position);
         }
 
     }
