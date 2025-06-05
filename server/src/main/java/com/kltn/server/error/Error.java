@@ -23,7 +23,7 @@ public enum Error {
     SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
     SPRINT_ALREADY_END(HttpServletResponse.SC_CONFLICT, "Sprint already ended"),
     NOT_FOUND_WORKSPACE(404, "Workspace not found"),
-
+    SPRINT_CONFLICT_TIME(HttpServletResponse.SC_CONFLICT,"This sprint timeline have been set for another sprint" ),
     NOT_FOUND_PROJECT(404, "Project not found"),
 
     NOT_FOUND_USER_IN_WORKSPACE(404, "User not found in workspace"),
@@ -45,7 +45,8 @@ public enum Error {
 
     SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error"),
     DB_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server error"),
-    SERVER_SNAPSHOT_SERVICE_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server had error with snapshot service "),
+    SERVER_SNAPSHOT_SERVICE_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                  "Server had error with snapshot service "),
     DB_SERVER_MISSING_DATA(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database server missing data"),
     INTERNAL_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error"),
     NOT_IMPLEMENTED(HttpServletResponse.SC_NOT_IMPLEMENTED, "Feature not implemented"),
@@ -77,4 +78,4 @@ public enum Error {
         this.message = message;
     }
 
-}
+    }
