@@ -205,6 +205,7 @@ public class WorkspaceService {
 
 
     public WorkspaceResponse getWorkspaceResponseById(String workspaceId) {
+
         return workspaceMapper.toWorkspaceResponseById(getWorkspaceById(workspaceId));
     }
 }

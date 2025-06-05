@@ -46,7 +46,7 @@ public class IssueController {
     @GetMapping("{issueId}")
     public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailByIdWithoutSprintID
             (@PathVariable String issueId) {
-        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, null));
+        ApiResponse<IssueDetailResponse> task = taskService.getCurrentIssueDetailById(issueId);
         return ResponseEntity.status(task.getCode()).body(task);
     }
     @PutMapping
@@ -68,6 +68,14 @@ public class IssueController {
         var isssues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(sprintId, projectId));
         return ResponseEntity.status(isssues.getCode()).body(isssues);
     }
+
+    @PutMapping("/assign-sprint/{sprintId}")
+    public ResponseEntity<ApiResponse<Void>> assignIssueToSprint(@Valid @RequestBody IssueAssignSprintRequest request) {
+        ApiResponse<Void> response = taskService.assignIssueToSprint(request);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+
 
 
 
