@@ -348,7 +348,7 @@ public class WorkspaceService {
                                       .truncatedTo(ChronoUnit.DAYS);
                 Instant end = sprint.getDtEnd()
                                     .truncatedTo(ChronoUnit.DAYS);
-                if (start.isAfter(now) || end.isBefore(now)) {
+                if (start.isBefore(now) && end.isAfter(now)) {
                     workspace.setCurrentSprint(sprint);
                     return;
                 }
