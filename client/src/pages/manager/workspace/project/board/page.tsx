@@ -32,10 +32,6 @@ const BoardPage = () => {
   )
   const { isLoading, items } = useAppSelector((state) => state.boardSlice)
 
-  const isUpdateIssue = useAppSelector(
-    (state: RootState) => state.triggerSlice.isUpdateIssue
-  )
-
   useEffect(() => {
     if (!isFetching) {
       dispatch(saveIssues(data))
@@ -69,12 +65,6 @@ const BoardPage = () => {
                 <ScrollBar orientation='vertical' />
                 <ScrollBar orientation='horizontal' />
               </ScrollArea>
-              <DialogUpdateIssue
-                open={isUpdateIssue}
-                onOpen={() => {
-                  dispatch(disableUpdateIssue())
-                }}
-              />
             </div>
           )
         }}

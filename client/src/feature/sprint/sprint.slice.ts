@@ -9,13 +9,11 @@ type SprintCurrent = {
 }
 
 type SprintState = {
-  isDragMode: boolean
   isOpenDialogCreate: boolean
   current?: SprintCurrent
   mode: 'create' | 'update'
 }
 const initialState: SprintState = {
-  isDragMode: false,
   isOpenDialogCreate: false,
   mode: 'create'
 }
@@ -30,12 +28,7 @@ const sprintSlice = createSlice({
     ) {
       state.current = action.payload
     },
-    enableDragMode(state: SprintState) {
-      state.isDragMode = true
-    },
-    disableDragMode(state: SprintState) {
-      state.isDragMode = false
-    },
+
     openDialogCreateSprint(state: SprintState) {
       state.isOpenDialogCreate = true
       state.mode = 'create'
@@ -63,8 +56,6 @@ const sprintSlice = createSlice({
 const sprintReducer = sprintSlice.reducer
 export { sprintReducer }
 export const {
-  enableDragMode,
-  disableDragMode,
   openDialogCreateSprint,
   closeDialogCreateSprint,
   setCurrentSprint,

@@ -38,7 +38,4 @@ const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
   return result
 }
 
-const sortSprintsByPosition = (sprints: SprintResponse[]) =>
-  [...sprints].sort((a, b) => a.position - b.position)
-
-export { toBoardModel, sortSprintsByPosition }
+export { toBoardModel }

@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 const BaseSprintFormSchema = z.object({
   title: stringSchema(),
-  minimumStoryPoint: z.number().positive(),
+  storyPoint: z.number().positive(),
   start: z.date(),
   predict: z.date(),
   end: z.date()
