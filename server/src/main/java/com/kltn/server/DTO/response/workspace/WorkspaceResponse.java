@@ -8,10 +8,18 @@ import java.time.Instant;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record WorkspaceResponse(String id, String name, String description, int sprintNum, int timePerSprint,
-                                UserResponse owner, Instant start, Instant end, List<ProjectResponse> projects,
+public record WorkspaceResponse(String id,
+                                String name,
+                                String description,
+                                int sprintNum,
+                                int timePerSprint,
+                                UserResponse owner,
+                                Instant start,
+                                Instant end,
+                                List<ProjectResponse> projects,
                                 Instant createdAt) {
     public static WorkspaceResponseBuilder builder() {
+
         return new WorkspaceResponseBuilder();
     }
 
@@ -28,11 +36,13 @@ public record WorkspaceResponse(String id, String name, String description, int 
         Instant createdAt;
 
         public WorkspaceResponseBuilder id(String id) {
+
             this.id = id;
             return this;
         }
 
         public WorkspaceResponseBuilder start(Instant start) {
+
             this.start = start;
             return this;
         }
@@ -43,46 +53,54 @@ public record WorkspaceResponse(String id, String name, String description, int 
         }
 
         public WorkspaceResponseBuilder end(Instant end) {
+
             this.end = end;
             return this;
         }
 
         public WorkspaceResponseBuilder sprintNum(int sprintNum) {
+
             this.sprintNum = sprintNum;
             return this;
         }
 
         public WorkspaceResponseBuilder timePerSprint(int timePerSprint) {
+
             this.timePerSprint = timePerSprint;
             return this;
         }
 
 
         public WorkspaceResponseBuilder name(String name) {
+
             this.name = name;
             return this;
         }
 
         public WorkspaceResponseBuilder description(String description) {
+
             this.description = description;
             return this;
         }
 
         public WorkspaceResponseBuilder owner(UserResponse owner) {
+
             this.owner = owner;
             return this;
         }
 
         public WorkspaceResponseBuilder projects(List<ProjectResponse> projects) {
+
             this.projects = projects;
             return this;
         }
 
         public WorkspaceResponse build() {
-            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, owner, start, end, projects, createdAt);
+
+            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, owner, start, end, projects,
+                                         createdAt);
         }
     }
-
 
 
 }
