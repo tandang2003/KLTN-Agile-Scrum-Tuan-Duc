@@ -1,4 +1,4 @@
-import DialogCreateIssue from '@/components/dialog/DialogCreateIssue'
+import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
 import ListIssue from '@/components/sprint/ListIssue'
 
 import ListIssueProductBacklog from '@/components/sprint/ListIssueProductBacklog'
@@ -14,7 +14,6 @@ import { Badge } from '@/components/ui/badge'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 
-import { disableCreateIssue } from '@/feature/trigger/trigger.slice'
 import { getStatusSprint, sortSprintsByDateStart } from '@/lib/sprint'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
@@ -27,10 +26,7 @@ type SprintAccordionProps = {
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
   const refContent = useRef<HTMLDivElement>(null)
   const [sprintId, setSprintId] = useState<Id | null>(null)
-  const isCreateIssue = useAppSelector(
-    (state: RootState) => state.triggerSlice.isCreateIssue
-  )
-  const dispatch = useAppDispatch()
+
   return (
     <div>
       <Accordion type='single' collapsible className='bg-accent w-full px-2'>
@@ -92,10 +88,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
         </AccordionItem>
       </Accordion>
 
-      <DialogCreateIssue
-        open={isCreateIssue}
-        onOpen={() => dispatch(disableCreateIssue())}
-      />
+      <DialogCreateIssue />
     </div>
   )
 }

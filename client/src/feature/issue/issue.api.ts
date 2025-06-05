@@ -78,7 +78,8 @@ const issueApi = createApi({
         } catch (error) {
           return { error }
         }
-      }
+      },
+      keepUnusedDataFor: 0
     }),
     updateIssue: builder.mutation<IssueDetailResponse, UpdateIssueRequest>({
       async queryFn(arg) {
@@ -98,6 +99,7 @@ export const {
   useCreateIssueMutation,
   useGetListIssueQuery,
   useGetIssueQuery,
+  useLazyGetIssueQuery,
   useUpdateIssueMutation,
   useLazyGetListIssueQuery
 } = issueApi

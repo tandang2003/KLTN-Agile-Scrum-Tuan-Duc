@@ -23,7 +23,8 @@ type SubTaskResponse = {
 
 type AttachmentResponse = {
   id: string
-  resourceId: string
+  name: string
+  url: string
 }
 
 type UserDetail = {
@@ -47,7 +48,7 @@ type IssueResponse = {
   reviewer: UserDetail
   topics?: TopicResponse[]
   subTasks?: SubTaskResponse[]
-  attachments: AttachmentResponse[]
+  resources?: AttachmentResponse[]
   start?: Date
   end?: Date
 }

@@ -1,4 +1,3 @@
-import Icon from '@/components/Icon'
 import UpdateAttachmentIssue from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
@@ -8,7 +7,6 @@ import UpdatePriorityIssue from '@/components/issue/updateFields/UpdatePriorityI
 import UpdateSubTaskForm from '@/components/issue/updateFields/UpdateSubTaskIssue'
 import UpdateTopicForm from '@/components/issue/updateFields/UpdateTopicIssue'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -45,6 +43,13 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
         }) ?? [],
       assigneeId: data.assignee.uniId,
       reviewerId: data.reviewer.uniId,
+      topics: data.topics?.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          color: item.color
+        }
+      }),
       date: {
         from: data.dtStart,
         to: data.dtEnd
@@ -75,7 +80,12 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <UpdateDescriptionIssue />
           </div>
           <div>
-            <UpdateAttachmentIssue issueId={data.id} />
+            <UpdateAttachmentIssue
+              issueId={data.id}
+              files={data.resources?.map((item) => {
+                return urlToFile(item.url, item.name)
+              })}
+            />
           </div>
           <UpdateSubTaskForm />
           <Tabs defaultValue='comment' className='mt-3'>

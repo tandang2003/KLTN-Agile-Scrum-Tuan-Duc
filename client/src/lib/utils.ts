@@ -85,10 +85,12 @@ function loadSessionStorage<T>(
   }
 }
 
-async function urlToFile(url: string, filename: string, mimeType: string) {
+async function urlToFile(url: string, filename: string) {
   const response = await fetch(url)
   const blob = await response.blob()
-  return new File([blob], filename, { type: mimeType })
+  const contentType =
+    response.headers.get('Content-Type') || 'application/octet-stream'
+  return new File([blob], filename, { type: contentType })
 }
 
 export {

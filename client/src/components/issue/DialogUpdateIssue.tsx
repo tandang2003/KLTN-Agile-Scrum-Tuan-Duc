@@ -14,26 +14,37 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAppSelector } from '@/context/redux/hook'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
-import { useGetIssueQuery } from '@/feature/issue/issue.api'
+import {
+  useGetIssueQuery,
+  useLazyGetIssueQuery
+} from '@/feature/issue/issue.api'
+import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
 import { IssueDetailResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
+import { useEffect } from 'react'
 
-type DialogUpdateIssueProps = {} & DialogControllerProps
-
-const DialogUpdateIssue = ({ open, onOpen }: DialogUpdateIssueProps) => {
+const DialogUpdateIssue = () => {
   const id = useAppSelector((state: RootState) => state.issueSlice.current?.id)
-  const { data, isFetching } = useGetIssueQuery(
-    {
-      issueId: id as Id
-    },
-    {
-      skip: !id
+  const { isUpdateIssue } = useAppSelector((state) => state.triggerSlice)
+  const dispatch = useAppDispatch()
+
+  const [triggerGetIssue, { data, isFetching }] = useLazyGetIssueQuery()
+
+  useEffect(() => {
+    if (isUpdateIssue && id) {
+      triggerGetIssue({ issueId: id })
     }
-  )
+  }, [isUpdateIssue, id])
+
   return (
-    <DialogController open={open} onOpen={onOpen}>
+    <DialogController
+      open={isUpdateIssue}
+      onOpen={() => {
+        dispatch(disableUpdateIssue())
+      }}
+    >
       <LoadingBoundary<IssueDetailResponse>
         data={data}
         isLoading={isFetching}

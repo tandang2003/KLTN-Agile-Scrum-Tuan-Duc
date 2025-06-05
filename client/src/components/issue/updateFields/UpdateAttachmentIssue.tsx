@@ -28,29 +28,42 @@ const UpdateAttachmentIssue = ({
   const { projectId } = useAppId()
   const [files, setFiles] = useState<File[]>([])
 
-  // useEffect(() => {
-  //   if (!data) return
-  //   async function loadInit() {
-  //     const results = await Promise.allSettled(data)
+  useEffect(() => {
+    const resolveFiles = async () => {
+      if (!data) return
+      try {
+        const resolvedFiles = await Promise.all(data)
+        console.log('Resolved files:', resolvedFiles)
+        setFiles(resolvedFiles)
+      } catch (err) {
+        console.error('Failed to resolve file promises:', err)
+      }
+    }
 
-  //     const resolvedFiles = results
-  //       .filter(
-  //         (res): res is PromiseFulfilledResult<File> =>
-  //           res.status === 'fulfilled'
-  //       )
-  //       .map((res) => res.value)
-  //     setFiles((prev) => [...prev, ...resolvedFiles])
-  //   }
+    resolveFiles()
+  }, [data])
 
-  //   loadInit()
-  // }, [])
+  const onDelete = useCallback((resourceId: string) => {
+    resourceService
+      .deleteResource(resourceId)
+      .then(() => {
+        toast.success('Delete file success')
+        setFiles((prevFiles) =>
+          prevFiles.filter((file) => file.name !== resourceId)
+        )
+      })
+      .catch((error) => {
+        console.error('Failed to delete resource:', error)
+        toast.error('Failed to delete file')
+      })
+  }, [])
 
   const onFileValidate = useCallback(
     (file: File): string | null => {
       // Validate max files
-      if (files.length >= 2) {
-        return 'You can only upload up to 2 files'
-      }
+      // if (files.length >= 2) {
+      //   return 'You can only upload up to 2 files'
+      // }
 
       // Validate file type (only images)
       if (!file.type.startsWith('image/')) {
@@ -184,13 +197,22 @@ const UpdateAttachmentIssue = ({
         <FileUploadTrigger asChild></FileUploadTrigger>
       </FileUploadDropzone>
       <FileUploadList>
-        {files.map((file) => (
+        {files.map((file, index) => (
           <FileUploadItem key={file.name} value={file}>
             <FileUploadItemPreview className='size-20'>
               <FileUploadItemProgress variant='fill' />
             </FileUploadItemPreview>
             <FileUploadItemMetadata />
-            <FileUploadItemDelete asChild>
+            <FileUploadItemDelete
+              data-id-resource={index}
+              onClick={(event) => {
+                const resourceId = event.currentTarget.dataset.idResource
+                if (resourceId) {
+                  onDelete(resourceId)
+                }
+              }}
+              asChild
+            >
               <Button variant='ghost' size='icon' className='size-7'>
                 <X />
               </Button>
