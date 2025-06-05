@@ -12,7 +12,6 @@ import java.util.Map;
 public record SprintResponse(String id,
                              String title,
                              Map<String, String> process,
-                             int position,
                              int storyPoint,
                              Instant predict,
                              Instant start,
@@ -24,7 +23,6 @@ public record SprintResponse(String id,
         private Map<String, String> process;
         private String title;
         private int storyPoint;
-        private int position;
         private Instant predict;
         private Instant dtStart;
         private Instant dtEnd;
@@ -76,13 +74,9 @@ public record SprintResponse(String id,
             return this;
         }
 
-        public SprintResponseBuilder position(int position) {
-            this.position = position;
-            return this;
-        }
 
         public SprintResponse build() {
-            return new SprintResponse(id, title, process, position, storyPoint, predict, dtStart, dtEnd, planning,
+            return new SprintResponse(id, title, process, storyPoint, predict, dtStart, dtEnd, planning,
                     preview);
         }
     }
