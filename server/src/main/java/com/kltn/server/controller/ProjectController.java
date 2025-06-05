@@ -1,11 +1,14 @@
 package com.kltn.server.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.repository.document.ProjectMongoRepository;
 import com.kltn.server.service.entity.ProjectService;
+import com.kltn.server.service.mongo.ProjectMongoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +22,12 @@ import java.util.List;
 @RequestMapping("/project")
 public class ProjectController {
     private ProjectService projectService;
+    private ProjectMongoService projectMongoService;
 
     @Autowired
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, ProjectMongoService projectMongoService) {
         this.projectService = projectService;
+        this.projectMongoService = projectMongoService;
     }
 
     @PostMapping
@@ -54,5 +59,13 @@ public class ProjectController {
         return ResponseEntity.status(members.getCode()).body(members);
     }
 
-
+    @GetMapping("/{project_id}/position")
+    public ResponseEntity<Object> getPosition(@PathVariable("project_id") String projectId) {
+        return ResponseEntity.ok(this.projectMongoService.getPosition(projectId));
+    }
+    @PutMapping("/{project_id}/position")
+    public ResponseEntity<Void> savePosition(@PathVariable("project_id") String projectId, @RequestBody JsonNode body) {
+        this.projectMongoService.savePosition(projectId,body);
+        return ResponseEntity.ok(null);
+    }
 }
