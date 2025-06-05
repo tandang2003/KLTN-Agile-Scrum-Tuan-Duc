@@ -24,7 +24,7 @@ public class Sprint extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
-    private int position;
+//    private int position;
     private int storyPoint;
     @Column(name = "dt_predict")
     private Instant dtPredict;
@@ -41,7 +41,7 @@ public class Sprint extends BaseEntity {
         this.projectSprints = sprintBuilder.projectSprints;
         this.storyPoint = sprintBuilder.storyPoint;
         this.dtPredict = sprintBuilder.dtPredict;
-        this.position = sprintBuilder.position;
+//        this.position = sprintBuilder.position;
     }
 
     public Sprint() {
@@ -91,11 +91,11 @@ public class Sprint extends BaseEntity {
             this.dtPredict = dtPredict;
             return this;
         }
-
-        public SprintEntityBuilder position(int position) {
-            this.position = position;
-            return this;
-        }
+//
+//        public SprintEntityBuilder position(int position) {
+//            this.position = position;
+//            return this;
+//        }
 
         public SprintEntityBuilder dtStart(Instant DTStart) {
             this.DTStart = DTStart;
@@ -203,13 +203,13 @@ public class Sprint extends BaseEntity {
         this.workspace = workspace;
     }
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
+//    public int getPosition() {
+//        return position;
+//    }
+//
+//    public void setPosition(int position) {
+//        this.position = position;
+//    }
 
 }
 
