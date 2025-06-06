@@ -20,7 +20,7 @@ public record IssueResponse(String id,
                             IssueStatus status,
                             IssuePriority priority,
                             IssueTag tag,
-                            int position,
+                            String position,
                             List<TopicResponse> topics,
                             List<SubTaskResponse> subTasks,
                             List<AttachmentResponse> attachments,
@@ -42,7 +42,7 @@ public record IssueResponse(String id,
         private IssueStatus status;
         private IssuePriority priority;
         private IssueTag tag;
-        private int position;
+        private String position;
         private List<TopicResponse> topics;
         private List<SubTaskResponse> subTasks;
         private List<AttachmentResponse> attachments;
@@ -90,7 +90,7 @@ public record IssueResponse(String id,
             return this;
         }
 
-        public IssueResponseBuilder position(int position) {
+        public IssueResponseBuilder position(String position) {
             this.position = position;
             return this;
         }

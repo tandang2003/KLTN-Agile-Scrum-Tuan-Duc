@@ -5,6 +5,7 @@ import com.kltn.server.DTO.request.entity.issue.*;
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
+import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
@@ -18,6 +19,7 @@ import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
+import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.model.type.task.IssueTag;
@@ -326,15 +328,18 @@ public class IssueService {
                 Sprint currentSprint = task.getSprint();
                 Instant now = Instant.now();
 
-                if (currentSprint == null || currentSprint.getDtEnd().isBefore(now)) {
-                    if (targetSprint.getDtEnd().isBefore(now)) {
+                if (currentSprint == null || currentSprint.getDtEnd()
+                                                          .isBefore(now)) {
+                    if (targetSprint.getDtEnd()
+                                    .isBefore(now)) {
                         throw AppException.builder()
                                           .error(Error.SPRINT_ALREADY_END)
                                           .message("Cannot assign issue to sprint that has already ended")
                                           .build();
                     }
 
-                    if (targetSprint.getDtStart().isBefore(now)) {
+                    if (targetSprint.getDtStart()
+                                    .isBefore(now)) {
                         throw AppException.builder()
                                           .error(Error.SPRINT_ALREADY_START)
                                           .message("Cannot assign issue to sprint that has already started")
@@ -347,7 +352,8 @@ public class IssueService {
                     break;
                 }
 
-                if (currentSprint.getDtStart().isAfter(now)) {
+                if (currentSprint.getDtStart()
+                                 .isAfter(now)) {
                     task.setSprint(targetSprint);
                     task = saveEntity(task);
                     changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
@@ -588,7 +594,19 @@ public class IssueService {
 
     }
 
-    public ApiResponse<Void> createRelation(@Valid IssueAssignSprintRequest request) {
-        return null;
+    public ApiResponse<IssueRelationResponse> createRelation(IssueAssignSprintRequest request) {
+        Issue issue = getEntityById(request.getIssueId());
+        Issue relatedIssue = getEntityById(request.getIssueRelatedId());
+        IssueRelation relation = IssueRelation.builder()
+                                              .issue(issue)
+                                              .issueRelated(relatedIssue)
+                                              .typeRelation(request.getTypeRelation())
+                                              .build();
+        relation = issueRelationRepository.save(relation);
+        return ApiResponse.<IssueRelationResponse>builder()
+                          .code(HttpStatus.CREATED.value())
+                          .message("Create relation successfully")
+                          .data(taskMapper.toIssueRelationResponse(relation))
+                          .build();
     }
 }
