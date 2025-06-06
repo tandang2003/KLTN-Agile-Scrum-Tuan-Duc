@@ -2,13 +2,13 @@ import Board from '@/components/board/Board'
 import FilterBoard from '@/components/board/FilterBoard'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { useAppDispatch } from '@/context/redux/hook'
 import { getPositionThunk, saveIssues } from '@/feature/board/board.slice'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
 import useBoard from '@/hooks/use-board'
-import { toBoardModel } from '@/lib/board'
-import boardService from '@/services/board.service'
+import { toBoardModel } from '@/lib/board.helper'
+import issueService from '@/services/issue.service'
 import { IssueResponse, UpdatePositionIssueRequest } from '@/types/issue.type'
 import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
@@ -19,7 +19,6 @@ const BoardPage = () => {
   const { projectId } = useAppId()
   const { sprint } = useBoard()
   const dispatch = useAppDispatch()
-  const currentSprint = useAppSelector((state) => state.sprintSlice.current)
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
@@ -44,14 +43,44 @@ const BoardPage = () => {
     const indexId = over.data.current?.sortable.index
     let nextId =
       indexId === -1 ? null : active.data.current?.sortable.items[indexId + 1]
+    let reqUpdatePrevious: UpdatePositionIssueRequest | null = null
+    if (nextId === undefined && data) {
+      // Check previous item
+      const previousId =
+        indexId === 0 ? null : active.data.current?.sortable.items[indexId - 1]
+      const previousItem = data.find((item) => item.id === previousId)
 
-    const req: UpdatePositionIssueRequest = {
+      if (!previousItem) return
+
+      const previousStatus = previousItem.status as IssueStatus
+      reqUpdatePrevious = {
+        id: previousId,
+        status: previousStatus,
+        position: id
+      }
+    }
+
+    const reqUpdateCurrent: UpdatePositionIssueRequest = {
       id: id,
       status: status,
       position: nextId
     }
-    console.log('req', req)
+
     // update here
+    if (reqUpdatePrevious)
+      Promise.all([
+        issueService.updatePosition(reqUpdatePrevious).then((res) => {
+          console.log('Update previous position:', res)
+        }),
+        issueService.updatePosition(reqUpdateCurrent).then((res) => {
+          console.log('Update current position:', res)
+        })
+      ])
+    else {
+      issueService.updatePosition(reqUpdateCurrent).then((res) => {
+        console.log('Update current position:', res)
+      })
+    }
   }
 
   return (

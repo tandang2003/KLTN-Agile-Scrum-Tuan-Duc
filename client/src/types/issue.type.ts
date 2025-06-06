@@ -43,7 +43,7 @@ type IssueResponse = {
   status: IssueStatus
   priority: IssuePriority
   tag: IssueTag
-  position: number
+  position: string
   assignee?: UserDetail
   reviewer?: UserDetail
   topics?: TopicResponse[]

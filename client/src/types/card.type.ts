@@ -9,7 +9,6 @@ type ColumnModelType = {
 type CardModelType = {
   id: Id
   name: string
-  point: number
   numComment?: number
   numAttach?: number
   numAssigner?: number
