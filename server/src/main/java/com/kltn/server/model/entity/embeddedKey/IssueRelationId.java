@@ -53,14 +53,6 @@ public class IssueRelationId {
         }
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getIssueId() {
         return issueId;
     }
@@ -75,13 +67,5 @@ public class IssueRelationId {
 
     public void setIssueRelatedId(String issueRelatedId) {
         this.issueRelatedId = issueRelatedId;
-    }
-
-    public IssueRelationType getTypeRelation() {
-        return typeRelation;
-    }
-
-    public void setTypeRelation(IssueRelationType typeRelation) {
-        this.typeRelation = typeRelation;
     }
 }

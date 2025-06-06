@@ -1,6 +1,7 @@
 package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueStatus;
@@ -39,7 +40,7 @@ public class Issue extends BaseEntity {
     private String name;
     @Enumerated(EnumType.STRING)
     private IssueStatus status;
-//    private int storyPoint;
+    //    private int storyPoint;
     @Enumerated(EnumType.STRING)
     private IssuePriority priority;
     @Enumerated(EnumType.STRING)
@@ -57,7 +58,11 @@ public class Issue extends BaseEntity {
     @Column(name = "dt_planning")
     private Instant dtPlanning;
 
-//    private List<Issue> issuesis;
+    //    private List<Issue> issuesis;
+    @OneToMany(mappedBy = "issueRelated", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<IssueRelation> AffectBy;
+    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<IssueRelation> affectTo;
 
     public Issue(IssueEntityBuilder builder) {
         super(builder);
@@ -100,7 +105,7 @@ public class Issue extends BaseEntity {
         private String name;
         private String description;
         private IssueStatus status;
-//        private int storyPoint;
+        //        private int storyPoint;
         private IssuePriority priority;
         private IssueTag tag;
         private int numChangeOfPriority;
@@ -113,7 +118,7 @@ public class Issue extends BaseEntity {
         private User reviewer;
         private Instant dtStart;
         private Instant dtEnd;
-//        private Instant dtPlanning;
+        //        private Instant dtPlanning;
         private Project project;
         private Sprint sprint;
 //        private ProjectSprint projectSprint;
