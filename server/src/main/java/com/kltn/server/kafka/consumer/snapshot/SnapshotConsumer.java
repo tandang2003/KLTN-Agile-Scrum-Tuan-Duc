@@ -51,9 +51,9 @@ public class SnapshotConsumer {
                 Map<String, List<Resource>> mapResources = issues.stream().collect(Collectors.toMap(BaseEntity::getId, issue -> issue.getResources().stream().toList()));
                 ProjectSnapshot projectSnapshot = snapshotMapper.toSnapshot(snapshotRequest.getProjectId(), snapshotRequest.getSprintId(), issues.stream().collect(Collectors.toMap(issue -> issue, issue -> issueLogRepository.findByNkTaskId(issue.getId()).orElseThrow(() -> new RuntimeException("Issue not found")))), mapResources);
                 projectSnapshot = snapshotRepository.save(projectSnapshot);
-                issues.forEach(issue -> {
-                    issue.setSprint(null);
-                });
+//                issues.forEach(issue -> {
+//                    issue.setSprint(null);
+//                });
             }
         }
 
@@ -76,9 +76,9 @@ public class SnapshotConsumer {
 
                 );
                 projectSnapshot = snapshotRepository.save(projectSnapshot);
-                issues.forEach(issue -> {
-                    issue.setSprint(null);
-                });
+//                issues.forEach(issue -> {
+//                    issue.setSprint(null);
+//                });
             }
         }
     }
@@ -100,9 +100,9 @@ public class SnapshotConsumer {
 
                 );
                 projectSnapshot = snapshotRepository.save(projectSnapshot);
-                issues.forEach(issue -> {
-                    issue.setSprint(null);
-                });
+//                issues.forEach(issue -> {
+//                    issue.setSprint(null);
+//                });
             }
         }
     }

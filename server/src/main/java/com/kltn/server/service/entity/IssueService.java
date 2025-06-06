@@ -10,22 +10,19 @@ import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
-import com.kltn.server.mapper.base.AttachmentMapper;
 import com.kltn.server.mapper.base.SubTaskMapper;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.IssueMapper;
 import com.kltn.server.mapper.entity.UserMapper;
-import com.kltn.server.mapper.snapshot.SnapshotMapper;
 import com.kltn.server.model.base.BaseEntity;
-import com.kltn.server.model.collection.ChangeLog;
-import com.kltn.server.model.collection.model.Attachment;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
 import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.model.type.task.IssueTag;
 import com.kltn.server.repository.entity.IssueRepository;
+import com.kltn.server.repository.entity.relation.IssueRelationRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
 import jakarta.validation.Valid;
@@ -52,14 +49,16 @@ public class IssueService {
     private TopicMapper topicMapper;
     private SubTaskMapper subTaskMapper;
     private SnapshotService snapshotService;
+    private IssueRelationRepository issueRelationRepository;
 
     @Autowired
-    public IssueService(SnapshotService snapshotService, TopicMapper topicMapper, SubTaskMapper subTaskMapper,
-                        ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper,
+    public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
+                        TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
+                        ResourceService resourceService, ChangeLogMapper changeLogMapper,
                         IssueMongoService issueMongoService, UserService userService,
                         ProjectSprintService projectSprintService, IssueMapper taskMapper,
                         IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
-
+        this.issueRelationRepository = issueRelationRepository;
         this.snapshotService = snapshotService;
         this.taskMapper = taskMapper;
         this.taskRepository = taskRepository;
@@ -323,28 +322,43 @@ public class IssueService {
                 changeLog = changeLogMapper.TaskToUpdate(new String[]{"description"}, task, taskMongo);
                 break;
             case "sprint":
-                Sprint sprint = sprintService.getSprintById(updateRequest.getSprintId());
+                Sprint targetSprint = sprintService.getSprintById(updateRequest.getSprintId());
+                Sprint currentSprint = task.getSprint();
                 Instant now = Instant.now();
-                if (now.isAfter(sprint.getDtStart())) {
-                    throw AppException.builder()
-                                      .error(Error.SPRINT_ALREADY_START)
-                                      .build();
+
+                if (currentSprint == null || currentSprint.getDtEnd().isBefore(now)) {
+                    if (targetSprint.getDtEnd().isBefore(now)) {
+                        throw AppException.builder()
+                                          .error(Error.SPRINT_ALREADY_END)
+                                          .message("Cannot assign issue to sprint that has already ended")
+                                          .build();
+                    }
+
+                    if (targetSprint.getDtStart().isBefore(now)) {
+                        throw AppException.builder()
+                                          .error(Error.SPRINT_ALREADY_START)
+                                          .message("Cannot assign issue to sprint that has already started")
+                                          .build();
+                    }
+
+                    task.setSprint(targetSprint);
+                    task = saveEntity(task);
+                    changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
+                    break;
                 }
-                else if (now.isAfter(sprint.getDtEnd())) {
-                    throw AppException.builder()
-                                      .error(Error.SPRINT_ALREADY_END)
-                                      .build();
+
+                if (currentSprint.getDtStart().isAfter(now)) {
+                    task.setSprint(targetSprint);
+                    task = saveEntity(task);
+                    changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
+                    break;
                 }
-                if (task.getDtStart() == null) {
-                    task.setDtStart(sprint.getDtStart());
-                }
-                if (task.getDtEnd() == null) {
-                    task.setDtEnd(sprint.getDtEnd());
-                }
-                task.setSprint(sprint);
-                task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
-                break;
+
+                // Current sprint is already started, cannot reassign
+                throw AppException.builder()
+                                  .error(Error.SPRINT_ALREADY_START)
+                                  .message("Cannot assign issue to sprint that has already started")
+                                  .build();
             case "priority":
                 task.setPriority(updateRequest.getPriority());
                 task = saveEntity(task);
@@ -494,7 +508,6 @@ public class IssueService {
 
     @SendKafkaEvent(topic = "task-log")
     public ApiResponse<IssueResponse> updateTask(@Valid IssueUpdateStatusRequest request) {
-
         String id = request.getId();
         var task = getEntityById(id);
         var taskMongo = issueMongoService.getById(id);
@@ -575,38 +588,7 @@ public class IssueService {
 
     }
 
-    //TODO: Complete it
-    public ApiResponse<Void> assignIssueToSprint(@Valid IssueAssignSprintRequest request) {
-
-        Sprint sprint = sprintService.getSprintById(request.getSprintId());
-        Issue issue = getEntityById(request.getIssueId());
-
-        Sprint currentSprint = issue.getSprint() != null ? issue.getSprint() : null;
-        Instant now = Instant.now();
-        if (currentSprint == null) {
-            if (now.isBefore(sprint.getDtStart())) {
-                //            simply assign
-                issue.setSprint(sprint);
-                issue.setDtStart(sprint.getDtStart());
-                issue.setDtEnd(sprint.getDtEnd());
-                saveEntity(issue);
-            }
-            else if (now.isAfter(sprint.getDtEnd())) {
-                throw AppException.builder()
-                                  .error(Error.SPRINT_ALREADY_END)
-                                  .build();
-            }
-            else if (now.isAfter(sprint.getDtStart()) && now.isBefore(sprint.getDtEnd())) {
-                throw AppException.builder()
-                                  .error(Error.SPRINT_ALREADY_START)
-                                  .build();
-            }
-        }
-        else {
-
-        }
-
-
+    public ApiResponse<Void> createRelation(@Valid IssueAssignSprintRequest request) {
         return null;
     }
 }
