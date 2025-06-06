@@ -73,4 +73,12 @@ public class Attachment {
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
     }
+
+    public Attachment clone() {
+        return Attachment.builder()
+                         .resourceId(this.resourceId)
+                         .publicId(this.publicId)
+                         .size(this.size)
+                         .build();
+    }
 }

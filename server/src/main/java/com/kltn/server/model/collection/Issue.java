@@ -34,7 +34,9 @@ public class Issue extends BaseDocument {
         this.subTasks = issueBuilder.subTasks;
         this.comments = issueBuilder.comment;
     }
-    public Issue() {}
+
+    public Issue() {
+    }
 
     public static IssueBuilder builder() {
         return new IssueBuilder();

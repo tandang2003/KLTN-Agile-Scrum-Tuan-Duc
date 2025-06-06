@@ -27,57 +27,70 @@ public class IssueController {
 
     @PostMapping("/backlog")
     @PreAuthorize("hasAuthority('create_task')")
-    public ResponseEntity<ApiResponse<IssueResponse>> createTaskInBacklog(@Valid @RequestBody IssueCreateRequest taskResponse) {
+    public ResponseEntity<ApiResponse<IssueResponse>> createTaskInBacklog(
+            @Valid @RequestBody IssueCreateRequest taskResponse) {
         var task = taskService.createTaskBacklog(taskResponse);
-        return ResponseEntity.ok().body(task);
+        return ResponseEntity.ok()
+                             .body(task);
     }
+
     @PostMapping
     @PreAuthorize("hasAuthority('create_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> createTask(@Valid @RequestBody IssueCreateRequest taskResponse) {
         var task = taskService.createTask(taskResponse);
-        return ResponseEntity.ok().body(task);
+        return ResponseEntity.ok()
+                             .body(task);
     }
 
     @GetMapping("{issueId}/{sprintId}")
-    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@PathVariable String issueId, @PathVariable String sprintId) {
-        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, sprintId));
-        return ResponseEntity.status(task.getCode()).body(task);
+    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailById(@PathVariable String issueId,
+                                                                               @PathVariable String sprintId) {
+        ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(
+                new IssueDetailRequest(issueId, sprintId));
+        return ResponseEntity.status(task.getCode())
+                             .body(task);
     }
+
     @GetMapping("{issueId}")
-    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailByIdWithoutSprintID
-            (@PathVariable String issueId) {
+    public ResponseEntity<ApiResponse<IssueDetailResponse>> getIssueDetailByIdWithoutSprintID(
+            @PathVariable String issueId) {
         ApiResponse<IssueDetailResponse> task = taskService.getCurrentIssueDetailById(issueId);
-        return ResponseEntity.status(task.getCode()).body(task);
+        return ResponseEntity.status(task.getCode())
+                             .body(task);
     }
+
     @PutMapping
     @PreAuthorize("hasAuthority('update_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateRequest taskResponse) {
         var task = taskService.updateTask(taskResponse);
-        return ResponseEntity.status(task.getCode()).body(task);
+        return ResponseEntity.status(task.getCode())
+                             .body(task);
     }
 
     @PutMapping("/update-status")
     @PreAuthorize("hasAuthority('update_task')")
     public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateStatusRequest request) {
         var task = taskService.updateTask(request);
-        return ResponseEntity.status(task.getCode()).body(task);
+        return ResponseEntity.status(task.getCode())
+                             .body(task);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("project_id") String projectId, @RequestParam(value = "sprint_id", required = false) String sprintId) {
-        var isssues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(sprintId, projectId));
-        return ResponseEntity.status(isssues.getCode()).body(isssues);
+    public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("project_id") String projectId,
+                                                                      @RequestParam(value = "sprint_id", required = false) String sprintId) {
+        var issues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(sprintId, projectId));
+        return ResponseEntity.status(issues.getCode())
+                             .body(issues);
     }
 
-    @PutMapping("/assign-sprint/{sprintId}")
-    public ResponseEntity<ApiResponse<Void>> assignIssueToSprint(@Valid @RequestBody IssueAssignSprintRequest request) {
-        ApiResponse<Void> response = taskService.assignIssueToSprint(request);
-        return ResponseEntity.status(response.getCode()).body(response);
+    @PostMapping("/relation")
+    public ResponseEntity<ApiResponse<IssueResponse>> relationShipIssue(
+            @Valid @RequestBody IssueAssignSprintRequest request) {
+//        var task = taskService.createRelation(request);
+//        return ResponseEntity.status(task.getCode())
+//                             .body(task);
+        return null;
     }
-
-
-
-
 
 
 }
