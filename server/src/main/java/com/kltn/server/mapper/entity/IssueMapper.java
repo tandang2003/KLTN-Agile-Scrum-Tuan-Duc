@@ -99,10 +99,22 @@ public interface IssueMapper {
     @BeanMapping(ignoreByDefault = true)
     IssueDetailResponse toIssueDetailResponseFromSnapshot(IssueSnapshot snapshot);
 
+    @Mappings({@Mapping(target = "id", source = "task.id"),
+               @Mapping(target = "name", source = "task.name"),
+               @Mapping(target = "description", source = "task.description"),
+               @Mapping(target = "status", source = "task.status"),
+               @Mapping(target = "priority", source = "task.priority"),
+               @Mapping(target = "tag", source = "task.tag"),
+               @Mapping(target = "position", source = "task.position"),
+               @Mapping(target = "start", source = "task.dtStart"),
+               @Mapping(target = "end", source = "task.dtEnd"),})
+    @BeanMapping(ignoreByDefault = true)
+    @Named("toIssueResponseSimple")
+    IssueResponse toIssueResponseSimple(Issue task);
 
-    @Mappings({@Mapping(target = "id", source = "relation.id"),
-               @Mapping(target = "issue", source = "relation.issue", qualifiedByName = "toIssueResponse"),
-               @Mapping(target = "relatedIssue", source = "relation.relatedIssue", qualifiedByName = "toIssueResponse"),
+    @Mappings({@Mapping(target = "issue", source = "relation.issue", qualifiedByName = "toIssueResponseSimple"),
+               @Mapping(target = "issueRelated", source = "relation.issueRelated", qualifiedByName = "toIssueResponseSimple"),
                @Mapping(target = "typeRelation", source = "relation.typeRelation"),})
+
     IssueRelationResponse toIssueRelationResponse(IssueRelation relation);
 }
