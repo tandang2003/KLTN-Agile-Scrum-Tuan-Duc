@@ -86,10 +86,9 @@ public class IssueController {
     @PostMapping("/relation")
     public ResponseEntity<ApiResponse<IssueResponse>> relationShipIssue(
             @Valid @RequestBody IssueAssignSprintRequest request) {
-//        var task = taskService.createRelation(request);
-//        return ResponseEntity.status(task.getCode())
-//                             .body(task);
-        return null;
+        var task = taskService.createRelation(request);
+        return ResponseEntity.status(task.getCode())
+                             .body(task);
     }
 
 
