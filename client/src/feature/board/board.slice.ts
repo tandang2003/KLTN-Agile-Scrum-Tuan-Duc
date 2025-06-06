@@ -6,12 +6,12 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type Sprint = {
   id: string
-  start: string
-  end: string
 }
 
 type BoardState = {
   isLoading: boolean
+  currentSprint?: Sprint
+  filterSprint?: Sprint
   items?: IssueResponse[]
   sprints?: Sprint[]
   position?: Position
@@ -36,6 +36,19 @@ const boardSlice = createSlice({
   name: 'boardSlice',
   initialState: initialState,
   reducers: {
+    setCurrentSprint(
+      state: BoardState,
+      action: PayloadAction<Sprint | undefined>
+    ) {
+      state.currentSprint = action.payload
+      state.filterSprint = action.payload
+    },
+    setFilterSprint: (
+      state: BoardState,
+      action: PayloadAction<Sprint | undefined>
+    ) => {
+      state.filterSprint = action.payload
+    },
     saveIssues: (
       state: BoardState,
       action: PayloadAction<IssueResponse[] | undefined>
@@ -55,5 +68,6 @@ const boardSlice = createSlice({
 })
 const boardReducer = boardSlice.reducer
 export { boardReducer, getPositionThunk }
-export const { saveIssues } = boardSlice.actions
+export const { saveIssues, setCurrentSprint, setFilterSprint } =
+  boardSlice.actions
 export default boardSlice

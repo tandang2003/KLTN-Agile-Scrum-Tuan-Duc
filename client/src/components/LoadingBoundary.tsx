@@ -6,7 +6,7 @@ type LoadingBoundaryProps<T> = {
   data: T | Falsy
   isLoading?: boolean
   loading?: ReactNode
-  fallback: ReactNode
+  fallback?: ReactNode
   children: (data: T) => ReactNode
 }
 

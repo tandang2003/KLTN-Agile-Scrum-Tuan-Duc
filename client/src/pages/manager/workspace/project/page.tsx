@@ -44,12 +44,7 @@ const ProjectPage = () => {
           </>
         )}
       </LoadingBoundary>
-      <DialogUpdateIssue
-        open={isUpdateIssue}
-        onOpen={() => {
-          dispatch(disableUpdateIssue())
-        }}
-      />
+      <DialogUpdateIssue />
     </SectionContainer>
   )
 }

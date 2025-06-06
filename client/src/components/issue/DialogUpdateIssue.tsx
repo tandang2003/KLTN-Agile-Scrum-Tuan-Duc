@@ -1,6 +1,4 @@
-import DialogController, {
-  DialogControllerProps
-} from '@/components/dialog/DialogController'
+import DialogController from '@/components/dialog/DialogController'
 import Icon from '@/components/Icon'
 import UpdateIssueForm from '@/components/issue/UpdateIssueForm'
 import LoadingBoundary from '@/components/LoadingBoundary'
@@ -23,20 +21,19 @@ import {
 import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
 import { IssueDetailResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { useEffect } from 'react'
 
 const DialogUpdateIssue = () => {
   const id = useAppSelector((state: RootState) => state.issueSlice.current?.id)
   const { isUpdateIssue } = useAppSelector((state) => state.triggerSlice)
   const dispatch = useAppDispatch()
-
-  const [triggerGetIssue, { data, isFetching }] = useLazyGetIssueQuery()
-
-  useEffect(() => {
-    if (isUpdateIssue && id) {
-      triggerGetIssue({ issueId: id })
+  const { data, isFetching } = useGetIssueQuery(
+    {
+      issueId: id as Id
+    },
+    {
+      skip: !isUpdateIssue || !id
     }
-  }, [isUpdateIssue, id])
+  )
 
   return (
     <DialogController

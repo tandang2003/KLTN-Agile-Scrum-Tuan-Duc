@@ -14,7 +14,6 @@ import {
   WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
-import { UniqueIdentifier } from '@dnd-kit/core'
 
 const workspaceService = {
   getListWorkSpace: async (
@@ -27,7 +26,7 @@ const workspaceService = {
     return response.data.data
   },
 
-  getWorkSpace: async (id: UniqueIdentifier): Promise<WorkspaceResponse> => {
+  getWorkSpace: async (id: Id): Promise<WorkspaceResponse> => {
     const response = await httpService.get<ResponseApi<WorkspaceResponse>>(
       `/workspace/${id}`
     )

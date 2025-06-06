@@ -240,18 +240,14 @@ const Board = ({ data: board, onMove }: BoardProps) => {
           }
         }
       }
-      console.log({
-        active: activeItemRef.current,
-        columnTo: activeNewColumn.current,
-        indexTo: activeNewIndex.current
-      })
-      if (
-        activeItemRef.current &&
-        activeNewColumn.current &&
-        activeNewIndex.current
-      ) {
-        onMove?.(active, over)
-      }
+      onMove?.(active, over)
+      // if (
+      //   activeItemRef.current &&
+      //   activeNewColumn.current &&
+      //   activeNewIndex.current
+      // ) {
+
+      // }
       clearState()
     },
     [findColumn, data, onMove, activeNewIndex]
@@ -283,7 +279,11 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     >
       <div className='flex bg-transparent'>
         {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
-          <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
+          <SortableContext
+            key={keyColumn}
+            id={keyColumn}
+            items={valueColumn.cardIds ?? []}
+          >
             <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
               <Column
                 id={keyColumn}

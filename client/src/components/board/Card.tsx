@@ -20,7 +20,7 @@ type CardProps = {
 }
 
 const Card = ({
-  data: { id, name, numAttach, numComment, numAssigner = 0, thumbnail },
+  data: { id, name, numAttach, numComment, numAssigner = 0 },
   container,
   onClick
 }: CardProps) => {
@@ -38,8 +38,7 @@ const Card = ({
       name,
       numAttach,
       numComment,
-      numAssigner,
-      thumbnail
+      numAssigner
     }
   })
 

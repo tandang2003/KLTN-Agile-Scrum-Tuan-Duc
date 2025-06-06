@@ -1,29 +1,41 @@
 import Icon from '@/components/Icon'
+import LoadingBoundary from '@/components/LoadingBoundary'
+import { Button } from '@/components/ui/button'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { Label } from '@/components/ui/label'
-import { ButtonGroup, ButtonGroupItem } from '@/components/ui/button-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAppDispatch } from '@/context/redux/hook'
+import { setCurrentSprint } from '@/feature/board/board.slice'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
-import { Id } from '@/types/other.type'
-import LoadingBoundary from '@/components/LoadingBoundary'
+import useBoard from '@/hooks/use-board'
 import { SprintModel } from '@/types/model/sprint.model'
+import { Id } from '@/types/other.type'
 import { useState } from 'react'
-import { useAppDispatch } from '@/context/redux/hook'
-import { setCurrentSprint } from '@/feature/sprint/sprint.slice'
-import { Button } from '@/components/ui/button'
 type FilterBoardProps = {}
 
 const FilterBoard = ({}: FilterBoardProps) => {
   const { workspaceId } = useAppId()
+  const { sprint } = useBoard()
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
   const dispatch = useAppDispatch()
+
+  const handleValueChange = (item: SprintModel | null) => {
+    dispatch(
+      setCurrentSprint(
+        item
+          ? {
+              id: item.id
+            }
+          : undefined
+      )
+    )
+  }
 
   return (
     <div>
@@ -51,19 +63,8 @@ const FilterBoard = ({}: FilterBoardProps) => {
                   {(data) => (
                     <SprintTabContent
                       items={data}
-                      onValueChange={(item) =>
-                        dispatch(
-                          setCurrentSprint(
-                            item
-                              ? {
-                                  id: item.id,
-                                  start: new Date(item.start).toISOString(),
-                                  end: new Date(item.end).toISOString()
-                                }
-                              : undefined
-                          )
-                        )
-                      }
+                      initialValue={sprint?.id ?? null}
+                      onValueChange={handleValueChange}
                     />
                   )}
                 </LoadingBoundary>
@@ -78,11 +79,16 @@ const FilterBoard = ({}: FilterBoardProps) => {
 
 type SprintTabContentProps = {
   items: SprintModel[]
+  initialValue?: Id | null
   onValueChange?: (sprint: SprintModel | null) => void
 }
 
-const SprintTabContent = ({ items, onValueChange }: SprintTabContentProps) => {
-  const [selectItem, setSelectItem] = useState<Id | null>(null)
+const SprintTabContent = ({
+  items,
+  onValueChange,
+  initialValue = null
+}: SprintTabContentProps) => {
+  const [selectItem, setSelectItem] = useState<Id | null>(initialValue)
   return (
     <div className='flex flex-col gap-3'>
       {items.map((item, index) => {

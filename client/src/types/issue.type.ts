@@ -136,7 +136,7 @@ type UpdateIssueRequest = {
 
 type UpdatePositionIssueRequest = {
   id: Id
-  position: string
+  position?: string
   status: IssueStatus
 }
 
