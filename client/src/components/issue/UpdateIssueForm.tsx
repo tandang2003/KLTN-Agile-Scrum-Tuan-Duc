@@ -41,8 +41,8 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             checked: item.checked
           }
         }) ?? [],
-      assigneeId: data.assignee.uniId,
-      reviewerId: data.reviewer.uniId,
+      assigneeId: data?.assignee?.uniId,
+      reviewerId: data?.reviewer?.uniId,
       topics: data.topics?.map((item) => {
         return {
           id: item.id,

@@ -88,6 +88,7 @@ const SprintTabContent = ({ items, onValueChange }: SprintTabContentProps) => {
       {items.map((item, index) => {
         return (
           <div
+            key={item.id}
             className='flex items-start gap-2 border-2 p-2'
             onClick={() => {
               setSelectItem(selectItem === item.id ? null : item.id)

@@ -1,12 +1,11 @@
 import { BoardModelType, CardModelType, ColumnsType } from '@/types/card.type'
 import { IssueResponse } from '@/types/issue.type'
 import { issueStatusList } from '@/types/model/typeOf'
-import { SprintResponse } from '@/types/sprint.type'
 
 const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
   const columns: ColumnsType = {}
   const cards: CardModelType[] = []
-  apiResponse.forEach((item, index) => {
+  apiResponse.forEach((item) => {
     if (!columns[item.status]) {
       columns[item.status] = {
         name: item.status,
@@ -19,7 +18,8 @@ const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
     cards.push({
       id: item.id,
       name: item.name,
-      point: 0
+      point: 0,
+      status: item.status
     })
   })
   issueStatusList.forEach((item) => {

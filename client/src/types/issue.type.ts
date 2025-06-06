@@ -44,8 +44,8 @@ type IssueResponse = {
   priority: IssuePriority
   tag: IssueTag
   position: number
-  assignee: UserDetail
-  reviewer: UserDetail
+  assignee?: UserDetail
+  reviewer?: UserDetail
   topics?: TopicResponse[]
   subTasks?: SubTaskResponse[]
   resources?: AttachmentResponse[]
@@ -134,6 +134,12 @@ type UpdateIssueRequest = {
   end?: Date
 } & UpdateIssueType
 
+type UpdatePositionIssueRequest = {
+  id: Id
+  position: string
+  status: IssueStatus
+}
+
 export {
   BaseIssueSchema,
   CreateIssueSchema,
@@ -149,5 +155,6 @@ export type {
   KeyOfFieldChangingIssue,
   TopicModelType,
   UpdateIssueRequest,
-  UpdateIssueType
+  UpdateIssueType,
+  UpdatePositionIssueRequest
 }

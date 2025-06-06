@@ -3,6 +3,7 @@ import Column from '@/components/board/Column'
 import { BoardModelType, ColumnModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import {
+  Active,
   closestCorners,
   defaultDropAnimationSideEffects,
   DndContext,
@@ -11,6 +12,7 @@ import {
   DragOverlay,
   DragStartEvent,
   DropAnimation,
+  Over,
   PointerSensor,
   useSensor,
   useSensors
@@ -22,15 +24,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type BoardProps = {
   data: BoardModelType
-  onMove?: ({
-    active,
-    columnTo,
-    indexTo
-  }: {
-    active: Id
-    columnTo: Id
-    indexTo: Id
-  }) => void
+  onMove?: (active: Active, over: Over) => void
 }
 
 const Board = ({ data: board, onMove }: BoardProps) => {
@@ -256,11 +250,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
         activeNewColumn.current &&
         activeNewIndex.current
       ) {
-        onMove?.({
-          active: activeItemRef.current,
-          columnTo: activeNewColumn.current,
-          indexTo: activeNewIndex.current
-        })
+        onMove?.(active, over)
       }
       clearState()
     },
@@ -277,11 +267,11 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     activeNewIndex.current = null
     activeNewColumn.current = null
   }
-  // useEffect(() => {
-  //   console.log(data.columns)
-  // }, [data.columns])
 
-  // console.log(activeDragTypeRef.current === 'card', activeItemData)
+  useEffect(() => {
+    setData(board)
+  }, [board])
+
   return (
     <DndContext
       sensors={sensors}
