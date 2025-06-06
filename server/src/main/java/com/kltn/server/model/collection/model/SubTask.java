@@ -89,7 +89,7 @@ public class SubTask {
     }
 
     public void setChecked(boolean checked) {
-
         this.checked = checked;
     }
+
 }

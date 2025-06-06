@@ -141,4 +141,15 @@ public class Comment {
     public void setId(ObjectId id) {
         this.id = id;
     }
+
+    public Comment clone() {
+        return Comment.builder()
+                      .to(this.to)
+                      .from(this.from)
+                      .message(this.message)
+                      .attachment(this.attachment != null ? this.attachment.clone() : null)
+                      .deleted(this.deleted)
+                      .deletedBy(this.deletedBy)
+                      .build();
+    }
 }

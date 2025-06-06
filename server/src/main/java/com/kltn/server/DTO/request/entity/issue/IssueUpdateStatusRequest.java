@@ -5,7 +5,7 @@ import com.kltn.server.model.type.task.IssueStatus;
 public class IssueUpdateStatusRequest {
     private String id;
     private IssueStatus status;
-    private int position;
+    private String position;
 
     public IssueUpdateStatusRequest() {
     }
@@ -18,7 +18,7 @@ public class IssueUpdateStatusRequest {
         return status;
     }
 
-    public int getPosition() {
+    public String getPosition() {
         return position;
     }
 }
