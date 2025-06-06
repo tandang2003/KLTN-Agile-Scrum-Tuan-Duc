@@ -11,11 +11,11 @@ public class IssueRelation {
     private IssueRelationId id;
     @MapsId("issueId")
     @ManyToOne(optional = false)
-    @JoinColumn(name = "issue_id")
+    @JoinColumn(name = "id")
     private Issue issue;
     @MapsId("issueId")
     @ManyToOne(optional = false)
-    @JoinColumn(name = "issue_related_id")
+    @JoinColumn(name = "id")
     private Issue issueRelated;
     @Enumerated(EnumType.STRING)
     private IssueRelationType typeRelation;

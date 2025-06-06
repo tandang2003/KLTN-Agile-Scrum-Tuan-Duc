@@ -3,6 +3,7 @@ package com.kltn.server.controller;
 import com.kltn.server.DTO.request.entity.issue.*;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
+import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.service.entity.IssueService;
@@ -84,7 +85,7 @@ public class IssueController {
     }
 
     @PostMapping("/relation")
-    public ResponseEntity<ApiResponse<IssueResponse>> relationShipIssue(
+    public ResponseEntity<ApiResponse<IssueRelationResponse>> relationShipIssue(
             @Valid @RequestBody IssueAssignSprintRequest request) {
         var task = taskService.createRelation(request);
         return ResponseEntity.status(task.getCode())

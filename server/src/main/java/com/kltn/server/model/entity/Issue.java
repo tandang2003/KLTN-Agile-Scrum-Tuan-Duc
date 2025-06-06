@@ -59,9 +59,9 @@ public class Issue extends BaseEntity {
     private Instant dtPlanning;
 
     //    private List<Issue> issuesis;
-    @OneToMany(mappedBy = "issue_related_id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "issueRelated", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<IssueRelation> AffectBy;
-    @OneToMany(mappedBy = "issueId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<IssueRelation> affectTo;
 
     public Issue(IssueEntityBuilder builder) {

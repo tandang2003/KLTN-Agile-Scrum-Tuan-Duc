@@ -29,7 +29,7 @@ public class IssueSnapshot {
     private List<Comment> comments;
     private int numChangeOfPriority;
     private int numChangeOfDescription;
-    private int position;
+    private String position;
 
     public IssueSnapshot(IssueSnapshotBuilder issueSnapshotBuilder) {
         this.nkTaskId = issueSnapshotBuilder.nkTaskId;
@@ -61,7 +61,7 @@ public class IssueSnapshot {
     public static class IssueSnapshotBuilder {
         private String nkTaskId;
         private String name;
-        private int position;
+        private String position;
         private String description;
         private List<Topic> topics;
         private String assignee;
@@ -174,7 +174,7 @@ public class IssueSnapshot {
             return new IssueSnapshot(this);
         }
 
-        public IssueSnapshotBuilder position(int position) {
+        public IssueSnapshotBuilder position(String position) {
             this.position= position;
             return this;
         }
@@ -320,7 +320,7 @@ public class IssueSnapshot {
         return name;
     }
 
-    public int getPosition() {
+    public String getPosition() {
         return position;
     }
 }
