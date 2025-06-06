@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "issues")
 public class Issue extends BaseEntity {
-    private int position;
+    private String position;
     @Column(columnDefinition = "LONGTEXT")
     private String description;
     @ManyToOne
@@ -57,6 +57,7 @@ public class Issue extends BaseEntity {
     @Column(name = "dt_planning")
     private Instant dtPlanning;
 
+//    private List<Issue> issuesis;
 
     public Issue(IssueEntityBuilder builder) {
         super(builder);
@@ -94,7 +95,7 @@ public class Issue extends BaseEntity {
     }
 
     public static class IssueEntityBuilder extends BaseEntityBuilder<Issue, IssueEntityBuilder> {
-        private int position;
+        private String position;
         private List<Resource> resources;
         private String name;
         private String description;
@@ -137,7 +138,7 @@ public class Issue extends BaseEntity {
             return this;
         }
 
-        public IssueEntityBuilder position(int position) {
+        public IssueEntityBuilder position(String position) {
             this.position = position;
             return this;
         }
@@ -332,11 +333,11 @@ public class Issue extends BaseEntity {
         this.resources = resources;
     }
 
-    public int getPosition() {
+    public String getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(String position) {
         this.position = position;
     }
 
