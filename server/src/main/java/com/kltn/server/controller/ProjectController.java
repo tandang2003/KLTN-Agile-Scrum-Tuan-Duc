@@ -36,8 +36,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(creationRequest));
     }
 
-//    TODO update project
-
+    // TODO update project
 
     @PostMapping("/invite")
     public ResponseEntity<ApiResponse<Void>> addUserToProject(
@@ -63,9 +62,10 @@ public class ProjectController {
     public ResponseEntity<Object> getPosition(@PathVariable("project_id") String projectId) {
         return ResponseEntity.ok(this.projectMongoService.getPosition(projectId));
     }
+
     @PutMapping("/{project_id}/position")
     public ResponseEntity<Void> savePosition(@PathVariable("project_id") String projectId, @RequestBody JsonNode body) {
-        this.projectMongoService.savePosition(projectId,body);
+        this.projectMongoService.savePosition(projectId, body);
         return ResponseEntity.ok(null);
     }
 }

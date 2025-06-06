@@ -24,8 +24,8 @@ public class Sprint extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
-    private int position;
-    private int miniumStoryPoint;
+//    private int position;
+    private int storyPoint;
     @Column(name = "dt_predict")
     private Instant dtPredict;
     @OneToMany(mappedBy = "sprint")
@@ -39,9 +39,9 @@ public class Sprint extends BaseEntity {
         this.dtStart = sprintBuilder.DTStart;
         this.dtEnd = sprintBuilder.DTEnd;
         this.projectSprints = sprintBuilder.projectSprints;
-        this.miniumStoryPoint = sprintBuilder.miniumStoryPoint;
+        this.storyPoint = sprintBuilder.storyPoint;
         this.dtPredict = sprintBuilder.dtPredict;
-        this.position = sprintBuilder.position;
+//        this.position = sprintBuilder.position;
     }
 
     public Sprint() {
@@ -53,7 +53,7 @@ public class Sprint extends BaseEntity {
 
     public static class SprintEntityBuilder extends BaseEntityBuilder<Sprint, SprintEntityBuilder> {
         //        private Project project;
-        private int miniumStoryPoint;
+        private int storyPoint;
         private Instant dtPredict;
         private String title;
         //        private Instant DTPlanning;
@@ -82,8 +82,8 @@ public class Sprint extends BaseEntity {
             return this;
         }
 
-        public SprintEntityBuilder miniumStoryPoint(int miniumStoryPoint) {
-            this.miniumStoryPoint = miniumStoryPoint;
+        public SprintEntityBuilder storyPoint(int storyPoint) {
+            this.storyPoint = storyPoint;
             return this;
         }
 
@@ -91,11 +91,11 @@ public class Sprint extends BaseEntity {
             this.dtPredict = dtPredict;
             return this;
         }
-
-        public SprintEntityBuilder position(int position) {
-            this.position = position;
-            return this;
-        }
+//
+//        public SprintEntityBuilder position(int position) {
+//            this.position = position;
+//            return this;
+//        }
 
         public SprintEntityBuilder dtStart(Instant DTStart) {
             this.DTStart = DTStart;
@@ -179,12 +179,12 @@ public class Sprint extends BaseEntity {
         this.projectSprints = projectSprints;
     }
 
-    public int getMiniumStoryPoint() {
-        return miniumStoryPoint;
+    public int getStoryPoint() {
+        return storyPoint;
     }
 
-    public void setMiniumStoryPoint(int miniumStoryPoint) {
-        this.miniumStoryPoint = miniumStoryPoint;
+    public void setStoryPoint(int storyPoint) {
+        this.storyPoint = storyPoint;
     }
 
     public Instant getDtPredict() {
@@ -203,13 +203,13 @@ public class Sprint extends BaseEntity {
         this.workspace = workspace;
     }
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
+//    public int getPosition() {
+//        return position;
+//    }
+//
+//    public void setPosition(int position) {
+//        this.position = position;
+//    }
 
 }
 

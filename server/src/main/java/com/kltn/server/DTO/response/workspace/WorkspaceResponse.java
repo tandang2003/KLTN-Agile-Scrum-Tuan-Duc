@@ -2,14 +2,23 @@ package com.kltn.server.DTO.response.workspace;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.DTO.response.project.ProjectResponse;
+import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.repository.entity.SprintRepository;
 
 import java.time.Instant;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record WorkspaceResponse(String id, String name, String description, int sprintNum, int timePerSprint,
-                                UserResponse owner, Instant start, Instant end, List<ProjectResponse> projects,
+public record WorkspaceResponse(String id,
+                                String name,
+                                String description,
+                                int sprintNum,
+                                SprintResponse currentSprint,
+                                UserResponse owner,
+                                Instant start,
+                                Instant end,
+                                List<ProjectResponse> projects,
                                 Instant createdAt) {
     public static WorkspaceResponseBuilder builder() {
         return new WorkspaceResponseBuilder();
@@ -20,7 +29,7 @@ public record WorkspaceResponse(String id, String name, String description, int 
         String name;
         String description;
         int sprintNum;
-        int timePerSprint;
+        SprintResponse currentSprint;
         Instant start;
         Instant end;
         UserResponse owner;
@@ -52,11 +61,6 @@ public record WorkspaceResponse(String id, String name, String description, int 
             return this;
         }
 
-        public WorkspaceResponseBuilder timePerSprint(int timePerSprint) {
-            this.timePerSprint = timePerSprint;
-            return this;
-        }
-
 
         public WorkspaceResponseBuilder name(String name) {
             this.name = name;
@@ -65,6 +69,11 @@ public record WorkspaceResponse(String id, String name, String description, int 
 
         public WorkspaceResponseBuilder description(String description) {
             this.description = description;
+            return this;
+        }
+
+        public WorkspaceResponseBuilder currentSprint(SprintResponse currentSprint) {
+            this.currentSprint = currentSprint;
             return this;
         }
 
@@ -79,10 +88,10 @@ public record WorkspaceResponse(String id, String name, String description, int 
         }
 
         public WorkspaceResponse build() {
-            return new WorkspaceResponse(id, name, description, sprintNum, timePerSprint, owner, start, end, projects, createdAt);
+            return new WorkspaceResponse(id, name, description, sprintNum, currentSprint, owner, start, end, projects,
+                                         createdAt);
         }
     }
-
 
 
 }
