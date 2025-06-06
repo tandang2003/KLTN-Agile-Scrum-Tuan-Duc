@@ -1,6 +1,5 @@
 import ListView from '@/components/ListView'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'

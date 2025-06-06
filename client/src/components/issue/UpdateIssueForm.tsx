@@ -1,3 +1,4 @@
+import UpdateAttachmentIssue from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
 import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'
@@ -10,6 +11,7 @@ import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { urlToFile } from '@/lib/utils'
 import {
   IssueDetailResponse,
   UpdateIssueSchema,
@@ -78,12 +80,12 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <UpdateDescriptionIssue />
           </div>
           <div>
-            {/* <UpdateAttachmentIssue
+            <UpdateAttachmentIssue
               issueId={data.id}
               files={data.resources?.map((item) => {
                 return urlToFile(item.url, item.name)
               })}
-            /> */}
+            />
           </div>
           <UpdateSubTaskForm />
           <Tabs defaultValue='comment' className='mt-3'>

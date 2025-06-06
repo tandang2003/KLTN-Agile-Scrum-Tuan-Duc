@@ -18,4 +18,10 @@ const dateRange = z
       path: ['to']
     }
   )
-export { string, dateRange }
+
+const dateStringToDateSchema = z.coerce.date()
+const stringToDate = (date: string) => {
+  return dateStringToDateSchema.safeParse(date)
+}
+
+export { string, dateRange, stringToDate }

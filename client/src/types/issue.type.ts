@@ -85,7 +85,7 @@ type TopicModelType = z.infer<typeof TopicModelSchema>
 const BaseIssueSchema = z
   .object({
     description: string,
-    sprintId: z.string().nullable(),
+    sprintId: z.string().optional(),
     status: string,
     priority: z.enum(issuePriorityList),
     tag: z.enum(issueTagList),
@@ -100,7 +100,15 @@ const BaseIssueSchema = z
     name: string
   })
 
-const CreateIssueSchema = BaseIssueSchema
+const CreateIssueSchema = BaseIssueSchema.extend({
+  sprint: z
+    .object({
+      id: z.string(),
+      start: z.coerce.date().optional(),
+      end: z.coerce.date().optional()
+    })
+    .optional()
+})
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
   id: string,

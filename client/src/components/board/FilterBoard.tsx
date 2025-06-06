@@ -25,7 +25,7 @@ const FilterBoard = ({}: FilterBoardProps) => {
   })
   const dispatch = useAppDispatch()
 
-  const handleValueChange = (item: SprintModel | null) => {
+  const handleSetSprint = (item: SprintModel | null) => {
     dispatch(
       setCurrentSprint(
         item
@@ -38,42 +38,38 @@ const FilterBoard = ({}: FilterBoardProps) => {
   }
 
   return (
-    <div>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>
-            <Icon icon={'mynaui:filter-solid'} />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align='start' className='w-fit'>
-          <Tabs defaultValue='sprint' className='flex h-full w-full gap-4'>
-            {/* Tabs List on the left */}
-            <TabsList className='h-full min-w-[160px] flex-col items-start space-y-2 bg-transparent p-4 [&>*]:w-full [&>*]:justify-start'>
-              <TabsTrigger value='sprint'>Sprint</TabsTrigger>
-            </TabsList>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button>
+          <Icon icon={'mynaui:filter-solid'} />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align='start' className='w-fit'>
+        <Tabs defaultValue='sprint' className='flex h-full w-full gap-4'>
+          <TabsList className='h-full min-w-[160px] flex-col items-start space-y-2 bg-transparent p-4 [&>*]:w-full [&>*]:justify-start'>
+            <TabsTrigger value='sprint'>Sprint</TabsTrigger>
+          </TabsList>
 
-            {/* Content on the right */}
-            <div className='flex-1 bg-gray-100 p-4'>
-              <TabsContent value='sprint' className='m-0'>
-                <LoadingBoundary<SprintModel[]>
-                  fallback=''
-                  isLoading={isFetching}
-                  data={data}
-                >
-                  {(data) => (
-                    <SprintTabContent
-                      items={data}
-                      initialValue={sprint?.id ?? null}
-                      onValueChange={handleValueChange}
-                    />
-                  )}
-                </LoadingBoundary>
-              </TabsContent>
-            </div>
-          </Tabs>
-        </PopoverContent>
-      </Popover>
-    </div>
+          <div className='flex-1 bg-gray-100 p-4'>
+            <TabsContent value='sprint' className='m-0'>
+              <LoadingBoundary<SprintModel[]>
+                fallback=''
+                isLoading={isFetching}
+                data={data}
+              >
+                {(data) => (
+                  <SprintTabContent
+                    items={data}
+                    initialValue={sprint?.id ?? null}
+                    onValueChange={handleSetSprint}
+                  />
+                )}
+              </LoadingBoundary>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </PopoverContent>
+    </Popover>
   )
 }
 

@@ -2,9 +2,7 @@ import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useGetProjectQuery } from '@/feature/project/project.api'
-import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { Id } from '@/types/other.type'
 import { ProjectResponse } from '@/types/project.type'
@@ -16,10 +14,6 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
-  const isUpdateIssue = useAppSelector(
-    (state) => state.triggerSlice.isUpdateIssue
-  )
-  const dispatch = useAppDispatch()
 
   return (
     <SectionContainer className='flex flex-col'>
@@ -44,7 +38,6 @@ const ProjectPage = () => {
           </>
         )}
       </LoadingBoundary>
-      <DialogUpdateIssue />
     </SectionContainer>
   )
 }

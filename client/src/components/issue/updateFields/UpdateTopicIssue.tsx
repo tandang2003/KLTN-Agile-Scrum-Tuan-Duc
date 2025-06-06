@@ -77,6 +77,15 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
     }
   })
 
+  const handleAddTopic = (field: TopicModelType) => {
+    setData((prev) => [...prev, field])
+    setSelecteds((prev) => [...prev, field])
+    append({
+      id: field.id,
+      name: field.name
+    })
+    setSearchTerm?.('')
+  }
   // useEffect(() => {
   //   console.log('isPopoverOpen', isPopoverOpen)
   // }, [isPopoverOpen])
@@ -113,9 +122,9 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
                   placeholder='Search items...'
                 />
                 <CommandCreateButton
-                  setData={setData}
-                  setOpen={setIsPopoverOpen}
-                  setSearchTerm={setSearchTerm}
+                  onAddTopic={(field) => {
+                    handleAddTopic(field)
+                  }}
                 />
                 <CommandList>
                   {data.map((item) => {
@@ -178,26 +187,10 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
 }
 
 type CommandCreateButtonProps = {
-  setData: React.Dispatch<
-    React.SetStateAction<
-      {
-        id: string
-        name: string
-      }[]
-    >
-  >
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
-  setSearchTerm?: React.Dispatch<React.SetStateAction<string>>
+  onAddTopic(topic: TopicModelType): void
 }
-const CommandCreateButton = ({
-  setData,
-  setOpen,
-  setSearchTerm
-}: CommandCreateButtonProps) => {
+const CommandCreateButton = ({ onAddTopic }: CommandCreateButtonProps) => {
   const search = useCommandState((state) => state.search)
-  const form = useFormContext<UpdateIssueType>()
-
-  const { control } = form
 
   return (
     <CommandEmpty
@@ -207,9 +200,7 @@ const CommandCreateButton = ({
           id: uuid(),
           name: search
         }
-        setData((prev) => [...prev, field])
-        setSearchTerm?.('')
-        setOpen?.(false)
+        onAddTopic(field)
       }}
     >
       <div>{search}</div>

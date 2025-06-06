@@ -12,32 +12,45 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Control } from 'react-hook-form'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
+import { stringToDate } from '@/types/common.type'
+import { CreateIssueType } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
+import { useFormContext, UseFormReturn } from 'react-hook-form'
 type SelectSprintProps = {
-  control: Control<any>
-  name: string
   label?: string
 }
 
-const SelectSprint = ({ control, name, label }: SelectSprintProps) => {
+const SelectSprint = ({ label }: SelectSprintProps) => {
   const { workspaceId } = useAppId()
-
+  const form = useFormContext<CreateIssueType>()
+  const { control, setValue } = form
   const { data } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
   return (
     <FormField
       control={control}
-      name={name}
+      name='sprintId'
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label || name}</FormLabel>
+          <FormLabel>{label}</FormLabel>
           <Select
             onValueChange={(value) => {
               field.onChange(value)
+              if (!value) {
+                setValue('sprint', undefined)
+                return
+              }
+              const start = data?.find((item) => item.id === value)?.start
+              const end = data?.find((item) => item.id === value)?.end
+              const sprint = {
+                id: value,
+                start: start,
+                end: end
+              }
+              setValue('sprint', sprint)
             }}
             defaultValue={field.value}
           >
