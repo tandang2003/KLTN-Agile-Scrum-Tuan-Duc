@@ -1,3 +1,4 @@
+import SectionComment from '@/components/issue/comment/SectionComment'
 import UpdateAttachmentIssue from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
@@ -72,30 +73,34 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
     <Form {...form}>
       <form className='flex h-[60vh] gap-3'>
         <ScrollArea className='h-inherit flex-1 [&>*:not(:first-element)]:mt-3'>
-          <div className='my-3'>
-            <UpdateNameIssue />
+          <div className='mr-3'>
+            <div className='my-3'>
+              <UpdateNameIssue />
+            </div>
+            <div className='my-3'>
+              <Label className='mb-2 text-xl font-bold'>Description</Label>
+              <UpdateDescriptionIssue />
+            </div>
+            <div>
+              <UpdateAttachmentIssue
+                issueId={data.id}
+                files={data.resources?.map((item) => {
+                  return urlToFile(item.url, item.name)
+                })}
+              />
+            </div>
+            <UpdateSubTaskForm />
+            <Tabs defaultValue='comment' className='mt-3'>
+              <TabsList>
+                <TabsTrigger value='comment'>Comment</TabsTrigger>
+                <TabsTrigger value='history'>History</TabsTrigger>
+              </TabsList>
+              <TabsContent value='comment'>
+                <SectionComment />
+              </TabsContent>
+              <TabsContent value='history'>history</TabsContent>
+            </Tabs>
           </div>
-          <div className='my-3'>
-            <Label className='mb-2 text-xl font-bold'>Description</Label>
-            <UpdateDescriptionIssue />
-          </div>
-          <div>
-            <UpdateAttachmentIssue
-              issueId={data.id}
-              files={data.resources?.map((item) => {
-                return urlToFile(item.url, item.name)
-              })}
-            />
-          </div>
-          <UpdateSubTaskForm />
-          <Tabs defaultValue='comment' className='mt-3'>
-            <TabsList>
-              <TabsTrigger value='comment'>Comment</TabsTrigger>
-              <TabsTrigger value='history'>History</TabsTrigger>
-            </TabsList>
-            <TabsContent value='comment'>comment</TabsContent>
-            <TabsContent value='history'>history</TabsContent>
-          </Tabs>
           <ScrollBar />
         </ScrollArea>
         <ScrollArea className='h-inherit basis-[550px] rounded-md border-2 px-4 py-2 [&>*:not(:first-child)]:mt-3'>
