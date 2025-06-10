@@ -1,6 +1,5 @@
 import ItemComment from '@/components/issue/comment/ItemComment'
 import { CommentType } from '@/types/comment.type'
-import { ReactNode } from 'react'
 type ListCommentProps = {
   items?: CommentType[]
 }

@@ -1,8 +1,17 @@
 type CommentType = {
   id: string
   from: string
-  to: string
   message: string
   createdAt: Date
 }
-export type { CommentType }
+
+type CommentReqType = {
+  content: string,
+}
+
+type CommentResType = {
+  from: string,
+  content: string
+}
+
+export type {CommentType, CommentReqType, CommentResType}

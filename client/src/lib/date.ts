@@ -1,9 +1,18 @@
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
 
-const LOCAL_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+const formatDateToString = (
+  date: Date,
+  pattern: 'SHORT' | 'LONG' | string = 'SHORT'
+): string => {
+  const patterns: Record<'SHORT' | 'LONG', string> = {
+    SHORT: 'dd/MM/yyyy',
+    LONG: 'HH:mm dd/MM/yyyy'
+  }
 
-const formatDateToString = (date: Date): string => {
-  return format(date, LOCAL_DATE_TIME)
+  const resolvedPattern =
+    pattern === 'SHORT' || pattern === 'LONG' ? patterns[pattern] : pattern
+
+  return format(date, resolvedPattern)
 }
 
 const formatDateRange = (start: Date, end: Date) =>
