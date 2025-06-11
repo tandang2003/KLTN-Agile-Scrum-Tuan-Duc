@@ -376,8 +376,8 @@ public class IssueService {
                 taskMongo = issueMongoService.saveDocument(taskMongo);
                 changeLog = changeLogMapper.TaskToUpdate(new String[] { "topics" }, task, taskMongo);
                 break;
-            case "subTasks":
-                taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
+            case "subtasks":
+                taskMongo.setSubtasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
                 changeLog = changeLogMapper.TaskToUpdate(new String[] { "subtasks" }, task, taskMongo);
                 break;

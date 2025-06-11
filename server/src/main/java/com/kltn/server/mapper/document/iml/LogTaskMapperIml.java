@@ -29,7 +29,7 @@ public class LogTaskMapperIml implements LogTaskMapper {
             if (entity.getSprint() != null) builder.sprintId(entity.getSprint().getId());
             if (document.getTopics() != null) builder.topics(new ArrayList<>(document.getTopics()));
             if (document.getAttachment() != null) builder.attachment(new ArrayList<>(document.getAttachment()));
-            if (document.getSubTasks() != null) builder.subTask(document.getSubTasks());
+            if (document.getSubtasks() != null) builder.subTask(document.getSubtasks());
 
         }
         return builder.build();

@@ -6,12 +6,14 @@ type CommentType = {
 }
 
 type CommentReqType = {
-  content: string,
-}
-
-type CommentResType = {
-  from: string,
   content: string
 }
 
-export type {CommentType, CommentReqType, CommentResType}
+type CommentResType = {
+  id: string
+  from: string
+  content: string
+  createdAt: Date
+}
+
+export type { CommentType, CommentReqType, CommentResType }

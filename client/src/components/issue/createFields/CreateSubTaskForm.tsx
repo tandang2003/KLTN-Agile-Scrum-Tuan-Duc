@@ -11,7 +11,7 @@ const CreateSubTaskForm = () => {
   const orderRef = useRef<number>(0)
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'subTasks'
+    name: 'subtasks'
   })
 
   const handleAppend = () => {
@@ -56,7 +56,7 @@ const CreateSubTaskItemForm = ({ index, onRemove }: CreateSubTaskProps) => {
     <div className='flex items-center gap-2'>
       <FormField
         control={control}
-        name={`subTasks.${index}.name`}
+        name={`subtasks.${index}.name`}
         render={({ field }) => (
           <FormItem className='flex-1'>
             <FormControl>

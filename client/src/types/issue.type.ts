@@ -47,7 +47,7 @@ type IssueResponse = {
   assignee?: UserDetail
   reviewer?: UserDetail
   topics?: TopicResponse[]
-  subTasks?: SubTaskResponse[]
+  subtasks?: SubTaskResponse[]
   resources?: AttachmentResponse[]
   start?: Date
   end?: Date
@@ -92,7 +92,7 @@ const BaseIssueSchema = z
     topics: z.array(TopicModelSchema),
     assigneeId: z.string().optional(),
     reviewerId: z.string().optional(),
-    subTasks: z.array(SubTaskModelSchema).optional(),
+    subtasks: z.array(SubTaskModelSchema).optional(),
     date: dateRange.optional()
   })
   .partial()
@@ -113,7 +113,7 @@ const CreateIssueSchema = BaseIssueSchema.extend({
 const UpdateIssueSchema = BaseIssueSchema.extend({
   id: string,
   name: string.optional(),
-  subTasks: z.array(SubTaskModelSchema).optional()
+  subtasks: z.array(SubTaskModelSchema).optional()
 })
 
 type BaseIssueFormType = z.infer<typeof BaseIssueSchema>

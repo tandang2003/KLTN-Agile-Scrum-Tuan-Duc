@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/command'
 import { cn } from '@/lib/utils'
 import { TopicModel } from '@/types/model/common.model'
-import { useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { BaseIssueFormType } from '@/types/issue.type'
 type CreateTopicProps = {}
