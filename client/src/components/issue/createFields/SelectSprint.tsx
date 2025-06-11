@@ -13,6 +13,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
+import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
 import { CreateIssueType } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
@@ -28,6 +29,12 @@ const SelectSprint = ({ label }: SelectSprintProps) => {
   const { data } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+  const { data: workspace, isFetching } = useGetWorkspaceQuery(
+    workspaceId as Id,
+    {
+      skip: !workspaceId
+    }
+  )
   return (
     <FormField
       control={control}
@@ -61,8 +68,16 @@ const SelectSprint = ({ label }: SelectSprintProps) => {
             <SelectContent>
               <SelectItem value={null!}>Not assign</SelectItem>
               {data?.map((item, index) => {
+                const isDisabled = workspace?.currentSprint
+                  ? item.start < workspace.currentSprint.start
+                  : false
+                console.log(isDisabled)
                 return (
-                  <SelectItem key={item.id} value={item.id}>
+                  <SelectItem
+                    key={item.id}
+                    value={item.id}
+                    disabled={isDisabled}
+                  >
                     <span>
                       {index + 1} - {item.title}
                     </span>
