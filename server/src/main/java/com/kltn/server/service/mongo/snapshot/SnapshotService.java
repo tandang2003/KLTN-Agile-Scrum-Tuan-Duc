@@ -12,17 +12,19 @@ import java.util.List;
 
 @Service
 public class SnapshotService {
-    private SnapshotRepository snapshotRepository;
+  private SnapshotRepository snapshotRepository;
 
-    @Autowired
-    public SnapshotService(SnapshotRepository snapshotRepository) {
-        this.snapshotRepository = snapshotRepository;
-    }
+  @Autowired
+  public SnapshotService(SnapshotRepository snapshotRepository) {
+    this.snapshotRepository = snapshotRepository;
+  }
 
-    public List<IssueSnapshot> getByProjectIdAndSprintId(String projectId, String sprintId) {
-        return snapshotRepository.findByProjectIdAndSprintId(projectId, sprintId)
-                .map(ProjectSnapshot::getIssues)
-                .orElseThrow(() -> AppException.builder().error(Error.SERVER_SNAPSHOT_SERVICE_ERROR).build());
-    }
+  public List<IssueSnapshot> getByProjectIdAndSprintId(String projectId, String sprintId) {
+    return snapshotRepository.findByProjectIdAndSprintId(projectId, sprintId)
+                             .orElseThrow(() -> AppException.builder()
+                                                                        .error(Error.SERVER_SNAPSHOT_SERVICE_ERROR)
+                                                                        .build())
+                             .getIssues();
+  }
 
 }
