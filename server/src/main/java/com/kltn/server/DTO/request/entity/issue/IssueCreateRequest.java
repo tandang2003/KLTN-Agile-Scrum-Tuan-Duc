@@ -20,273 +20,153 @@ import java.util.List;
 import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 
 public class IssueCreateRequest {
-    @NotEmpty
-    private String name;
-    @NotEmpty
-    private String projectId;
-    //    @NotEmpty
-    private String sprintId;
-    @Enumerated(EnumType.STRING)
-    private IssueStatus status;
-    @Enumerated(EnumType.STRING)
-    private IssuePriority priority;
-    @Enumerated(EnumType.STRING)
-    private IssueTag tag;
-    private int position;
-    private List<TopicRequest> topics;
-    private List<SubTaskRequest> subtasks;
-    private List<AttachmentRequest> attachments;
-    //    @NotEmpty
-    private String description;
-    //    @NotEmpty
-    private String assigneeId;
-    //    @NotEmpty
-    private String reviewerId;
-    @DateTimeFormat(pattern = LOCAL_DATE_TIME)
-    private Instant start;
-    @DateTimeFormat(pattern = LOCAL_DATE_TIME)
-    private Instant end;
+  @NotEmpty
+  private String name;
+  @NotEmpty
+  private String projectId;
+  //    @NotEmpty
+  private String sprintId;
+  @Enumerated(EnumType.STRING)
+  private IssueStatus status;
+  @Enumerated(EnumType.STRING)
+  private IssuePriority priority;
+  @Enumerated(EnumType.STRING)
+  private IssueTag tag;
+  private int position;
+  private List<TopicRequest> topics;
+  private List<SubTaskRequest> subtasks;
+  private List<AttachmentRequest> attachments;
+  //    @NotEmpty
+  private String description;
+  //    @NotEmpty
+  private String assigneeId;
+  //    @NotEmpty
+  private String reviewerId;
+  @DateTimeFormat(pattern = LOCAL_DATE_TIME)
+  private Instant start;
+  @DateTimeFormat(pattern = LOCAL_DATE_TIME)
+  private Instant end;
 
-//    public static IssueCreateRequestBuilder builder() {
-//        return new IssueCreateRequestBuilder();
-//    }
+  public IssueCreateRequest() {
+  }
 
-    public IssueCreateRequest() {
-    }
-//
-//    public IssueCreateRequest(IssueCreateRequestBuilder builder) {
-//        this.name = builder.name;
-//        this.projectId = builder.projectId;
-//        this.sprintId = builder.sprintId;
-//        this.status = builder.status;
-//        this.priority = builder.priority;
-//        this.tag = builder.tag;
-//        this.position = builder.position;
-//        this.topics = builder.topics;
-//        this.subTasks = builder.subTasks;
-//        this.attachments = builder.attachments;
-//        this.description = builder.description;
-//        this.assigneeId = builder.assigneeId;
-//        this.reviewerId = builder.reviewerId;
-//        this.start = builder.start;
-//        this.end = builder.end;
-//    }
+  public String getName() {
+    return name;
+  }
 
+  public void setName(String name) {
+    this.name = name;
+  }
 
-//    public static class IssueCreateRequestBuilder {
-//        private String name;
-//        private String projectId;
-//        private String sprintId;
-//        private S status;
-//        private String priority;
-//        private String tag;
-//        private int position;
-//        private List<TopicRequest> topics;
-//        private List<SubTaskRequest> subTasks;
-//        private List<AttachmentRequest> attachments;
-//        private String description;
-//        private String assigneeId;
-//        private String reviewerId;
-//        private Instant start;
-//        private Instant end;
-//
-//        public IssueCreateRequestBuilder name(String name) {
-//            this.name = name;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder projectId(String projectId) {
-//            this.projectId = projectId;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder sprintId(String sprintId) {
-//            this.sprintId = sprintId;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder status(String status) {
-//            this.status = status;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder priority(String priority) {
-//            this.priority = priority;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder topics(List<TopicRequest> topics) {
-//            this.topics = topics;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder subTasks(List<SubTaskRequest> subTasks) {
-//            this.subTasks = subTasks;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder attachments(List<AttachmentRequest> attachments) {
-//            this.attachments = attachments;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder tag(String tag) {
-//            this.tag = tag;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder description(String description) {
-//            this.description = description;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder assigneeId(String assigneeId) {
-//            this.assigneeId = assigneeId;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder reviewerId(String reviewerId) {
-//            this.reviewerId = reviewerId;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder position(int position) {
-//            this.position = position;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder start(Instant start) {
-//            this.start = start;
-//            return this;
-//        }
-//
-//        public IssueCreateRequestBuilder end(Instant end) {
-//            this.end = end;
-//            return this;
-//        }
-//
-//        public IssueCreateRequest build() {
-//            return new IssueCreateRequest(this);
-//        }
-//    }
+  public String getProjectId() {
+    return projectId;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getSprintId() {
+    return sprintId;
+  }
 
-    public String getProjectId() {
-        return projectId;
-    }
+  public void setSprintId(String sprintId) {
+    this.sprintId = sprintId;
+  }
 
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
+  public IssueStatus getStatus() {
+    return status;
+  }
 
-    public String getSprintId() {
-        return sprintId;
-    }
+  public void setStatus(IssueStatus status) {
+    this.status = status;
+  }
 
-    public void setSprintId(String sprintId) {
-        this.sprintId = sprintId;
-    }
+  public IssuePriority getPriority() {
+    return priority;
+  }
 
-    public IssueStatus getStatus() {
-        return status;
-    }
+  public void setPriority(IssuePriority priority) {
+    this.priority = priority;
+  }
 
-    public void setStatus(IssueStatus status) {
-        this.status = status;
-    }
+  public IssueTag getTag() {
+    return tag;
+  }
 
-    public IssuePriority getPriority() {
-        return priority;
-    }
+  public void setTag(IssueTag tag) {
+    this.tag = tag;
+  }
 
-    public void setPriority(IssuePriority priority) {
-        this.priority = priority;
-    }
+  public int getPosition() {
+    return position;
+  }
 
-    public IssueTag getTag() {
-        return tag;
-    }
+  public void setPosition(int position) {
+    this.position = position;
+  }
 
-    public void setTag(IssueTag tag) {
-        this.tag = tag;
-    }
+  public List<TopicRequest> getTopics() {
+    return topics;
+  }
 
-    public int getPosition() {
-        return position;
-    }
+  public void setTopics(List<TopicRequest> topics) {
+    this.topics = topics;
+  }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
+  public List<AttachmentRequest> getAttachments() {
+    return attachments;
+  }
 
-    public List<TopicRequest> getTopics() {
-        return topics;
-    }
+  public void setAttachments(List<AttachmentRequest> attachments) {
+    this.attachments = attachments;
+  }
 
-    public void setTopics(List<TopicRequest> topics) {
-        this.topics = topics;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public List<AttachmentRequest> getAttachments() {
-        return attachments;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setAttachments(List<AttachmentRequest> attachments) {
-        this.attachments = attachments;
-    }
+  public String getAssigneeId() {
+    return assigneeId;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setAssigneeId(String assigneeId) {
+    this.assigneeId = assigneeId;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getReviewerId() {
+    return reviewerId;
+  }
 
-    public String getAssigneeId() {
-        return assigneeId;
-    }
+  public void setReviewerId(String reviewerId) {
+    this.reviewerId = reviewerId;
+  }
 
-    public void setAssigneeId(String assigneeId) {
-        this.assigneeId = assigneeId;
-    }
+  public Instant getStart() {
+    return start;
+  }
 
-    public String getReviewerId() {
-        return reviewerId;
-    }
+  public void setStart(Instant start) {
+    this.start = start;
+  }
 
-    public void setReviewerId(String reviewerId) {
-        this.reviewerId = reviewerId;
-    }
+  public Instant getEnd() {
+    return end;
+  }
 
-    public Instant getStart() {
-        return start;
-    }
+  public void setEnd(Instant end) {
+    this.end = end;
+  }
 
-    public void setStart(Instant start) {
-        this.start = start;
-    }
+  public List<SubTaskRequest> getSubtasks() {
+    return subtasks;
+  }
 
-    public Instant getEnd() {
-        return end;
-    }
-
-    public void setEnd(Instant end) {
-        this.end = end;
-    }
-
-    public List<SubTaskRequest> getSubtasks() {
-        return subtasks;
-    }
-
-    public void setSubtasks(List<SubTaskRequest> subtasks) {
-        this.subtasks = subtasks;
-    }
+  public void setSubtasks(List<SubTaskRequest> subtasks) {
+    this.subtasks = subtasks;
+  }
 }

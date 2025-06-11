@@ -41,11 +41,13 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
       if (token != null && token.startsWith("Bearer ")) {
         System.out.println("token" + token);
         token = token.substring(7);
-        String uniId = jwtDecoder.decode(token).getClaim("uniId");
+        String uniId = jwtDecoder.decode(token)
+                                 .getClaim("uniId");
         UserDetails userDetails = this.loadUserService.loadUserByUsername(uniId);
-        UserPrinciple user =new UserPrinciple(userDetails.getUsername());
+        UserPrinciple user = new UserPrinciple(((User) userDetails).getUniId());
         // set attr in here
-        Objects.requireNonNull(accessor.getSessionAttributes()).put("key", "value");
+        Objects.requireNonNull(accessor.getSessionAttributes())
+               .put("key", "value");
 
         // set user to use @SendToUser
         accessor.setUser(user);

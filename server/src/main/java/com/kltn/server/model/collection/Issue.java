@@ -35,12 +35,12 @@ public class Issue extends BaseDocument {
         this.comments = issueBuilder.comment;
     }
 
-    public Issue() {
-    }
+  public Issue() {
+  }
 
-    public static IssueBuilder builder() {
-        return new IssueBuilder();
-    }
+  public static IssueBuilder builder() {
+    return new IssueBuilder();
+  }
 
     public static class IssueBuilder extends BaseDocumentBuilder<Issue, IssueBuilder> {
         private String nkTaskId;
@@ -51,15 +51,15 @@ public class Issue extends BaseDocument {
         private List<SubTask> subtasks;
 
 
-        public IssueBuilder nkTaskId(String nkTaskId) {
-            this.nkTaskId = nkTaskId;
-            return this;
-        }
+    public IssueBuilder nkTaskId(String nkTaskId) {
+      this.nkTaskId = nkTaskId;
+      return this;
+    }
 
-        public IssueBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
+    public IssueBuilder description(String description) {
+      this.description = description;
+      return this;
+    }
 
         public IssueBuilder topics(List<Topic> topics) {
             this.topics = topics;
@@ -81,10 +81,10 @@ public class Issue extends BaseDocument {
             return this;
         }
 
-        @Override
-        protected IssueBuilder self() {
-            return this;
-        }
+    @Override
+    protected IssueBuilder self() {
+      return this;
+    }
 
         public Issue build() {
             return new Issue(this);
