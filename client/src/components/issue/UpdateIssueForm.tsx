@@ -34,8 +34,8 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
       name: data.name,
       description: data.description,
       priority: data.priority,
-      subTasks:
-        data?.subTasks?.map((item) => {
+      subtasks:
+        data?.subtasks?.map((item) => {
           return {
             name: item.name,
             order: item.order,

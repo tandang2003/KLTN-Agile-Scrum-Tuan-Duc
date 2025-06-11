@@ -1,7 +1,6 @@
 package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.issue.IssueCreateRequest;
-import com.kltn.server.DTO.request.entity.issue.IssueUpdateRequest;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
@@ -11,11 +10,7 @@ import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.relationship.IssueRelation;
-import com.kltn.server.model.type.task.IssueStatus;
-import com.kltn.server.service.file.FileService;
 import org.mapstruct.*;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class,
                                            ResourceMapper.class,
@@ -37,7 +32,7 @@ public interface IssueMapper {
     @Mappings({@Mapping(target = "nkTaskId", source = "task.id"),
                @Mapping(target = "description", source = "task.description"),
 //            @Mapping(target = "tag", source = "task.name"),
-               @Mapping(target = "subTasks", source = "issueCreateRequest.subtasks", qualifiedByName = "toListDocument"),
+               @Mapping(target = "subtasks", source = "issueCreateRequest.subtasks", qualifiedByName = "toListDocument"),
                @Mapping(target = "attachment", source = "issueCreateRequest.attachments", qualifiedByName = "toListDocument"),
                @Mapping(target = "topics", source = "issueCreateRequest.topics", qualifiedByName = "toTopicList")})
     @BeanMapping(ignoreByDefault = true)
@@ -73,7 +68,7 @@ public interface IssueMapper {
                @Mapping(target = "assignee", source = "task.assignee", qualifiedByName = "toUserDetailDTO"),
                @Mapping(target = "reviewer", source = "task.reviewer", qualifiedByName = "toUserDetailDTO"),
                @Mapping(target = "topics", source = "issueMongo.topics", qualifiedByName = "toListResponse"),
-               @Mapping(target = "subTasks", source = "issueMongo.subTasks", qualifiedByName = "toListResponse"),
+               @Mapping(target = "subtasks", source = "issueMongo.subtasks", qualifiedByName = "toListResponse"),
                @Mapping(target = "resources", source = "task.resources", qualifiedByName = "toListResponse"),
                @Mapping(target = "complexOfDescription", source = "task.complexOfDescription"),
                @Mapping(target = "dtStart", source = "task.dtStart"),
@@ -91,7 +86,7 @@ public interface IssueMapper {
                @Mapping(target = "tag", source = "snapshot.tag"),
                @Mapping(target = "position", source = "snapshot.position"),
                @Mapping(target = "topics", source = "snapshot.topics", qualifiedByName = "toListResponse"),
-               @Mapping(target = "subTasks", source = "snapshot.subTasks", qualifiedByName = "toListResponse"),
+               @Mapping(target = "subtasks", source = "snapshot.subtasks", qualifiedByName = "toListResponse"),
                @Mapping(target = "resources", source = "snapshot.resources", qualifiedByName = "toListResponse"),
                @Mapping(target = "complexOfDescription", source = "snapshot.complexOfDescription"),
                @Mapping(target = "dtStart", source = "snapshot.dtStart"),

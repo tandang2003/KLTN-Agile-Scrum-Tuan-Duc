@@ -24,7 +24,7 @@ public class IssueSnapshot {
     private Instant dtEnd;
     private Instant dtPlanning;
     private int complexOfDescription;
-    private List<SubTask> subTasks;
+    private List<SubTask> subtasks;
     private List<ResourceSnapshot> resources;
     private List<Comment> comments;
     private int numChangeOfPriority;
@@ -45,7 +45,7 @@ public class IssueSnapshot {
         this.dtEnd = issueSnapshotBuilder.dtEnd;
         this.dtPlanning = issueSnapshotBuilder.dtPlanning;
         this.complexOfDescription = issueSnapshotBuilder.complexOfDescription;
-        this.subTasks = issueSnapshotBuilder.subTasks;
+        this.subtasks = issueSnapshotBuilder.subtasks;
         this.resources = issueSnapshotBuilder.resources;
         this.comments = issueSnapshotBuilder.comments;
         this.numChangeOfPriority = issueSnapshotBuilder.numChangeOfPriority;
@@ -73,7 +73,7 @@ public class IssueSnapshot {
         private Instant dtEnd;
         private Instant dtPlanning;
         private int complexOfDescription;
-        private List<SubTask> subTasks;
+        private List<SubTask> subtasks;
         private List<ResourceSnapshot> resources;
         private List<Comment> comments;
         private int numChangeOfPriority;
@@ -155,8 +155,8 @@ public class IssueSnapshot {
             return this;
         }
 
-        public IssueSnapshotBuilder subTasks(List<SubTask> subTasks) {
-            this.subTasks = subTasks;
+        public IssueSnapshotBuilder subtasks(List<SubTask> subtasks) {
+            this.subtasks = subtasks;
             return this;
         }
 
@@ -276,12 +276,12 @@ public class IssueSnapshot {
         this.complexOfDescription = complexOfDescription;
     }
 
-    public List<SubTask> getSubTasks() {
-        return subTasks;
+    public List<SubTask> getSubtasks() {
+        return subtasks;
     }
 
-    public void setSubTasks(List<SubTask> subTasks) {
-        this.subTasks = subTasks;
+    public void setSubtasks(List<SubTask> subtasks) {
+        this.subtasks = subtasks;
     }
 
     public List<ResourceSnapshot> getResources() {

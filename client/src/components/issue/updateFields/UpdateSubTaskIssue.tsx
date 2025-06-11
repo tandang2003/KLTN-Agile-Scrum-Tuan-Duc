@@ -11,7 +11,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { FormControl, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useAutoUpdateField } from '@/hooks/use-update'
-import { cn, uuid } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import {
@@ -29,6 +29,7 @@ import {
 } from '@dnd-kit/sortable'
 import { forwardRef, useRef, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+
 const UpdateSubTaskForm = () => {
   const orderRef = useRef<number>(0)
 
@@ -41,9 +42,9 @@ const UpdateSubTaskForm = () => {
 
   const [addMode, setAddMode] = useState<boolean>(false)
   const form = useFormContext<UpdateIssueType>()
-  const { fields, append, move } = useFieldArray({
+  const { fields, append, move, remove } = useFieldArray({
     control: form.control,
-    name: 'subTasks',
+    name: 'subtasks',
     keyName: 'id'
   })
   const { getValues } = form
@@ -51,7 +52,7 @@ const UpdateSubTaskForm = () => {
 
   useAutoUpdateField({
     form: form,
-    field: 'subTasks',
+    field: 'subtasks',
 
     // isPause: (field, value) => {
     //   console.log(fields)
@@ -61,7 +62,7 @@ const UpdateSubTaskForm = () => {
       return issueService.updateIssue({
         id: getValues('id'),
         fieldChanging: field,
-        subTasks:
+        subtasks:
           value?.map((item) => {
             return {
               name: item.name,
@@ -115,7 +116,12 @@ const UpdateSubTaskForm = () => {
           strategy={verticalListSortingStrategy}
         >
           {fields.map((item, index) => (
-            <SubTaskItem key={item.id} index={index} {...item} />
+            <SubTaskItem
+              key={item.id}
+              index={index}
+              {...item}
+              remove={remove}
+            />
           ))}
         </SortableContext>
       </DndContext>
@@ -144,13 +150,9 @@ type SubTaskItemProps = {
   id: string
   name: string
   index: number
+  remove: (index: number) => void
 }
-const SubTaskItem = ({ id, name, index }: SubTaskItemProps) => {
-  const form = useFormContext<UpdateIssueType>()
-  const { remove } = useFieldArray({
-    control: form.control,
-    name: 'subTasks'
-  })
+const SubTaskItem = ({ id, name, index, remove }: SubTaskItemProps) => {
   const {
     attributes,
     listeners,
