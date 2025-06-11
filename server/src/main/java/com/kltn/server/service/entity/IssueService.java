@@ -55,11 +55,11 @@ public class IssueService {
 
     @Autowired
     public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
-                        TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
-                        ResourceService resourceService, ChangeLogMapper changeLogMapper,
-                        IssueMongoService issueMongoService, UserService userService,
-                        ProjectSprintService projectSprintService, IssueMapper taskMapper,
-                        IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
+            TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
+            ResourceService resourceService, ChangeLogMapper changeLogMapper,
+            IssueMongoService issueMongoService, UserService userService,
+            ProjectSprintService projectSprintService, IssueMapper taskMapper,
+            IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
         this.issueRelationRepository = issueRelationRepository;
         this.snapshotService = snapshotService;
         this.taskMapper = taskMapper;
@@ -84,70 +84,68 @@ public class IssueService {
         var task = taskMapper.toEntity(issueCreateRequest);
         task.setProject(project);
         if (issueCreateRequest.getAssigneeId() != null && !issueCreateRequest.getAssigneeId()
-                                                                             .isEmpty()) {
+                .isEmpty()) {
             User assignee = userService.getUserByUniId(issueCreateRequest.getAssigneeId());
             task.setAssignee(assignee);
         }
         if (issueCreateRequest.getReviewerId() != null && !issueCreateRequest.getReviewerId()
-                                                                             .isEmpty()) {
+                .isEmpty()) {
             User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
             task.setReviewer(reviewer);
         }
         if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId()
-                                                                           .isEmpty()) {
+                .isEmpty()) {
             Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
             if (task.getDtStart() == null) {
                 task.setDtStart(sprint.getDtStart());
-            }
-            else if (task.getDtStart() != null && task.getDtStart()
-                                                      .isBefore(sprint.getDtStart())) {
+            } else if (task.getDtStart() != null && task.getDtStart()
+                    .isBefore(sprint.getDtStart())) {
                 Map<String, String> error = new HashMap<>();
                 error.put("start", "Start date cannot be before sprint start date");
                 List<Map<String, String>> errors = new ArrayList<>();
                 errors.add(error);
                 throw AppMethodArgumentNotValidException.builder()
-                                                        .error(errors)
-                                                        .build();
+                        .error(errors)
+                        .build();
             }
             if (task.getDtEnd() == null) {
                 task.setDtEnd(sprint.getDtEnd());
-            }
-            else if (task.getDtEnd() != null && task.getDtEnd()
-                                                    .isAfter(sprint.getDtEnd())) {
+            } else if (task.getDtEnd() != null && task.getDtEnd()
+                    .isAfter(sprint.getDtEnd())) {
                 Map<String, String> error = new HashMap<>();
                 error.put("end", "End date cannot be after sprint end date");
                 List<Map<String, String>> errors = new ArrayList<>();
                 errors.add(error);
                 throw AppMethodArgumentNotValidException.builder()
-                                                        .error(errors)
-                                                        .build();
+                        .error(errors)
+                        .build();
             }
             task.setSprint(sprint);
         }
         if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments()
-                                                                              .isEmpty()) {
+                .isEmpty()) {
             List<Resource> resources = issueCreateRequest.getAttachments()
-                                                         .stream()
-                                                         .map(id -> resourceService.getById(id.getResourceId()))
-                                                         .toList();
+                    .stream()
+                    .map(id -> resourceService.getById(id.getResourceId()))
+                    .toList();
             task.setResources(resources);
         }
         task = taskRepository.save(task);
         if (task == null || task.getId() == null) {
             throw AppException.builder()
-                              .error(Error.DB_SERVER_ERROR)
-                              .build();
+                    .error(Error.DB_SERVER_ERROR)
+                    .build();
         }
         var taskMongo = taskMapper.toCollection(task, issueCreateRequest);
         taskMongo = issueMongoService.save(taskMongo);
         var changeLog = changeLogMapper.taskToCreateLogRequest(task, taskMongo);
 
         return ApiResponse.<IssueResponse>builder()
-                          .code(HttpStatus.CREATED.value())
-                          .message("Create task successfully")
-                          .data(taskMapper.toIssueResponse(task, taskMongo))
-                          .logData(changeLog)
-                          .build();
+                .code(HttpStatus.CREATED.value())
+                .message("Create task successfully")
+                .data(taskMapper.toIssueResponse(task, taskMongo))
+                .logData(changeLog)
+                .build();
     }
 
     @SendKafkaEvent(topic = "task-log")
@@ -158,89 +156,87 @@ public class IssueService {
         var task = taskMapper.toEntity(issueCreateRequest);
         task.setProject(project);
         if (issueCreateRequest.getAssigneeId() != null && !issueCreateRequest.getAssigneeId()
-                                                                             .isEmpty()) {
+                .isEmpty()) {
             User assignee = userService.getUserByUniId(issueCreateRequest.getAssigneeId());
             task.setAssignee(assignee);
         }
         if (issueCreateRequest.getReviewerId() != null && !issueCreateRequest.getReviewerId()
-                                                                             .isEmpty()) {
+                .isEmpty()) {
             User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
             task.setReviewer(reviewer);
         }
         if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId()
-                                                                           .isEmpty()) {
+                .isEmpty()) {
             Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
             Instant now = Instant.now();
             if (now.isAfter(sprint.getDtStart())) {
                 throw AppException.builder()
-                                  .error(Error.SPRINT_ALREADY_START)
-                                  .build();
+                        .error(Error.SPRINT_ALREADY_START)
+                        .build();
             }
             if (now.isAfter(sprint.getDtEnd())) {
                 throw AppException.builder()
-                                  .error(Error.SPRINT_ALREADY_END)
-                                  .build();
+                        .error(Error.SPRINT_ALREADY_END)
+                        .build();
             }
             if (task.getDtStart() == null) {
                 task.setDtStart(sprint.getDtStart());
-            }
-            else if (task.getDtStart() != null && task.getDtStart()
-                                                      .isBefore(sprint.getDtStart())) {
+            } else if (task.getDtStart() != null && task.getDtStart()
+                    .isBefore(sprint.getDtStart())) {
                 Map<String, String> error = new HashMap<>();
                 error.put("start", "Start date cannot be before sprint start date");
                 List<Map<String, String>> errors = new ArrayList<>();
                 errors.add(error);
                 throw AppMethodArgumentNotValidException.builder()
-                                                        .error(errors)
-                                                        .build();
+                        .error(errors)
+                        .build();
             }
             if (task.getDtEnd() == null) {
                 task.setDtEnd(sprint.getDtEnd());
-            }
-            else if (task.getDtEnd() != null && task.getDtEnd()
-                                                    .isAfter(sprint.getDtEnd())) {
+            } else if (task.getDtEnd() != null && task.getDtEnd()
+                    .isAfter(sprint.getDtEnd())) {
                 Map<String, String> error = new HashMap<>();
                 error.put("end", "End date cannot be after sprint end date");
                 List<Map<String, String>> errors = new ArrayList<>();
                 errors.add(error);
                 throw AppMethodArgumentNotValidException.builder()
-                                                        .error(errors)
-                                                        .build();
+                        .error(errors)
+                        .build();
             }
             task.setSprint(sprint);
         }
         if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments()
-                                                                              .isEmpty()) {
+                .isEmpty()) {
             List<Resource> resources = issueCreateRequest.getAttachments()
-                                                         .stream()
-                                                         .map(id -> resourceService.getById(id.getResourceId()))
-                                                         .toList();
+                    .stream()
+                    .map(id -> resourceService.getById(id.getResourceId()))
+                    .toList();
             task.setResources(resources);
         }
         task = taskRepository.save(task);
         if (task == null || task.getId() == null) {
             throw AppException.builder()
-                              .error(Error.DB_SERVER_ERROR)
-                              .build();
+                    .error(Error.DB_SERVER_ERROR)
+                    .build();
         }
         var taskMongo = taskMapper.toCollection(task, issueCreateRequest);
         taskMongo = issueMongoService.save(taskMongo);
         var changeLog = changeLogMapper.taskToCreateLogRequest(task, taskMongo);
 
         return ApiResponse.<IssueResponse>builder()
-                          .code(HttpStatus.CREATED.value())
-                          .message("Create task successfully")
-                          .data(taskMapper.toIssueResponse(task, taskMongo))
-                          .logData(changeLog)
-                          .build();
+                .code(HttpStatus.CREATED.value())
+                .message("Create task successfully")
+                .data(taskMapper.toIssueResponse(task, taskMongo))
+                .logData(changeLog)
+                .build();
     }
 
     public Issue getEntityById(String id) {
 
         return taskRepository.findById(id)
-                             .orElseThrow(() -> AppException.builder()
-                                                            .error(Error.NOT_FOUND)
-                                                            .build());
+                .orElseThrow(() -> AppException.builder()
+                        .error(Error.NOT_FOUND)
+                        .build());
     }
 
     public Issue saveEntity(Issue issue) {
@@ -249,8 +245,8 @@ public class IssueService {
             issue = taskRepository.save(issue);
         } catch (RuntimeException e) {
             throw AppException.builder()
-                              .error(Error.DB_SERVER_MISSING_DATA)
-                              .build();
+                    .error(Error.DB_SERVER_MISSING_DATA)
+                    .build();
         }
         return issue;
 
@@ -261,46 +257,46 @@ public class IssueService {
         String id = request.getIssueId();
         var entity = getEntityById(id);
         if (request.getSprintId() != null && !request.getSprintId()
-                                                     .isEmpty()) {
+                .isEmpty()) {
             Sprint sprint = sprintService.getSprintById(id);
             if (sprint.getDtEnd()
-                      .isBefore(Instant.now())) {
+                    .isBefore(Instant.now())) {
                 List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject()
-                                                                                                .getId(),
-                                                                                          sprint.getId());
+                        .getId(),
+                        sprint.getId());
                 if (snapshots.isEmpty()) {
                     throw AppException.builder()
-                                      .error(Error.NOT_FOUND)
-                                      .message("No task found in this sprint")
-                                      .build();
+                            .error(Error.NOT_FOUND)
+                            .message("No task found in this sprint")
+                            .build();
                 }
                 IssueSnapshot snapshot = snapshots.stream()
-                                                  .filter(s -> s.getNkTaskId()
-                                                                .equals(id))
-                                                  .findFirst()
-                                                  .orElseThrow(() -> AppException.builder()
-                                                                                 .error(Error.NOT_FOUND)
-                                                                                 .message(
-                                                                                         "Task not found in this sprint")
-                                                                                 .build());
+                        .filter(s -> s.getNkTaskId()
+                                .equals(id))
+                        .findFirst()
+                        .orElseThrow(() -> AppException.builder()
+                                .error(Error.NOT_FOUND)
+                                .message(
+                                        "Task not found in this sprint")
+                                .build());
                 IssueDetailResponse response = taskMapper.toIssueDetailResponseFromSnapshot(snapshot);
 
                 response.setAssignee(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getAssignee())));
                 response.setReviewer(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getReviewer())));
                 return ApiResponse.<IssueDetailResponse>builder()
-                                  .code(HttpStatus.OK.value())
-                                  .message("Get task detail successfully")
-                                  .data(response)
-                                  .build();
+                        .code(HttpStatus.OK.value())
+                        .message("Get task detail successfully")
+                        .data(response)
+                        .build();
             }
         }
         var taskMongo = issueMongoService.getById(id);
         var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
         return ApiResponse.<IssueDetailResponse>builder()
-                          .code(HttpStatus.OK.value())
-                          .message("Get task detail successfully")
-                          .data(taskResponse)
-                          .build();
+                .code(HttpStatus.OK.value())
+                .message("Get task detail successfully")
+                .data(taskResponse)
+                .build();
 
     }
 
@@ -316,12 +312,12 @@ public class IssueService {
             case "name":
                 task.setName(updateRequest.getName());
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"name"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "name" }, task, taskMongo);
                 break;
             case "description":
                 task.setDescription(updateRequest.getDescription());
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"description"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "description" }, task, taskMongo);
                 break;
             case "sprint":
                 Sprint targetSprint = sprintService.getSprintById(updateRequest.getSprintId());
@@ -329,149 +325,147 @@ public class IssueService {
                 Instant now = Instant.now();
 
                 if (currentSprint == null || currentSprint.getDtEnd()
-                                                          .isBefore(now)) {
+                        .isBefore(now)) {
                     if (targetSprint.getDtEnd()
-                                    .isBefore(now)) {
+                            .isBefore(now)) {
                         throw AppException.builder()
-                                          .error(Error.SPRINT_ALREADY_END)
-                                          .message("Cannot assign issue to sprint that has already ended")
-                                          .build();
+                                .error(Error.SPRINT_ALREADY_END)
+                                .message("Cannot assign issue to sprint that has already ended")
+                                .build();
                     }
 
                     if (targetSprint.getDtStart()
-                                    .isBefore(now)) {
+                            .isBefore(now)) {
                         throw AppException.builder()
-                                          .error(Error.SPRINT_ALREADY_START)
-                                          .message("Cannot assign issue to sprint that has already started")
-                                          .build();
+                                .error(Error.SPRINT_ALREADY_START)
+                                .message("Cannot assign issue to sprint that has already started")
+                                .build();
                     }
 
                     task.setSprint(targetSprint);
                     task = saveEntity(task);
-                    changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
+                    changeLog = changeLogMapper.TaskToUpdate(new String[] { "sprint" }, task, taskMongo);
                     break;
                 }
 
                 if (currentSprint.getDtStart()
-                                 .isAfter(now)) {
+                        .isAfter(now)) {
                     task.setSprint(targetSprint);
                     task = saveEntity(task);
-                    changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
+                    changeLog = changeLogMapper.TaskToUpdate(new String[] { "sprint" }, task, taskMongo);
                     break;
                 }
 
                 // Current sprint is already started, cannot reassign
                 throw AppException.builder()
-                                  .error(Error.SPRINT_ALREADY_START)
-                                  .message("Cannot assign issue to sprint that has already started")
-                                  .build();
+                        .error(Error.SPRINT_ALREADY_START)
+                        .message("Cannot assign issue to sprint that has already started")
+                        .build();
             case "priority":
                 task.setPriority(updateRequest.getPriority());
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"priority"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "priority" }, task, taskMongo);
                 break;
             case "status":
                 task.setPriority(updateRequest.getPriority());
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"status"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "status" }, task, taskMongo);
                 break;
             case "topics":
                 taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"topics"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "topics" }, task, taskMongo);
                 break;
             case "subTasks":
                 taskMongo.setSubTasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
                 taskMongo = issueMongoService.saveDocument(taskMongo);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"subtasks"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "subtasks" }, task, taskMongo);
                 break;
             case "attachments":
                 List<Resource> resources = task.getResources();
                 List<String> newResource = new ArrayList<>(updateRequest.getAttachments()
-                                                                        .stream()
-                                                                        .map(AttachmentRequest::getResourceId)
-                                                                        .toList());
+                        .stream()
+                        .map(AttachmentRequest::getResourceId)
+                        .toList());
                 resources = resources.stream()
-                                     .filter(r -> !newResource.contains(r.getId()))
-                                     .toList();
+                        .filter(r -> !newResource.contains(r.getId()))
+                        .toList();
                 newResource.removeAll(resources.stream()
-                                               .map(BaseEntity::getId)
-                                               .toList());
+                        .map(BaseEntity::getId)
+                        .toList());
                 for (String resourceId : newResource) {
                     Resource resource = resourceService.getById(resourceId);
                     resources.add(resource);
                 }
                 task.setResources(resources);
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"attachments"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "attachments" }, task, taskMongo);
                 break;
             case "assignee":
                 if (updateRequest.getAssignee() == null || updateRequest.getAssignee()
-                                                                        .isEmpty()) {
+                        .isEmpty()) {
                     task.setAssignee(null);
-                }
-                else {
+                } else {
                     User assignee = userService.getUserByUniId(updateRequest.getAssignee());
                     task.setAssignee(assignee);
                 }
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"assignee"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "assignee" }, task, taskMongo);
                 break;
             case "reviewer":
                 if (updateRequest.getReviewer() == null || updateRequest.getReviewer()
-                                                                        .isEmpty()) {
+                        .isEmpty()) {
                     task.setReviewer(null);
-                }
-                else {
+                } else {
                     User reviewer = userService.getUserByUniId(updateRequest.getReviewer());
                     task.setReviewer(reviewer);
                 }
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"reviewer"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "reviewer" }, task, taskMongo);
                 break;
             case "start":
                 task.setDtStart(updateRequest.getStart());
                 if (task.getSprint() != null && task.getDtStart()
-                                                    .isBefore(task.getSprint()
-                                                                  .getDtStart())) {
+                        .isBefore(task.getSprint()
+                                .getDtStart())) {
                     Map<String, String> error = new HashMap<>();
                     error.put("start", "Start date cannot be before sprint start date");
                     List<Map<String, String>> errors = new ArrayList<>();
                     errors.add(error);
                     throw AppMethodArgumentNotValidException.builder()
-                                                            .error(errors)
-                                                            .build();
+                            .error(errors)
+                            .build();
                 }
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"start"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "start" }, task, taskMongo);
                 break;
             case "end":
                 task.setDtEnd(updateRequest.getEnd());
                 if (task.getSprint() != null && task.getDtEnd()
-                                                    .isAfter(task.getSprint()
-                                                                 .getDtEnd())) {
+                        .isAfter(task.getSprint()
+                                .getDtEnd())) {
                     Map<String, String> error = new HashMap<>();
                     error.put("end", "End date cannot be after sprint end date");
                     List<Map<String, String>> errors = new ArrayList<>();
                     errors.add(error);
                     throw AppMethodArgumentNotValidException.builder()
-                                                            .error(errors)
-                                                            .build();
+                            .error(errors)
+                            .build();
                 }
                 task = saveEntity(task);
-                changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
+                changeLog = changeLogMapper.TaskToUpdate(new String[] { "end" }, task, taskMongo);
                 break;
             default:
                 throw AppException.builder()
-                                  .error(Error.INVALID_PARAMETER_REQUEST)
-                                  .build();
+                        .error(Error.INVALID_PARAMETER_REQUEST)
+                        .build();
         }
         return ApiResponse.<IssueResponse>builder()
-                          .code(HttpStatus.OK.value())
-                          .message("Update task successfully")
-                          .data(taskMapper.toIssueResponse(task, taskMongo))
-                          .logData(changeLog)
-                          .build();
+                .code(HttpStatus.OK.value())
+                .message("Update task successfully")
+                .data(taskMapper.toIssueResponse(task, taskMongo))
+                .logData(changeLog)
+                .build();
     }
 
     @Transactional
@@ -480,34 +474,34 @@ public class IssueService {
         String sprintId = request.getSprintId();
         String projectId = request.getProjectId();
         if (sprintId == null || sprintId.isEmpty()) {
-//            check relationship
+            // check relationship
             List<Issue> issues = projectService.getProjectById(projectId)
-                                               .getIssues();
+                    .getIssues();
             issues = issues.stream()
-                           .filter(issue -> issue.getSprint() == null)
-                           .toList();
+                    .filter(issue -> issue.getSprint() == null)
+                    .toList();
 
             return buildResponseFromIssues(issues);
         }
 
         Sprint sprint = sprintService.getSprintById(sprintId);
         if (Instant.now()
-                   .isAfter(sprint.getDtEnd())) {
+                .isAfter(sprint.getDtEnd())) {
             List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(projectId, sprintId);
             List<IssueResponse> responses = snapshots.stream()
-                                                     .map(this::buildResponseFromSnapshot)
-                                                     .toList();
+                    .map(this::buildResponseFromSnapshot)
+                    .toList();
             return ApiResponse.<List<IssueResponse>>builder()
-                              .code(HttpStatus.OK.value())
-                              .message("Get issues successfully")
-                              .data(responses)
-                              .build();
+                    .code(HttpStatus.OK.value())
+                    .message("Get issues successfully")
+                    .data(responses)
+                    .build();
         }
 
         List<Issue> issues = taskRepository.findAllByProjectIdAndSprintId(projectId, sprintId)
-                                           .orElseThrow(() -> AppException.builder()
-                                                                          .error(Error.NOT_FOUND)
-                                                                          .build());
+                .orElseThrow(() -> AppException.builder()
+                        .error(Error.NOT_FOUND)
+                        .build());
 
         return buildResponseFromIssues(issues);
     }
@@ -521,65 +515,63 @@ public class IssueService {
         task.setStatus(request.getStatus());
         task.setPosition(request.getPosition());
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[]{"status",
-                                                              "position"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[] { "status",
+                "position" }, task, taskMongo);
         return ApiResponse.<IssueResponse>builder()
-                          .code(HttpStatus.OK.value())
-                          .message("Update task successfully")
-                          .data(taskMapper.toIssueResponse(task, taskMongo))
-                          .logData(changeLog)
-                          .build();
+                .code(HttpStatus.OK.value())
+                .message("Update task successfully")
+                .data(taskMapper.toIssueResponse(task, taskMongo))
+                .logData(changeLog)
+                .build();
     }
-
 
     private IssueResponse buildResponseFromSnapshot(IssueSnapshot snapshot) {
 
         User assignee = Optional.ofNullable(snapshot.getAssignee())
-                                .map(userService::getUserById)
-                                .orElse(null);
+                .map(userService::getUserById)
+                .orElse(null);
         User reviewer = Optional.ofNullable(snapshot.getReviewer())
-                                .map(userService::getUserById)
-                                .orElse(null);
+                .map(userService::getUserById)
+                .orElse(null);
 
         return IssueResponse.builder()
-                            .id(snapshot.getNkTaskId())
-                            .name(snapshot.getName())
-                            .description(snapshot.getDescription())
-                            .status(IssueStatus.fromString(snapshot.getStatus()))
-                            .priority(IssuePriority.fromString(snapshot.getPriority()))
-                            .tag(IssueTag.fromString(snapshot.getTag()))
-                            .position(snapshot.getPosition())
-                            .start(snapshot.getDtStart())
-                            .end(snapshot.getDtEnd())
-                            .assignee(userMapper.toUserDetailDTO(assignee))
-                            .reviewer(userMapper.toUserDetailDTO(reviewer))
-                            .build();
+                .id(snapshot.getNkTaskId())
+                .name(snapshot.getName())
+                .description(snapshot.getDescription())
+                .status(IssueStatus.fromString(snapshot.getStatus()))
+                .priority(IssuePriority.fromString(snapshot.getPriority()))
+                .tag(IssueTag.fromString(snapshot.getTag()))
+                .position(snapshot.getPosition())
+                .start(snapshot.getDtStart())
+                .end(snapshot.getDtEnd())
+                .assignee(userMapper.toUserDetailDTO(assignee))
+                .reviewer(userMapper.toUserDetailDTO(reviewer))
+                .build();
     }
 
     private ApiResponse<List<IssueResponse>> buildResponseFromIssues(List<Issue> issues) {
 
         if (issues.isEmpty()) {
             return ApiResponse.<List<IssueResponse>>builder()
-                              .code(HttpStatus.OK.value())
-                              .message("No task found")
-                              .data(null)
-                              .build();
+                    .code(HttpStatus.OK.value())
+                    .message("No task found")
+                    .data(null)
+                    .build();
         }
 
         List<IssueResponse> responses = issues.stream()
-                                              .map(issue -> {
-                                                  var issueMongo = issueMongoService.getById(issue.getId());
-                                                  return taskMapper.toIssueResponse(issue, issueMongo);
-                                              })
-                                              .toList();
+                .map(issue -> {
+                    var issueMongo = issueMongoService.getById(issue.getId());
+                    return taskMapper.toIssueResponse(issue, issueMongo);
+                })
+                .toList();
 
         return ApiResponse.<List<IssueResponse>>builder()
-                          .code(HttpStatus.OK.value())
-                          .message("Get issues successfully")
-                          .data(responses)
-                          .build();
+                .code(HttpStatus.OK.value())
+                .message("Get issues successfully")
+                .data(responses)
+                .build();
     }
-
 
     public ApiResponse<IssueDetailResponse> getCurrentIssueDetailById(String id) {
 
@@ -587,10 +579,10 @@ public class IssueService {
         var taskMongo = issueMongoService.getById(id);
         var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
         return ApiResponse.<IssueDetailResponse>builder()
-                          .code(HttpStatus.OK.value())
-                          .message("Get task detail successfully")
-                          .data(taskResponse)
-                          .build();
+                .code(HttpStatus.OK.value())
+                .message("Get task detail successfully")
+                .data(taskResponse)
+                .build();
 
     }
 
@@ -598,15 +590,15 @@ public class IssueService {
         Issue issue = getEntityById(request.getIssueId());
         Issue relatedIssue = getEntityById(request.getIssueRelatedId());
         IssueRelation relation = IssueRelation.builder()
-                                              .issue(issue)
-                                              .issueRelated(relatedIssue)
-                                              .typeRelation(request.getTypeRelation())
-                                              .build();
+                .issue(issue)
+                .issueRelated(relatedIssue)
+                .typeRelation(request.getTypeRelation())
+                .build();
         relation = issueRelationRepository.save(relation);
         return ApiResponse.<IssueRelationResponse>builder()
-                          .code(HttpStatus.CREATED.value())
-                          .message("Create relation successfully")
-                          .data(taskMapper.toIssueRelationResponse(relation))
-                          .build();
+                .code(HttpStatus.CREATED.value())
+                .message("Create relation successfully")
+                .data(taskMapper.toIssueRelationResponse(relation))
+                .build();
     }
 }

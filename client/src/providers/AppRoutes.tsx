@@ -14,7 +14,6 @@ import BoardPage from '@/pages/manager/workspace/project/board/page'
 import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import { KanbanDemo } from '@/pages/manager/workspace/project/kaban/page'
 import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
@@ -33,7 +32,6 @@ const AppRoutes = () => {
           <Route index element={<HomePage />} />
           <Route path='home' element={<HomePage />} />
           <Route path='kaban' element={<BoardPage />} />
-          <Route path='kaban1' element={<KanbanDemo />} />
           <Route
             path='auth'
             element={

@@ -1,3 +1,4 @@
+import { sortSprintsByDateStart } from '@/lib/sprint'
 import sprintService from '@/services/sprint.service'
 import { Id } from '@/types/other.type'
 import {
@@ -16,7 +17,7 @@ const sprintApi = createApi({
       async queryFn(arg) {
         try {
           const data = await sprintService.getSprints(arg)
-          return { data: data }
+          return { data: sortSprintsByDateStart(data) }
         } catch (error) {
           return { error }
         }

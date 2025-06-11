@@ -17,6 +17,8 @@ public class Project extends BaseDocument {
     private String description;
     @Field("topics")
     private List<Topic> topics;
+    @Field("position")
+    private Object position;
 
     public Project() {
         super();
@@ -33,6 +35,7 @@ public class Project extends BaseDocument {
         private String nkProjectId;
         private String description;
         private List<Topic> topics;
+        private Object position;
 
         public ProjectBuilder nkProjectId(String nkProjectId) {
             this.nkProjectId = nkProjectId;
@@ -41,6 +44,11 @@ public class Project extends BaseDocument {
 
         public ProjectBuilder description(String description) {
             this.description = description;
+            return this;
+        }
+
+        public ProjectBuilder position(Object position) {
+            this.position = position;
             return this;
         }
 
@@ -53,6 +61,8 @@ public class Project extends BaseDocument {
         protected ProjectBuilder self() {
             return this;
         }
+
+        @Override
 
         public Project build() {
             return new Project(this);
@@ -89,4 +99,13 @@ public class Project extends BaseDocument {
     public void setTopics(List<Topic> topics) {
         this.topics = topics;
     }
+
+    public Object getPosition() {
+        return position;
+    }
+
+    public void setPosition(Object position) {
+        this.position = position;
+    }
+
 }

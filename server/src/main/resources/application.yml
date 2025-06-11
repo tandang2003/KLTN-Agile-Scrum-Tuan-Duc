@@ -33,8 +33,7 @@ spring:
         spring:
           json:
             type:
-              mapping:
-                "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
+              mapping: "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -44,8 +43,7 @@ spring:
             trusted:
               packages: send_project_customer, send_mail
             type:
-              mapping:
-                "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
+              mapping: "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
     bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
 
 springdoc:
@@ -91,10 +89,12 @@ app:
     - /v3/api-docs
     - /v3/api-docs/**
     - /swagger-ui/**
+    - /chat/**
+    - /ws/**
+    - /ws
 
 verify:
   invite-project-link: https://localhost:3000/verify?token=
-
 #kafka:
 #  topic:
 #    send-object-customer:

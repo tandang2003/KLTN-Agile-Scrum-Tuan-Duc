@@ -1,0 +1,32 @@
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { setCurrentSprint } from '@/feature/board/board.slice'
+import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import { Id } from '@/types/other.type'
+import { useEffect } from 'react'
+
+const useBoard = () => {
+  const dispatch = useAppDispatch()
+  const boardSprintCurrent = useAppSelector(
+    (state) => state.boardSlice.currentSprint
+  )
+  const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
+  const { data, isFetching } = useGetWorkspaceQuery(workspaceId as Id, {
+    skip: !workspaceId
+  })
+
+  useEffect(() => {
+    if (data) {
+      dispatch(
+        setCurrentSprint({
+          id: data.currentSprint?.id
+        })
+      )
+    }
+  }, [data])
+  return {
+    isFetching,
+    sprint: boardSprintCurrent
+  }
+}
+
+export default useBoard

@@ -56,8 +56,21 @@ const resourceService = {
     const res = await httpService.post<
       ResponseApi<void>,
       CreateResourceRequestType
-    >('/resource/task/upload', req)
+    >('/resource/issue', req)
     return res.data.data
+  },
+
+  deleteResource: async (resourceId: string) => {
+    // const res = await httpService.delete<ResponseApi<void>>(
+    //   `/resource/${resourceId}`
+    // )
+    // return res.data.data
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.log(`Resource with ID ${resourceId} deleted`)
+        resolve()
+      }, 1000)
+    })
   }
 }
 

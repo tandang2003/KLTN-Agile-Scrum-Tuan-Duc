@@ -44,13 +44,13 @@ export function useAutoUpdateField<K extends FieldKey>({
     }
 
     // Skip when it's transitioning from [] → [item]
-    if (
-      watched == undefined ||
-      watched == null ||
-      (Array.isArray(watched) && watched.length === 0)
-    ) {
-      return
-    }
+    // if (
+    //   watched == undefined ||
+    //   watched == null ||
+    //   (Array.isArray(watched) && watched.length === 0)
+    // ) {
+    //   return
+    // }
 
     if (isRollingBack.current) {
       isRollingBack.current = false
@@ -65,9 +65,7 @@ export function useAutoUpdateField<K extends FieldKey>({
     }
 
     const handle = async () => {
-      console.log(watched)
       const isValid = await trigger(field)
-      console.log('isValid', isValid)
       if (!isValid) return
       try {
         await callApi?.(field, watched)

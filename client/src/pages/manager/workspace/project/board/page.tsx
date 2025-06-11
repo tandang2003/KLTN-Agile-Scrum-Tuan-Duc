@@ -1,74 +1,111 @@
 import Board from '@/components/board/Board'
 import FilterBoard from '@/components/board/FilterBoard'
-import Icon from '@/components/Icon'
-import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
-import LoadingBoundary from '@/components/LoadingBoundary'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { RootState } from '@/context/redux/store'
-import { saveIssues } from '@/feature/board/board.slice'
+import { useAppDispatch } from '@/context/redux/hook'
+import { getPositionThunk, saveIssues } from '@/feature/board/board.slice'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
-import { toBoardModel } from '@/lib/board'
-import { IssueResponse } from '@/types/issue.type'
+import useBoard from '@/hooks/use-board'
+import { toBoardModel } from '@/lib/board.helper'
+import issueService from '@/services/issue.service'
+import { IssueResponse, UpdatePositionIssueRequest } from '@/types/issue.type'
+import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import { cloneDeep } from 'lodash'
-import { useEffect } from 'react'
+import { ComponentProps, useEffect } from 'react'
 
 const BoardPage = () => {
   const { projectId } = useAppId()
+  const { sprint } = useBoard()
   const dispatch = useAppDispatch()
-  const currentSprint = useAppSelector((state) => state.sprintSlice.current)
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
-      sprintId: currentSprint?.id
+      sprintId: sprint?.id as Id
     },
     {
-      skip: !projectId
+      skip: !projectId || !sprint?.id
     }
   )
-  const { isLoading, items } = useAppSelector((state) => state.boardSlice)
 
   useEffect(() => {
     if (!isFetching) {
       dispatch(saveIssues(data))
+      if (projectId) dispatch(getPositionThunk(projectId))
     }
-  }, [data, isFetching])
+  }, [data, isFetching, projectId, dispatch])
+
+  const handleOnMove = (active, over) => {
+    // Same column
+    const id = active.id
+    const status = active.data.current?.sortable.containerId as IssueStatus
+    const indexId = over.data.current?.sortable.index
+    let nextId =
+      indexId === -1 ? null : active.data.current?.sortable.items[indexId + 1]
+    let reqUpdatePrevious: UpdatePositionIssueRequest | null = null
+    if (nextId === undefined && data) {
+      // Check previous item
+      const previousId =
+        indexId === 0 ? null : active.data.current?.sortable.items[indexId - 1]
+      const previousItem = data.find((item) => item.id === previousId)
+
+      if (!previousItem) return
+
+      const previousStatus = previousItem.status as IssueStatus
+      reqUpdatePrevious = {
+        id: previousId,
+        status: previousStatus,
+        position: id
+      }
+    }
+
+    const reqUpdateCurrent: UpdatePositionIssueRequest = {
+      id: id,
+      status: status,
+      position: nextId
+    }
+
+    // update here
+    if (reqUpdatePrevious)
+      Promise.all([
+        issueService.updatePosition(reqUpdatePrevious).then((res) => {
+          console.log('Update previous position:', res)
+        }),
+        issueService.updatePosition(reqUpdateCurrent).then((res) => {
+          console.log('Update current position:', res)
+        })
+      ])
+    else {
+      issueService.updatePosition(reqUpdateCurrent).then((res) => {
+        console.log('Update current position:', res)
+      })
+    }
+  }
 
   return (
     <div>
       <FilterBoard />
+      {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
+      {!isFetching && <RenderBoard data={data} handleOnMove={handleOnMove} />}
+    </div>
+  )
+}
 
-      <LoadingBoundary<IssueResponse[]>
-        data={items}
-        fallback={<div>No result</div>}
-        isLoading={isLoading}
-        loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
-      >
-        {(data) => {
-          const boardData = toBoardModel(cloneDeep(data))
+type RenderBoardProps = {
+  data?: IssueResponse[]
+  handleOnMove?: ComponentProps<typeof Board>['onMove']
+}
 
-          return (
-            <div className='flex-1'>
-              <ScrollArea className='h-full'>
-                <Board
-                  data={boardData}
-                  onMove={({ active, columnTo, indexTo }) => {
-                    console.log('active', active)
-                    console.log('columnTo', columnTo)
-                    console.log('indexTo', indexTo)
-                  }}
-                />
-                <ScrollBar orientation='vertical' />
-                <ScrollBar orientation='horizontal' />
-              </ScrollArea>
-            </div>
-          )
-        }}
-      </LoadingBoundary>
+const RenderBoard = ({ data, handleOnMove }: RenderBoardProps) => {
+  const dataToRender = toBoardModel(cloneDeep(data || []))
+  return (
+    <div className='flex-1'>
+      <ScrollArea className='h-full'>
+        <Board data={dataToRender} onMove={handleOnMove} />
+        <ScrollBar orientation='vertical' />
+        <ScrollBar orientation='horizontal' />
+      </ScrollArea>
     </div>
   )
 }

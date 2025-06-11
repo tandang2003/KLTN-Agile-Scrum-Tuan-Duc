@@ -5,7 +5,8 @@ import {
   CreateIssueRequest,
   IssueDetailResponse,
   IssueResponse,
-  UpdateIssueRequest
+  UpdateIssueRequest,
+  UpdatePositionIssueRequest
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
@@ -43,6 +44,13 @@ const issueService = {
       ResponseApi<IssueDetailResponse>,
       UpdateIssueRequest
     >(`/issue`, req)
+    return res.data.data
+  },
+  updatePosition: async (req: UpdatePositionIssueRequest) => {
+    const res = await httpService.put<
+      ResponseApi<IssueResponse>,
+      UpdatePositionIssueRequest
+    >(`/issue/update-status`, req)
     return res.data.data
   }
 }

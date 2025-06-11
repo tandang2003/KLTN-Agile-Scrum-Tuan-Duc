@@ -154,7 +154,6 @@ const workspaceApi = createApi({
       async queryFn(args) {
         try {
           const data = await workspaceService.getListProject(args)
-          console.log(data)
           return { data: data }
         } catch (error) {
           return { error }

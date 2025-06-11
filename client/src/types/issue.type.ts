@@ -23,7 +23,8 @@ type SubTaskResponse = {
 
 type AttachmentResponse = {
   id: string
-  resourceId: string
+  name: string
+  url: string
 }
 
 type UserDetail = {
@@ -42,12 +43,12 @@ type IssueResponse = {
   status: IssueStatus
   priority: IssuePriority
   tag: IssueTag
-  position: number
-  assignee: UserDetail
-  reviewer: UserDetail
+  position: string
+  assignee?: UserDetail
+  reviewer?: UserDetail
   topics?: TopicResponse[]
   subTasks?: SubTaskResponse[]
-  attachments: AttachmentResponse[]
+  resources?: AttachmentResponse[]
   start?: Date
   end?: Date
 }
@@ -84,7 +85,7 @@ type TopicModelType = z.infer<typeof TopicModelSchema>
 const BaseIssueSchema = z
   .object({
     description: string,
-    sprintId: z.string().nullable(),
+    sprintId: z.string().optional(),
     status: string,
     priority: z.enum(issuePriorityList),
     tag: z.enum(issueTagList),
@@ -99,7 +100,15 @@ const BaseIssueSchema = z
     name: string
   })
 
-const CreateIssueSchema = BaseIssueSchema
+const CreateIssueSchema = BaseIssueSchema.extend({
+  sprint: z
+    .object({
+      id: z.string(),
+      start: z.coerce.date().optional(),
+      end: z.coerce.date().optional()
+    })
+    .optional()
+})
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
   id: string,
@@ -133,6 +142,12 @@ type UpdateIssueRequest = {
   end?: Date
 } & UpdateIssueType
 
+type UpdatePositionIssueRequest = {
+  id: Id
+  position?: string
+  status: IssueStatus
+}
+
 export {
   BaseIssueSchema,
   CreateIssueSchema,
@@ -148,5 +163,6 @@ export type {
   KeyOfFieldChangingIssue,
   TopicModelType,
   UpdateIssueRequest,
-  UpdateIssueType
+  UpdateIssueType,
+  UpdatePositionIssueRequest
 }
