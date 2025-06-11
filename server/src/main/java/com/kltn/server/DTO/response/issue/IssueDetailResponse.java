@@ -26,7 +26,7 @@ public class IssueDetailResponse {
     private IssuePriority priority;
     private IssueTag tag;
     private List<TopicResponse> topics;
-    private List<SubTaskResponse> subTasks;
+    private List<SubTaskResponse> subtasks;
     private int complexOfDescription;
     private Instant dtStart;
     private Instant dtEnd;
@@ -49,7 +49,7 @@ public class IssueDetailResponse {
         private IssuePriority priority;
         private IssueTag tag;
         private List<TopicResponse> topics;
-        private List<SubTaskResponse> subTasks;
+        private List<SubTaskResponse> subtasks;
         private int complexOfDescription;
         private Instant dtStart;
         private Instant dtEnd;
@@ -110,8 +110,8 @@ public class IssueDetailResponse {
             return this;
         }
 
-        public IssueDetailResponseBuilder subTasks(List<SubTaskResponse> subTasks) {
-            this.subTasks = subTasks;
+        public IssueDetailResponseBuilder subtasks(List<SubTaskResponse> subtasks) {
+            this.subtasks = subtasks;
             return this;
         }
 
@@ -156,7 +156,7 @@ public class IssueDetailResponse {
         this.storyPoint = builder.storyPoint;
         this.status = builder.status;
         this.priority = builder.priority;
-        this.subTasks = builder.subTasks;
+        this.subtasks = builder.subtasks;
         this.tag = builder.tag;
         this.topics = builder.topics;
         this.complexOfDescription = builder.complexOfDescription;
@@ -273,12 +273,12 @@ public class IssueDetailResponse {
         this.assignee = assignee;
     }
 
-    public List<SubTaskResponse> getSubTasks() {
-        return subTasks;
+    public List<SubTaskResponse> getSubtasks() {
+        return subtasks;
     }
 
-    public void setSubTasks(List<SubTaskResponse> subTasks) {
-        this.subTasks = subTasks;
+    public void setSubtasks(List<SubTaskResponse> subtasks) {
+        this.subtasks = subtasks;
     }
 
     public Instant getDtStart() {

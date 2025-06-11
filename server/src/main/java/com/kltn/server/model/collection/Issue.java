@@ -19,7 +19,7 @@ public class Issue extends BaseDocument {
     @Field("topics")
     private List<Topic> topics;
     @Field("subTasks")
-    private List<SubTask> subTasks;
+    private List<SubTask> subtasks;
     @Field("attachments")
     private List<Attachment> attachment;
     @Field("comments")
@@ -31,7 +31,7 @@ public class Issue extends BaseDocument {
         this.description = issueBuilder.description;
         this.topics = issueBuilder.topics;
         this.attachment = issueBuilder.attachment;
-        this.subTasks = issueBuilder.subTasks;
+        this.subtasks = issueBuilder.subtasks;
         this.comments = issueBuilder.comment;
     }
 
@@ -48,7 +48,7 @@ public class Issue extends BaseDocument {
         private List<Topic> topics;
         private List<Attachment> attachment;
         private List<Comment> comment;
-        private List<SubTask> subTasks;
+        private List<SubTask> subtasks;
 
 
         public IssueBuilder nkTaskId(String nkTaskId) {
@@ -76,8 +76,8 @@ public class Issue extends BaseDocument {
             return this;
         }
 
-        public IssueBuilder subTasks(List<SubTask> subTasks) {
-            this.subTasks = subTasks;
+        public IssueBuilder subtasks(List<SubTask> subtasks) {
+            this.subtasks = subtasks;
             return this;
         }
 
@@ -115,12 +115,12 @@ public class Issue extends BaseDocument {
         this.topics = topics;
     }
 
-    public List<SubTask> getSubTasks() {
-        return subTasks;
+    public List<SubTask> getSubtasks() {
+        return subtasks;
     }
 
-    public void setSubTasks(List<SubTask> subTasks) {
-        this.subTasks = subTasks;
+    public void setSubtasks(List<SubTask> subtasks) {
+        this.subtasks = subtasks;
     }
 
     public List<Attachment> getAttachment() {

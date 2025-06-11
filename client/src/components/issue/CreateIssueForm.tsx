@@ -72,18 +72,17 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
       projectId: projectId,
       ...values
     }
-    console.log(req)
-    // create(req)
-    //   .unwrap()
-    //   .then((response) => {
-    //     toast.success('Create issue success', {
-    //       description: `Issue - ${response.name}`
-    //     })
-    //   })
-    //   .catch((_) => toast.error('Create issue failed'))
-    //   .finally(() => {
-    //     onSubmit?.()
-    //   })
+    create(req)
+      .unwrap()
+      .then((response) => {
+        toast.success('Create issue success', {
+          description: `Issue - ${response.name}`
+        })
+      })
+      .catch((_) => toast.error('Create issue failed'))
+      .finally(() => {
+        onSubmit?.()
+      })
   }
   return (
     <Form {...form}>

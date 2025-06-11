@@ -14,10 +14,9 @@ import {
 } from '@/components/ui/select'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
-import { stringToDate } from '@/types/common.type'
 import { CreateIssueType } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { useFormContext, UseFormReturn } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 type SelectSprintProps = {
   label?: string
 }
