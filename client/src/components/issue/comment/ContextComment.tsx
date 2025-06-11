@@ -44,7 +44,11 @@ export const ProviderCommentProvider = ({
   const [isReady, setIsReady] = useState<boolean>(false)
   const ws = useRef<CompatClient>(null)
   const [comment, setComment] = useState<CommentResType[]>(initValue)
-
+  useEffect(() => {
+    if (initValue) {
+      setComment(initValue)
+    }
+  }, [initValue])
   useEffect(() => {
     const headers = {
       Authorization: `Bearer ${accessToken}`
@@ -52,9 +56,15 @@ export const ProviderCommentProvider = ({
     const socket = new SockJS(`${envConfig.BACKEND_URL}/ws`)
     const stompClient = Stomp.over(socket)
     stompClient.connectHeaders = headers
+    stompClient.reconnectDelay = 5000
     stompClient.onConnect = () => {
       console.log('Connected to WebSocket')
       setIsReady(stompClient.connected)
+    }
+
+    stompClient.onStompError = (frame) => {
+      console.error('Broker reported error: ' + frame.headers['message'])
+      console.error('Additional details: ' + frame.body)
     }
 
     stompClient.onDisconnect = () => {
