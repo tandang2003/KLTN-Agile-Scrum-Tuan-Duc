@@ -71,7 +71,6 @@ const SelectSprint = ({ label }: SelectSprintProps) => {
                 const isDisabled = workspace?.currentSprint
                   ? item.start < workspace.currentSprint.start
                   : false
-                console.log(isDisabled)
                 return (
                   <SelectItem
                     key={item.id}
