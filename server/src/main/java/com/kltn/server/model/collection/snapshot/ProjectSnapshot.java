@@ -22,7 +22,11 @@ public class ProjectSnapshot {
         this.sprintId = projectSnapshotBuilder.sprintId;
         this.issues = projectSnapshotBuilder.issues;
     }
-    public static ProjectSnapshotBuilder builder() {
+
+  public ProjectSnapshot() {
+  }
+
+  public static ProjectSnapshotBuilder builder() {
         return new ProjectSnapshotBuilder();
     }
 
