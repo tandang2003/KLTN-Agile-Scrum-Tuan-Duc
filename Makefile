@@ -1,4 +1,4 @@
-.PHONY: up down
+.PHONY: up down server client
 
 up:
 	( \
@@ -16,4 +16,16 @@ down:
 		make mysql_stop && \
 		make redis_stop && \
 		make mongo_stop \
+	)
+
+server:
+	(\
+		cd ./server && \
+		./gradlew bootRun \
+	)
+
+client :
+	(\
+		cd ./client && \
+		npm run dev \
 	)

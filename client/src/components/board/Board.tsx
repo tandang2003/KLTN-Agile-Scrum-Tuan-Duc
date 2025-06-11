@@ -3,6 +3,7 @@ import Column from '@/components/board/Column'
 import { BoardModelType, ColumnModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import {
+  Active,
   closestCorners,
   defaultDropAnimationSideEffects,
   DndContext,
@@ -11,6 +12,7 @@ import {
   DragOverlay,
   DragStartEvent,
   DropAnimation,
+  Over,
   PointerSensor,
   useSensor,
   useSensors
@@ -22,15 +24,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type BoardProps = {
   data: BoardModelType
-  onMove?: ({
-    active,
-    columnTo,
-    indexTo
-  }: {
-    active: Id
-    columnTo: Id
-    indexTo: Id
-  }) => void
+  onMove?: (active: Active, over: Over) => void
 }
 
 const Board = ({ data: board, onMove }: BoardProps) => {
@@ -246,22 +240,14 @@ const Board = ({ data: board, onMove }: BoardProps) => {
           }
         }
       }
-      console.log({
-        active: activeItemRef.current,
-        columnTo: activeNewColumn.current,
-        indexTo: activeNewIndex.current
-      })
-      if (
-        activeItemRef.current &&
-        activeNewColumn.current &&
-        activeNewIndex.current
-      ) {
-        onMove?.({
-          active: activeItemRef.current,
-          columnTo: activeNewColumn.current,
-          indexTo: activeNewIndex.current
-        })
-      }
+      onMove?.(active, over)
+      // if (
+      //   activeItemRef.current &&
+      //   activeNewColumn.current &&
+      //   activeNewIndex.current
+      // ) {
+
+      // }
       clearState()
     },
     [findColumn, data, onMove, activeNewIndex]
@@ -277,11 +263,11 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     activeNewIndex.current = null
     activeNewColumn.current = null
   }
-  // useEffect(() => {
-  //   console.log(data.columns)
-  // }, [data.columns])
 
-  // console.log(activeDragTypeRef.current === 'card', activeItemData)
+  useEffect(() => {
+    setData(board)
+  }, [board])
+
   return (
     <DndContext
       sensors={sensors}
@@ -293,7 +279,11 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     >
       <div className='flex bg-transparent'>
         {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
-          <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
+          <SortableContext
+            key={keyColumn}
+            id={keyColumn}
+            items={valueColumn.cardIds ?? []}
+          >
             <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
               <Column
                 id={keyColumn}

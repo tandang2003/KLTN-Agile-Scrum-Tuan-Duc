@@ -16,33 +16,16 @@ import {
 } from '@/components/ui/command'
 import { cn, uuid } from '@/lib/utils'
 import { TopicModelType, UpdateIssueType } from '@/types/issue.type'
-import { TopicModel } from '@/types/model/common.model'
 import { useCommandState } from 'cmdk'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 type UpdateTopicProps = {}
 
-const topicData: TopicModel[] = [
-  {
-    id: '1',
-    name: 'SQL'
-  },
-  {
-    id: '2',
-    name: 'JAVA'
-  },
-  {
-    id: '3',
-    name: 'TYPESCRIPT'
-  }
-]
-
 const UpdateTopicForm = ({}: UpdateTopicProps) => {
   const form = useFormContext<UpdateIssueType>()
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
-
   const { control, getValues } = form
 
   const { fields, append, remove } = useFieldArray({
@@ -50,8 +33,8 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
     name: 'topics'
   })
 
-  const [data, setData] = useState<TopicModelType[]>(topicData)
-  const [selecteds, setSelecteds] = useState<TopicModelType[]>(
+  const [searchTerm, setSearchTerm] = useState('')
+  const [data, setData] = useState<TopicModelType[]>(
     fields.map((item) => {
       return {
         id: item.id,
@@ -60,13 +43,23 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
     })
   )
 
+  const [selecteds, setSelecteds] = useState<TopicModelType[]>(
+    ...[
+      fields.map((item) => {
+        return {
+          id: item.id,
+          name: item.name
+        }
+      })
+    ]
+  )
+
   useAutoUpdateField({
     form: form,
     field: 'topics',
     deps: [isPopoverOpen],
     isPause: (_, __) => {
-      if (isPopoverOpen) return true
-      return false
+      return isPopoverOpen
     },
     callApi: (field, value) => {
       return issueService.updateIssue({
@@ -84,6 +77,18 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
     }
   })
 
+  const handleAddTopic = (field: TopicModelType) => {
+    setData((prev) => [...prev, field])
+    setSelecteds((prev) => [...prev, field])
+    append({
+      id: field.id,
+      name: field.name
+    })
+    setSearchTerm?.('')
+  }
+  // useEffect(() => {
+  //   console.log('isPopoverOpen', isPopoverOpen)
+  // }, [isPopoverOpen])
   return (
     <FormField
       control={control}
@@ -111,11 +116,19 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
                   return 0
                 }}
               >
-                <CommandInput placeholder='Search items...' />
-                <CommandCreateButton setData={setData} />
+                <CommandInput
+                  value={searchTerm}
+                  onValueChange={setSearchTerm}
+                  placeholder='Search items...'
+                />
+                <CommandCreateButton
+                  onAddTopic={(field) => {
+                    handleAddTopic(field)
+                  }}
+                />
                 <CommandList>
                   {data.map((item) => {
-                    const isSelected = fields
+                    const isSelected = selecteds
                       .map((field) => field.name)
                       .includes(item.name)
                     return (
@@ -127,12 +140,23 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
                             (field) => field.name === value
                           )
                           if (index > -1) {
+                            setSelecteds((prev) => [
+                              ...prev.filter((field) => field.name !== value)
+                            ])
                             remove(index)
                           } else {
-                            const selected = topicData.find(
+                            const selected = data.find(
                               (topic) => topic.name === value
                             )
                             if (selected) {
+                              setSelecteds((prev) => [
+                                ...prev,
+                                {
+                                  id: selected.id,
+                                  name: selected.name
+                                }
+                              ])
+
                               append({
                                 id: selected.id,
                                 name: selected.name
@@ -163,25 +187,11 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
 }
 
 type CommandCreateButtonProps = {
-  setData: React.Dispatch<
-    React.SetStateAction<
-      {
-        id: string
-        name: string
-      }[]
-    >
-  >
+  onAddTopic(topic: TopicModelType): void
 }
-const CommandCreateButton = ({ setData }: CommandCreateButtonProps) => {
+const CommandCreateButton = ({ onAddTopic }: CommandCreateButtonProps) => {
   const search = useCommandState((state) => state.search)
-  const form = useFormContext<UpdateIssueType>()
 
-  const { control } = form
-
-  const { append } = useFieldArray({
-    control: control,
-    name: 'topics'
-  })
   return (
     <CommandEmpty
       className='hover:bg-accent flex px-1.5 py-2 pl-8 hover:cursor-pointer'
@@ -190,8 +200,7 @@ const CommandCreateButton = ({ setData }: CommandCreateButtonProps) => {
           id: uuid(),
           name: search
         }
-        append(field)
-        setData((prev) => [...prev, field])
+        onAddTopic(field)
       }}
     >
       <div>{search}</div>

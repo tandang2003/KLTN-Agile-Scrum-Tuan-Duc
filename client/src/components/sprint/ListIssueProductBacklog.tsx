@@ -1,6 +1,5 @@
 import ListView from '@/components/ListView'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
@@ -58,12 +57,9 @@ const ListIssueProductBacklog = () => {
               {item.id}
             </ToolTip>
 
-            <div className='mr-3 ml-auto'>
-              <Badge status={item.status}>{item.status}</Badge>
-            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Icon icon={'ri:more-fill'} />
+                <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
                 <DropdownMenuItem onClick={handleUpdate}>Edit</DropdownMenuItem>

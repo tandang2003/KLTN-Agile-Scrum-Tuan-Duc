@@ -39,7 +39,6 @@ const InlineEdit = <T,>({
   const inputRef = useRef<any>(null)
 
   const handleBlur = () => {
-    console.log('blur')
     setEditing(false)
     if (value !== initialValue) {
       if (validate && !validate(value)) {

@@ -62,8 +62,8 @@ const Column = ({ id, name, items }: ColumnProps) => {
                 data={{ ...item }}
                 container={cn('mt-2 bg-white')}
                 onClick={() => {
-                  dispatch(enableUpdateIssue())
                   dispatch(setCurrentIssue(item.id))
+                  dispatch(enableUpdateIssue())
                 }}
               />
             )

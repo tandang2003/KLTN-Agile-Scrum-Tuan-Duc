@@ -1,11 +1,11 @@
 import Editor from '@/components/Editor'
-import SelectMember from '@/components/issue/SelectMember'
 import SelectEnum from '@/components/issue/SelectEnum'
-import SelectSprint from '@/components/issue/SelectSprint'
+import SelectMember from '@/components/issue/SelectMember'
+import SelectSprint from '@/components/issue/createFields/SelectSprint'
+import CreateDateIssueForm from '@/components/issue/createFields/CreateDateIssueForm'
 import CreateSubTaskForm from '@/components/issue/createFields/CreateSubTaskForm'
 import CreateTopicForm from '@/components/issue/createFields/CreateTopicForm'
 import { Button } from '@/components/ui/button'
-import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
   Form,
   FormControl,
@@ -22,54 +22,37 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { RootState } from '@/context/redux/store'
 import { useCreateIssueMutation } from '@/feature/issue/issue.api'
-import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
-import { setCurrentSprint } from '@/feature/sprint/sprint.slice'
 import useAppId from '@/hooks/use-app-id'
 import {
-  BaseIssueFormType,
-  BaseIssueSchema,
   CreateIssueRequest,
+  CreateIssueSchema,
   CreateIssueType
 } from '@/types/issue.type'
 import { issuePriorityList, issueTagList } from '@/types/model/typeOf'
-import { Id } from '@/types/other.type'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { useEffect } from 'react'
 type CreateIssueFormProps = {
   onSubmit?: () => void
 }
 
 const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
-  const dispatch = useAppDispatch()
-  const { workspaceId, projectId } = useAppId()
-  const sprintCurrent = useAppSelector(
-    (state: RootState) => state.sprintSlice.current
-  )
-  const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
-    skip: !workspaceId
-  })
+  const { projectId } = useAppId()
 
   const [create] = useCreateIssueMutation()
 
-  const form = useForm<BaseIssueFormType>({
-    resolver: zodResolver(BaseIssueSchema),
+  const form = useForm<CreateIssueType>({
+    resolver: zodResolver(CreateIssueSchema),
     defaultValues: {
-      sprintId: sprintCurrent?.id,
       priority: 'CRITICAL',
       tag: 'THEORY',
       date: undefined
     }
   })
 
-  const value = useWatch({
-    control: form.control,
-    name: 'sprintId'
-  })
+  const { getValues } = form
 
   useEffect(() => {
     console.log(form.getValues())
@@ -83,40 +66,24 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     }
   }, [form.formState.errors])
 
-  useEffect(() => {
-    const selectedSprint = sprints?.find((item) => item.id === value)
-
-    if (selectedSprint)
-      dispatch(
-        setCurrentSprint({
-          id: selectedSprint.id,
-          start: new Date(selectedSprint.start).toISOString(),
-          end: new Date(selectedSprint.end).toISOString()
-        })
-      )
-    else {
-      dispatch(setCurrentSprint(undefined))
-    }
-  }, [value])
-
   const handleSubmit = (values: CreateIssueType) => {
     if (!projectId) return
     const req: CreateIssueRequest = {
       projectId: projectId,
-      sprintId: sprintCurrent?.id,
       ...values
     }
-    create(req)
-      .unwrap()
-      .then((response) => {
-        toast.success('Create issue success', {
-          description: `Issue - ${response.name}`
-        })
-      })
-      .catch((_) => toast.error('Create issue failed'))
-      .finally(() => {
-        onSubmit?.()
-      })
+    console.log(req)
+    // create(req)
+    //   .unwrap()
+    //   .then((response) => {
+    //     toast.success('Create issue success', {
+    //       description: `Issue - ${response.name}`
+    //     })
+    //   })
+    //   .catch((_) => toast.error('Create issue failed'))
+    //   .finally(() => {
+    //     onSubmit?.()
+    //   })
   }
   return (
     <Form {...form}>
@@ -156,69 +123,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
           </div>
           <div className='basis-[450px] [&>*:not(:first-child)]:mt-3'>
             <div className='flex gap-3'>
-              <FormField
-                control={form.control}
-                name='date.from'
-                render={({ field }) => (
-                  <FormItem className=''>
-                    <FormLabel>Time start</FormLabel>
-                    <DatePickerWithPresets
-                      min={
-                        sprintCurrent?.start
-                          ? new Date(sprintCurrent.start)
-                          : undefined
-                      }
-                      max={
-                        sprintCurrent?.end
-                          ? new Date(sprintCurrent.end)
-                          : undefined
-                      }
-                      date={field.value}
-                      setDate={(date) => {
-                        if (date) {
-                          field.onChange(date)
-                        }
-                      }}
-                    />
-                    <div className='h-[20px]'>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='date.to'
-                render={({ field }) => {
-                  return (
-                    <FormItem className=''>
-                      <FormLabel>Time end</FormLabel>
-                      <DatePickerWithPresets
-                        date={field.value}
-                        min={
-                          sprintCurrent?.start
-                            ? new Date(sprintCurrent.start)
-                            : undefined
-                        }
-                        max={
-                          sprintCurrent?.end
-                            ? new Date(sprintCurrent.end)
-                            : undefined
-                        }
-                        setDate={(date) => {
-                          if (date) {
-                            field.onChange(date)
-                          }
-                        }}
-                      />
-                      <div className='h-[20px]'>
-                        <FormMessage />
-                      </div>
-                    </FormItem>
-                  )
-                }}
-              />
+              <CreateDateIssueForm />
             </div>
             <div className='grid grid-cols-2 grid-rows-2 gap-3'>
               <FormField
@@ -303,11 +208,7 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
                 data={issueTagList}
               />
             </div>
-            <SelectSprint
-              control={form.control}
-              name='sprintId'
-              label='Sprint'
-            />
+            <SelectSprint label='Sprint' />
 
             <CreateTopicForm />
           </div>

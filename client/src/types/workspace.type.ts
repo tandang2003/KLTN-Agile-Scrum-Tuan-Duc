@@ -4,6 +4,7 @@ import { ProjectModel } from '@/types/model/project.model'
 import { UserModel } from '@/types/model/user.model'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
+import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
 
 const CreateWorkspaceSchema = z.object({
@@ -52,7 +53,9 @@ type WorkspaceResponse = Pick<
   | 'end'
   | 'timePerSprint'
   | 'sprintNum'
->
+> & {
+  currentSprint: SprintResponse
+}
 
 type WorkspaceCardResponse = {
   id: Id
