@@ -1,6 +1,4 @@
-import commentService from '@/services/comment.service'
 import issueService from '@/services/issue.service'
-import { CommentResType } from '@/types/comment.type'
 import {
   CreateIssueRequest,
   IssueDetailResponse,
