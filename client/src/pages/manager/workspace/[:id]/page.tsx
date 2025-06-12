@@ -98,13 +98,8 @@ const WorkspaceDetailPage = () => {
             </RequiredAuth>
             <TabsTrigger value='student'>Student</TabsTrigger>
           </TabsList>
-          {projectId && user?.role === 'student' ? (
-            <Button variant='default' size='sm' asChild>
-              <NavLink to={`/manager/workspace/project/${projectId}`}>
-                Your Project
-              </NavLink>
-            </Button>
-          ) : (
+
+          {!projectId && user?.role === 'student' && (
             <Button
               variant='default'
               size='sm'
@@ -112,6 +107,13 @@ const WorkspaceDetailPage = () => {
             >
               <PlusIcon />
               New Group
+            </Button>
+          )}
+          {projectId && user?.role === 'student' && (
+            <Button variant='default' size='sm' asChild>
+              <NavLink to={`/manager/workspace/project/${projectId}`}>
+                Your Project
+              </NavLink>
             </Button>
           )}
         </div>

@@ -33,7 +33,6 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
     resolver: zodResolver(UpdateWorkspaceSchema),
     defaultValues: {
       description: data.description,
-      sprintNum: data.sprintNum,
       date: {
         from: new Date(data.start),
         to: new Date(data.end)
@@ -46,7 +45,6 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
       workspaceId: data.id,
       payload: {
         description: values.description,
-        sprintNum: values.sprintNum,
         end: values.date.to
       }
     })
@@ -79,36 +77,6 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
               <FormMessage />
             </FormItem>
             <div className='flex gap-5 [&>*]:flex-1'>
-              <FormField
-                control={form.control}
-                name='sprintNum'
-                render={({ field }) => (
-                  <FormItem className='mt-4'>
-                    <FormLabel>Quantity of Sprint</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='number'
-                        {...field}
-                        onChange={(event) =>
-                          form.setValue('sprintNum', event.target.valueAsNumber)
-                        }
-                      />
-                    </FormControl>
-                    <div className='h-[20px]'>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormItem className='mt-4'>
-                <FormLabel>Time per sprint</FormLabel>
-                <FormControl>
-                  <Input disabled value={data.timePerSprint} />
-                </FormControl>
-                <div className='h-[20px]'></div>
-              </FormItem>
-
               <FormItem className='mt-4'>
                 <FormLabel>Time start</FormLabel>
                 <FormControl>

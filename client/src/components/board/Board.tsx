@@ -1,6 +1,10 @@
 import Card from '@/components/board/Card'
 import Column from '@/components/board/Column'
-import { BoardModelType, ColumnModelType } from '@/types/card.type'
+import {
+  BoardModelType,
+  CardModelType,
+  ColumnModelType
+} from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import {
   Active,
@@ -48,6 +52,31 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       styles: { active: { opacity: '0.5' } }
     })
   }
+
+  const renderColumn = useCallback(
+    ([keyColumn, valueColumn]: [Id, ColumnModelType]) => {
+      const cardsInColumn = valueColumn.cardIds
+        .map((cardId) => data.cards.find((card) => card.id === cardId))
+        .filter((card): card is CardModelType => card !== undefined)
+
+      return (
+        <SortableContext
+          key={keyColumn}
+          id={keyColumn}
+          items={valueColumn.cardIds}
+        >
+          <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
+            <Column
+              id={keyColumn}
+              name={valueColumn.name}
+              items={cardsInColumn}
+            />
+          </div>
+        </SortableContext>
+      )
+    },
+    [data.cards] // Only rerun if cards list changes
+  )
 
   const activeItemData = useMemo(() => {
     if (!activeItemRef.current) return undefined
@@ -278,26 +307,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       onDragCancel={handleDragCancel}
     >
       <div className='flex bg-transparent'>
-        {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
-          <SortableContext
-            key={keyColumn}
-            id={keyColumn}
-            items={valueColumn.cardIds ?? []}
-          >
-            <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
-              <Column
-                id={keyColumn}
-                name={valueColumn.name}
-                items={valueColumn.cardIds
-                  .map((cardId) =>
-                    data.cards.find((card) => card.id === cardId)
-                  )
-                  .filter((item) => item !== undefined)}
-                key={keyColumn}
-              />
-            </div>
-          </SortableContext>
-        ))}
+        {Object.entries(data.columns).map(renderColumn)}
       </div>
       <DragOverlay dropAnimation={dropAnimation}>
         {activeDragTypeRef.current === 'card' && activeItemData && (
