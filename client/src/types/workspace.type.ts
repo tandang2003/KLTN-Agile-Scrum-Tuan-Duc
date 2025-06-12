@@ -10,7 +10,6 @@ import { z } from 'zod'
 const CreateWorkspaceSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  timePerSprint: z.number().positive(),
   date: dateRange.refine((data) => data.from <= data.to, {
     message: 'Date end need after date start',
     path: ['to']
@@ -19,7 +18,6 @@ const CreateWorkspaceSchema = z.object({
 
 const UpdateWorkspaceSchema = z.object({
   description: z.string().optional(),
-  sprintNum: z.number().positive(),
   date: z
     .object({
       from: z.date(),

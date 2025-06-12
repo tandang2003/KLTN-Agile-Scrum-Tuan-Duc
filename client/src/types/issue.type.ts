@@ -108,7 +108,8 @@ const CreateIssueSchema = BaseIssueSchema.extend({
       start: z.coerce.date().optional(),
       end: z.coerce.date().optional()
     })
-    .optional()
+    .optional(),
+  position: z.number().optional()
 })
 
 const UpdateIssueSchema = BaseIssueSchema.extend({

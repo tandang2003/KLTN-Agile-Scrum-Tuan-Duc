@@ -1,6 +1,5 @@
 package com.kltn.server.model.entity;
 
-
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import jakarta.persistence.*;
@@ -19,7 +18,7 @@ public class Workspace extends BaseEntity {
   private String description;
   @Transient
   private int sprintNum;
-  //    private int timePerSprint;
+  // private int timePerSprint;
   private Instant start;
   private Instant end;
   @ManyToOne
@@ -39,7 +38,7 @@ public class Workspace extends BaseEntity {
     this.description = workspaceBuilder.description;
     this.owner = workspaceBuilder.owner;
     this.sprintNum = workspaceBuilder.sprintNum;
-//        this.timePerSprint = workspaceBuilder.timePerSprint;
+    // this.timePerSprint = workspaceBuilder.timePerSprint;
     this.start = workspaceBuilder.start;
     this.end = workspaceBuilder.end;
     this.sprints = workspaceBuilder.sprints;
@@ -56,8 +55,13 @@ public class Workspace extends BaseEntity {
       return false;
     if (!super.equals(o))
       return false;
-    return Objects.equals(name, workspace.name) && Objects.equals(description, workspace.description) && Objects.equals(
-      start, workspace.start) && Objects.equals(end, workspace.end) && Objects.equals(owner, workspace.owner);
+    return Objects.equals(name, workspace.name) && Objects.equals(description,
+        workspace.description)
+        && Objects.equals(start,
+            workspace.start)
+        && Objects.equals(
+            end, workspace.end)
+        && Objects.equals(owner, workspace.owner);
   }
 
   @Override
@@ -70,7 +74,7 @@ public class Workspace extends BaseEntity {
     private String description;
     private User owner;
     private int sprintNum;
-    //        private int timePerSprint;
+    // private int timePerSprint;
     private Instant start;
     private Instant end;
     private List<Sprint> sprints;
@@ -92,7 +96,6 @@ public class Workspace extends BaseEntity {
       return this;
     }
 
-
     public WorkspaceEntityBuilder sprintNum(int sprintNum) {
       this.sprintNum = sprintNum;
       return this;
@@ -113,10 +116,10 @@ public class Workspace extends BaseEntity {
       return this;
     }
 
-//        public WorkspaceEntityBuilder timePerSprint(int timePerSprint) {
-//            this.timePerSprint = timePerSprint;
-//            return this;
-//        }
+    // public WorkspaceEntityBuilder timePerSprint(int timePerSprint) {
+    // this.timePerSprint = timePerSprint;
+    // return this;
+    // }
 
     public WorkspaceEntityBuilder description(String description) {
       this.description = description;
@@ -138,10 +141,9 @@ public class Workspace extends BaseEntity {
       return this;
     }
 
-
   }
 
-  //getter/setter section
+  // getter/setter section
   public String getName() {
     return name;
   }
@@ -167,17 +169,17 @@ public class Workspace extends BaseEntity {
   }
 
   public int getSprintNum() {
-    sprintNum = sprints == null ? 0 : sprints.size();
+    sprintNum = sprints.size();
     return sprintNum;
   }
 
-//    public int getTimePerSprint() {
-//        return timePerSprint;
-//    }
-//
-//    public void setTimePerSprint(int timePerSprint) {
-//        this.timePerSprint = timePerSprint;
-//    }
+  // public int getTimePerSprint() {
+  // return timePerSprint;
+  // }
+  //
+  // public void setTimePerSprint(int timePerSprint) {
+  // this.timePerSprint = timePerSprint;
+  // }
 
   public Instant getStart() {
     return start;
@@ -207,16 +209,16 @@ public class Workspace extends BaseEntity {
   @Transient
   public Set<User> getMembers() {
     return workspacesUserProjects.stream()
-                                 .map(WorkspacesUsersProjects::getUser)
-                                 .collect(java.util.stream.Collectors.toSet());
+        .map(WorkspacesUsersProjects::getUser)
+        .collect(java.util.stream.Collectors.toSet());
   }
 
   @Transient
   public Set<Project> getProjects() {
     return workspacesUserProjects.stream()
-                                 .map(WorkspacesUsersProjects::getProject)
-                                 .filter(Objects::nonNull)
-                                 .collect(Collectors.toSet());
+        .map(WorkspacesUsersProjects::getProject)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
   }
 
   public List<Sprint> getSprints() {

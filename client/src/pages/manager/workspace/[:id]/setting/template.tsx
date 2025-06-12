@@ -29,21 +29,26 @@ const TemplateTab = () => {
 
   return (
     <div>
-      <Button
-        variant='default'
-        size='sm'
-        onClick={() => {
-          dispatch(openDialogCreateSprint())
-        }}
-      >
-        <PlusIcon />
-        Create Sprint
-      </Button>
+      <div className='my-2 flex justify-end'>
+        <Button
+          className=''
+          variant='default'
+          size='sm'
+          onClick={() => {
+            dispatch(openDialogCreateSprint())
+          }}
+        >
+          <PlusIcon />
+          Create Sprint
+        </Button>
+      </div>
 
       <LoadingBoundary<SprintModel[]>
         data={data}
         isLoading={isFetching}
-        fallback={'No sprint found'}
+        fallback={
+          <div className='mt-4'>No sprint found, please create sprint</div>
+        }
       >
         {(data) => {
           return <SprintTemplate ref={workspaceRef} sprints={data} />
