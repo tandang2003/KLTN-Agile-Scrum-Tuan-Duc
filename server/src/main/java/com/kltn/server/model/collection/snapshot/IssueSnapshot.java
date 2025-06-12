@@ -1,18 +1,64 @@
 package com.kltn.server.model.collection.snapshot;
 
-import com.kltn.server.model.collection.model.Attachment;
-import com.kltn.server.model.collection.model.Comment;
-import com.kltn.server.model.collection.model.SubTask;
-import com.kltn.server.model.collection.model.Topic;
-import com.kltn.server.model.entity.Resource;
-import com.kltn.server.model.type.task.IssueStatus;
+import com.kltn.server.model.collection.model.*;
 
 import java.time.Instant;
 import java.util.List;
 
 public class IssueSnapshot {
+  private String nkTaskId;
+  private String name;
+  private String description;
+  private List<Topic> topics;
+  private String assignee;
+  private String reviewer;
+  private String status;
+  private String priority;
+  private String tag;
+  private Instant dtStart;
+  private Instant dtEnd;
+  private Instant dtPlanning;
+  private int complexOfDescription;
+  private List<SubTask> subtasks;
+  private List<ResourceSnapshot> resources;
+  private List<Comment> comments;
+  private int numChangeOfPriority;
+  private int numChangeOfDescription;
+  private String position;
+  private List<Relation<String>> related;
+
+  public IssueSnapshot(IssueSnapshotBuilder issueSnapshotBuilder) {
+    this.nkTaskId = issueSnapshotBuilder.nkTaskId;
+    this.name = issueSnapshotBuilder.name;
+    this.description = issueSnapshotBuilder.description;
+    this.topics = issueSnapshotBuilder.topics;
+    this.assignee = issueSnapshotBuilder.assignee;
+    this.reviewer = issueSnapshotBuilder.reviewer;
+    this.status = issueSnapshotBuilder.status;
+    this.priority = issueSnapshotBuilder.priority;
+    this.tag = issueSnapshotBuilder.tag;
+    this.dtStart = issueSnapshotBuilder.dtStart;
+    this.dtEnd = issueSnapshotBuilder.dtEnd;
+    this.dtPlanning = issueSnapshotBuilder.dtPlanning;
+    this.complexOfDescription = issueSnapshotBuilder.complexOfDescription;
+    this.subtasks = issueSnapshotBuilder.subtasks;
+    this.resources = issueSnapshotBuilder.resources;
+    this.comments = issueSnapshotBuilder.comments;
+    this.numChangeOfPriority = issueSnapshotBuilder.numChangeOfPriority;
+    this.numChangeOfDescription = issueSnapshotBuilder.numChangeOfDescription;
+    this.position = issueSnapshotBuilder.position;
+    this.related = issueSnapshotBuilder.related;
+  }
+
+  public static IssueSnapshotBuilder builder() {
+    return new IssueSnapshotBuilder();
+  }
+
+
+  public static class IssueSnapshotBuilder {
     private String nkTaskId;
     private String name;
+    private String position;
     private String description;
     private List<Topic> topics;
     private String assignee;
@@ -29,298 +75,271 @@ public class IssueSnapshot {
     private List<Comment> comments;
     private int numChangeOfPriority;
     private int numChangeOfDescription;
-    private String position;
+    private List<Relation<String>> related;
 
-    public IssueSnapshot(IssueSnapshotBuilder issueSnapshotBuilder) {
-        this.nkTaskId = issueSnapshotBuilder.nkTaskId;
-        this.name = issueSnapshotBuilder.name;
-        this.description = issueSnapshotBuilder.description;
-        this.topics = issueSnapshotBuilder.topics;
-        this.assignee = issueSnapshotBuilder.assignee;
-        this.reviewer = issueSnapshotBuilder.reviewer;
-        this.status = issueSnapshotBuilder.status;
-        this.priority = issueSnapshotBuilder.priority;
-        this.tag = issueSnapshotBuilder.tag;
-        this.dtStart = issueSnapshotBuilder.dtStart;
-        this.dtEnd = issueSnapshotBuilder.dtEnd;
-        this.dtPlanning = issueSnapshotBuilder.dtPlanning;
-        this.complexOfDescription = issueSnapshotBuilder.complexOfDescription;
-        this.subtasks = issueSnapshotBuilder.subtasks;
-        this.resources = issueSnapshotBuilder.resources;
-        this.comments = issueSnapshotBuilder.comments;
-        this.numChangeOfPriority = issueSnapshotBuilder.numChangeOfPriority;
-        this.numChangeOfDescription = issueSnapshotBuilder.numChangeOfDescription;
-        this.position = issueSnapshotBuilder.position;
-    }
-
-    public static IssueSnapshotBuilder builder() {
-        return new IssueSnapshotBuilder();
+    public IssueSnapshotBuilder related(List<Relation<String>> related) {
+      this.related = related;
+      return this;
     }
 
 
-    public static class IssueSnapshotBuilder {
-        private String nkTaskId;
-        private String name;
-        private String position;
-        private String description;
-        private List<Topic> topics;
-        private String assignee;
-        private String reviewer;
-        private String status;
-        private String priority;
-        private String tag;
-        private Instant dtStart;
-        private Instant dtEnd;
-        private Instant dtPlanning;
-        private int complexOfDescription;
-        private List<SubTask> subtasks;
-        private List<ResourceSnapshot> resources;
-        private List<Comment> comments;
-        private int numChangeOfPriority;
-        private int numChangeOfDescription;
-
-
-        public IssueSnapshotBuilder numChangeOfPriority(int numChangeOfPriority) {
-            this.numChangeOfPriority = numChangeOfPriority;
-            return this;
-        }
-
-        public IssueSnapshotBuilder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public IssueSnapshotBuilder numChangeOfDescription(int numChangeOfDescription) {
-            this.numChangeOfDescription = numChangeOfDescription;
-            return this;
-        }
-
-        public IssueSnapshotBuilder nkTaskId(String nkTaskId) {
-            this.nkTaskId = nkTaskId;
-            return this;
-        }
-
-        public IssueSnapshotBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public IssueSnapshotBuilder topics(List<Topic> topics) {
-            this.topics = topics;
-            return this;
-        }
-
-        public IssueSnapshotBuilder assignee(String assignee) {
-            this.assignee = assignee;
-            return this;
-        }
-
-        public IssueSnapshotBuilder reviewer(String reviewer) {
-            this.reviewer = reviewer;
-            return this;
-        }
-
-        public IssueSnapshotBuilder status(String status) {
-            this.status = status;
-            return this;
-        }
-
-        public IssueSnapshotBuilder priority(String priority) {
-            this.priority = priority;
-            return this;
-        }
-
-        public IssueSnapshotBuilder tag(String tag) {
-            this.tag = tag;
-            return this;
-        }
-
-        public IssueSnapshotBuilder dtStart(Instant dtStart) {
-            this.dtStart = dtStart;
-            return this;
-        }
-
-        public IssueSnapshotBuilder dtEnd(Instant dtEnd) {
-            this.dtEnd = dtEnd;
-            return this;
-        }
-
-        public IssueSnapshotBuilder dtPlanning(Instant dtPlanning) {
-            this.dtPlanning = dtPlanning;
-            return this;
-        }
-
-        public IssueSnapshotBuilder complexOfDescription(int complexOfDescription) {
-            this.complexOfDescription = complexOfDescription;
-            return this;
-        }
-
-        public IssueSnapshotBuilder subtasks(List<SubTask> subtasks) {
-            this.subtasks = subtasks;
-            return this;
-        }
-
-        public IssueSnapshotBuilder resources(List<ResourceSnapshot> resources) {
-            this.resources = resources;
-            return this;
-        }
-
-        public IssueSnapshotBuilder comments(List<Comment> comments) {
-            this.comments = comments;
-            return this;
-        }
-
-        public IssueSnapshot build() {
-            return new IssueSnapshot(this);
-        }
-
-        public IssueSnapshotBuilder position(String position) {
-            this.position= position;
-            return this;
-        }
+    public IssueSnapshotBuilder numChangeOfPriority(int numChangeOfPriority) {
+      this.numChangeOfPriority = numChangeOfPriority;
+      return this;
     }
 
-    public String getNkTaskId() {
-        return nkTaskId;
+    public IssueSnapshotBuilder name(String name) {
+      this.name = name;
+      return this;
     }
 
-    public void setNkTaskId(String nkTaskId) {
-        this.nkTaskId = nkTaskId;
+    public IssueSnapshotBuilder numChangeOfDescription(int numChangeOfDescription) {
+      this.numChangeOfDescription = numChangeOfDescription;
+      return this;
     }
 
-    public String getDescription() {
-        return description;
+    public IssueSnapshotBuilder nkTaskId(String nkTaskId) {
+      this.nkTaskId = nkTaskId;
+      return this;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public IssueSnapshotBuilder description(String description) {
+      this.description = description;
+      return this;
     }
 
-    public List<Topic> getTopics() {
-        return topics;
+    public IssueSnapshotBuilder topics(List<Topic> topics) {
+      this.topics = topics;
+      return this;
     }
 
-    public void setTopics(List<Topic> topics) {
-        this.topics = topics;
+    public IssueSnapshotBuilder assignee(String assignee) {
+      this.assignee = assignee;
+      return this;
     }
 
-    public String getAssignee() {
-        return assignee;
+    public IssueSnapshotBuilder reviewer(String reviewer) {
+      this.reviewer = reviewer;
+      return this;
     }
 
-    public void setAssignee(String assignee) {
-        this.assignee = assignee;
+    public IssueSnapshotBuilder status(String status) {
+      this.status = status;
+      return this;
     }
 
-    public String getReviewer() {
-        return reviewer;
+    public IssueSnapshotBuilder priority(String priority) {
+      this.priority = priority;
+      return this;
     }
 
-    public void setReviewer(String reviewer) {
-        this.reviewer = reviewer;
+    public IssueSnapshotBuilder tag(String tag) {
+      this.tag = tag;
+      return this;
     }
 
-    public String getStatus() {
-        return status;
+    public IssueSnapshotBuilder dtStart(Instant dtStart) {
+      this.dtStart = dtStart;
+      return this;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public IssueSnapshotBuilder dtEnd(Instant dtEnd) {
+      this.dtEnd = dtEnd;
+      return this;
     }
 
-    public String getPriority() {
-        return priority;
+    public IssueSnapshotBuilder dtPlanning(Instant dtPlanning) {
+      this.dtPlanning = dtPlanning;
+      return this;
     }
 
-    public void setPriority(String priority) {
-        this.priority = priority;
+    public IssueSnapshotBuilder complexOfDescription(int complexOfDescription) {
+      this.complexOfDescription = complexOfDescription;
+      return this;
     }
 
-    public String getTag() {
-        return tag;
+    public IssueSnapshotBuilder subtasks(List<SubTask> subtasks) {
+      this.subtasks = subtasks;
+      return this;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public IssueSnapshotBuilder resources(List<ResourceSnapshot> resources) {
+      this.resources = resources;
+      return this;
     }
 
-    public Instant getDtStart() {
-        return dtStart;
+    public IssueSnapshotBuilder comments(List<Comment> comments) {
+      this.comments = comments;
+      return this;
     }
 
-    public void setDtStart(Instant dtStart) {
-        this.dtStart = dtStart;
+    public IssueSnapshot build() {
+      return new IssueSnapshot(this);
     }
 
-    public Instant getDtEnd() {
-        return dtEnd;
+    public IssueSnapshotBuilder position(String position) {
+      this.position = position;
+      return this;
     }
+  }
 
-    public void setDtEnd(Instant dtEnd) {
-        this.dtEnd = dtEnd;
-    }
+  public String getNkTaskId() {
+    return nkTaskId;
+  }
 
-    public Instant getDtPlanning() {
-        return dtPlanning;
-    }
+  public void setNkTaskId(String nkTaskId) {
+    this.nkTaskId = nkTaskId;
+  }
 
-    public void setDtPlanning(Instant dtPlanning) {
-        this.dtPlanning = dtPlanning;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public int getComplexOfDescription() {
-        return complexOfDescription;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setComplexOfDescription(int complexOfDescription) {
-        this.complexOfDescription = complexOfDescription;
-    }
+  public List<Topic> getTopics() {
+    return topics;
+  }
 
-    public List<SubTask> getSubtasks() {
-        return subtasks;
-    }
+  public void setTopics(List<Topic> topics) {
+    this.topics = topics;
+  }
 
-    public void setSubtasks(List<SubTask> subtasks) {
-        this.subtasks = subtasks;
-    }
+  public String getAssignee() {
+    return assignee;
+  }
 
-    public List<ResourceSnapshot> getResources() {
-        return resources;
-    }
+  public void setAssignee(String assignee) {
+    this.assignee = assignee;
+  }
 
-    public void setResources(List<ResourceSnapshot> resources) {
-        this.resources = resources;
-    }
+  public String getReviewer() {
+    return reviewer;
+  }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
+  public void setReviewer(String reviewer) {
+    this.reviewer = reviewer;
+  }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public int getNumChangeOfPriority() {
-        return numChangeOfPriority;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setNumChangeOfPriority(int numChangeOfPriority) {
-        this.numChangeOfPriority = numChangeOfPriority;
-    }
+  public String getPriority() {
+    return priority;
+  }
 
-    public int getNumChangeOfDescription() {
-        return numChangeOfDescription;
-    }
+  public void setPriority(String priority) {
+    this.priority = priority;
+  }
 
-    public void setNumChangeOfDescription(int numChangeOfDescription) {
-        this.numChangeOfDescription = numChangeOfDescription;
-    }
+  public String getTag() {
+    return tag;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 
-    public String getPosition() {
-        return position;
-    }
+  public Instant getDtStart() {
+    return dtStart;
+  }
+
+  public void setDtStart(Instant dtStart) {
+    this.dtStart = dtStart;
+  }
+
+  public Instant getDtEnd() {
+    return dtEnd;
+  }
+
+  public void setDtEnd(Instant dtEnd) {
+    this.dtEnd = dtEnd;
+  }
+
+  public Instant getDtPlanning() {
+    return dtPlanning;
+  }
+
+  public void setDtPlanning(Instant dtPlanning) {
+    this.dtPlanning = dtPlanning;
+  }
+
+  public int getComplexOfDescription() {
+    return complexOfDescription;
+  }
+
+  public void setComplexOfDescription(int complexOfDescription) {
+    this.complexOfDescription = complexOfDescription;
+  }
+
+  public List<SubTask> getSubtasks() {
+    return subtasks;
+  }
+
+  public void setSubtasks(List<SubTask> subtasks) {
+    this.subtasks = subtasks;
+  }
+
+  public List<ResourceSnapshot> getResources() {
+    return resources;
+  }
+
+  public void setResources(List<ResourceSnapshot> resources) {
+    this.resources = resources;
+  }
+
+  public List<Comment> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<Comment> comments) {
+    this.comments = comments;
+  }
+
+  public int getNumChangeOfPriority() {
+    return numChangeOfPriority;
+  }
+
+  public void setNumChangeOfPriority(int numChangeOfPriority) {
+    this.numChangeOfPriority = numChangeOfPriority;
+  }
+
+  public int getNumChangeOfDescription() {
+    return numChangeOfDescription;
+  }
+
+  public void setNumChangeOfDescription(int numChangeOfDescription) {
+    this.numChangeOfDescription = numChangeOfDescription;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getPosition() {
+    return position;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setPosition(String position) {
+    this.position = position;
+  }
+
+  public List<Relation<String>> getRelated() {
+    return related;
+  }
+
+  public void setRelated(List<Relation<String>> related) {
+    this.related = related;
+  }
 }

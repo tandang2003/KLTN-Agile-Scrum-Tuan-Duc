@@ -10,7 +10,6 @@ public class IssueAssignSprintRequest {
     private String issueId;
     @NotEmpty
     private String issueRelatedId;
-    @NotEmpty
     @Enumerated(EnumType.STRING)
     private IssueRelationType typeRelation;
 
