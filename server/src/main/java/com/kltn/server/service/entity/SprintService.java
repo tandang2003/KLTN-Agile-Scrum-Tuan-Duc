@@ -221,9 +221,9 @@ public class SprintService {
                             .truncatedTo(ChronoUnit.MINUTES);
             if ((start.isAfter(sStart) && start.isBefore(sEnd)) || (end.isAfter(sStart) && end.isBefore(
                     sEnd)) || (start.equals(sStart) || end.equals(sEnd))) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

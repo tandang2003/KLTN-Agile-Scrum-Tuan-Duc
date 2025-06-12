@@ -12,7 +12,6 @@ import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
-import com.kltn.server.mapper.document.iml.ChangeLogMapperIml;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.Project;
@@ -108,7 +107,7 @@ public class ProjectService {
                 .topics(topics).build();
         projectMongoService.save(projectMongo);
 
-        ChangeLogRequest log = changeLogMapper.ProjectToCreateLog(project, projectMongo);
+        ChangeLogRequest log = changeLogMapper.projectToCreateLog(project, projectMongo);
 
         return ApiResponse.<ProjectResponse>builder().message("Create project success")
                 .data(projectMapper.toCreationResponse(savedProject, topics)).logData(log).build();

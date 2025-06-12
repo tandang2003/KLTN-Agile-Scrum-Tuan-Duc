@@ -23,15 +23,10 @@ public class IssueRelationId {
     }
 
     public static class IssueRelationBuilder {
-        private String id;
         private String issueId;
         private String issueRelatedId;
         private IssueRelationType typeRelation;
 
-        public IssueRelationBuilder id(String id) {
-            this.id = id;
-            return this;
-        }
 
         public IssueRelationBuilder issueId(String issueId) {
             this.issueId = issueId;
