@@ -48,11 +48,10 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     defaultValues: {
       priority: 'CRITICAL',
       tag: 'THEORY',
-      date: undefined
+      date: undefined,
+      position: 1000
     }
   })
-
-  const { getValues } = form
 
   useEffect(() => {
     console.log(form.getValues())

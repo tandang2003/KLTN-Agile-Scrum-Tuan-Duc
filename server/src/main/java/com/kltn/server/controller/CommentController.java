@@ -12,8 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.List;
-
 
 @Controller()
 @RequestMapping("")
@@ -27,7 +27,7 @@ public class CommentController {
   @MessageMapping("/issue/{issueId}")
   @SendTo("/topic/room/{issueId}")
   public CommentResponse sendToGroup(@DestinationVariable("issueId") String issueId,
-                                     @Payload CommentCreateRequest message, Principal principal) {
+      @Payload CommentCreateRequest message, Principal principal) {
 
     String userId = "";
     if (principal instanceof UserPrinciple) {
@@ -36,7 +36,8 @@ public class CommentController {
     // Handle business logic comment
     commentService.saveComment(issueId, userId, message.getContent());
     // send to /topic/room/{roomId}
-    return new CommentResponse(userId, message.getContent());
+    System.out.println("sent");
+    return new CommentResponse(userId, message.getContent(), Instant.now());
   }
 
   @GetMapping("/comments/{issueId}")

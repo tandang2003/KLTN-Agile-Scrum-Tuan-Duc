@@ -31,10 +31,8 @@ const commentService = {
     })
   },
   getComment: async (issueId: string) => {
-    const res = await httpService.get<ResponseApi<CommentResType[]>>(
-      `/comment/${issueId}`
-    )
-    return res.data.data
+    const res = await httpService.get<CommentResType[]>(`/comments/${issueId}`)
+    return res.data
   }
 }
 

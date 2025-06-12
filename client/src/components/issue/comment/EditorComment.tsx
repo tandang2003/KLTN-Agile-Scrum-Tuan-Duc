@@ -1,44 +1,32 @@
 import Editor from '@/components/Editor'
 import HtmlViewer from '@/components/HtmlViewer'
 import InlineEdit from '@/components/InlineEdit'
-import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
-import {Button} from '@/components/ui/button'
-import {useContextComment} from "@/components/issue/comment/ContextComment.tsx";
-import commentService from "@/services/comment.service.ts";
-import {useAppSelector} from "@/context/redux/hook.ts";
-import {RootState} from "@/context/redux/store.ts";
-import {toast} from "sonner";
-import {useEffect} from "react";
+import { useContextComment } from '@/components/issue/comment/ContextComment.tsx'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { useAppSelector } from '@/context/redux/hook.ts'
+import { RootState } from '@/context/redux/store.ts'
+import commentService from '@/services/comment.service.ts'
 
 const EditorComment = () => {
-  const issueId = useAppSelector((state: RootState) => state.issueSlice.current?.id)
-  const {isReady, ws} = useContextComment()
+  const issueId = useAppSelector(
+    (state: RootState) => state.issueSlice.current?.id
+  )
+  const { isReady, ws } = useContextComment()
 
   const handlePushComment = (val: string) => {
     if (issueId && isReady) {
       commentService.sendComment(ws, issueId, {
-        content: val,
+        content: val
       })
     }
   }
-
-  useEffect(() => {
-    if (ws && isReady && ws.connected) {
-      const subscriber = ws.subscribe(`/topic/room/${issueId}`, (value) => {
-        console.log(value)
-        toast.message(JSON.stringify(value.body))
-      })
-      return () => {
-        return subscriber.unsubscribe();
-      }
-    }
-  }, [ws, isReady])
 
   return (
     <div className='flex gap-2'>
       <div className='basis-[50px]'>
         <Avatar className='mt-2'>
-          <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn'/>
+          <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </div>
@@ -55,7 +43,7 @@ const EditorComment = () => {
             />
           )
         }}
-        renderEditor={({value, onChange, onBlur, ref}) => (
+        renderEditor={({ value, onChange, onBlur, ref }) => (
           <div className='flex-1'>
             <Editor
               value={value}
