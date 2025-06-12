@@ -507,12 +507,18 @@ public class IssueService {
     }
 
     @SendKafkaEvent(topic = "task-log")
-    public ApiResponse<IssueResponse> updateTask(@Valid IssueUpdateStatusRequest request) {
+    public ApiResponse<IssueResponse> updateTask( IssueUpdateStatusRequest request) {
         String id = request.getId();
         var task = getEntityById(id);
         var taskMongo = issueMongoService.getById(id);
         ChangeLogRequest changeLog;
-        task.setStatus(request.getStatus());
+      task.setStatus(request.getStatus());
+
+        if(task.getStatus().equals(IssueStatus.DONE)){
+          
+
+        }
+
         task.setPosition(request.getPosition());
         task = saveEntity(task);
         changeLog = changeLogMapper.TaskToUpdate(new String[] { "status",
