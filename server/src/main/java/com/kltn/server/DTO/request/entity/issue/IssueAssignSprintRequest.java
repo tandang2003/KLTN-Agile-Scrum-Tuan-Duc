@@ -6,12 +6,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 
 public class IssueAssignSprintRequest {
-    @NotEmpty
-    private String issueId;
-    @NotEmpty
-    private String issueRelatedId;
-    @Enumerated(EnumType.STRING)
-    private IssueRelationType typeRelation;
+  @NotEmpty
+  private String issueId;
+  @NotEmpty
+  private String issueRelatedId;
+  @Enumerated(EnumType.STRING)
+  private IssueRelationType typeRelation;
 
     public String getIssueId() {
         return issueId;

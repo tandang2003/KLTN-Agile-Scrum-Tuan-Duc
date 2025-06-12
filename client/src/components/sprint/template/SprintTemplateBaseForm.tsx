@@ -25,7 +25,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
 import { isNumber } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 
 type DurationType = 1 | 2 | 3 | 4 | 'custom'
@@ -63,12 +63,24 @@ const SprintTemplateBaseForm = ({
     }
   })
 
+  const { watch } = form
+
+  const startDate = watch('start')
+  const endDate = watch('end')
+
+  useEffect(() => {
+    if (durationValue.active !== 'custom') {
+      const end = addDays(startDate, Number(durationValue.active) * 7)
+      form.setValue('end', end)
+    }
+    // Reset end date if it is before start date
+    if (endDate && endDate < startDate) {
+      form.setValue('end', addDays(startDate, 7))
+    }
+  }, [durationValue, startDate])
+
   const handleSelectDurationChange = (value: string) => {
     if (value) {
-      if (value !== 'custom') {
-        const end = addDays(form.getValues('start'), Number(value) * 7)
-        form.setValue('end', end)
-      }
       setDurationValue((prev) => ({
         ...prev,
         active: value as DurationType
@@ -190,9 +202,16 @@ const SprintTemplateBaseForm = ({
                       disabled={durationValue.active !== 'custom'}
                       date={field.value}
                       setDate={(date) => {
-                        if (date) {
-                          field.onChange(new Date(date))
+                        if (durationValue.active !== 'custom') {
+                          const start = form.getValues('start')
+                          date = addDays(
+                            start,
+                            Number(durationValue.active) * 7
+                          )
+                        } else {
+                          date = field.value
                         }
+                        field.onChange(new Date(date))
                       }}
                     />
                     <div className='h-[20px]'>

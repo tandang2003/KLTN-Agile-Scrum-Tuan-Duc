@@ -100,31 +100,6 @@ const CreateWorkspaceForm = () => {
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name='timePerSprint'
-                render={({ field }) => (
-                  <FormItem className='mt-4'>
-                    <FormLabel>Time per sprint</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='number'
-                        {...field}
-                        onChange={(event) =>
-                          form.setValue(
-                            'timePerSprint',
-                            event.target.valueAsNumber
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <div className='h-[20px]'>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
             </div>
 
             <FormField

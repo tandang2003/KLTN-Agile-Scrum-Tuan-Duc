@@ -19,7 +19,6 @@ import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
-import com.kltn.server.model.entity.embeddedKey.IssueRelationId;
 import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueStatus;
@@ -28,6 +27,7 @@ import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.relation.IssueRelationRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -315,12 +315,12 @@ public class IssueService {
       case "name":
         task.setName(updateRequest.getName());
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"name"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"name"}, task, taskMongo);
         break;
       case "description":
         task.setDescription(updateRequest.getDescription());
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"description"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"description"}, task, taskMongo);
         break;
       case "sprint":
         Sprint targetSprint = sprintService.getSprintById(updateRequest.getSprintId());
@@ -347,7 +347,7 @@ public class IssueService {
 
           task.setSprint(targetSprint);
           task = saveEntity(task);
-          changeLog = changeLogMapper.taskToUpdate(new String[]{"sprint"}, task, taskMongo);
+          changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
           break;
         }
 
@@ -355,7 +355,7 @@ public class IssueService {
                          .isAfter(now)) {
           task.setSprint(targetSprint);
           task = saveEntity(task);
-          changeLog = changeLogMapper.taskToUpdate(new String[]{"sprint"}, task, taskMongo);
+          changeLog = changeLogMapper.TaskToUpdate(new String[]{"sprint"}, task, taskMongo);
           break;
         }
 
@@ -367,22 +367,22 @@ public class IssueService {
       case "priority":
         task.setPriority(updateRequest.getPriority());
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"priority"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"priority"}, task, taskMongo);
         break;
       case "status":
         task.setPriority(updateRequest.getPriority());
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"status"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"status"}, task, taskMongo);
         break;
       case "topics":
         taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
         taskMongo = issueMongoService.saveDocument(taskMongo);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"topics"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"topics"}, task, taskMongo);
         break;
       case "subtasks":
         taskMongo.setSubtasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
         taskMongo = issueMongoService.saveDocument(taskMongo);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"subtasks"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"subtasks"}, task, taskMongo);
         break;
       case "attachments":
         List<Resource> resources = task.getResources();
@@ -402,7 +402,7 @@ public class IssueService {
         }
         task.setResources(resources);
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"attachments"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"attachments"}, task, taskMongo);
         break;
       case "assignee":
         if (updateRequest.getAssignee() == null || updateRequest.getAssignee()
@@ -414,7 +414,7 @@ public class IssueService {
           task.setAssignee(assignee);
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"assignee"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"assignee"}, task, taskMongo);
         break;
       case "reviewer":
         if (updateRequest.getReviewer() == null || updateRequest.getReviewer()
@@ -426,7 +426,7 @@ public class IssueService {
           task.setReviewer(reviewer);
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"reviewer"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"reviewer"}, task, taskMongo);
         break;
       case "start":
         task.setDtStart(updateRequest.getStart());
@@ -442,7 +442,7 @@ public class IssueService {
                                                   .build();
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"start"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"start"}, task, taskMongo);
         break;
       case "end":
         task.setDtEnd(updateRequest.getEnd());
@@ -458,7 +458,7 @@ public class IssueService {
                                                   .build();
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.taskToUpdate(new String[]{"end"}, task, taskMongo);
+        changeLog = changeLogMapper.TaskToUpdate(new String[]{"end"}, task, taskMongo);
         break;
       default:
         throw AppException.builder()
@@ -521,12 +521,13 @@ public class IssueService {
 
     if (task.getStatus()
             .equals(IssueStatus.DONE)) {
-      task.setDtEnd(Instant.now());
+
+
     }
 
     task.setPosition(request.getPosition());
     task = saveEntity(task);
-    changeLog = changeLogMapper.taskToUpdate(new String[]{"status",
+    changeLog = changeLogMapper.TaskToUpdate(new String[]{"status",
                                                           "position"}, task, taskMongo);
     return ApiResponse.<IssueResponse>builder()
                       .code(HttpStatus.OK.value())
@@ -606,8 +607,8 @@ public class IssueService {
                                                              .issueId(issue.getId())
                                                              .issueRelatedId(relatedIssue.getId())
                                                              .build())
-//                                          .issue(issue)
-//                                          .issueRelated(relatedIssue)
+                                          .issue(issue)
+                                          .issueRelated(relatedIssue)
                                           .typeRelation(request.getTypeRelation())
                                           .build();
     ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));

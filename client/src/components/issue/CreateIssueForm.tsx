@@ -34,6 +34,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
+import UpdateRelationship from '@/components/issue/updateFields/UpdateRelationship'
 type CreateIssueFormProps = {
   onSubmit?: () => void
 }
@@ -48,11 +49,10 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
     defaultValues: {
       priority: 'CRITICAL',
       tag: 'THEORY',
-      date: undefined
+      date: undefined,
+      position: 1000
     }
   })
-
-  const { getValues } = form
 
   useEffect(() => {
     console.log(form.getValues())

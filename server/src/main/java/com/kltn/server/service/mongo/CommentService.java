@@ -22,14 +22,14 @@ public class CommentService {
   public void saveComment(String issueId, String userId, String content) {
 
     Comment comment = Comment.builder()
-                             .from(userId)
-                             .message(content)
-                             .build();
+        .from(userId)
+        .message(content)
+        .build();
     Issue issue = issueLogRepository.findByNkTaskId(issueId)
-                                    .orElseThrow(() -> AppException.builder()
-                                                                   .error(Error.NOT_FOUND)
-                                                                   .message("Issue not found")
-                                                                   .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.NOT_FOUND)
+            .message("Issue not found")
+            .build());
     List<Comment> comments = issue.getComments();
     if (comments == null) {
       comments = new ArrayList<>();
@@ -41,16 +41,16 @@ public class CommentService {
 
   public List<CommentResponse> getCommentsInIssue(String issueId) {
     Issue issue = issueLogRepository.findByNkTaskId(issueId)
-                                    .orElseThrow(() -> AppException.builder()
-                                                                   .error(Error.NOT_FOUND)
-                                                                   .message("Issue not found")
-                                                                   .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.NOT_FOUND)
+            .message("Issue not found")
+            .build());
     List<Comment> comments = issue.getComments();
     if (comments == null || comments.isEmpty()) {
       return new ArrayList<>();
     }
     return comments.stream()
-                   .map(e -> new CommentResponse(e.getFrom(), e.getMessage()))
-                   .toList();
+        .map(e -> new CommentResponse(e.getFrom(), e.getMessage(), e.getCreatedAt()))
+        .toList();
   }
 }

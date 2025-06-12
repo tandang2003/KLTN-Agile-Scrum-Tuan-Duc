@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { CardModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import { useDroppable } from '@dnd-kit/core'
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import ListView from '@/components/ListView'
 import { useAppDispatch } from '@/context/redux/hook'
 import { enableUpdateIssue } from '@/feature/trigger/trigger.slice'
@@ -45,12 +45,7 @@ const Column = ({ id, name, items }: ColumnProps) => {
           {items.length}
         </span>
       </span>
-      <div
-        ref={(node) => {
-          setNodeRef(node)
-        }}
-        className={cn('rounded-sm px-2')}
-      >
+      <div ref={setNodeRef} className={cn('min-h-[100px] rounded-sm px-2')}>
         <ListView<CardModelType>
           emptyComponent={''}
           data={items}
@@ -88,4 +83,4 @@ const Column = ({ id, name, items }: ColumnProps) => {
     </>
   )
 }
-export default Column
+export default memo(Column)

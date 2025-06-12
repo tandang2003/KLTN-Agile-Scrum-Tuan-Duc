@@ -40,7 +40,7 @@ const FilterBoard = ({}: FilterBoardProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button>
+        <Button className='mb-3 block'>
           <Icon icon={'mynaui:filter-solid'} />
         </Button>
       </PopoverTrigger>
