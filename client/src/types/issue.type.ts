@@ -2,7 +2,6 @@ import { dateRange, string } from '@/types/common.type'
 import {
   IssuePriority,
   issuePriorityList,
-  IssueRelationShip,
   IssueStatus,
   IssueTag,
   issueTagList
@@ -150,22 +149,11 @@ type UpdatePositionIssueRequest = {
   status: IssueStatus
 }
 
-const CreateRelationshipIssueSchema = z.object({
-  issueId: z.string(),
-  issueRelated: z.string(),
-  typeRelation: z.nativeEnum(IssueRelationShip)
-})
-
-type CreateRelationshipIssueRequest = z.infer<
-  typeof CreateRelationshipIssueSchema
->
-
 export {
   BaseIssueSchema,
   CreateIssueSchema,
   TopicModelSchema,
-  UpdateIssueSchema,
-  CreateRelationshipIssueSchema
+  UpdateIssueSchema
 }
 export type {
   BaseIssueFormType,
@@ -177,6 +165,5 @@ export type {
   TopicModelType,
   UpdateIssueRequest,
   UpdateIssueType,
-  UpdatePositionIssueRequest,
-  CreateRelationshipIssueRequest as CreateRelationshipIssueType
+  UpdatePositionIssueRequest
 }
