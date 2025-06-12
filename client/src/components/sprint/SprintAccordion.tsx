@@ -11,9 +11,6 @@ import {
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { RootState } from '@/context/redux/store'
-
 import { getStatusSprint, sortSprintsByDateStart } from '@/lib/sprint'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'

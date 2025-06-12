@@ -8,14 +8,14 @@ import java.time.Instant;
 
 public class Comment {
   private ObjectId id;
-  @Field// issueId
+  @Field // issueId
   private String to;
-  @Field//uniId
+  @Field // uniId
   private String from;
   @Field
   private String message;
-//  @Field
-//  private Attachment attachment;
+  // @Field
+  // private Attachment attachment;
   @Field("is_delete")
   private boolean deleted;
   @Field("delete_by")
@@ -29,10 +29,10 @@ public class Comment {
     this.to = builder.to;
     this.from = builder.from;
     this.message = builder.message;
-//    this.attachment = builder.attachment;
+    // this.attachment = builder.attachment;
     this.deleted = builder.deleted;
     this.deletedBy = builder.deletedBy;
-    this.createdAt = builder.createdAt ;
+    this.createdAt = builder.createdAt;
   }
 
   public Comment() {
@@ -47,7 +47,7 @@ public class Comment {
     private String to;
     private String from;
     private String message;
-//    private Attachment attachment;
+    // private Attachment attachment;
     private boolean deleted;
     private String deletedBy;
     private Instant createdAt;
@@ -55,6 +55,9 @@ public class Comment {
     public void prePersist() {
       if (this.id == null) {
         this.id = new ObjectId();
+      }
+      if (createdAt == null) {
+        this.createdAt = Instant.now();
       }
     }
 
@@ -73,10 +76,10 @@ public class Comment {
       return this;
     }
 
-//    public CommentBuilder attachment(Attachment attachment) {
-//      this.attachment = attachment;
-//      return this;
-//    }
+    // public CommentBuilder attachment(Attachment attachment) {
+    // this.attachment = attachment;
+    // return this;
+    // }
 
     public CommentBuilder deleted(boolean deleted) {
       this.deleted = deleted;
@@ -87,6 +90,7 @@ public class Comment {
       this.deletedBy = deletedBy;
       return this;
     }
+
     public CommentBuilder createdAt(Instant createdAt) {
       this.createdAt = createdAt;
       return this;
@@ -122,13 +126,13 @@ public class Comment {
     this.message = message;
   }
 
-//  public Attachment getAttachment() {
-//    return attachment;
-//  }
-//
-//  public void setAttachment(Attachment attachment) {
-//    this.attachment = attachment;
-//  }
+  // public Attachment getAttachment() {
+  // return attachment;
+  // }
+  //
+  // public void setAttachment(Attachment attachment) {
+  // this.attachment = attachment;
+  // }
 
   public boolean isDeleted() {
     return deleted;
@@ -164,12 +168,12 @@ public class Comment {
 
   public Comment clone() {
     return Comment.builder()
-                  .to(this.to)
-                  .from(this.from)
-                  .message(this.message)
-//                  .attachment(this.attachment != null ? this.attachment.clone() : null)
-                  .deleted(this.deleted)
-                  .deletedBy(this.deletedBy)
-                  .build();
+        .to(this.to)
+        .from(this.from)
+        .message(this.message)
+        // .attachment(this.attachment != null ? this.attachment.clone() : null)
+        .deleted(this.deleted)
+        .deletedBy(this.deletedBy)
+        .build();
   }
 }

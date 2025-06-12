@@ -59,7 +59,9 @@ const SprintTemplateCard = ({
   return (
     <div
       data-sprint-id={data.id}
-      className={cn('flex items-center gap-2 bg-gray-50 p-2 shadow-md')}
+      className={cn(
+        'border-accent flex items-center gap-2 border-2 bg-gray-50 p-2 shadow-md'
+      )}
     >
       <div className='flex flex-1 items-baseline'>
         <h3 className='text-md font-bold'>{data.title}</h3>
