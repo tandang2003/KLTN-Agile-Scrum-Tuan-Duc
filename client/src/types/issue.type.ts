@@ -134,6 +134,7 @@ type KeyOfFieldChangingIssue =
   | 'end'
   | 'assignee'
   | 'reviewer'
+  | 'sprint'
 
 type UpdateIssueRequest = {
   id: Id

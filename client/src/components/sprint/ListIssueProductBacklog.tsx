@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import Icon from '@/components/Icon'
 import ToolTip from '@/components/Tooltip'
+import SprintCard from '@/components/sprint/SprintCard'
 const ListIssueProductBacklog = () => {
   const dispatch = useAppDispatch()
   const { projectId } = useAppId()
@@ -42,34 +43,7 @@ const ListIssueProductBacklog = () => {
       emptyComponent={''}
       className={cn('gap-3')}
       render={(item) => {
-        return (
-          <div
-            className='flex rounded-sm border-2 bg-white px-4 py-2'
-            key={item.id}
-          >
-            <ToolTip
-              trigger={
-                <div className='font-semibold'>
-                  <span>{item.name}</span>
-                </div>
-              }
-            >
-              {item.id}
-            </ToolTip>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
-                <DropdownMenuItem onClick={handleUpdate}>Edit</DropdownMenuItem>
-                <DropdownMenuItem className='bg-red-500 text-white hover:cursor-pointer hover:opacity-80'>
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )
+        return <SprintCard data={item} />
       }}
       append={
         <Button

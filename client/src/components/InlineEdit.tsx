@@ -38,6 +38,10 @@ const InlineEdit = <T,>({
   const [editing, setEditing] = useState(false)
   const inputRef = useRef<any>(null)
 
+  useEffect(() => {
+    setValue(initialValue)
+  }, [initialValue])
+
   const handleBlur = () => {
     setEditing(false)
     if (value !== initialValue) {
