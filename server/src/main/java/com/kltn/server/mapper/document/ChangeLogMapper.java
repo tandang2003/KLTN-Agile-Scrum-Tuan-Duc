@@ -14,5 +14,6 @@ public interface ChangeLogMapper {
   ChangeLogRequest taskToUpdate(String[] properties, com.kltn.server.model.entity.Issue task, Issue issueMongo);
 
   ChangeLogRequest taskToCreateRelation(com.kltn.server.model.entity.Issue task, Issue issueMongo);
+  ChangeLogRequest taskToRemoveRelation(com.kltn.server.model.entity.Issue task, Issue issueMongo);
 
 }
