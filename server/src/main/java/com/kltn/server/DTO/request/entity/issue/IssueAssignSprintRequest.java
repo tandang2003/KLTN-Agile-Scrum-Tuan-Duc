@@ -13,27 +13,27 @@ public class IssueAssignSprintRequest {
   @Enumerated(EnumType.STRING)
   private IssueRelationType typeRelation;
 
-  public String getIssueId() {
-    return issueId;
-  }
+    public String getIssueId() {
+        return issueId;
+    }
 
-  public void setIssueId(String issueId) {
-    this.issueId = issueId;
-  }
+    public void setIssueId(String issueId) {
+        this.issueId = issueId;
+    }
 
-  public String getIssueRelatedId() {
-    return issueRelatedId;
-  }
+    public String getIssueRelatedId() {
+        return issueRelatedId;
+    }
 
-  public void setIssueRelatedId(String issueRelatedId) {
-    this.issueRelatedId = issueRelatedId;
-  }
+    public void setIssueRelatedId(String issueRelatedId) {
+        this.issueRelatedId = issueRelatedId;
+    }
 
-  public IssueRelationType getTypeRelation() {
-    return typeRelation;
-  }
+    public IssueRelationType getTypeRelation() {
+        return typeRelation;
+    }
 
-  public void setTypeRelation(IssueRelationType typeRelation) {
-    this.typeRelation = typeRelation;
-  }
+    public void setTypeRelation(IssueRelationType typeRelation) {
+        this.typeRelation = typeRelation;
+    }
 }
