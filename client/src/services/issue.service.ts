@@ -8,10 +8,11 @@ import {
   UpdateIssueRequest,
   UpdatePositionIssueRequest
 } from '@/types/issue.type'
+import { IssueRelationShip } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import {
   CreateRelationshipIssueRequest,
-  CreateRelationshipIssueType
+  RelationshipResponse
 } from '@/types/relationship.type'
 
 const issueService = {
@@ -57,9 +58,11 @@ const issueService = {
     >(`/issue/update-status`, req)
     return res.data.data
   },
-  createRelationship: async (req: CreateRelationshipIssueRequest) => {
+  createRelationship: async (
+    req: CreateRelationshipIssueRequest
+  ): Promise<RelationshipResponse> => {
     const res = await httpService.post<
-      ResponseApi<IssueResponse>,
+      ResponseApi<RelationshipResponse>,
       CreateRelationshipIssueRequest
     >(`/issue/relation`, req)
     return res.data.data

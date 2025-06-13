@@ -99,8 +99,15 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
                 })}
               />
             </div>
-            <UpdateSubTaskForm />
-            {isAddRelationship && <UpdateRelationship issueId={data.id} />}
+            <UpdateSubTaskForm
+              open={isAddSubTask}
+              cancel={() => setIsAddSubTask(false)}
+            />
+            <UpdateRelationship
+              issueId={data.id}
+              open={isAddRelationship}
+              cancel={() => setIsAddRelationship(false)}
+            />
             <Tabs defaultValue='comment' className='mt-3'>
               <TabsList>
                 <TabsTrigger value='comment'>Comment</TabsTrigger>
