@@ -66,6 +66,13 @@ const issueService = {
       CreateRelationshipIssueRequest
     >(`/issue/relation`, req)
     return res.data.data
+  },
+  moveToSprint: async (sprintId: Id) => {
+    const res = await httpService.put<
+      ResponseApi<IssueDetailResponse>,
+      UpdateIssueRequest
+    >(`/issue`, req)
+    return res.data.data
   }
 }
 export default issueService
