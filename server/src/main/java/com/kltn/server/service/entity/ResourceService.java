@@ -113,6 +113,7 @@ public class ResourceService {
   public ApiResponse<Void> uploadFileToTask(ResourceTaskStoringRequest request) {
     Resource resource = resourceMapper.toResource(request);
     resource.setUser(userService.getCurrentUser());
+    resource=repository.save(resource);
     Issue issue = issueService.getEntityById(request.getIssueId());
 //    Issue issue = issueService.findById(request.getIssueId())
 //                              .orElseThrow(() -> AppException.builder()

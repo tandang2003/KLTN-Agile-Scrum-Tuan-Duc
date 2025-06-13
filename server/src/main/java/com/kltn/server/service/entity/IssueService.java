@@ -246,7 +246,6 @@ public class IssueService {
   }
 
   public Issue saveEntity(Issue issue) {
-
     try {
       issue = taskRepository.save(issue);
     } catch (RuntimeException e) {
@@ -320,6 +319,7 @@ public class IssueService {
         break;
       case "description":
         task.setDescription(updateRequest.getDescription());
+        task.setNumChangeOfDescription(task.getNumChangeOfDescription() + 1);
         task = saveEntity(task);
         changeLog = changeLogMapper.taskToUpdate(new String[]{"description"}, task, taskMongo);
         break;
@@ -330,6 +330,7 @@ public class IssueService {
 
         if (currentSprint == null || currentSprint.getDtEnd()
                                                   .isBefore(now)) {
+//          sprint moi da ket thuc, khong the gan lai
           if (targetSprint.getDtEnd()
                           .isBefore(now)) {
             throw AppException.builder()
@@ -337,7 +338,7 @@ public class IssueService {
                               .message("Cannot assign issue to sprint that has already ended")
                               .build();
           }
-
+//        sprint moi dat bat dau truoc thoi diem hien tai
           if (targetSprint.getDtStart()
                           .isBefore(now)) {
             throw AppException.builder()
@@ -347,6 +348,14 @@ public class IssueService {
           }
 
           task.setSprint(targetSprint);
+          if (task.getDtStart() == null || task.getDtStart()
+                                               .isBefore(targetSprint.getDtStart())) {
+            task.setDtStart(targetSprint.getDtStart());
+          }
+          if (task.getDtEnd() == null || task.getDtEnd()
+                                             .isAfter(targetSprint.getDtEnd())) {
+            task.setDtEnd(targetSprint.getDtEnd());
+          }
           task = saveEntity(task);
           changeLog = changeLogMapper.taskToUpdate(new String[]{"sprint"}, task, taskMongo);
           break;
@@ -367,6 +376,8 @@ public class IssueService {
                           .build();
       case "priority":
         task.setPriority(updateRequest.getPriority());
+        task.setNumChangeOfPriority(task.getNumChangeOfPriority() + 1);
+
         task = saveEntity(task);
         changeLog = changeLogMapper.taskToUpdate(new String[]{"priority"}, task, taskMongo);
         break;
@@ -518,13 +529,8 @@ public class IssueService {
     var task = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
+
     task.setStatus(request.getStatus());
-
-    if (task.getStatus()
-            .equals(IssueStatus.DONE)) {
-
-
-    }
 
     task.setPosition(request.getPosition());
     task = saveEntity(task);
@@ -612,8 +618,8 @@ public class IssueService {
                                           .issueRelated(relatedIssue)
                                           .typeRelation(request.getTypeRelation())
                                           .build();
-    ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));
     relation = issueRelationRepository.save(relation);
+    ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));
     return ApiResponse.<IssueRelationResponse>builder()
                       .code(HttpStatus.CREATED.value())
                       .message("Create relation successfully")
@@ -624,6 +630,13 @@ public class IssueService {
 
   @SendKafkaEvent(topic = "task-log")
   public ApiResponse<IssueRelationResponse> deleteRelation(IssueAssignSprintRequest request) {
+    if (request.getIssueId()
+               .equals(request.getIssueRelatedId())) {
+      throw AppException.builder()
+                        .error(Error.INVALID_PARAMETER_REQUEST)
+                        .message("Cannot create relation with itself")
+                        .build();
+    }
     Issue issue = getEntityById(request.getIssueId());
     Issue relatedIssue = getEntityById(request.getIssueRelatedId());
     IssueRelation relation = IssueRelation.builder()
@@ -638,6 +651,24 @@ public class IssueService {
                       .message("Create relation successfully")
                       .data(taskMapper.toIssueRelationResponse(relation))
                       .logData(changeLog)
+                      .build();
+  }
+
+  public ApiResponse<List<IssueRelationResponse>> getRelations(String id) {
+    Issue issue = getEntityById(id);
+    List<IssueRelation> relations = issue.getAffectTo();
+    if (relations == null || relations.isEmpty()) {
+      return ApiResponse.<List<IssueRelationResponse>>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("No relation found")
+                        .data(Collections.emptyList())
+                        .build();
+    }
+    List<IssueRelationResponse> responses = taskMapper.toListIssueRelationResponse(relations);
+    return ApiResponse.<List<IssueRelationResponse>>builder()
+                      .code(HttpStatus.OK.value())
+                      .message("Get relations successfully")
+                      .data(responses)
                       .build();
   }
 }
