@@ -27,10 +27,15 @@ import {
   useSortable,
   verticalListSortingStrategy
 } from '@dnd-kit/sortable'
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useRef } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-const UpdateSubTaskForm = () => {
+type UpdateSubTaskFormProp = {
+  open?: boolean
+  cancel?: () => void
+}
+
+const UpdateSubTaskForm = ({ open, cancel }: UpdateSubTaskFormProp) => {
   const orderRef = useRef<number>(0)
 
   const pointerSensor = useSensor(PointerSensor, {
@@ -40,7 +45,6 @@ const UpdateSubTaskForm = () => {
   })
   const sensors = useSensors(pointerSensor)
 
-  const [addMode, setAddMode] = useState<boolean>(false)
   const form = useFormContext<UpdateIssueType>()
   const { fields, append, move, remove } = useFieldArray({
     control: form.control,
@@ -75,21 +79,17 @@ const UpdateSubTaskForm = () => {
   })
 
   const handleAppend = () => {
-    if (!addMode) {
-      setAddMode(true)
-      return
-    }
     const value = inputRef.current?.value
     if (!value) {
       inputRef.current?.focus()
     } else {
       orderRef.current += 1
+
       append({
         name: value,
         checked: false,
         order: orderRef.current
       })
-      setAddMode(false)
     }
   }
 
@@ -106,6 +106,7 @@ const UpdateSubTaskForm = () => {
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
+      <h3>Sub Task</h3>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -125,27 +126,21 @@ const UpdateSubTaskForm = () => {
           ))}
         </SortableContext>
       </DndContext>
-      <div className='mt-3 flex flex-col gap-2'>
-        {!addMode ? (
-          <Button type='button' onClick={handleAppend}>
-            Add sub tasks
-          </Button>
-        ) : (
+      {open && (
+        <div className='mt-3 flex flex-col gap-2'>
           <SubTaskItemForm
-            setAddMode={setAddMode}
+            cancel={() => {
+              cancel?.()
+            }}
             handleAppend={handleAppend}
             ref={inputRef}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
 
-type CreateSubTaskProps = {
-  setAddMode: (mode: false) => void
-  handleAppend: () => void
-}
 type SubTaskItemProps = {
   id: string
   name: string
@@ -210,8 +205,13 @@ const SubTaskItem = ({ id, name, index, remove }: SubTaskItemProps) => {
   )
 }
 
+type CreateSubTaskProps = {
+  cancel: () => void
+  handleAppend: () => void
+}
+
 const SubTaskItemForm = forwardRef<HTMLInputElement, CreateSubTaskProps>(
-  ({ setAddMode, handleAppend, ...props }, ref) => {
+  ({ cancel, handleAppend, ...props }, ref) => {
     return (
       <div className='flex flex-col gap-2'>
         <FormItem className='flex-1'>
@@ -226,10 +226,10 @@ const SubTaskItemForm = forwardRef<HTMLInputElement, CreateSubTaskProps>(
           </Button>
           <Button
             type='button'
-            onClick={() => setAddMode(false)}
+            onClick={() => cancel()}
             className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
           >
-            Delete
+            Cancel
           </Button>
         </div>
       </div>
