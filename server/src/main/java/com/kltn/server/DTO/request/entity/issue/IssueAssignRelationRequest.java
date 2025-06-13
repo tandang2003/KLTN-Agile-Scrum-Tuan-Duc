@@ -5,7 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 
-public class IssueAssignSprintRequest {
+public class IssueAssignRelationRequest {
   @NotEmpty
   private String issueId;
   @NotEmpty

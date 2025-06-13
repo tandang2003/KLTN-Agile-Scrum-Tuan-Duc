@@ -605,7 +605,7 @@ public class IssueService {
   }
 
   @SendKafkaEvent(topic = "task-log")
-  public ApiResponse<IssueRelationResponse> createRelation(IssueAssignSprintRequest request) {
+  public ApiResponse<IssueRelationResponse> createRelation(IssueAssignRelationRequest request) {
     Issue issue = getEntityById(request.getIssueId());
     Issue relatedIssue = getEntityById(request.getIssueRelatedId());
     IssueRelation relation = IssueRelation.builder()
@@ -628,27 +628,22 @@ public class IssueService {
   }
 
   @SendKafkaEvent(topic = "task-log")
-  public ApiResponse<IssueRelationResponse> deleteRelation(IssueAssignSprintRequest request) {
-    if (request.getIssueId()
-               .equals(request.getIssueRelatedId())) {
-      throw AppException.builder()
-                        .error(Error.INVALID_PARAMETER_REQUEST)
-                        .message("Cannot create relation with itself")
-                        .build();
-    }
+  public ApiResponse<Void> deleteRelation(IssueRemoveRelationRequest request) {
     Issue issue = getEntityById(request.getIssueId());
     Issue relatedIssue = getEntityById(request.getIssueRelatedId());
     IssueRelation relation = IssueRelation.builder()
+                                          .id(IssueRelationId.builder()
+                                                             .issueId(issue.getId())
+                                                             .issueRelatedId(relatedIssue.getId())
+                                                             .build())
                                           .issue(issue)
                                           .issueRelated(relatedIssue)
-                                          .typeRelation(request.getTypeRelation())
                                           .build();
     ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));
-    relation = issueRelationRepository.save(relation);
-    return ApiResponse.<IssueRelationResponse>builder()
-                      .code(HttpStatus.CREATED.value())
-                      .message("Create relation successfully")
-                      .data(taskMapper.toIssueRelationResponse(relation))
+    issueRelationRepository.delete(relation);
+    return ApiResponse.<Void>builder()
+                      .code(HttpStatus.OK.value())
+                      .message("Remove relation successfully")
                       .logData(changeLog)
                       .build();
   }
