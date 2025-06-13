@@ -11,21 +11,14 @@ import java.util.List;
 @Entity
 @Table(name = "resources")
 public class Resource extends BaseEntity {
-  //    @ManyToOne
-//    @JoinColumn(name = "project_id")
-//    private Project project;
   //ManyToMany sprint
   @ManyToMany(mappedBy = "dailyFiles")
   private List<ProjectSprint> issueDailyFiles;
-
   @ManyToMany(mappedBy = "resources")
   private List<Issue> issues;
-
-
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
-
   private String name;
   private String extension;
   @Transient

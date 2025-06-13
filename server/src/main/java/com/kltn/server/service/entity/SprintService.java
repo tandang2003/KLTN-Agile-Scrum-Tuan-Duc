@@ -108,7 +108,7 @@ public class SprintService {
 
         boolean isOngoing = (now.equals(start) || now.equals(end) || (now.isAfter(start) && now.isBefore(end)));
 
-        if (!isOngoing)
+        if (isOngoing)
             throw AppException.builder()
                               .error(Error.SPRINT_ALREADY_START)
                               .build();

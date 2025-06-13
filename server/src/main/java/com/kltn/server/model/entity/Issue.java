@@ -22,8 +22,7 @@ public class Issue extends BaseEntity {
               nullable = false)
   private Project project;
   @ManyToOne
-  @JoinColumn(name = "sprint_id",
-              updatable = false)
+  @JoinColumn(name = "sprint_id")
   private Sprint sprint;
   //    @ManyToOne
 //    @JoinColumns({
