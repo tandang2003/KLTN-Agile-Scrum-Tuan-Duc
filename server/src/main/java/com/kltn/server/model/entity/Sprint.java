@@ -10,9 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "sprints")
 public class Sprint extends BaseEntity {
-  //    @ManyToOne
-//    @JoinColumn(name = "project_id")
-//    private Project project;
   @Column(name = "title",
           columnDefinition = "LONGTEXT")
   private String title;
@@ -32,30 +29,15 @@ public class Sprint extends BaseEntity {
   @OneToMany(mappedBy = "sprint")
   private List<Issue> issues;
 
-  //  @OneToOne()
-//  @JoinColumn(name = "first_daily_file")
-//  private Resource firstDailyFile;
-//  @OneToOne()
-//  @JoinColumn(name = "second_daily_file")
-//  private Resource secondDailyFile;
-//  @OneToOne()
-//  @JoinColumn(name = "file_backlog")
-//  private Resource fileBacklog;
-
-  //    @Column(name = "dt_planning")
 
   public Sprint(SprintEntityBuilder sprintBuilder) {
     super(sprintBuilder);
-//        this.project = sprintBuilder.project;
     this.title = sprintBuilder.title;
-//        this.DTPlanning = sprintBuilder.DTPlanning;
-//        this.DTPreview = sprintBuilder.DTPreview;
     this.dtStart = sprintBuilder.DTStart;
     this.dtEnd = sprintBuilder.DTEnd;
     this.projectSprints = sprintBuilder.projectSprints;
     this.storyPoint = sprintBuilder.storyPoint;
     this.dtPredict = sprintBuilder.dtPredict;
-//        this.position = sprintBuilder.position;
   }
 
   public Sprint() {

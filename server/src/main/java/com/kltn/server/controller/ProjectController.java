@@ -6,7 +6,6 @@ import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
-import com.kltn.server.repository.document.ProjectMongoRepository;
 import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.mongo.ProjectMongoService;
 import jakarta.validation.Valid;

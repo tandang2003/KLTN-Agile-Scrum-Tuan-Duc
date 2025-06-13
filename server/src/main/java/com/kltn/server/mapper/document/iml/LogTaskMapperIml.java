@@ -4,9 +4,6 @@ import com.kltn.server.mapper.document.LogTaskMapper;
 import com.kltn.server.model.collection.Issue;
 import com.kltn.server.model.collection.model.LogTask;
 import com.kltn.server.model.collection.model.Relation;
-import com.kltn.server.model.entity.embeddedKey.IssueRelationId;
-import com.kltn.server.model.entity.relationship.IssueRelation;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

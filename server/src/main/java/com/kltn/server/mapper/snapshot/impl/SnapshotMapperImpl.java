@@ -10,6 +10,8 @@ import com.kltn.server.model.entity.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public class SnapshotMapperImpl implements SnapshotMapper {
     builder.complexOfDescription(entity.getComplexOfDescription());
     builder.numChangeOfPriority(entity.getNumChangeOfPriority());
     builder.numChangeOfDescription(entity.getNumChangeOfDescription());
-    builder.related(relationships.get(entity.getId()));
+    builder.related(relationships.getOrDefault(entity.getId(), Collections.emptyList()));
     if (entity.getAssignee() != null)
       builder.assignee(entity.getAssignee()
                              .getId());
