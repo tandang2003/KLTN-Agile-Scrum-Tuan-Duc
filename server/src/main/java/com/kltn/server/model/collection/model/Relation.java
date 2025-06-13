@@ -59,4 +59,12 @@ public class Relation<T> {
   public void setRelated(T related) {
     this.related = related;
   }
+
+  public IssueRelationType getRelationType() {
+    return relationType;
+  }
+
+  public void setRelationType(IssueRelationType relationType) {
+    this.relationType = relationType;
+  }
 }

@@ -58,7 +58,7 @@ public class ResourceController {
   }
 
   @PostMapping("daily-signature")
-  public ResponseEntity<ApiResponse<Void>> getSignature(
+  public ResponseEntity<ApiResponse<Void>> uploadDailySignature(
     @RequestBody DailyResourceSignatureRequest request) {
     var response = resourceService.uploadFileToDailySprint(request);
     return ResponseEntity.ok()

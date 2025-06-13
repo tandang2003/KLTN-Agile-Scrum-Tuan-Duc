@@ -5,7 +5,6 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
-import com.kltn.server.model.entity.Issue;
 import com.kltn.server.service.entity.IssueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
