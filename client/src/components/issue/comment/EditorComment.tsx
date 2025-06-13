@@ -7,18 +7,21 @@ import { Button } from '@/components/ui/button'
 import { useAppSelector } from '@/context/redux/hook.ts'
 import { RootState } from '@/context/redux/store.ts'
 import commentService from '@/services/comment.service.ts'
+import { useState } from 'react'
 
 const EditorComment = () => {
   const issueId = useAppSelector(
     (state: RootState) => state.issueSlice.current?.id
   )
   const { isReady, ws } = useContextComment()
+  const [comment, setComment] = useState<string>('')
 
   const handlePushComment = (val: string) => {
     if (issueId && isReady) {
       commentService.sendComment(ws, issueId, {
         content: val
       })
+      setComment('')
     }
   }
 
@@ -32,7 +35,7 @@ const EditorComment = () => {
       </div>
 
       <InlineEdit<string>
-        value={''}
+        value={comment}
         onSave={handlePushComment}
         className='block flex-1'
         displayComponent={(_) => {

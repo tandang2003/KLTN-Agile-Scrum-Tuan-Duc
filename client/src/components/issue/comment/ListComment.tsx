@@ -18,7 +18,7 @@ const ListComment = () => {
             id: uuid(),
             from: response.from,
             content: response.content,
-            createdAt: new Date()
+            createdAt: response.createdAt
           },
           ...(comment ?? [])
         ])
