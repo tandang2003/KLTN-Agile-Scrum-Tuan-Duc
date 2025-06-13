@@ -62,6 +62,16 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
                     .change(logTaskMapper.entityToLogDomain(task, issueMongo));
     return changeLogBuilder.build();
   }
+  @Override
+  public ChangeLogRequest taskToRemoveRelation(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.DELETE)
+                    .idRef(task.getId())
+                    .entityTarget(EntityTarget.TASK.name())
+                    .propertiesTargets(new String []{"relations"})
+                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+    return changeLogBuilder.build();
+  }
 
 //    @Override
 //    public ChangeLog TaskToUpdate(Issue curEntity, Issue newEntity, com.kltn.server.model.collection.Issue curDocument, com.kltn.server.model.collection.Issue newDocument) {

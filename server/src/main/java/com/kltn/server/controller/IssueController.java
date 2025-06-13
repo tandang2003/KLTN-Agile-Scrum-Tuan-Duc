@@ -5,6 +5,8 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
+import com.kltn.server.error.AppException;
+import com.kltn.server.error.Error;
 import com.kltn.server.service.entity.IssueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +87,28 @@ public class IssueController {
 
   @PostMapping("/relation")
   public ResponseEntity<ApiResponse<IssueRelationResponse>> relationShipIssue(
-    @Valid @RequestBody IssueAssignSprintRequest request) {
+    @Valid @RequestBody IssueAssignRelationRequest request) {
+    if (request.getIssueId()
+               .equals(request.getIssueRelatedId())) {
+      throw AppException.builder()
+                        .error(Error.INVALID_PARAMETER_REQUEST)
+                        .message("Cannot create relation with itself")
+                        .build();
+    }
     var task = taskService.createRelation(request);
+    return ResponseEntity.status(task.getCode())
+                         .body(task);
+  }
+
+  @DeleteMapping("/relation")
+  public ResponseEntity<ApiResponse<Void>> relationShipIssue(@Valid @RequestBody IssueRemoveRelationRequest request) {
+    if (request.getIssueId()
+               .equals(request.getIssueRelatedId())) {
+      throw AppException.builder()
+                        .error(Error.INVALID_PARAMETER_REQUEST)
+                        .build();
+    }
+    var task = taskService.deleteRelation(request);
     return ResponseEntity.status(task.getCode())
                          .body(task);
   }

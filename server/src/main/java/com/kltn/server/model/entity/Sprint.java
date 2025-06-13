@@ -48,16 +48,12 @@ public class Sprint extends BaseEntity {
   }
 
   public static class SprintEntityBuilder extends BaseEntityBuilder<Sprint, SprintEntityBuilder> {
-    //        private Project project;
     private int storyPoint;
     private Instant dtPredict;
     private String title;
-    //        private Instant DTPlanning;
-//        private Instant DTPreview;
     private Instant DTStart;
     private Instant DTEnd;
     private List<ProjectSprint> projectSprints;
-    private int position;
 
     @Override
     protected SprintEntityBuilder self() {
@@ -87,11 +83,6 @@ public class Sprint extends BaseEntity {
       this.dtPredict = dtPredict;
       return this;
     }
-//
-//        public SprintEntityBuilder position(int position) {
-//            this.position = position;
-//            return this;
-//        }
 
     public SprintEntityBuilder dtStart(Instant DTStart) {
       this.DTStart = DTStart;
