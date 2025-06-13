@@ -47,6 +47,8 @@ enum IssueRelationShip {
   IS_DUPLICATED_BY = 'IS_DUPLICATED_BY'
 }
 
+const issueRelationshipList = Object.values(IssueRelationShip)
+
 export type { IssueStatus, IssuePriority, IssueTag, SprintStatusType }
 export {
   issueStatusList,
@@ -54,5 +56,6 @@ export {
   issueTagList,
   issuePriorityList,
   sprintStatusList,
+  issueRelationshipList,
   IssueRelationShip
 }
