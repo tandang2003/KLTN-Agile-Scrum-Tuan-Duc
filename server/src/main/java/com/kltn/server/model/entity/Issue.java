@@ -30,7 +30,8 @@ public class Issue extends BaseEntity {
 //            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id", nullable = true)
 //    })
 //    private ProjectSprint projectSprint;
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY,
+             cascade = CascadeType.REMOVE)
   @JoinTable(name = "issue_resources",
              joinColumns = @JoinColumn(name = "issue_id"),
              inverseJoinColumns = @JoinColumn(name = "resource_id"))
@@ -66,7 +67,7 @@ public class Issue extends BaseEntity {
              cascade = CascadeType.ALL)
   private List<IssueRelation> affectBy;
   @OneToMany(mappedBy = "issue",
-             fetch = FetchType.LAZY,
+             fetch = FetchType.EAGER,
              cascade = CascadeType.ALL)
   private List<IssueRelation> affectTo;
 
