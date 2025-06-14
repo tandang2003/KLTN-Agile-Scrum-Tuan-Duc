@@ -20,7 +20,8 @@ public enum Error {
     INVITED_FAILED(411, "Failure to invite user"),
 
     ALREADY_EXISTS(HttpServletResponse.SC_CONFLICT, "User already have project"),
-    SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
+  SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
+  BACKLOG_FILE_ALREADY_UPLOAD(HttpServletResponse.SC_CONFLICT, "Backlog file already uploaded"),
     SPRINT_ALREADY_END(HttpServletResponse.SC_CONFLICT, "Sprint already ended"),
     NOT_FOUND_WORKSPACE(404, "Workspace not found"),
     SPRINT_CONFLICT_TIME(HttpServletResponse.SC_CONFLICT,"This sprint timeline have been set for another sprint" ),
