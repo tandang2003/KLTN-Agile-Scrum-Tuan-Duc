@@ -56,7 +56,9 @@ public enum Error {
     PRIVATE_KEY_READ_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error reading private key file"),
     PRIVATE_KEY_GENERATION_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating private key"),
     PUBLIC_KEY_READ_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error reading public key file"),
-    PUBLIC_KEY_GENERATION_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating public key");
+    PUBLIC_KEY_GENERATION_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating public key"),
+  SKILL_NOT_FOUND(404, "Skill not found"),
+  PERSONAL_SKILL_NOT_FOUND(404, "Personal skill not found"),;
 
     private int code;
     private String message;

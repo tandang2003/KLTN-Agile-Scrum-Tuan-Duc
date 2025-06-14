@@ -4,7 +4,6 @@ import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import jakarta.persistence.*;
-import org.mapstruct.Mappings;
 
 import java.util.List;
 
