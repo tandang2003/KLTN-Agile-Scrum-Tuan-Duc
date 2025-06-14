@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { ReactNode } from 'react'
 
-type ListViewProps<T> = {
+export type ListViewProps<T> = {
   data?: T[]
   render: (item: T, index: number) => ReactNode
   loading?: boolean

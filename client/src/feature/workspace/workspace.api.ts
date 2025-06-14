@@ -10,7 +10,6 @@ import {
   ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
-  WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -20,13 +19,10 @@ const workspaceApi = createApi({
   baseQuery: () => ({ data: {} }),
   tagTypes: ['Workspaces'],
   endpoints: (builder) => ({
-    getListWorkspace: builder.query<
-      Page<WorkspaceCardResponse>,
-      ListWorkspaceReq
-    >({
+    getListWorkspace: builder.query<Page<WorkspaceResponse>, ListWorkspaceReq>({
       async queryFn(args) {
         try {
-          const data: Page<WorkspaceCardResponse> =
+          const data: Page<WorkspaceResponse> =
             await workspaceService.getListWorkSpace(args)
           return { data: data }
         } catch (error) {

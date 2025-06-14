@@ -6,9 +6,13 @@ import {
   SidebarTrigger
 } from '@/components/ui/sidebar'
 import UserDropdown from '@/components/UserDropdown'
+import { useAppSelector } from '@/context/redux/hook'
 import { Outlet } from 'react-router-dom'
 
 const ManagerLayout = () => {
+  const { user } = useAppSelector((state) => state.authSlice)
+
+  if (!user) return null
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar className='bg-white' />
@@ -26,7 +30,11 @@ const ManagerLayout = () => {
           </header>
           <div className='flex-1 overflow-y-auto'>
             <div className='h-[calc(100vh-4rem)] group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-[calc(100vh-3rem)]'>
-              <Outlet />
+              <Outlet
+                context={{
+                  user: user
+                }}
+              />
             </div>
           </div>
         </div>

@@ -75,9 +75,11 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <BadgeCheck />
-            Account
+          <DropdownMenuItem asChild>
+            <NavLink to={'/user'} className='w-full'>
+              <BadgeCheck />
+              Account
+            </NavLink>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard />
