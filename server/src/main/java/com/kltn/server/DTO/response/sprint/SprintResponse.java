@@ -17,7 +17,8 @@ public record SprintResponse(String id,
                              Instant start,
                              Instant end,
                              Instant planning,
-                             Instant preview) {
+                             Instant preview
+) {
     public static class SprintResponseBuilder {
         private String id;
         private Map<String, String> process;

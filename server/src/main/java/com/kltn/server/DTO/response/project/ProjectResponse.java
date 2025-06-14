@@ -8,7 +8,8 @@ import java.time.Instant;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ProjectResponse(String id, String name, String description, Instant start, Instant end,
+public record ProjectResponse(
+  String id, String name, String description, Instant start, Instant end,
                               List<TopicResponse> topics,
                               List<SprintResponse> sprints,
                               Instant createdAt,
