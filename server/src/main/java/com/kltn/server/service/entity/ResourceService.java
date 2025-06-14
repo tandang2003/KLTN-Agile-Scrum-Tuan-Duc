@@ -5,6 +5,7 @@ import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
+import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -36,20 +38,21 @@ public class ResourceService {
   private final SprintService sprintService;
   private final ProjectSprintService projectSprintService;
   private ResourceRepository repository;
-  private ResourceMapper resourceMapper;
   private UserService userService;
   private ProjectRepository projectRepository;
+  private ResourceMapper resourceMapper;
   @Lazy
   @Autowired
   private IssueService issueService;
   private FileService fileService;
+  private IssueRepository issueRepository;
 
   @Autowired
   public ResourceService(ResourceRepository repository, ResourceMapper resourceMapper, UserService userService,
-                         ProjectRepository projectService,
-
+                         ProjectRepository projectService,IssueRepository issueRepository,
                          FileService fileService, SprintService sprintService,
                          ProjectSprintService projectSprintService) {
+    this.issueRepository = issueRepository;
     this.repository = repository;
     this.resourceMapper = resourceMapper;
     this.userService = userService;
@@ -110,17 +113,11 @@ public class ResourceService {
 
   }
 
-  public ApiResponse<Void> uploadFileToTask(ResourceTaskStoringRequest request) {
+  public ApiResponse<ResourceResponse> uploadFileToTask(ResourceTaskStoringRequest request) {
     Resource resource = resourceMapper.toResource(request);
     resource.setUser(userService.getCurrentUser());
-    resource=repository.save(resource);
+    resource = repository.save(resource);
     Issue issue = issueService.getEntityById(request.getIssueId());
-//    Issue issue = issueService.findById(request.getIssueId())
-//                              .orElseThrow(() -> AppException.builder()
-//                                                             .error(Error.NOT_FOUND)
-//                                                             .message(
-//                                                               "Issue not found with id: " + request.getIssueId())
-//                                                             .build());
     List<Resource> resources = new ArrayList<>();
     if (issue.getResources() != null) {
       resources = issue.getResources();
@@ -129,14 +126,15 @@ public class ResourceService {
     issue.setResources(resources);
     issueService.saveEntity(issue);
     repository.save(resource);
-    return ApiResponse.<Void>builder()
+    return ApiResponse.<ResourceResponse>builder()
                       .code(HttpStatus.CREATED.value())
                       .message("Upload file successfully")
+                      .data(resourceMapper.toResourceResponse(resource))
                       .build();
 
   }
 
-  public ApiResponse<Void> uploadFileToDailySprint(DailyResourceSignatureRequest request) {
+  public ApiResponse<ResourceResponse> uploadFileToDailySprint(DailyResourceSignatureRequest request) {
     Resource resource = resourceMapper.toResource(request);
     resource.setUser(userService.getCurrentUser());
     repository.save(resource);
@@ -154,10 +152,53 @@ public class ResourceService {
     dailyFiles.add(resource);
     projectSprint.setDailyFiles(dailyFiles);
     projectSprintService.save(projectSprint);
-    return ApiResponse.<Void>builder()
+    return ApiResponse.<ResourceResponse>builder()
                       .code(HttpStatus.CREATED.value())
                       .message("Upload file successfully")
+                      .data(resourceMapper.toResourceResponse(resource))
                       .build();
 
+  }
+
+
+  public ApiResponse<ResourceResponse> uploadFileToBacklogSprint(DailyResourceSignatureRequest request) {
+    Resource resource = resourceMapper.toResource(request);
+    resource.setUser(userService.getCurrentUser());
+    repository.save(resource);
+//    Sprint sprint = sprintService.getSprintById(request.getSprintId());
+    ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+                                                                                           .sprintId(
+                                                                                             request.getSprintId())
+                                                                                           .projectId(
+                                                                                             request.getProjectId())
+                                                                                           .build());
+    if (projectSprint.getDailyFiles() != null) {
+      throw AppException.builder()
+                        .error(Error.BACKLOG_FILE_ALREADY_UPLOAD)
+                        .build();
+    }
+    projectSprint.setFileBackLog(resource);
+    projectSprintService.save(projectSprint);
+    return ApiResponse.<ResourceResponse>builder()
+                      .code(HttpStatus.CREATED.value())
+                      .message("Upload file successfully")
+                      .data(resourceMapper.toResourceResponse(resource))
+                      .build();
+
+  }
+
+  @Transactional
+  public ApiResponse<Void> deleteFileToDailySprint(String id) {
+    Resource resource = getById(id);
+    for (Issue issue : resource.getIssues()) {
+      issue.getResources()
+           .remove(resource);
+    }
+    issueRepository.saveAll(resource.getIssues());
+    repository.delete(resource);
+    return ApiResponse.<Void>builder()
+                      .code(HttpStatus.OK.value())
+                      .message("Delete file successfully")
+                      .build();
   }
 }

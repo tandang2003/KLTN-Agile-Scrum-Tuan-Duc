@@ -5,6 +5,7 @@ import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
+import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
 import com.kltn.server.service.entity.ResourceService;
 import jakarta.validation.Valid;
@@ -43,7 +44,8 @@ public class ResourceController {
   }
 
   @PostMapping("/issue")
-  public ResponseEntity<ApiResponse<Void>> storeResource(@RequestBody @Valid ResourceTaskStoringRequest request) {
+  public ResponseEntity<ApiResponse<ResourceResponse>> storeResource(
+    @RequestBody @Valid ResourceTaskStoringRequest request) {
     var response = resourceService.uploadFileToTask(request);
     return ResponseEntity.ok()
                          .body(response);
@@ -57,13 +59,31 @@ public class ResourceController {
                          .body(response);
   }
 
-  @PostMapping("daily-signature")
-  public ResponseEntity<ApiResponse<Void>> uploadDailySignature(
+  @PostMapping("daily")
+  public ResponseEntity<ApiResponse<ResourceResponse>> uploadDailyFile(
     @RequestBody DailyResourceSignatureRequest request) {
     var response = resourceService.uploadFileToDailySprint(request);
     return ResponseEntity.ok()
                          .body(response);
   }
 
+
+  @PostMapping("backlog")
+  public ResponseEntity<ApiResponse<ResourceResponse>> uploadBacklogFile(
+    @RequestBody DailyResourceSignatureRequest request) {
+    var response = resourceService.uploadFileToBacklogSprint(request);
+    return ResponseEntity.ok()
+                         .body(response);
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<ApiResponse<Void>> deleteResource(@PathVariable String id) {
+    resourceService.deleteFileToDailySprint(id);
+    return ResponseEntity.ok()
+                         .body(ApiResponse.<Void>builder()
+                                          .code(200)
+                                          .message("Delete resource successfully")
+                                          .build());
+  }
 
 }

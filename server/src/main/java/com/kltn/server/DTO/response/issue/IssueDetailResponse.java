@@ -31,6 +31,7 @@ public class IssueDetailResponse {
     private Instant dtStart;
     private Instant dtEnd;
     private Instant dtPlanning;
+    private List<IssueRelationResponse> relations;
 
     public static IssueDetailResponseBuilder builder() {
         return new IssueDetailResponseBuilder();
@@ -54,6 +55,7 @@ public class IssueDetailResponse {
         private Instant dtStart;
         private Instant dtEnd;
         private Instant dtPlanning;
+      private List<IssueRelationResponse>  relations;
 
         public IssueDetailResponseBuilder id(String id) {
             this.id = id;
@@ -140,10 +142,16 @@ public class IssueDetailResponse {
             return this;
         }
 
+        public IssueDetailResponseBuilder relations(List<IssueRelationResponse>  relations) {
+            this.relations = relations;
+            return this;
+        }
+
         public IssueDetailResponse build() {
             return new IssueDetailResponse(this);
         }
     }
+
 
     public IssueDetailResponse(IssueDetailResponseBuilder builder) {
         this.id = builder.id;
@@ -163,6 +171,7 @@ public class IssueDetailResponse {
         this.dtStart = builder.dtStart;
         this.dtEnd = builder.dtEnd;
         this.dtPlanning = builder.dtPlanning;
+        this.relations = builder.relations;
     }
 
     public String getId() {
@@ -304,4 +313,12 @@ public class IssueDetailResponse {
     public void setDtPlanning(Instant dtPlanning) {
         this.dtPlanning = dtPlanning;
     }
+
+  public List<IssueRelationResponse>  getRelations() {
+    return relations;
+  }
+
+  public void setRelations(List<IssueRelationResponse>  relations) {
+    this.relations = relations;
+  }
 }
