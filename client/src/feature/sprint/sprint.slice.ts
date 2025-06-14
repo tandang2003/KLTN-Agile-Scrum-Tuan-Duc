@@ -55,6 +55,7 @@ const sprintSlice = createSlice({
 
 const sprintReducer = sprintSlice.reducer
 export { sprintReducer }
+export type { SprintCurrent }
 export const {
   openDialogCreateSprint,
   closeDialogCreateSprint,

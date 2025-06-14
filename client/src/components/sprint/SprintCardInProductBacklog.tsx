@@ -1,4 +1,5 @@
-import { IssueResponse } from '@/types/issue.type'
+import Icon from '@/components/Icon'
+import ToolTip from '@/components/Tooltip'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,23 +10,27 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import ToolTip from '@/components/Tooltip'
-import Icon from '@/components/Icon'
+import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
+import useOpenIssueUpdate from '@/hooks/use-issue-update'
+import { HttpStatusCode } from '@/lib/const'
+import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
 import { toast } from 'sonner'
-type SprintCardProps = {
+type SprintCardInProductBacklogProps = {
   data: IssueResponse
 }
 
-const SprintCard = ({ data: item }: SprintCardProps) => {
+const SprintCardInProductBacklog = ({
+  data: item
+}: SprintCardInProductBacklogProps) => {
   const { workspaceId } = useAppId()
   const [update] = useUpdateIssueMutation()
   const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+  const { action } = useOpenIssueUpdate()
   const handleUpdateSprint = (sprintId: Id) => {
     update({
       id: item.id,
@@ -35,6 +40,11 @@ const SprintCard = ({ data: item }: SprintCardProps) => {
       .unwrap()
       .then((res) => {
         toast.message("Issue's sprint updated successfully")
+      })
+      .catch((err) => {
+        if (err.status === HttpStatusCode.Conflict)
+          toast.error('Sprint is running')
+        else toast.error("Another error occurred while updating issue's sprint")
       })
   }
   return (
@@ -54,6 +64,13 @@ const SprintCard = ({ data: item }: SprintCardProps) => {
           <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
+          <DropdownMenuItem
+            onClick={() => {
+              action(item.id)
+            }}
+          >
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
             <DropdownMenuPortal>
@@ -79,4 +96,4 @@ const SprintCard = ({ data: item }: SprintCardProps) => {
   )
 }
 
-export default SprintCard
+export default SprintCardInProductBacklog

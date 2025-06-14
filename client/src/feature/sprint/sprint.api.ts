@@ -1,3 +1,4 @@
+import { normalizeError } from '@/lib/http.helper'
 import { sortSprintsByDateStart } from '@/lib/sprint'
 import sprintService from '@/services/sprint.service'
 import { Id } from '@/types/other.type'
@@ -64,7 +65,9 @@ const sprintApi = createApi({
           const data = await sprintService.updateSprint(arg)
           return { data: data }
         } catch (error) {
-          return { error }
+          return {
+            error: normalizeError(error)
+          }
         }
       },
       invalidatesTags: (_, __, { id }) => {

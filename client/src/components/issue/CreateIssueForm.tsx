@@ -36,9 +36,10 @@ import { toast } from 'sonner'
 import { useEffect } from 'react'
 type CreateIssueFormProps = {
   onSubmit?: () => void
+  sprint?: CreateIssueType['sprint']
 }
 
-const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
+const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
   const { projectId } = useAppId()
 
   const [create] = useCreateIssueMutation()
@@ -49,7 +50,9 @@ const CreateIssueForm = ({ onSubmit }: CreateIssueFormProps) => {
       priority: 'CRITICAL',
       tag: 'THEORY',
       date: undefined,
-      position: null
+      position: null,
+      sprint: sprint,
+      sprintId: sprint?.id
     }
   })
 
