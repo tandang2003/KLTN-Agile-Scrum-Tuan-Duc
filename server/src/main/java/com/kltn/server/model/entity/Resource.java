@@ -14,6 +14,8 @@ public class Resource extends BaseEntity {
   //ManyToMany sprint
   @ManyToMany(mappedBy = "dailyFiles")
   private List<ProjectSprint> issueDailyFiles;
+  @OneToOne(mappedBy = "fileBackLog")
+  private ProjectSprint projectSprint;
   @ManyToMany(mappedBy = "resources")
   private List<Issue> issues;
   @ManyToOne
@@ -198,5 +200,13 @@ public class Resource extends BaseEntity {
 
   public void setIssues(List<Issue> issues) {
     this.issues = issues;
+  }
+
+  public ProjectSprint getProjectSprint() {
+    return projectSprint;
+  }
+
+  public void setProjectSprint(ProjectSprint projectSprint) {
+    this.projectSprint = projectSprint;
   }
 }

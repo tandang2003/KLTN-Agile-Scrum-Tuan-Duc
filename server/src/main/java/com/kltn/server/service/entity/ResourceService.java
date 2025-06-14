@@ -18,6 +18,7 @@ import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.ResourceRepository;
+import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import com.kltn.server.service.file.FileService;
 import com.kltn.server.service.file.FileSignature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,13 @@ public class ResourceService {
   private IssueService issueService;
   private FileService fileService;
   private IssueRepository issueRepository;
+  @Autowired
+  private ProjectSprintRepository projectSprintRepository;
 
   @Autowired
   public ResourceService(ResourceRepository repository, ResourceMapper resourceMapper, UserService userService,
-                         ProjectRepository projectService,IssueRepository issueRepository,
-                         FileService fileService, SprintService sprintService,
-                         ProjectSprintService projectSprintService) {
+                         ProjectRepository projectService, IssueRepository issueRepository, FileService fileService,
+                         SprintService sprintService, ProjectSprintService projectSprintService) {
     this.issueRepository = issueRepository;
     this.repository = repository;
     this.resourceMapper = resourceMapper;
@@ -195,6 +197,16 @@ public class ResourceService {
            .remove(resource);
     }
     issueRepository.saveAll(resource.getIssues());
+    if (resource.getProjectSprint() != null) {
+      ProjectSprint projectSprint = resource.getProjectSprint();
+      projectSprint.setFileBackLog(null);
+      projectSprintService.save(projectSprint);
+    }
+    for (ProjectSprint projectSprint : resource.getIssueDailyFiles()) {
+      projectSprint.getDailyFiles()
+                   .remove(resource);
+    }
+    projectSprintRepository.saveAll(resource.getIssueDailyFiles());
     repository.delete(resource);
     return ApiResponse.<Void>builder()
                       .code(HttpStatus.OK.value())
