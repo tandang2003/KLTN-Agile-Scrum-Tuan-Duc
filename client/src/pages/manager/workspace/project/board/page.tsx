@@ -1,5 +1,6 @@
 import Board from '@/components/board/Board'
 import FilterBoard from '@/components/board/FilterBoard'
+import { DataOnMoveType, Position } from '@/components/board/type'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppDispatch } from '@/context/redux/hook'
@@ -7,13 +8,17 @@ import { getPositionThunk, saveIssues } from '@/feature/board/board.slice'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
 import useBoard from '@/hooks/use-board'
-import { toBoardModel } from '@/lib/board.helper'
-import issueService from '@/services/issue.service'
-import { IssueResponse, UpdatePositionIssueRequest } from '@/types/issue.type'
+import { DEFAULT_POSITION, toBoardModel } from '@/lib/board.helper'
+import boardService from '@/services/board.service'
+import { IssueResponse } from '@/types/issue.type'
 import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
+import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
-import { ComponentProps, useEffect } from 'react'
+import { ComponentProps, useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
+
+type OnMove = ComponentProps<typeof Board>['onMove']
 
 const BoardPage = () => {
   const { projectId } = useAppId()
@@ -29,6 +34,9 @@ const BoardPage = () => {
     }
   )
 
+  const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
+  const currentColumns = useRef<Position>(columns)
+
   useEffect(() => {
     if (!isFetching) {
       dispatch(saveIssues(data))
@@ -36,49 +44,99 @@ const BoardPage = () => {
     }
   }, [data, isFetching, projectId, dispatch])
 
-  const handleOnMove = (active, over) => {
-    // Same column
-    const id = active.id
-    const status = active.data.current?.sortable.containerId as IssueStatus
-    const indexId = over.data.current?.sortable.index
-    let nextId =
-      indexId === -1 ? null : active.data.current?.sortable.items[indexId + 1]
-    let reqUpdatePrevious: UpdatePositionIssueRequest | null = null
-    if (nextId === undefined && data) {
-      // Check previous item
-      const previousId =
-        indexId === 0 ? null : active.data.current?.sortable.items[indexId - 1]
-      const previousItem = data.find((item) => item.id === previousId)
+  useEffect(() => {
+    if (projectId) {
+      boardService.getPosition(projectId).then((res) => {
+        setColumns(res)
+      })
+    }
+  }, [projectId])
 
-      if (!previousItem) return
+  useEffect(() => {
+    if (currentColumns.current === columns) return
+    currentColumns.current = columns
+    if (projectId) {
+      console.log('Saving position:', columns)
+      boardService.savePosition(projectId, columns).then((res) => {
+        toast.message('Position saved successfully')
+      })
+    }
+  }, [columns])
 
-      const previousStatus = previousItem.status as IssueStatus
-      reqUpdatePrevious = {
-        id: previousId,
-        status: previousStatus,
-        position: id
+  const findColumn = useCallback(
+    (active: Id) => {
+      if (!columns) return null
+      for (const [key, value] of Object.entries(columns)) {
+        if (value.includes(active)) {
+          return key as IssueStatus
+        }
       }
-    }
+      return null
+    },
+    [columns]
+  )
 
-    const reqUpdateCurrent: UpdatePositionIssueRequest = {
-      id: id,
-      status: status,
-      position: nextId
-    }
+  const findIndex = useCallback(
+    (active: Id) => {
+      if (!columns) return null
+      for (const value of Object.values(columns)) {
+        if (value.includes(active)) {
+          return value.indexOf(active)
+        }
+      }
+      return null
+    },
+    [columns]
+  )
 
-    // update here
-    if (reqUpdatePrevious)
-      Promise.all([
-        issueService.updatePosition(reqUpdatePrevious).then((res) => {
-          console.log('Update previous position:', res)
-        }),
-        issueService.updatePosition(reqUpdateCurrent).then((res) => {
-          console.log('Update current position:', res)
-        })
-      ])
-    else {
-      issueService.updatePosition(reqUpdateCurrent).then((res) => {
-        console.log('Update current position:', res)
+  useEffect(() => {
+    console.log('columns', columns)
+  }, [columns])
+
+  const handleOnMove = ({ active, columnTo, indexTo }: DataOnMoveType) => {
+    // // console.log('handleOnMove', active, columnTo, indexTo)
+    const oldActiveIndex = findIndex(active)
+    const newActiveIndex = indexTo
+    const oldColumn: IssueStatus | null = findColumn(active)
+    const newColumn = columnTo as IssueStatus | null
+    // console.log(oldActiveIndex, newActiveIndex, oldColumn, newColumn)
+    if (
+      oldActiveIndex === null ||
+      newActiveIndex === null ||
+      oldColumn === null ||
+      newColumn === null
+    )
+      return
+    if (oldColumn === newColumn) {
+      // Same column => swap
+      const itemsNewColumn = arrayMove(
+        columns[oldColumn],
+        oldActiveIndex,
+        newActiveIndex
+      )
+      setColumns((prev) => {
+        return {
+          ...(prev ?? {}),
+          [oldColumn]: itemsNewColumn
+        }
+      })
+    }
+    if (oldColumn !== newColumn) {
+      // Different column
+      // remove old column
+      const itemsOldColumn = cloneDeep(columns[oldColumn])
+      // remove
+      itemsOldColumn.splice(oldActiveIndex, 1)
+      console.log('itemsNewColumn', columns[newColumn])
+      let itemsNewColumn = cloneDeep(columns[newColumn])
+      // insert
+      itemsNewColumn.splice(newActiveIndex, 0, active)
+      setColumns((prev) => {
+        return {
+          ...(prev ?? {}),
+          [oldColumn]: itemsOldColumn,
+          [newColumn]: itemsNewColumn
+        }
       })
     }
   }
@@ -87,18 +145,35 @@ const BoardPage = () => {
     <div>
       <FilterBoard />
       {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
-      {!isFetching && <RenderBoard data={data} handleOnMove={handleOnMove} />}
+      {!isFetching && columns && (
+        <RenderBoard
+          data={{
+            columns: columns,
+            items: data || []
+          }}
+          handleOnMove={(data) => {
+            handleOnMove({
+              active: data.active,
+              columnTo: data.columnTo,
+              indexTo: data.indexTo
+            })
+          }}
+        />
+      )}
     </div>
   )
 }
 
 type RenderBoardProps = {
-  data?: IssueResponse[]
-  handleOnMove?: ComponentProps<typeof Board>['onMove']
+  data: {
+    columns: Position
+    items: IssueResponse[]
+  }
+  handleOnMove: OnMove
 }
 
 const RenderBoard = ({ data, handleOnMove }: RenderBoardProps) => {
-  const dataToRender = toBoardModel(cloneDeep(data || []))
+  const dataToRender = cloneDeep(toBoardModel(data.items, data.columns))
   return (
     <div className='flex-1'>
       <ScrollArea className='h-full'>

@@ -1,56 +1,30 @@
-import { BoardModelType, CardModelType, ColumnsType } from '@/types/card.type'
+import { Position } from '@/components/board/type'
+import { BoardModelType, ColumnsType } from '@/types/card.type'
 import { IssueResponse } from '@/types/issue.type'
-import { issueStatusList, statusOrder } from '@/types/model/typeOf'
-import { Id } from '@/types/other.type'
+import { issueStatusList } from '@/types/model/typeOf'
 
-const toBoardModel = (apiResponse: IssueResponse[]): BoardModelType => {
-  const apiResponseMapStatus: Record<Id, IssueResponse[]> = {}
-  apiResponse.forEach((item) => {
-    if (!apiResponseMapStatus[item.status]) {
-      apiResponseMapStatus[item.status] = []
-    }
-    apiResponseMapStatus[item.status].push(item)
-  })
+const DEFAULT_POSITION: Position = {
+  BACKLOG: [],
+  TODO: [],
+  INPROCESS: [],
+  REVIEW: [],
+  DONE: []
+}
 
-  for (const key in apiResponseMapStatus) {
-    apiResponseMapStatus[key] = sortLinkedList<IssueResponse>(
-      apiResponseMapStatus[key],
-      'id',
-      'position'
-    )
-  }
-
+const toBoardModel = (
+  issues: IssueResponse[],
+  position: Position
+): BoardModelType => {
   let columns: ColumnsType = {}
-  const cards: CardModelType[] = []
-  for (const key in apiResponseMapStatus) {
-    columns[key] = {
-      name: key,
-      cardIds: apiResponseMapStatus[key].map((item) => item.id)
-    }
-
-    cards.push(
-      ...apiResponseMapStatus[key].map((item) => ({
-        id: item.id,
-        name: item.name,
-        status: item.status
-      }))
-    )
-  }
-
-  columns = sortObjectByKeyOrder(columns, statusOrder)
-
-  issueStatusList.forEach((item) => {
-    if (!columns[item]) {
-      columns[item] = {
-        name: item,
-        cardIds: []
-      }
+  issueStatusList.forEach((status) => {
+    columns[status] = {
+      name: status,
+      cardIds: position[status] || []
     }
   })
-
   const result: BoardModelType = {
-    columns,
-    cards
+    columns: columns,
+    cards: issues
   }
 
   return result
@@ -102,4 +76,4 @@ function sortObjectByKeyOrder<T extends Record<string, any>>(
   return sorted
 }
 
-export { toBoardModel }
+export { toBoardModel, DEFAULT_POSITION }

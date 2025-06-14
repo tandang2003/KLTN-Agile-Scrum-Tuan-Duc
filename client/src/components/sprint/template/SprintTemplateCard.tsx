@@ -13,6 +13,7 @@ import {
   setCurrentSprint
 } from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode } from '@/lib/const'
+import { getStatusSprint } from '@/lib/sprint'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
@@ -71,6 +72,9 @@ const SprintTemplateCard = ({
         <span className='ml-auto flex items-center gap-4'>
           <span>Point: </span>
           <Badge className='bg-green-500'>{data.storyPoint}</Badge>
+          <Badge statusSprint={getStatusSprint(data)} className='ml-auto'>
+            {getStatusSprint(data)}
+          </Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Icon icon={'ri:more-fill'} />

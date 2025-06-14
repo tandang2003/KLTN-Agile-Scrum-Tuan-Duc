@@ -1,5 +1,8 @@
 import Card from '@/components/board/Card'
 import Column from '@/components/board/Column'
+import { DataOnMoveType } from '@/components/board/type'
+import KanbanBoard from '@/components/kanban/KanbanBoard'
+import KanbanProvider from '@/components/kanban/KanbanProvider'
 import {
   BoardModelType,
   CardModelType,
@@ -10,25 +13,28 @@ import {
   Active,
   closestCorners,
   defaultDropAnimationSideEffects,
-  DndContext,
   DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
   DropAnimation,
-  Over,
   PointerSensor,
   useSensor,
   useSensors
 } from '@dnd-kit/core'
 
-import { arrayMove, SortableContext } from '@dnd-kit/sortable'
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type BoardProps = {
   data: BoardModelType
-  onMove?: (active: Active, over: Over) => void
+  // onMove?: (active: Active, over: Over) => void
+  onMove?: (data: DataOnMoveType) => void
 }
 
 const Board = ({ data: board, onMove }: BoardProps) => {
@@ -41,8 +47,9 @@ const Board = ({ data: board, onMove }: BoardProps) => {
 
   const [data, setData] = useState<BoardModelType>(board)
 
+  // Active
   const activeItemRef = useRef<Id | null>(null)
-  const activeNewIndex = useRef<Id | null>(null)
+  const activeNewIndex = useRef<number | null>(null)
   const activeNewColumn = useRef<Id | null>(null)
 
   const activeDragTypeRef = useRef<null | 'card'>(null)
@@ -52,6 +59,25 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       styles: { active: { opacity: '0.5' } }
     })
   }
+
+  const prevColumnsRef = useRef(data.columns)
+
+  useEffect(() => {
+    for (const [columnId, column] of Object.entries(data.columns)) {
+      const prev = prevColumnsRef.current[columnId]?.cardIds || []
+      const curr = column.cardIds
+
+      const hasChanged =
+        prev.length !== curr.length || prev.some((id, idx) => id !== curr[idx])
+
+      // if (hasChanged) {
+      //   console.log(`Column ${columnId} changed`, curr)
+      //   // Do something with the update
+      // }
+    }
+
+    prevColumnsRef.current = data.columns
+  }, [data.columns])
 
   const renderColumn = useCallback(
     ([keyColumn, valueColumn]: [Id, ColumnModelType]) => {
@@ -63,14 +89,17 @@ const Board = ({ data: board, onMove }: BoardProps) => {
         <SortableContext
           key={keyColumn}
           id={keyColumn}
+          strategy={verticalListSortingStrategy}
           items={valueColumn.cardIds}
         >
           <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
-            <Column
-              id={keyColumn}
-              name={valueColumn.name}
-              items={cardsInColumn}
-            />
+            <KanbanBoard id={keyColumn}>
+              <Column
+                id={keyColumn}
+                name={valueColumn.name}
+                items={cardsInColumn}
+              />
+            </KanbanBoard>
           </div>
         </SortableContext>
       )
@@ -269,14 +298,14 @@ const Board = ({ data: board, onMove }: BoardProps) => {
           }
         }
       }
-      onMove?.(active, over)
-      // if (
-      //   activeItemRef.current &&
-      //   activeNewColumn.current &&
-      //   activeNewIndex.current
-      // ) {
 
-      // }
+      if (activeItemRef.current) {
+        onMove?.({
+          active: activeItemRef.current,
+          columnTo: activeNewColumn.current,
+          indexTo: activeNewIndex.current
+        })
+      }
       clearState()
     },
     [findColumn, data, onMove, activeNewIndex]
@@ -298,7 +327,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
   }, [board])
 
   return (
-    <DndContext
+    <KanbanProvider
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
@@ -319,7 +348,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
           />
         )}
       </DragOverlay>
-    </DndContext>
+    </KanbanProvider>
   )
 }
 

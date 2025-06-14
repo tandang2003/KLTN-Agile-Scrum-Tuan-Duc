@@ -9,10 +9,13 @@ type KanbanBoardProps = {
 }
 
 const KanbanBoard = ({ id, children, className }: KanbanBoardProps) => {
-  const { isOver, setNodeRef } = useDroppable({ id })
+  const { setNodeRef } = useDroppable({ id })
 
   return (
-    <div className={cn(className)} ref={setNodeRef}>
+    <div
+      className={cn(cn('min-h-[100px] rounded-sm px-2'), className)}
+      ref={setNodeRef}
+    >
       {children}
     </div>
   )
