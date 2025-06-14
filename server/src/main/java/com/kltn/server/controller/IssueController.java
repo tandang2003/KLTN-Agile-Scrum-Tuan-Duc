@@ -36,6 +36,7 @@ public class IssueController {
                          .body(task);
   }
 
+
   @PostMapping
   @PreAuthorize("hasAuthority('create_task')")
   public ResponseEntity<ApiResponse<IssueResponse>> createTask(@Valid @RequestBody IssueCreateRequest taskResponse) {
@@ -50,6 +51,7 @@ public class IssueController {
     ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, sprintId));
     return ResponseEntity.status(task.getCode())
                          .body(task);
+
   }
 
   @GetMapping("{issueId}")

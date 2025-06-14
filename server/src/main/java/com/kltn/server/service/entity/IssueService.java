@@ -153,7 +153,6 @@ public class IssueService {
   @SendKafkaEvent(topic = "task-log")
   @Transactional
   public ApiResponse<IssueResponse> createTaskBacklog(IssueCreateRequest issueCreateRequest) {
-
     Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
     var task = taskMapper.toEntity(issueCreateRequest);
     task.setProject(project);
@@ -480,6 +479,7 @@ public class IssueService {
                       .code(HttpStatus.OK.value())
                       .message("Update task successfully")
                       .data(taskMapper.toIssueResponse(task, taskMongo))
+
                       .logData(changeLog)
                       .build();
   }
@@ -494,7 +494,10 @@ public class IssueService {
       List<Issue> issues = projectService.getProjectById(projectId)
                                          .getIssues();
       issues = issues.stream()
-                     .filter(issue -> issue.getSprint() == null)
+                     .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && !issue.getStatus()
+                                                                                                       .equals(
+                                                                                                         IssueStatus.DONE)))
+
                      .toList();
 
       return buildResponseFromIssues(issues);
@@ -592,7 +595,6 @@ public class IssueService {
   }
 
   public ApiResponse<IssueDetailResponse> getCurrentIssueDetailById(String id) {
-
     var entity = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
