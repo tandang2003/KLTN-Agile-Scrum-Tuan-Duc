@@ -1,7 +1,5 @@
 package com.kltn.server.config.websocket;
 
-import com.kltn.server.model.entity.User;
-
 import java.security.Principal;
 
 public class UserPrinciple implements Principal {

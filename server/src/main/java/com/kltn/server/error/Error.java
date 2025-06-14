@@ -20,7 +20,8 @@ public enum Error {
     INVITED_FAILED(411, "Failure to invite user"),
 
     ALREADY_EXISTS(HttpServletResponse.SC_CONFLICT, "User already have project"),
-    SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
+  SPRINT_ALREADY_START(HttpServletResponse.SC_CONFLICT, "Sprint already started"),
+  BACKLOG_FILE_ALREADY_UPLOAD(HttpServletResponse.SC_CONFLICT, "Backlog file already uploaded"),
     SPRINT_ALREADY_END(HttpServletResponse.SC_CONFLICT, "Sprint already ended"),
     NOT_FOUND_WORKSPACE(404, "Workspace not found"),
     SPRINT_CONFLICT_TIME(HttpServletResponse.SC_CONFLICT,"This sprint timeline have been set for another sprint" ),
@@ -55,7 +56,9 @@ public enum Error {
     PRIVATE_KEY_READ_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error reading private key file"),
     PRIVATE_KEY_GENERATION_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating private key"),
     PUBLIC_KEY_READ_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error reading public key file"),
-    PUBLIC_KEY_GENERATION_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating public key");
+    PUBLIC_KEY_GENERATION_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating public key"),
+  SKILL_NOT_FOUND(404, "Skill not found"),
+  PERSONAL_SKILL_NOT_FOUND(404, "Personal skill not found"),;
 
     private int code;
     private String message;

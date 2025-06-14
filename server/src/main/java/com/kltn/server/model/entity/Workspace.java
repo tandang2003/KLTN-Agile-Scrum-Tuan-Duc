@@ -55,13 +55,8 @@ public class Workspace extends BaseEntity {
       return false;
     if (!super.equals(o))
       return false;
-    return Objects.equals(name, workspace.name) && Objects.equals(description,
-        workspace.description)
-        && Objects.equals(start,
-            workspace.start)
-        && Objects.equals(
-            end, workspace.end)
-        && Objects.equals(owner, workspace.owner);
+    return Objects.equals(name, workspace.name) && Objects.equals(description, workspace.description) && Objects.equals(
+      start, workspace.start) && Objects.equals(end, workspace.end) && Objects.equals(owner, workspace.owner);
   }
 
   @Override
@@ -169,7 +164,7 @@ public class Workspace extends BaseEntity {
   }
 
   public int getSprintNum() {
-    sprintNum = sprints.size();
+    sprintNum = sprints != null && !sprints.isEmpty() ? sprints.size() : 0;
     return sprintNum;
   }
 
@@ -209,16 +204,16 @@ public class Workspace extends BaseEntity {
   @Transient
   public Set<User> getMembers() {
     return workspacesUserProjects.stream()
-        .map(WorkspacesUsersProjects::getUser)
-        .collect(java.util.stream.Collectors.toSet());
+                                 .map(WorkspacesUsersProjects::getUser)
+                                 .collect(java.util.stream.Collectors.toSet());
   }
 
   @Transient
   public Set<Project> getProjects() {
     return workspacesUserProjects.stream()
-        .map(WorkspacesUsersProjects::getProject)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toSet());
+                                 .map(WorkspacesUsersProjects::getProject)
+                                 .filter(Objects::nonNull)
+                                 .collect(Collectors.toSet());
   }
 
   public List<Sprint> getSprints() {

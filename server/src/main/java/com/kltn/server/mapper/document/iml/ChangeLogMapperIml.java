@@ -12,44 +12,66 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ChangeLogMapperIml implements ChangeLogMapper {
-    private final LogTaskMapper logTaskMapper;
-    private final LogProjectMapper logProjectMapper;
+  private final LogTaskMapper logTaskMapper;
+  private final LogProjectMapper logProjectMapper;
 
-    public ChangeLogMapperIml(LogTaskMapper logTaskMapper, LogProjectMapper logProjectMapper) {
-        this.logTaskMapper = logTaskMapper;
-        this.logProjectMapper = logProjectMapper;
-    }
+  public ChangeLogMapperIml(LogTaskMapper logTaskMapper, LogProjectMapper logProjectMapper) {
+    this.logTaskMapper = logTaskMapper;
+    this.logProjectMapper = logProjectMapper;
+  }
 
-    @Override
-    public ChangeLogRequest taskToCreateLogRequest(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
-        ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
-        changeLogBuilder.type(LogType.CREATE)
-                .idRef(task.getId())
-                .entityTarget(EntityTarget.TASK.name())
-                .change(logTaskMapper.entityToLogDomain(task, issueMongo));
-        return changeLogBuilder.build();
-    }
+  @Override
+  public ChangeLogRequest taskToCreateLogRequest(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.CREATE)
+                    .idRef(task.getId())
+                    .entityTarget(EntityTarget.TASK.name())
+                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+    return changeLogBuilder.build();
+  }
 
-    @Override
-    public ChangeLogRequest ProjectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo) {
-        ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
-        changeLogBuilder.type(LogType.CREATE)
-                .idRef(project.getId())
-                .entityTarget(EntityTarget.PROJECT.name())
-                .change(logProjectMapper.entityToLogDomain(project, projectMongo));
-        return changeLogBuilder.build();
-    }
+  @Override
+  public ChangeLogRequest projectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.CREATE)
+                    .idRef(project.getId())
+                    .entityTarget(EntityTarget.PROJECT.name())
+                    .change(logProjectMapper.entityToLogDomain(project, projectMongo));
+    return changeLogBuilder.build();
+  }
 
-    @Override
-    public ChangeLogRequest TaskToUpdate(String[] properties, Issue task, com.kltn.server.model.collection.Issue issueMongo) {
-        ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
-        changeLogBuilder.type(LogType.UPDATE)
-                .idRef(task.getId())
-                .entityTarget(EntityTarget.TASK.name())
-                .propertiesTargets(properties)
-                .change(logTaskMapper.entityToLogDomain(task, issueMongo));
-        return changeLogBuilder.build();
-    }
+  @Override
+  public ChangeLogRequest taskToUpdate(String[] properties, Issue task,
+                                       com.kltn.server.model.collection.Issue issueMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.UPDATE)
+                    .idRef(task.getId())
+                    .entityTarget(EntityTarget.TASK.name())
+                    .propertiesTargets(properties)
+                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+    return changeLogBuilder.build();
+  }
+
+  @Override
+  public ChangeLogRequest taskToCreateRelation(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.CREATE)
+                    .idRef(task.getId())
+                    .entityTarget(EntityTarget.TASK.name())
+                    .propertiesTargets(new String []{"relations"})
+                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+    return changeLogBuilder.build();
+  }
+  @Override
+  public ChangeLogRequest taskToRemoveRelation(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.DELETE)
+                    .idRef(task.getId())
+                    .entityTarget(EntityTarget.TASK.name())
+                    .propertiesTargets(new String []{"relations"})
+                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+    return changeLogBuilder.build();
+  }
 
 //    @Override
 //    public ChangeLog TaskToUpdate(Issue curEntity, Issue newEntity, com.kltn.server.model.collection.Issue curDocument, com.kltn.server.model.collection.Issue newDocument) {

@@ -28,7 +28,6 @@ import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.relation.IssueRelationRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -59,8 +58,8 @@ public class IssueService {
       TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
       ResourceService resourceService, ChangeLogMapper changeLogMapper,
       IssueMongoService issueMongoService, UserService userService,
-      ProjectSprintService projectSprintService, IssueMapper taskMapper,
-      IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper) {
+      ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository,
+      SprintService sprintService, UserMapper userMapper) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -152,7 +151,6 @@ public class IssueService {
   @SendKafkaEvent(topic = "task-log")
   @Transactional
   public ApiResponse<IssueResponse> createTaskBacklog(IssueCreateRequest issueCreateRequest) {
-
     Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
     var task = taskMapper.toEntity(issueCreateRequest);
     task.setProject(project);
@@ -237,11 +235,11 @@ public class IssueService {
     return taskRepository.findById(id)
         .orElseThrow(() -> AppException.builder()
             .error(Error.NOT_FOUND)
+            .message("Issue not found with id: " + id)
             .build());
   }
 
   public Issue saveEntity(Issue issue) {
-
     try {
       issue = taskRepository.save(issue);
     } catch (RuntimeException e) {
@@ -263,8 +261,7 @@ public class IssueService {
       if (sprint.getDtEnd()
           .isBefore(Instant.now())) {
         List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject()
-            .getId(),
-            sprint.getId());
+            .getId(), sprint.getId());
         if (snapshots.isEmpty()) {
           throw AppException.builder()
               .error(Error.NOT_FOUND)
@@ -277,8 +274,7 @@ public class IssueService {
             .findFirst()
             .orElseThrow(() -> AppException.builder()
                 .error(Error.NOT_FOUND)
-                .message(
-                    "Task not found in this sprint")
+                .message("Task not found in this sprint")
                 .build());
         IssueDetailResponse response = taskMapper.toIssueDetailResponseFromSnapshot(snapshot);
 
@@ -313,12 +309,13 @@ public class IssueService {
       case "name":
         task.setName(updateRequest.getName());
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "name" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "name" }, task, taskMongo);
         break;
       case "description":
         task.setDescription(updateRequest.getDescription());
+        task.setNumChangeOfDescription(task.getNumChangeOfDescription() + 1);
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "description" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "description" }, task, taskMongo);
         break;
       case "sprint":
         Sprint targetSprint = sprintService.getSprintById(updateRequest.getSprintId());
@@ -327,6 +324,7 @@ public class IssueService {
 
         if (currentSprint == null || currentSprint.getDtEnd()
             .isBefore(now)) {
+          // sprint moi da ket thuc, khong the gan lai
           if (targetSprint.getDtEnd()
               .isBefore(now)) {
             throw AppException.builder()
@@ -334,7 +332,7 @@ public class IssueService {
                 .message("Cannot assign issue to sprint that has already ended")
                 .build();
           }
-
+          // sprint moi dat bat dau truoc thoi diem hien tai
           if (targetSprint.getDtStart()
               .isBefore(now)) {
             throw AppException.builder()
@@ -344,8 +342,16 @@ public class IssueService {
           }
 
           task.setSprint(targetSprint);
+          if (task.getDtStart() == null || task.getDtStart()
+              .isBefore(targetSprint.getDtStart())) {
+            task.setDtStart(targetSprint.getDtStart());
+          }
+          if (task.getDtEnd() == null || task.getDtEnd()
+              .isAfter(targetSprint.getDtEnd())) {
+            task.setDtEnd(targetSprint.getDtEnd());
+          }
           task = saveEntity(task);
-          changeLog = changeLogMapper.TaskToUpdate(new String[] { "sprint" }, task, taskMongo);
+          changeLog = changeLogMapper.taskToUpdate(new String[] { "sprint" }, task, taskMongo);
           break;
         }
 
@@ -353,7 +359,7 @@ public class IssueService {
             .isAfter(now)) {
           task.setSprint(targetSprint);
           task = saveEntity(task);
-          changeLog = changeLogMapper.TaskToUpdate(new String[] { "sprint" }, task, taskMongo);
+          changeLog = changeLogMapper.taskToUpdate(new String[] { "sprint" }, task, taskMongo);
           break;
         }
 
@@ -364,23 +370,25 @@ public class IssueService {
             .build();
       case "priority":
         task.setPriority(updateRequest.getPriority());
+        task.setNumChangeOfPriority(task.getNumChangeOfPriority() + 1);
+
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "priority" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "priority" }, task, taskMongo);
         break;
       case "status":
         task.setPriority(updateRequest.getPriority());
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "status" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "status" }, task, taskMongo);
         break;
       case "topics":
         taskMongo.setTopics(topicMapper.toTopicList(updateRequest.getTopics()));
         taskMongo = issueMongoService.saveDocument(taskMongo);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "topics" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "topics" }, task, taskMongo);
         break;
       case "subtasks":
         taskMongo.setSubtasks(subTaskMapper.toSubTaskList(updateRequest.getSubtasks()));
         taskMongo = issueMongoService.saveDocument(taskMongo);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "subtasks" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "subtasks" }, task, taskMongo);
         break;
       case "attachments":
         List<Resource> resources = task.getResources();
@@ -400,7 +408,7 @@ public class IssueService {
         }
         task.setResources(resources);
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "attachments" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "attachments" }, task, taskMongo);
         break;
       case "assignee":
         if (updateRequest.getAssignee() == null || updateRequest.getAssignee()
@@ -411,7 +419,7 @@ public class IssueService {
           task.setAssignee(assignee);
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "assignee" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "assignee" }, task, taskMongo);
         break;
       case "reviewer":
         if (updateRequest.getReviewer() == null || updateRequest.getReviewer()
@@ -422,7 +430,7 @@ public class IssueService {
           task.setReviewer(reviewer);
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "reviewer" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "reviewer" }, task, taskMongo);
         break;
       case "start":
         task.setDtStart(updateRequest.getStart());
@@ -438,7 +446,7 @@ public class IssueService {
               .build();
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "start" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "start" }, task, taskMongo);
         break;
       case "end":
         task.setDtEnd(updateRequest.getEnd());
@@ -454,7 +462,7 @@ public class IssueService {
               .build();
         }
         task = saveEntity(task);
-        changeLog = changeLogMapper.TaskToUpdate(new String[] { "end" }, task, taskMongo);
+        changeLog = changeLogMapper.taskToUpdate(new String[] { "end" }, task, taskMongo);
         break;
       default:
         throw AppException.builder()
@@ -465,6 +473,7 @@ public class IssueService {
         .code(HttpStatus.OK.value())
         .message("Update task successfully")
         .data(taskMapper.toIssueResponse(task, taskMongo))
+
         .logData(changeLog)
         .build();
   }
@@ -474,12 +483,16 @@ public class IssueService {
 
     String sprintId = request.getSprintId();
     String projectId = request.getProjectId();
+    System.out.println(sprintId);
     if (sprintId == null || sprintId.isEmpty()) {
       // check relationship
       List<Issue> issues = projectService.getProjectById(projectId)
           .getIssues();
       issues = issues.stream()
-          .filter(issue -> issue.getSprint() == null)
+          .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && !issue.getStatus()
+              .equals(
+                  IssueStatus.DONE)))
+
           .toList();
 
       return buildResponseFromIssues(issues);
@@ -513,15 +526,12 @@ public class IssueService {
     var task = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
+
     task.setStatus(request.getStatus());
-
-    if (task.getStatus().equals(IssueStatus.DONE)) {
-
-    }
 
     task.setPosition(request.getPosition());
     task = saveEntity(task);
-    changeLog = changeLogMapper.TaskToUpdate(new String[] { "status",
+    changeLog = changeLogMapper.taskToUpdate(new String[] { "status",
         "position" }, task, taskMongo);
     return ApiResponse.<IssueResponse>builder()
         .code(HttpStatus.OK.value())
@@ -580,7 +590,6 @@ public class IssueService {
   }
 
   public ApiResponse<IssueDetailResponse> getCurrentIssueDetailById(String id) {
-
     var entity = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     var taskResponse = taskMapper.toIssueDetailResponse(entity, taskMongo);
@@ -592,7 +601,8 @@ public class IssueService {
 
   }
 
-  public ApiResponse<IssueRelationResponse> createRelation(IssueAssignSprintRequest request) {
+  @SendKafkaEvent(topic = "task-log")
+  public ApiResponse<IssueRelationResponse> createRelation(IssueAssignRelationRequest request) {
     Issue issue = getEntityById(request.getIssueId());
     Issue relatedIssue = getEntityById(request.getIssueRelatedId());
     IssueRelation relation = IssueRelation.builder()
@@ -600,15 +610,56 @@ public class IssueService {
             .issueId(issue.getId())
             .issueRelatedId(relatedIssue.getId())
             .build())
-         .issue(issue)
-         .issueRelated(relatedIssue)
+        .issue(issue)
+        .issueRelated(relatedIssue)
         .typeRelation(request.getTypeRelation())
         .build();
     relation = issueRelationRepository.save(relation);
+    ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));
     return ApiResponse.<IssueRelationResponse>builder()
         .code(HttpStatus.CREATED.value())
         .message("Create relation successfully")
         .data(taskMapper.toIssueRelationResponse(relation))
+        .logData(changeLog)
+        .build();
+  }
+
+  @SendKafkaEvent(topic = "task-log")
+  public ApiResponse<Void> deleteRelation(IssueRemoveRelationRequest request) {
+    Issue issue = getEntityById(request.getIssueId());
+    Issue relatedIssue = getEntityById(request.getIssueRelatedId());
+    IssueRelation relation = IssueRelation.builder()
+        .id(IssueRelationId.builder()
+            .issueId(issue.getId())
+            .issueRelatedId(relatedIssue.getId())
+            .build())
+        .issue(issue)
+        .issueRelated(relatedIssue)
+        .build();
+    ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));
+    issueRelationRepository.delete(relation);
+    return ApiResponse.<Void>builder()
+        .code(HttpStatus.OK.value())
+        .message("Remove relation successfully")
+        .logData(changeLog)
+        .build();
+  }
+
+  public ApiResponse<List<IssueRelationResponse>> getRelations(String id) {
+    Issue issue = getEntityById(id);
+    List<IssueRelation> relations = issue.getAffectTo();
+    if (relations == null || relations.isEmpty()) {
+      return ApiResponse.<List<IssueRelationResponse>>builder()
+          .code(HttpStatus.OK.value())
+          .message("No relation found")
+          .data(Collections.emptyList())
+          .build();
+    }
+    List<IssueRelationResponse> responses = taskMapper.toListIssueRelationResponse(relations);
+    return ApiResponse.<List<IssueRelationResponse>>builder()
+        .code(HttpStatus.OK.value())
+        .message("Get relations successfully")
+        .data(responses)
         .build();
   }
 }
