@@ -10,12 +10,13 @@ import useAppId from '@/hooks/use-app-id'
 import useBoard from '@/hooks/use-board'
 import { DEFAULT_POSITION, toBoardModel } from '@/lib/board.helper'
 import boardService from '@/services/board.service'
+import issueService from '@/services/issue.service'
 import { IssueResponse } from '@/types/issue.type'
 import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
-import { ComponentProps, useCallback, useEffect, useRef, useState } from 'react'
+import { ComponentProps, useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 type OnMove = ComponentProps<typeof Board>['onMove']
@@ -35,7 +36,6 @@ const BoardPage = () => {
   )
 
   const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
-  const currentColumns = useRef<Position>(columns)
 
   useEffect(() => {
     if (!isFetching) {
@@ -52,16 +52,26 @@ const BoardPage = () => {
     }
   }, [projectId])
 
-  useEffect(() => {
-    if (currentColumns.current === columns) return
-    currentColumns.current = columns
-    if (projectId) {
-      console.log('Saving position:', columns)
-      boardService.savePosition(projectId, columns).then((res) => {
-        toast.message('Position saved successfully')
-      })
-    }
-  }, [columns])
+  const handleOnChangeAPI = useCallback(
+    (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
+      if (projectId) {
+        console.log('Saving position:', position)
+        const promises = Promise.all([
+          mode === 'same'
+            ? Promise.resolve()
+            : issueService.updateStatus({
+                id: issue.active,
+                status: issue.columnTo as IssueStatus,
+                position: ''
+              }),
+          boardService.savePosition(projectId, position)
+        ])
+
+        return promises
+      }
+    },
+    [projectId]
+  )
 
   const findColumn = useCallback(
     (active: Id) => {
@@ -89,12 +99,13 @@ const BoardPage = () => {
     [columns]
   )
 
-  useEffect(() => {
-    console.log('columns', columns)
-  }, [columns])
+  // useEffect(() => {
+  //   console.log('columns', columns)
+  // }, [columns])
 
-  const handleOnMove = ({ active, columnTo, indexTo }: DataOnMoveType) => {
+  const handleOnMove = (data: DataOnMoveType) => {
     // // console.log('handleOnMove', active, columnTo, indexTo)
+    const { active, columnTo, indexTo } = data
     const oldActiveIndex = findIndex(active)
     const newActiveIndex = indexTo
     const oldColumn: IssueStatus | null = findColumn(active)
@@ -114,29 +125,34 @@ const BoardPage = () => {
         oldActiveIndex,
         newActiveIndex
       )
-      setColumns((prev) => {
-        return {
-          ...(prev ?? {}),
-          [oldColumn]: itemsNewColumn
-        }
+      const position = {
+        ...(columns ?? {}),
+        [oldColumn]: itemsNewColumn
+      }
+      handleOnChangeAPI(data, 'same', position)?.then(() => {
+        setColumns(position)
+        toast.message('Position saved successfully')
       })
     }
+
     if (oldColumn !== newColumn) {
       // Different column
       // remove old column
       const itemsOldColumn = cloneDeep(columns[oldColumn])
       // remove
       itemsOldColumn.splice(oldActiveIndex, 1)
-      console.log('itemsNewColumn', columns[newColumn])
       let itemsNewColumn = cloneDeep(columns[newColumn])
       // insert
       itemsNewColumn.splice(newActiveIndex, 0, active)
-      setColumns((prev) => {
-        return {
-          ...(prev ?? {}),
-          [oldColumn]: itemsOldColumn,
-          [newColumn]: itemsNewColumn
-        }
+
+      const position = {
+        ...(columns ?? {}),
+        [oldColumn]: itemsOldColumn,
+        [newColumn]: itemsNewColumn
+      }
+      handleOnChangeAPI(data, 'diff', position)?.then(() => {
+        setColumns(position)
+        toast.message('Position saved successfully')
       })
     }
   }

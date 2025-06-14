@@ -51,7 +51,7 @@ const issueService = {
     >(`/issue`, req)
     return res.data.data
   },
-  updatePosition: async (req: UpdatePositionIssueRequest) => {
+  updateStatus: async (req: UpdatePositionIssueRequest) => {
     const res = await httpService.put<
       ResponseApi<IssueResponse>,
       UpdatePositionIssueRequest
