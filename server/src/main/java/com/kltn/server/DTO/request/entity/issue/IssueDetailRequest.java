@@ -1,6 +1,5 @@
 package com.kltn.server.DTO.request.entity.issue;
 
-import jakarta.validation.constraints.NotEmpty;
 
 public class IssueDetailRequest {
     private String issueId;
