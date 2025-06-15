@@ -2,12 +2,12 @@ import { dateRange, string } from '@/types/common.type'
 import {
   IssuePriority,
   issuePriorityList,
-  IssueRelationShip,
   IssueStatus,
   IssueTag,
   issueTagList
 } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
+import { RelationshipResponse } from '@/types/relationship.type'
 import { z } from 'zod'
 
 type TopicResponse = {
@@ -55,11 +55,11 @@ type IssueResponse = {
 }
 
 type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
-  storyPoint: number
   description: string
   dtStart?: Date
   dtEnd?: Date
   resources: ResourceResponse[]
+  relations: RelationshipResponse[]
 }
 
 type ResourceResponse = {
@@ -151,22 +151,11 @@ type UpdatePositionIssueRequest = {
   status: IssueStatus
 }
 
-const CreateRelationshipIssueSchema = z.object({
-  issueId: z.string(),
-  issueRelated: z.string(),
-  typeRelation: z.nativeEnum(IssueRelationShip)
-})
-
-type CreateRelationshipIssueRequest = z.infer<
-  typeof CreateRelationshipIssueSchema
->
-
 export {
   BaseIssueSchema,
   CreateIssueSchema,
   TopicModelSchema,
-  UpdateIssueSchema,
-  CreateRelationshipIssueSchema
+  UpdateIssueSchema
 }
 export type {
   BaseIssueFormType,
@@ -178,6 +167,5 @@ export type {
   TopicModelType,
   UpdateIssueRequest,
   UpdateIssueType,
-  UpdatePositionIssueRequest,
-  CreateRelationshipIssueRequest as CreateRelationshipIssueType
+  UpdatePositionIssueRequest
 }

@@ -1,12 +1,11 @@
 import authReducer from '@/feature/auth/auth.slice'
-import boardApi from '@/feature/board/board.api'
 import { boardReducer } from '@/feature/board/board.slice'
 import issueApi from '@/feature/issue/issue.api'
 import { issueReducer } from '@/feature/issue/issue.slice'
 import projectApi from '@/feature/project/project.api'
 import { projectReducer } from '@/feature/project/project.slice'
 import skillApi from '@/feature/skill/skill.api'
-import skillSlice, { skillReducer } from '@/feature/skill/skill.slice'
+import { skillReducer } from '@/feature/skill/skill.slice'
 import sprintApi from '@/feature/sprint/sprint.api'
 import { sprintReducer } from '@/feature/sprint/sprint.slice'
 import { triggerReducer } from '@/feature/trigger/trigger.slice'
@@ -15,7 +14,6 @@ import { workspaceReducer } from '@/feature/workspace/workspace.slice'
 import { combineReducers } from '@reduxjs/toolkit'
 
 const rootReducer = combineReducers({
-  [boardApi.reducerPath]: boardApi.reducer,
   [workspaceApi.reducerPath]: workspaceApi.reducer,
   [projectApi.reducerPath]: projectApi.reducer,
   [sprintApi.reducerPath]: sprintApi.reducer,

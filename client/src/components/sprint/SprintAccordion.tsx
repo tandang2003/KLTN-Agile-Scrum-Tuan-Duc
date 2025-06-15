@@ -1,4 +1,3 @@
-import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
 import ListIssueInSprint from '@/components/sprint/ListIssueInSprint'
 
 import ListIssueInProductBacklog from '@/components/sprint/ListIssueInProductBacklog'

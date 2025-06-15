@@ -10,7 +10,6 @@ import {
 } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import {
-  Active,
   closestCorners,
   defaultDropAnimationSideEffects,
   DragEndEvent,
@@ -60,24 +59,24 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     })
   }
 
-  const prevColumnsRef = useRef(data.columns)
+  // const prevColumnsRef = useRef(data.columns)
 
-  useEffect(() => {
-    for (const [columnId, column] of Object.entries(data.columns)) {
-      const prev = prevColumnsRef.current[columnId]?.cardIds || []
-      const curr = column.cardIds
+  // useEffect(() => {
+  //   for (const [columnId, column] of Object.entries(data.columns)) {
+  //     const prev = prevColumnsRef.current[columnId]?.cardIds || []
+  //     const curr = column.cardIds
 
-      const hasChanged =
-        prev.length !== curr.length || prev.some((id, idx) => id !== curr[idx])
+  //     const hasChanged =
+  //       prev.length !== curr.length || prev.some((id, idx) => id !== curr[idx])
 
-      // if (hasChanged) {
-      //   console.log(`Column ${columnId} changed`, curr)
-      //   // Do something with the update
-      // }
-    }
+  //     // if (hasChanged) {
+  //     //   console.log(`Column ${columnId} changed`, curr)
+  //     //   // Do something with the update
+  //     // }
+  //   }
 
-    prevColumnsRef.current = data.columns
-  }, [data.columns])
+  //   prevColumnsRef.current = data.columns
+  // }, [data.columns])
 
   const renderColumn = useCallback(
     ([keyColumn, valueColumn]: [Id, ColumnModelType]) => {

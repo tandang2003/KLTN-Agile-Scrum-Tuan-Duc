@@ -1,8 +1,6 @@
-import { Client } from '@stomp/stompjs'
-import { CommentReqType, CommentResType } from '@/types/comment.type.ts'
-import { IMessage } from '@stomp/stompjs'
-import { ResponseApi } from '@/types/http.type'
 import httpService from '@/services/http.service'
+import { CommentReqType, CommentResType } from '@/types/comment.type.ts'
+import { Client, IMessage } from '@stomp/stompjs'
 
 type AppIMessage<T> = IMessage & {
   bodyParse: T

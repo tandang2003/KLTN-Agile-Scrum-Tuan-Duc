@@ -118,13 +118,13 @@ const UpdateAttachmentIssue = ({
             // Simulate server processing delay
             const fileName = file.name // Full name: "model.obj"
             const baseName = fileName.substring(0, fileName.lastIndexOf('.'))
-            const { apiKey, cloudName, folder, signature, timestamp, url } =
+            const { apiKey, folder, signature, timestamp, url } =
               await resourceService.getSignature({
                 projectId: projectId!,
                 issueId: issueId
               })
 
-            const { public_id, bytes, format, resource_type } =
+            const { public_id, bytes, format } =
               await resourceService.uploadFileToCloudinary(file, {
                 apiKey: apiKey,
                 folder: folder,

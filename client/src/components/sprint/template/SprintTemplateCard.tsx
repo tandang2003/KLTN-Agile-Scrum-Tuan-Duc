@@ -24,11 +24,7 @@ type SprintTemplateCardProps = {
   isDisabled?: boolean
 }
 
-const SprintTemplateCard = ({
-  id,
-  data,
-  isDisabled = false
-}: SprintTemplateCardProps) => {
+const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
   const [deleteSprint] = useDeleteSprintMutation()
   const dispatch = useAppDispatch()
 

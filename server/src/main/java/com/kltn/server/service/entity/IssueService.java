@@ -489,10 +489,11 @@ public class IssueService {
       List<Issue> issues = projectService.getProjectById(projectId)
           .getIssues();
       issues = issues.stream()
-          .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && !issue.getStatus()
-              .equals(
-                  IssueStatus.DONE)))
-
+          .filter(issue -> issue.getSprint() == null
+              || (issue.getSprint() != null && issue.getSprint().getDtEnd().isBefore(Instant.now())
+                  && !issue.getStatus()
+                      .equals(
+                          IssueStatus.DONE)))
           .toList();
 
       return buildResponseFromIssues(issues);

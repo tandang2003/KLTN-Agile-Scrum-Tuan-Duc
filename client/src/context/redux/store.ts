@@ -3,7 +3,6 @@ import {
   persistAuthorizationMiddleware
 } from '@/context/redux/middleware'
 import rootReducer from '@/context/redux/reducer'
-import boardApi from '@/feature/board/board.api'
 import issueApi from '@/feature/issue/issue.api'
 import projectApi from '@/feature/project/project.api'
 import skillApi from '@/feature/skill/skill.api'
@@ -30,7 +29,6 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(localStorageMiddleware)
       .concat(persistAuthorizationMiddleware)
-      .concat(boardApi.middleware)
       .concat(workspaceApi.middleware)
       .concat(projectApi.middleware)
       .concat(sprintApi.middleware)

@@ -14,13 +14,13 @@ import {
   CommandItem,
   CommandList
 } from '@/components/ui/command'
+import { useAutoUpdateField } from '@/hooks/use-update'
 import { cn, uuid } from '@/lib/utils'
+import issueService from '@/services/issue.service'
 import { TopicModelType, UpdateIssueType } from '@/types/issue.type'
 import { useCommandState } from 'cmdk'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { useAutoUpdateField } from '@/hooks/use-update'
-import issueService from '@/services/issue.service'
 type UpdateTopicProps = {}
 
 const UpdateTopicForm = ({}: UpdateTopicProps) => {
@@ -61,7 +61,7 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
     isPause: (_, __) => {
       return isPopoverOpen
     },
-    callApi: (field, value) => {
+    callApi: (_, value) => {
       return issueService.updateIssue({
         id: getValues('id'),
         fieldChanging: 'topics',

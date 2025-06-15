@@ -38,7 +38,7 @@ const SprintCardInProductBacklog = ({
       fieldChanging: 'sprint'
     })
       .unwrap()
-      .then((res) => {
+      .then(() => {
         toast.message("Issue's sprint updated successfully")
       })
       .catch((err) => {
@@ -64,6 +64,9 @@ const SprintCardInProductBacklog = ({
           <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
+          <DropdownMenuItem className='bg-red-500 text-white'>
+            Reopen
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               action(item.id)
