@@ -1,26 +1,17 @@
 import ListView from '@/components/ListView'
 
+import SprintCardInProductBacklog from '@/components/sprint/SprintCardInProductBacklog'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import {
-  enableCreateIssue,
-  enableUpdateIssue
-} from '@/feature/trigger/trigger.slice'
+import { setCurrentSprint } from '@/feature/sprint/sprint.slice'
+import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { cn } from '@/lib/utils'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import Icon from '@/components/Icon'
-import ToolTip from '@/components/Tooltip'
-import SprintCard from '@/components/sprint/SprintCard'
-const ListIssueProductBacklog = () => {
+
+const ListIssueInProductBacklog = () => {
   const dispatch = useAppDispatch()
   const { projectId } = useAppId()
   const { data, isFetching } = useGetListIssueQuery(
@@ -32,10 +23,6 @@ const ListIssueProductBacklog = () => {
     }
   )
 
-  const handleUpdate = () => {
-    dispatch(enableUpdateIssue())
-  }
-
   return (
     <ListView<IssueResponse>
       data={data}
@@ -43,13 +30,14 @@ const ListIssueProductBacklog = () => {
       emptyComponent={''}
       className={cn('gap-3')}
       render={(item) => {
-        return <SprintCard data={item} />
+        return <SprintCardInProductBacklog data={item} />
       }}
       append={
         <Button
           className='mt-2 w-full justify-start border-none'
           variant={'default'}
           onClick={() => {
+            dispatch(setCurrentSprint(undefined))
             dispatch(enableCreateIssue())
           }}
         >
@@ -60,4 +48,4 @@ const ListIssueProductBacklog = () => {
   )
 }
 
-export default ListIssueProductBacklog
+export default ListIssueInProductBacklog

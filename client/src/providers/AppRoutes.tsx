@@ -2,7 +2,13 @@ import LoginPage from '@/pages/auth/login/page'
 import HomePage from '@/pages/home/page'
 import NotFoundPage from '@/pages/not-found'
 import RootLayout from '@/pages/layout'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Router,
+  Routes
+} from 'react-router-dom'
 import RegisterPage from '@/pages/auth/register/page'
 import AuthLayout from '@/pages/auth/layout'
 import GuestOnly from '@/components/wrapper/GuestOnly'
@@ -19,6 +25,7 @@ import InviteProjectPage from '@/pages/verification/invite-project/page'
 import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
 import ProjectLayout from '@/pages/manager/workspace/project/layout'
+import UserPage from '@/pages/user/page'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -42,6 +49,17 @@ const AppRoutes = () => {
           >
             <Route path='login' index element={<LoginPage />} />
             <Route path='register' element={<RegisterPage />} />
+          </Route>
+
+          <Route
+            path='user'
+            element={
+              <RequiredAuth mode='login'>
+                <ManagerLayout />
+              </RequiredAuth>
+            }
+          >
+            <Route index element={<UserPage />} />
           </Route>
 
           <Route

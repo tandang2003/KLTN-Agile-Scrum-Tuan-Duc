@@ -1,3 +1,6 @@
+import { RoleType } from '@/types/auth.type'
+import { Id } from '@/types/other.type'
+
 type ProjectParams = {
   projectId: string
 }
@@ -10,4 +13,18 @@ type InviteProjectParams = {
   token: string
 }
 
-export type { ProjectParams, WorkspaceParams, InviteProjectParams }
+type ManagerLayoutContextType = {
+  user: {
+    id: Id
+    name: string
+    uniId: string
+    role: RoleType
+  }
+}
+
+export type {
+  ProjectParams,
+  WorkspaceParams,
+  InviteProjectParams,
+  ManagerLayoutContextType
+}

@@ -4,12 +4,14 @@ type TriggerState = {
   isCreateProject: boolean
   isCreateIssue: boolean
   isUpdateIssue: boolean
+  isOpenDialogSkill: boolean
 }
 
 const initialState: TriggerState = {
   isCreateProject: false,
   isCreateIssue: false,
-  isUpdateIssue: false
+  isUpdateIssue: false,
+  isOpenDialogSkill: false
 }
 
 const triggerSlice = createSlice({
@@ -33,6 +35,12 @@ const triggerSlice = createSlice({
     },
     disableUpdateIssue: (state: TriggerState) => {
       state.isUpdateIssue = false
+    },
+    enableDialogSkill: (state: TriggerState) => {
+      state.isOpenDialogSkill = true
+    },
+    disableDialogSkill: (state: TriggerState) => {
+      state.isOpenDialogSkill = false
     }
   }
 })
@@ -45,6 +53,8 @@ export const {
   disableCreateIssue,
   enableCreateIssue,
   enableUpdateIssue,
-  disableUpdateIssue
+  disableUpdateIssue,
+  enableDialogSkill,
+  disableDialogSkill
 } = triggerSlice.actions
 export default triggerSlice

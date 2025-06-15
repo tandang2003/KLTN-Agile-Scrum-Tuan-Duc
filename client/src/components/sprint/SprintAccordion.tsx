@@ -1,7 +1,7 @@
 import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
-import ListIssue from '@/components/sprint/ListIssue'
+import ListIssueInSprint from '@/components/sprint/ListIssueInSprint'
 
-import ListIssueProductBacklog from '@/components/sprint/ListIssueProductBacklog'
+import ListIssueInProductBacklog from '@/components/sprint/ListIssueInProductBacklog'
 import ToolTip from '@/components/Tooltip'
 import {
   Accordion,
@@ -15,7 +15,6 @@ import { getStatusSprint, sortSprintsByDateStart } from '@/lib/sprint'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
-import { DndContext } from '@dnd-kit/core'
 import { useRef, useState } from 'react'
 type SprintAccordionProps = {
   sprints: SprintModel[]
@@ -27,69 +26,65 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
 
   return (
     <div>
-      <DndContext>
-        {/* Sprint backlog */}
-        <Accordion
-          type='single'
-          collapsible
-          className='bg-accent mb-[50px] w-full px-2'
-        >
-          <AccordionItem key={'backlog'} value={'backlog'}>
-            <AccordionTrigger>Product Backlog</AccordionTrigger>
-            <AccordionContent>
-              <ListIssueProductBacklog />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      {/* Sprint backlog */}
+      <Accordion
+        type='single'
+        collapsible
+        className='bg-accent mb-[50px] w-full px-2'
+      >
+        <AccordionItem key={'backlog'} value={'backlog'}>
+          <AccordionTrigger>Product Backlog</AccordionTrigger>
+          <AccordionContent>
+            <ListIssueInProductBacklog />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
-        <Accordion type='single' collapsible className='bg-accent w-full px-2'>
-          {sortSprintsByDateStart(sprints).map((item, index) => {
-            return (
-              <AccordionItem key={item.id} value={item.id}>
-                <AccordionTrigger
-                  value={item.id}
-                  className='gap-2'
-                  onClick={(e) => {
-                    if (refContent.current) {
-                      setSprintId(e.currentTarget.value)
-                    }
-                  }}
+      <Accordion type='multiple' className='bg-accent w-full px-2'>
+        {sortSprintsByDateStart(sprints).map((item, index) => {
+          return (
+            <AccordionItem key={item.id} value={item.id}>
+              <AccordionTrigger
+                value={item.id}
+                className='gap-2'
+                onClick={(e) => {
+                  if (refContent.current) {
+                    setSprintId(e.currentTarget.value)
+                  }
+                }}
+              >
+                <ToolTip
+                  trigger={
+                    <span>
+                      Sprint {index + 1} : {item.title}
+                    </span>
+                  }
                 >
-                  <ToolTip
-                    trigger={
-                      <span>
-                        Sprint {index + 1} : {item.title}
-                      </span>
-                    }
-                  >
-                    {item.id}
-                  </ToolTip>
-                  <Badge
-                    statusSprint={getStatusSprint(item)}
-                    className='ml-auto basis-[100px]'
-                  >
-                    {getStatusSprint(item)}
-                  </Badge>
-                  <span className='mr-3 basis-[200px]'>
-                    {formatDate(item.start)} - {formatDate(item.end)}
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent ref={refContent}>
-                  {sprintId && (
-                    <ListIssue
-                      sprintId={sprintId}
-                      start={item.start}
-                      end={item.end}
-                    />
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            )
-          })}
-        </Accordion>
-
-        <DialogCreateIssue />
-      </DndContext>
+                  {item.id}
+                </ToolTip>
+                <Badge
+                  statusSprint={getStatusSprint(item)}
+                  className='ml-auto basis-[100px]'
+                >
+                  {getStatusSprint(item)}
+                </Badge>
+                <span className='mr-3 basis-[200px]'>
+                  {formatDate(item.start)} - {formatDate(item.end)}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent ref={refContent}>
+                {sprintId && (
+                  <ListIssueInSprint
+                    sprintId={sprintId}
+                    start={item.start}
+                    end={item.end}
+                  />
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          )
+        })}
+      </Accordion>
     </div>
   )
 }

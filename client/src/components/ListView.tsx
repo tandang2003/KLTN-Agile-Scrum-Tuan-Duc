@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { ReactNode } from 'react'
 
-type ListViewProps<T> = {
+export type ListViewProps<T> = {
   data?: T[]
   render: (item: T, index: number) => ReactNode
   loading?: boolean
@@ -31,7 +31,8 @@ const ListView = <T,>({
     </div>
   ),
   className,
-  append
+  append,
+  style
 }: ListViewProps<T>) => {
   if (loading && !loadingItems) {
     return loadingComponent ? (
@@ -43,6 +44,7 @@ const ListView = <T,>({
   return (
     <>
       <div
+        style={style}
         className={cn(
           display,
           orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',

@@ -51,7 +51,7 @@ const issueService = {
     >(`/issue`, req)
     return res.data.data
   },
-  updatePosition: async (req: UpdatePositionIssueRequest) => {
+  updateStatus: async (req: UpdatePositionIssueRequest) => {
     const res = await httpService.put<
       ResponseApi<IssueResponse>,
       UpdatePositionIssueRequest
@@ -65,13 +65,6 @@ const issueService = {
       ResponseApi<RelationshipResponse>,
       CreateRelationshipIssueRequest
     >(`/issue/relation`, req)
-    return res.data.data
-  },
-  moveToSprint: async (sprintId: Id) => {
-    const res = await httpService.put<
-      ResponseApi<IssueDetailResponse>,
-      UpdateIssueRequest
-    >(`/issue`, req)
     return res.data.data
   }
 }
