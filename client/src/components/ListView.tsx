@@ -31,7 +31,8 @@ const ListView = <T,>({
     </div>
   ),
   className,
-  append
+  append,
+  style
 }: ListViewProps<T>) => {
   if (loading && !loadingItems) {
     return loadingComponent ? (
@@ -43,6 +44,7 @@ const ListView = <T,>({
   return (
     <>
       <div
+        style={style}
         className={cn(
           display,
           orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',

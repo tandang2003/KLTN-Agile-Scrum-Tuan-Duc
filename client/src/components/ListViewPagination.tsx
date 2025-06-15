@@ -8,18 +8,21 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination'
-import { Page, PageRequest } from '@/types/http.type'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { Page } from '@/types/http.type'
 
 type ListViewPaginationProps<T> = {
   view: Omit<ListViewProps<T>, 'data'>
   page?: Page<T>
+  minHeight?: string
   onPageChange?: (page: number) => void
 }
 
 const ListViewPagination = <T,>({
   view,
   page,
-  onPageChange
+  onPageChange,
+  minHeight
 }: ListViewPaginationProps<T>) => {
   const totalPages = page?.totalPages || 1
   const currentPage = page?.currentPage || 0 // 0-based
@@ -29,7 +32,10 @@ const ListViewPagination = <T,>({
 
   return (
     <>
-      <ListView<T> data={data} {...view} />
+      <ScrollArea>
+        <ListView<T> style={{ minHeight: minHeight }} data={data} {...view} />
+        <ScrollBar />
+      </ScrollArea>
       {totalPages > 1 && (
         <Pagination className='mt-4'>
           <PaginationContent>

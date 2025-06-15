@@ -1,13 +1,10 @@
-import Icon from '@/components/Icon'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { useGetListWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import UserSkill from '@/pages/user/skill'
+import UserWorkspace from '@/pages/user/workspace'
 import { ManagerLayoutContextType } from '@/types/route.type'
-import { WorkspaceResponse } from '@/types/workspace.type'
 
-import ListViewPagination from '@/components/ListViewPagination'
-import { PageRequest } from '@/types/http.type'
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { useOutletContext } from 'react-router-dom'
 
 const UserPage = () => {
@@ -26,8 +23,11 @@ const UserPage = () => {
           <Info />
         </div>
         <div className='flex-2/3'>
-          <Workspace />
+          <UserWorkspace />
         </div>
+      </div>
+      <div className='mt-10 border-2 p-2 shadow-md'>
+        <UserSkill />
       </div>
     </section>
   )
@@ -45,59 +45,6 @@ const Info = () => {
         value={<Badge role={user.role}>{user.role}</Badge>}
       />
     </div>
-  )
-}
-
-const Workspace = () => {
-  const [page, setPage] = useState<PageRequest>({ page: 0, size: 1 })
-  const { data, isFetching } = useGetListWorkspaceQuery(
-    {
-      page: page.page,
-      size: page.size
-    },
-    {
-      refetchOnMountOrArgChange: true
-    }
-  )
-  return (
-    <>
-      <span className='h3 mb-2 flex items-center gap-2'>
-        <Icon icon={'carbon:workspace'} />
-        <h2>Working workspace</h2>
-      </span>
-      <div>
-        <ListViewPagination<WorkspaceResponse>
-          view={{
-            className: 'min-h-[300px] bg-gray-100 p-2',
-            loading: isFetching,
-            render: (item, index) => {
-              return (
-                <div
-                  key={item.id}
-                  className='border-accent flex gap-4 rounded-md border-2 bg-white p-4 shadow'
-                >
-                  <span className='line-clamp-1 basis-[100px]'>{item.id}</span>
-                  <span>{item.name}</span>
-                  <div className='ml-auto'>
-                    {item.currentSprint && (
-                      <Badge
-                        statusSprint={'RUNNING'}
-                        className='mr-3 text-center'
-                      >
-                        RUNNING
-                      </Badge>
-                    )}
-                    <span>{item.owner.name}</span>
-                  </div>
-                </div>
-              )
-            }
-          }}
-          page={data}
-          onPageChange={(page) => {}}
-        />
-      </div>
-    </>
   )
 }
 
