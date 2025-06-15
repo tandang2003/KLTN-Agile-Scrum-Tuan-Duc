@@ -28,14 +28,14 @@ public class SkillController {
     }
     var response = skillService.createSkill(request.getSkillName(), request.getProficiency());
     return ResponseEntity.ok()
-                         .body(response);
+        .body(response);
   }
 
   @DeleteMapping
   public ResponseEntity<ApiResponse<Void>> deleteSkill(@Valid @RequestBody SkillRequest request) {
     var response = skillService.deleteSkill(request.getSkillName());
     return ResponseEntity.ok()
-                         .body(response);
+        .body(response);
   }
 
   @PutMapping
@@ -45,13 +45,20 @@ public class SkillController {
     }
     var response = skillService.updateSkill(request.getSkillName(), request.getProficiency());
     return ResponseEntity.ok()
-                         .body(response);
+        .body(response);
   }
 
   @GetMapping("/list")
   public ResponseEntity<ApiResponse<List<PersonalSkillResponse>>> getSkills() {
+    var response = skillService.getSkillsPersonal();
+    return ResponseEntity.ok()
+        .body(response);
+  }
+
+  @GetMapping("/list-all")
+  public ResponseEntity<ApiResponse<List<String>>> getSkillsAll() {
     var response = skillService.getSkills();
     return ResponseEntity.ok()
-                         .body(response);
+        .body(response);
   }
 }

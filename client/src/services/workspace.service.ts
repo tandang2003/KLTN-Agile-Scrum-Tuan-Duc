@@ -11,17 +11,16 @@ import {
   ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
-  WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 
 const workspaceService = {
   getListWorkSpace: async (
     req: ListWorkspaceReq
-  ): Promise<Page<WorkspaceCardResponse>> => {
+  ): Promise<Page<WorkspaceResponse>> => {
     const queryString = req.page ? toQueryString(req) : ''
     const response = await httpService.get<
-      ResponseApi<Page<WorkspaceCardResponse>>
+      ResponseApi<Page<WorkspaceResponse>>
     >(`/workspace/list?${queryString}`)
     return response.data.data
   },
