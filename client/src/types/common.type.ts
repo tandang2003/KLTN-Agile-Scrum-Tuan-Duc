@@ -1,4 +1,4 @@
-import { date, z } from 'zod'
+import { z } from 'zod'
 
 const string = z.string().trim().min(1)
 const dateRange = z
@@ -24,4 +24,4 @@ const stringToDate = (date: string) => {
   return dateStringToDateSchema.safeParse(date)
 }
 
-export { string, dateRange, stringToDate }
+export { dateRange, string, stringToDate }

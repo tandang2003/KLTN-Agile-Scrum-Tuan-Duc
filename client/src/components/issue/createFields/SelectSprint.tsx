@@ -29,12 +29,9 @@ const SelectSprint = ({ label }: SelectSprintProps) => {
   const { data } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
-  const { data: workspace, isFetching } = useGetWorkspaceQuery(
-    workspaceId as Id,
-    {
-      skip: !workspaceId
-    }
-  )
+  const { data: workspace } = useGetWorkspaceQuery(workspaceId as Id, {
+    skip: !workspaceId
+  })
   return (
     <FormField
       control={control}

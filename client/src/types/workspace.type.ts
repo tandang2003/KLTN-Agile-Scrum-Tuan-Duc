@@ -42,7 +42,7 @@ type UpdateWorkspaceReqType = Omit<UpdateWorkspaceSchemaType, 'date'> & {
   end: Date
 }
 
-type WorkspaceResponse = Pick<
+type WorkspaceDetailResponse = Pick<
   WorkSpaceModel,
   | 'id'
   | 'name'
@@ -55,12 +55,16 @@ type WorkspaceResponse = Pick<
   currentSprint: SprintResponse
 }
 
-type WorkspaceCardResponse = {
+type WorkspaceResponse = {
   id: Id
   name: string
   owner: {
     name: string
   }
+  description: string
+  currentSprint: SprintResponse
+  start: Date
+  end: Date
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
@@ -93,8 +97,8 @@ type InviteStudentWorkspaceReqType = {
 export type {
   CreateWorkspaceReqType,
   CreateWorkspaceSchemaType,
+  WorkspaceDetailResponse,
   WorkspaceResponse,
-  WorkspaceCardResponse,
   WorkspaceSideBar,
   ListWorkspaceReq,
   ListStudentWorkspaceReq,

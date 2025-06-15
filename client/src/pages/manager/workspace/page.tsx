@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useGetListWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
-import { WorkspaceCardResponse } from '@/types/workspace.type'
+import { WorkspaceResponse } from '@/types/workspace.type'
 
 const WorkspacePage = () => {
   const { data, isFetching } = useGetListWorkspaceQuery({
@@ -36,7 +36,7 @@ const WorkspacePage = () => {
           </Button>
         </RequiredAuth>
       </div>
-      <ListView<WorkspaceCardResponse>
+      <ListView<WorkspaceResponse>
         data={data?.items}
         loading={isFetching}
         loadingItems={{

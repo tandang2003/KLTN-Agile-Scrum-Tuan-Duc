@@ -9,7 +9,6 @@ import UpdatePriorityIssue from '@/components/issue/updateFields/UpdatePriorityI
 import UpdateRelationship from '@/components/issue/updateFields/UpdateRelationship'
 import UpdateSubTaskForm from '@/components/issue/updateFields/UpdateSubTaskIssue'
 import UpdateTopicForm from '@/components/issue/updateFields/UpdateTopicIssue'
-import { Badge } from '@/components/ui/badge'
 import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -105,6 +104,7 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             />
             <UpdateRelationship
               issueId={data.id}
+              initialData={data.relations}
               open={isAddRelationship}
               cancel={() => setIsAddRelationship(false)}
             />
@@ -129,8 +129,7 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <UpdateMemberIssue form={form} name='assigneeId' />
             <div>Reviewer</div>
             <UpdateMemberIssue form={form} name='reviewerId' />
-            <div>Story point estimate</div>
-            <Badge>{data.storyPoint}</Badge>
+
             <div>Duration</div>
             <UpdateDateIssue />
             <div>Priority</div>

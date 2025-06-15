@@ -1,24 +1,25 @@
-import LoginPage from '@/pages/auth/login/page'
-import HomePage from '@/pages/home/page'
-import NotFoundPage from '@/pages/not-found'
-import RootLayout from '@/pages/layout'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import RegisterPage from '@/pages/auth/register/page'
-import AuthLayout from '@/pages/auth/layout'
 import GuestOnly from '@/components/wrapper/GuestOnly'
-import WorkspacePage from '@/pages/manager/workspace/page'
-import ManagerPage from '@/pages/manager/page'
-import ManagerLayout from '@/pages/manager/layout'
-import ProjectPage from '@/pages/manager/workspace/project/page'
-import BoardPage from '@/pages/manager/workspace/project/board/page'
-import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
-import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
-import InviteProjectPage from '@/pages/verification/invite-project/page'
-import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
+import AuthLayout from '@/pages/auth/layout'
+import LoginPage from '@/pages/auth/login/page'
+import RegisterPage from '@/pages/auth/register/page'
+import HomePage from '@/pages/home/page'
+import RootLayout from '@/pages/layout'
+import ManagerLayout from '@/pages/manager/layout'
+import ManagerPage from '@/pages/manager/page'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
+import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
+import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
+import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
+import WorkspacePage from '@/pages/manager/workspace/page'
+import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
+import BoardPage from '@/pages/manager/workspace/project/board/page'
 import ProjectLayout from '@/pages/manager/workspace/project/layout'
+import ProjectPage from '@/pages/manager/workspace/project/page'
+import NotFoundPage from '@/pages/not-found'
+import UserPage from '@/pages/user/page'
+import InviteProjectPage from '@/pages/verification/invite-project/page'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 // http://localhost:3000/manager/workspace
 // http://localhost:3000/manager/workspace/project/1
@@ -42,6 +43,17 @@ const AppRoutes = () => {
           >
             <Route path='login' index element={<LoginPage />} />
             <Route path='register' element={<RegisterPage />} />
+          </Route>
+
+          <Route
+            path='user'
+            element={
+              <RequiredAuth mode='login'>
+                <ManagerLayout />
+              </RequiredAuth>
+            }
+          >
+            <Route index element={<UserPage />} />
           </Route>
 
           <Route

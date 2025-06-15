@@ -8,7 +8,6 @@ import {
   UpdateIssueRequest,
   UpdatePositionIssueRequest
 } from '@/types/issue.type'
-import { IssueRelationShip } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import {
   CreateRelationshipIssueRequest,

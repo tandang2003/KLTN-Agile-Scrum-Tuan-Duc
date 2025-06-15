@@ -3,7 +3,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
-import { IssueStatus, SprintStatusType } from '@/types/model/typeOf'
+import { IssueStatus, SkillLevel, SprintStatusType } from '@/types/model/typeOf'
 
 const badgeVariants = cva<{
   variant: {
@@ -12,6 +12,7 @@ const badgeVariants = cva<{
     destructive: string
     outline: string
   }
+  skillLevel: Record<SkillLevel, string>
   status: Record<IssueStatus, string>
   statusSprint: Record<SprintStatusType, string>
 }>(
@@ -39,6 +40,13 @@ const badgeVariants = cva<{
         PENDING: 'text-black bg-gray-400 font-semibold',
         COMPLETE: 'text-white bg-green-500 font-semibold',
         RUNNING: 'text-white bg-blue-500 font-semibold'
+      },
+      skillLevel: {
+        '1': 'text-white bg-red-500 font-semibold',
+        '2': 'text-white bg-yellow-500 font-semibold',
+        '3': 'text-black bg-blue-300 font-semibold',
+        '4': 'text-black bg-green-300 font-semibold',
+        '5': 'text-white bg-purple-500 font-semibold'
       }
     },
 
@@ -54,6 +62,7 @@ function Badge({
   variant,
   status,
   statusSprint,
+  skillLevel,
   asChild = false,
   ...props
 }: React.ComponentProps<'span'> &
@@ -66,7 +75,7 @@ function Badge({
     <Comp
       data-slot='badge'
       className={cn(
-        badgeVariants({ variant, status, statusSprint }),
+        badgeVariants({ variant, status, statusSprint, skillLevel }),
         className
       )}
       {...props}

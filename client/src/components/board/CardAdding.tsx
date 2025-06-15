@@ -2,9 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import issueService from '@/services/issue.service'
 import React, { forwardRef, useRef } from 'react'
-import { toast } from 'sonner'
 
 type CardAddingProps = {
   id: string
@@ -14,18 +12,18 @@ const CardAdding = forwardRef<HTMLDivElement, CardAddingProps>(
   ({ id, className, ...props }, ref) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-    const handleClick = () => {
-      if (!textareaRef.current?.value) {
-        toast.warning('Please input name issue')
-        return
-      }
+    // const handleClick = () => {
+    //   if (!textareaRef.current?.value) {
+    //     toast.warning('Please input name issue')
+    //     return
+    //   }
 
-      const value = textareaRef.current.value
-      // issueService.createIssue({
-      //   name: value,
-      //   projectId:,
-      // })
-    }
+    //   const value = textareaRef.current.value
+    //   // issueService.createIssue({
+    //   //   name: value,
+    //   //   projectId:,
+    //   // })
+    // }
     return (
       <Card
         ref={ref}
