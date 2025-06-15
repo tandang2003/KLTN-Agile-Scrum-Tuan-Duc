@@ -1,6 +1,5 @@
 import { RootState } from '@/context/redux/store'
 import { logoutThunk } from '@/feature/auth/auth.slice'
-import { saveIssues } from '@/feature/board/board.slice'
 import {
   getTokenProjectThunk,
   setProjectState
@@ -43,7 +42,7 @@ const localStorageMiddleware: Middleware<{}, RootState> =
   }
 
 const persistAuthorizationMiddleware: Middleware<{}, RootState> =
-  (store) => (next) => (action) => {
+  (_) => (next) => (action) => {
     if (getTokenProjectThunk.fulfilled.match(action)) {
       const { token, projectId, projectIds } = action.payload
       tokenService.setTokenProjectSession({

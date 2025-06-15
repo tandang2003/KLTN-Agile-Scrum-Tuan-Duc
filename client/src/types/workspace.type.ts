@@ -61,7 +61,10 @@ type WorkspaceResponse = {
   owner: {
     name: string
   }
+  description: string
   currentSprint: SprintResponse
+  start: Date
+  end: Date
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>

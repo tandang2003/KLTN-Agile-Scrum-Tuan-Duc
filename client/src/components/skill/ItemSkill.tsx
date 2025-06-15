@@ -45,7 +45,7 @@ const ItemSkill = ({ data }: ItemSkillProps) => {
       .then(() => {
         console.log('Skill deleted successfully')
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('Failed to delete skill')
       })
   }

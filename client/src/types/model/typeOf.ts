@@ -34,19 +34,6 @@ const sprintStatusList = ['PENDING', 'COMPLETE', 'RUNNING'] as const
 
 type SprintStatusType = (typeof sprintStatusList)[number]
 
-enum IssueRelationShip {
-  BLOCKS = 'BLOCKS',
-  IS_BLOCKED_BY = 'IS_BLOCKED_BY',
-  RELATES_TO = 'RELATES_TO',
-  IS_RELATED_TO = 'IS_RELATED_TO',
-  DEPENDS_ON = 'DEPENDS_ON',
-  IS_DEPENDED_ON_BY = 'IS_DEPENDED_ON_BY',
-  SUPERSEDES = 'SUPERSEDES',
-  IS_SUPERSEDED_BY = 'IS_SUPERSEDED_BY',
-  DUPLICATES = 'DUPLICATES',
-  IS_DUPLICATED_BY = 'IS_DUPLICATED_BY'
-}
-
 enum SkillLevel {
   Beginner = 1,
   Intermediate = 2,
@@ -59,8 +46,6 @@ const skillLevelList = Object.keys(SkillLevel).filter(
   (key): key is keyof typeof SkillLevel => isNaN(Number(key))
 )
 
-const issueRelationshipList = Object.values(IssueRelationShip)
-
 export type { IssueStatus, IssuePriority, IssueTag, SprintStatusType }
 export {
   issueStatusList,
@@ -68,8 +53,6 @@ export {
   issueTagList,
   issuePriorityList,
   sprintStatusList,
-  issueRelationshipList,
-  IssueRelationShip,
   skillLevelList,
   SkillLevel
 }

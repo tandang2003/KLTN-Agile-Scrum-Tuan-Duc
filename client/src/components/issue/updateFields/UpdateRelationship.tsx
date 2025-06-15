@@ -12,7 +12,12 @@ import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
 import useBoard from '@/hooks/use-board'
 import issueService from '@/services/issue.service'
-import { IssueRelationShip, issueRelationshipList } from '@/types/model/typeOf'
+import { IssueResponse } from '@/types/issue.type'
+import {
+  IssueRelationLabels,
+  issueRelationOptions,
+  IssueRelationShip
+} from '@/types/model/relationship'
 import { Id } from '@/types/other.type'
 import {
   CreateRelationshipIssueSchema,
@@ -20,10 +25,9 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
-import { IssueResponse } from '@/types/issue.type'
 type UpdateRelationshipProps = {
   issueId: string
-  initialData?: Array<RelationshipResponse>
+  initialData?: RelationshipResponse[]
   open?: boolean
   cancel?: () => void
 }
@@ -40,7 +44,7 @@ const UpdateRelationship = ({
   const { projectId } = useAppId()
   const { sprint } = useBoard()
 
-  const { data: issues, isFetching } = useGetListIssueQuery(
+  const { data: issues } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
       sprintId: sprint?.id as Id
@@ -51,16 +55,18 @@ const UpdateRelationship = ({
   )
 
   const handleSubmit = async () => {
-    const daParser = CreateRelationshipIssueSchema.safeParse(form)
-    if (!daParser.success) {
+    const dataParser = CreateRelationshipIssueSchema.safeParse(form)
+    if (!dataParser.success) {
+      console.error(dataParser.error)
       toast.error('Invalid data')
       return
     }
+    const data = dataParser.data
     issueService
       .createRelationship({
         issueId: issueId,
-        issueRelatedId: daParser.data.issueRelatedId.toLowerCase(),
-        typeRelation: daParser.data.typeRelation
+        issueRelatedId: data.issueRelatedId.toLowerCase(),
+        typeRelation: data.typeRelation
       })
       .then((response) => {
         setInitData((prev) => {
@@ -72,7 +78,7 @@ const UpdateRelationship = ({
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <h3>Linked issue</h3>
+      <span className='text-lg'>Linked issue</span>
       <RelationshipList items={initData} />
 
       {open && (
@@ -91,9 +97,9 @@ const UpdateRelationship = ({
                 <SelectValue placeholder='Relation' />
               </SelectTrigger>
               <SelectContent>
-                {Object.values(IssueRelationShip).map((relationship) => (
-                  <SelectItem key={relationship} value={relationship}>
-                    {relationship}
+                {issueRelationOptions.map(({ label, value }) => (
+                  <SelectItem key={label} value={value}>
+                    {label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -122,15 +128,19 @@ const UpdateRelationship = ({
           </div>
 
           <div className='mt-3 flex justify-end gap-2'>
-            <Button type='button' onClick={handleSubmit}>
-              Create
-            </Button>
             <Button
               type='button'
               className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
               onClick={() => cancel?.()}
             >
               Cancel
+            </Button>
+            <Button
+              type='button'
+              onClick={handleSubmit}
+              className='bg-green-500 text-white hover:cursor-pointer hover:opacity-60'
+            >
+              Create
             </Button>
           </div>
         </>
@@ -144,11 +154,13 @@ type RelationshipListProps = {
 }
 
 const RelationshipList = ({ items = [] }: RelationshipListProps) => {
-  const dataPreprocessing = useMemo(() => {
+  const dataPreprocessing = useMemo<
+    Record<IssueRelationShip, IssueResponse[]>
+  >(() => {
     const mapType: Record<IssueRelationShip, IssueResponse[]> =
-      issueRelationshipList.reduce(
-        (acc, key) => {
-          acc[key] = []
+      issueRelationOptions.reduce(
+        (acc, { value }) => {
+          acc[value] = []
           return acc
         },
         {} as Record<IssueRelationShip, IssueResponse[]>
@@ -166,9 +178,11 @@ const RelationshipList = ({ items = [] }: RelationshipListProps) => {
       {Object.entries(dataPreprocessing).map(([key, value]) => {
         if (value.length === 0) return null
         return (
-          <div>
-            <h4>{key}</h4>
-            <div className='flex flex-col gap-2'>
+          <div key={key}>
+            <span className='mt-4 mb-2 inline-block text-base'>
+              {IssueRelationLabels[key as IssueRelationShip]}
+            </span>
+            <div className='mt-2 flex flex-col gap-1'>
               {value.map((item) => {
                 return <RelationshipItem key={item.id} issueRelated={item} />
               })}
@@ -184,7 +198,7 @@ type RelationshipItemProps = Pick<RelationshipResponse, 'issueRelated'>
 
 const RelationshipItem = ({ issueRelated }: RelationshipItemProps) => {
   return (
-    <div className='border-accent rounded-md border-2 px-2 py-1 shadow-md'>
+    <div className='border-accent rounded-md border-2 px-4 py-2 shadow-md'>
       {issueRelated.name}
     </div>
   )

@@ -96,7 +96,7 @@ const FormSkill = () => {
                 <FormItem>
                   <FormLabel>Skill</FormLabel>
                   <div className='flex'>
-                    <Popover open={open} onOpenChange={setOpen} modal={true}>
+                    <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           disabled={mode === 'update'}

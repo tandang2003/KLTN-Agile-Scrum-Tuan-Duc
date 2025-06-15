@@ -5,13 +5,11 @@ import { FormField } from '@/components/ui/form'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
-import { ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
-type UpdateDescriptionIssueProps = {
-  children: ReactNode
-}
 
-const UpdateDescriptionIssue = () => {
+type UpdateDescriptionIssueProps = {}
+
+const UpdateDescriptionIssue = ({}: UpdateDescriptionIssueProps) => {
   const form = useFormContext<UpdateIssueType>()
   const { control, setValue, getValues } = form
 

@@ -106,7 +106,7 @@ const UpdateSubTaskForm = ({ open, cancel }: UpdateSubTaskFormProp) => {
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <h3>Sub Task</h3>
+      <span className='text-lg'>Sub Task</span>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
