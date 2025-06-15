@@ -28,7 +28,7 @@ public class SkillService {
 
   @Autowired
   public SkillService(SkillRepository skillRepository, UserService userService,
-                      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper) {
+      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper) {
     this.skillRepository = skillRepository;
     this.userService = userService;
     this.personalSkillRepository = personalSkillRepository;
@@ -40,95 +40,103 @@ public class SkillService {
     Skill skill;
     if (!skillRepository.existsByName(skillName)) {
       skill = Skill.builder()
-                   .name(skillName)
-                   .build();
+          .name(skillName)
+          .build();
       skill = skillRepository.save(skill);
-    }
-    else {
+    } else {
       skill = skillRepository.findByName((skillName))
-                             .orElseThrow(() -> AppException.builder()
-                                                            .error(Error.SKILL_NOT_FOUND)
-                                                            .build());
+          .orElseThrow(() -> AppException.builder()
+              .error(Error.SKILL_NOT_FOUND)
+              .build());
     }
     PersonalSkill personalSkill = PersonalSkill.builder()
-                                               .id(PersonalSkillId.builder()
-                                                                  .skillId(skill.getId())
-                                                                  .personalId(user.getId())
-                                                                  .build())
-                                               .user(user)
-                                               .skill(skill)
-                                               .proficiency(proficiency)
-                                               .build();
+        .id(PersonalSkillId.builder()
+            .skillId(skill.getId())
+            .personalId(user.getId())
+            .build())
+        .user(user)
+        .skill(skill)
+        .proficiency(proficiency)
+        .build();
     personalSkillRepository.save(personalSkill);
     return ApiResponse.<Void>builder()
-                      .code(HttpStatus.CREATED.value())
-                      .message("Skill created successfully")
-                      .build();
+        .code(HttpStatus.CREATED.value())
+        .message("Skill created successfully")
+        .build();
   }
 
   public ApiResponse<Void> deleteSkill(String skillName) {
     User user = userService.getCurrentUser();
     Skill skill = skillRepository.findByName(skillName)
-                                 .orElseThrow(() -> AppException.builder()
-                                                                .error(Error.SKILL_NOT_FOUND)
-                                                                .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.SKILL_NOT_FOUND)
+            .build());
     PersonalSkill personalSkill = PersonalSkill.builder()
-                                               .id(PersonalSkillId.builder()
-                                                                  .skillId(skill.getId())
-                                                                  .personalId(user.getId())
-                                                                  .build())
-                                               .user(user)
-                                               .skill(skill)
-                                               .build();
+        .id(PersonalSkillId.builder()
+            .skillId(skill.getId())
+            .personalId(user.getId())
+            .build())
+        .user(user)
+        .skill(skill)
+        .build();
     personalSkill = personalSkillRepository.findById(personalSkill.getId())
-                                           .orElseThrow(() -> AppException.builder()
-                                                                          .error(Error.PERSONAL_SKILL_NOT_FOUND)
-                                                                          .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.PERSONAL_SKILL_NOT_FOUND)
+            .build());
     personalSkillRepository.delete(personalSkill);
     return ApiResponse.<Void>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("Skill deleted successfully")
-                      .build();
+        .code(HttpStatus.OK.value())
+        .message("Skill deleted successfully")
+        .build();
   }
 
   public ApiResponse<PersonalSkillResponse> updateSkill(String skillName, int proficiency) {
     User user = userService.getCurrentUser();
     Skill skill = skillRepository.findByName(skillName)
-                                 .orElseThrow(() -> AppException.builder()
-                                                                .error(Error.SKILL_NOT_FOUND)
-                                                                .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.SKILL_NOT_FOUND)
+            .build());
     PersonalSkill personalSkill = PersonalSkill.builder()
-                                               .id(PersonalSkillId.builder()
-                                                                  .skillId(skill.getId())
-                                                                  .personalId(user.getId())
-                                                                  .build())
-                                               .user(user)
-                                               .skill(skill)
-                                               .build();
+        .id(PersonalSkillId.builder()
+            .skillId(skill.getId())
+            .personalId(user.getId())
+            .build())
+        .user(user)
+        .skill(skill)
+        .build();
     personalSkill = personalSkillRepository.findById(personalSkill.getId())
-                                           .orElseThrow(() -> AppException.builder()
-                                                                          .error(Error.PERSONAL_SKILL_NOT_FOUND)
-                                                                          .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.PERSONAL_SKILL_NOT_FOUND)
+            .build());
     personalSkill.setProficiency(proficiency);
     personalSkillRepository.save(personalSkill);
     return ApiResponse.<PersonalSkillResponse>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("Skill updated successfully")
-                      .data(skillMapper.toPersonalSkillResponse(personalSkill))
-                      .build();
+        .code(HttpStatus.OK.value())
+        .message("Skill updated successfully")
+        .data(skillMapper.toPersonalSkillResponse(personalSkill))
+        .build();
   }
 
-  public ApiResponse<List<PersonalSkillResponse>> getSkills() {
+  public ApiResponse<List<PersonalSkillResponse>> getSkillsPersonal() {
     User user = userService.getCurrentUser();
     List<PersonalSkill> personalSkills = personalSkillRepository.findByUser(user)
-                                                                .orElseThrow(() -> AppException.builder()
-                                                                                               .error(
-                                                                                                 Error.PERSONAL_SKILL_NOT_FOUND)
-                                                                                               .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(
+                Error.PERSONAL_SKILL_NOT_FOUND)
+            .build());
     return ApiResponse.<List<PersonalSkillResponse>>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("Skills retrieved successfully")
-                      .data(skillMapper.toListPersonalSkillResponse(personalSkills))
-                      .build();
+        .code(HttpStatus.OK.value())
+        .message("Skills retrieved successfully")
+        .data(skillMapper.toListPersonalSkillResponse(personalSkills))
+        .build();
+  }
+
+  public ApiResponse<List<String>> getSkills() {
+    List<String> skills = skillRepository.findAll().stream().map(Skill::getName).toList();
+    return ApiResponse.<List<String>>builder()
+        .code(HttpStatus.OK.value())
+        .message("All Skills")
+        .data(skills)
+        .build();
   }
 }

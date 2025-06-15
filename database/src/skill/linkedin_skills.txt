@@ -1,0 +1,20 @@
+Python
+JavaScript
+HTML
+CSS
+SQL
+Java
+C++
+Git
+Docker
+Kubernetes
+AWS
+Azure
+TensorFlow
+React
+Node.js
+Linux
+Agile
+Scrum
+Machine Learning
+Data Analysis

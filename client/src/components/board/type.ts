@@ -38,6 +38,12 @@ type CardTagProps = {
   color: TagColorTypeOf
 }
 
-type Position = Record<IssueStatus, string[] | undefined>
+type DataOnMoveType = {
+  active: Id
+  columnTo: Id | null
+  indexTo: number | null
+}
 
-export type { Position, BaseCardProps, BoardProps, ColumnProps }
+type Position = Record<IssueStatus, Id[]>
+
+export type { Position, BaseCardProps, BoardProps, ColumnProps, DataOnMoveType }

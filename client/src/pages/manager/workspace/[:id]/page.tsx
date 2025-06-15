@@ -24,9 +24,7 @@ import { NavLink } from 'react-router-dom'
 const WorkspaceDetailPage = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { user } = useAppSelector((state) => state.authSlice)
-  const { projectIds, projectId } = useAppSelector(
-    (state) => state.projectSlice
-  )
+  const { projectId } = useAppSelector((state) => state.projectSlice)
 
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId

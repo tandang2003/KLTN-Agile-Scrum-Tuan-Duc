@@ -18,4 +18,8 @@ const formatDateToString = (
 const formatDateRange = (start: Date, end: Date) =>
   `${format(start, 'd/M')} - ${format(end, 'd/M/yyyy')}`
 
-export { formatDateToString, formatDateRange }
+const parseStringToDate = (dateString: string): Date => {
+  return new Date(dateString)
+}
+
+export { formatDateToString, formatDateRange, parseStringToDate }

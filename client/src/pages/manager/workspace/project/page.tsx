@@ -1,3 +1,4 @@
+import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -18,6 +19,8 @@ const ProjectPage = () => {
   return (
     <SectionContainer className='flex flex-col'>
       <DialogUpdateIssue />
+
+      <DialogCreateIssue />
       <LoadingBoundary<ProjectResponse>
         fallback={''}
         data={data}

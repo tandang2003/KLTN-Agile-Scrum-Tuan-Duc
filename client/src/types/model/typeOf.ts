@@ -47,6 +47,18 @@ enum IssueRelationShip {
   IS_DUPLICATED_BY = 'IS_DUPLICATED_BY'
 }
 
+enum SkillLevel {
+  Beginner = 1,
+  Intermediate = 2,
+  Proficient = 3,
+  Advanced = 4,
+  Expert = 5
+}
+
+const skillLevelList = Object.keys(SkillLevel).filter(
+  (key): key is keyof typeof SkillLevel => isNaN(Number(key))
+)
+
 const issueRelationshipList = Object.values(IssueRelationShip)
 
 export type { IssueStatus, IssuePriority, IssueTag, SprintStatusType }
@@ -57,5 +69,7 @@ export {
   issuePriorityList,
   sprintStatusList,
   issueRelationshipList,
-  IssueRelationShip
+  IssueRelationShip,
+  skillLevelList,
+  SkillLevel
 }
