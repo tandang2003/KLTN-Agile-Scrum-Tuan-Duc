@@ -16,8 +16,11 @@ public class Resource extends BaseEntity {
   private List<ProjectSprint> issueDailyFiles;
   @OneToOne(mappedBy = "fileBackLog")
   private ProjectSprint projectSprint;
+  @OneToOne(mappedBy = "avatar")
+  private User ownerAvatar ;
   @ManyToMany(mappedBy = "resources")
   private List<Issue> issues;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
@@ -206,7 +209,16 @@ public class Resource extends BaseEntity {
     return projectSprint;
   }
 
+  public User getOwnerAvatar() {
+    return ownerAvatar;
+  }
+
+  public void setOwnerAvatar(User ownerAvatar) {
+    this.ownerAvatar = ownerAvatar;
+  }
+
   public void setProjectSprint(ProjectSprint projectSprint) {
+
     this.projectSprint = projectSprint;
   }
 }
