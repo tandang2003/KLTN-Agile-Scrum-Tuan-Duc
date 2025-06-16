@@ -37,8 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -215,11 +217,12 @@ public class ProjectService {
     else {
       workspacesUsersProjectsService.getByUserIdAndProjectId(user.getId(), projectId);
     }
-
+    Workspace workspace = project.getWorkspace();
+    Sprint sprint = getCurrentSprint(workspace.getSprints());
     var project1 = projectMongoService.getByNkProjectId(projectId);
     List<Topic> topics = project1.getTopics();
 //        List<SprintResponse> sprintResponses = getSprintResponses(project);
-    ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics);
+    ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics,sprint);
     return ApiResponse.<ProjectResponse>builder()
                       .message("Get project by id")
                       .data(projectResponse)
@@ -265,5 +268,30 @@ public class ProjectService {
                                                     .fileBacklog(fileBacklog)
                                                     .build())
                       .build();
+  }
+  public Sprint getCurrentSprint(List<Sprint> sprints){
+    Instant now = Instant.now()
+                         .truncatedTo(ChronoUnit.DAYS);
+    if (sprints != null && !sprints.isEmpty()) {
+      Sprint nextSprint = sprints.getFirst();
+      long days = 0;
+      for (Sprint sprint : sprints) {
+        Instant start = sprint.getDtStart()
+                              .truncatedTo(ChronoUnit.DAYS);
+        Instant end = sprint.getDtEnd()
+                            .truncatedTo(ChronoUnit.DAYS);
+        if (start.isBefore(now) && end.isAfter(now)) {
+          return sprint;
+        }
+        else if (now.isBefore(start) && days <= start.until(now)
+                                                     .toDays()) {
+          days = start.until(now)
+                      .toDays();
+          nextSprint = sprint;
+        }
+      }
+      return nextSprint;
+    }
+    return null;
   }
 }
