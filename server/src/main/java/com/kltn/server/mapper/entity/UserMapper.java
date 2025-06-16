@@ -16,7 +16,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring",
         unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE,
         unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
-        uses = {WorkspaceMapper.class})
+        uses = {WorkspaceMapper.class,ResourceMapper.class})
 public interface UserMapper {
   User toUser(RegisterRequest registerRequest);
 
@@ -49,7 +49,10 @@ public interface UserMapper {
              @Mapping(target = "className",
                       source = "className"),
              @Mapping(target = "role",
-                      source = "role.name")})
+                      source = "role.name"),
+             @Mapping(target = "avatar",
+                      source = "avatar",
+                      qualifiedByName = "toResourceResponse"),})
   @BeanMapping(ignoreByDefault = true)
   UserResponse toUserResponse(User user);
 
