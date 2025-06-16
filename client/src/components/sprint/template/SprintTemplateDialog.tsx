@@ -27,7 +27,7 @@ type SprintTemplateDialogProps = {} & DialogControllerProps
 const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
   const { mode } = useAppSelector((state) => state.sprintSlice)
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
-  const sprintId = useAppSelector((state) => state.sprintSlice.current?.id)
+  const sprintId = useAppSelector((state) => state.sprintSlice.active?.id)
   const { data } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })

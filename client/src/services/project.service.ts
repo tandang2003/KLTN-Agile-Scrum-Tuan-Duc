@@ -1,7 +1,11 @@
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
 import { Id } from '@/types/other.type'
-import { CreateProjectRequest, ProjectResponse } from '@/types/project.type'
+import {
+  CreateProjectRequest,
+  ProjectDetailResponse,
+  ProjectResponse
+} from '@/types/project.type'
 import { UserResponse } from '@/types/user.type'
 
 const projectService = {
@@ -15,7 +19,7 @@ const projectService = {
   },
 
   getProject: async (projectId: Id) => {
-    const response = await httpService.get<ResponseApi<ProjectResponse>>(
+    const response = await httpService.get<ResponseApi<ProjectDetailResponse>>(
       `/project/${projectId}`
     )
 

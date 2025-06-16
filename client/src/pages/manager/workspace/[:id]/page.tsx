@@ -97,23 +97,24 @@ const WorkspaceDetailPage = () => {
             <TabsTrigger value='student'>Student</TabsTrigger>
           </TabsList>
 
-          {!projectId && user?.role === 'student' && (
-            <Button
-              variant='default'
-              size='sm'
-              onClick={() => setOpenDialogCreateProject(true)}
-            >
-              <PlusIcon />
-              New Group
-            </Button>
-          )}
-          {projectId && user?.role === 'student' && (
-            <Button variant='default' size='sm' asChild>
-              <NavLink to={`/manager/workspace/project/${projectId}`}>
-                Your Project
-              </NavLink>
-            </Button>
-          )}
+          <RequiredAuth mode='hide' roles={['student']}>
+            {projectId ? (
+              <Button variant='default' size='sm' asChild>
+                <NavLink to={`/manager/workspace/project/${projectId}`}>
+                  Your Project
+                </NavLink>
+              </Button>
+            ) : (
+              <Button
+                variant='default'
+                size='sm'
+                onClick={() => setOpenDialogCreateProject(true)}
+              >
+                <PlusIcon />
+                New Group
+              </Button>
+            )}
+          </RequiredAuth>
         </div>
         <RequiredAuth mode='hide' roles={['teacher']}>
           <TabsContent value='project'>

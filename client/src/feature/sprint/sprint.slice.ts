@@ -10,7 +10,7 @@ type SprintCurrent = {
 
 type SprintState = {
   isOpenDialogCreate: boolean
-  current?: SprintCurrent
+  active?: SprintCurrent
   mode: 'create' | 'update'
 }
 const initialState: SprintState = {
@@ -26,7 +26,7 @@ const sprintSlice = createSlice({
       state: SprintState,
       action: PayloadAction<SprintCurrent | undefined>
     ) {
-      state.current = action.payload
+      state.active = action.payload
     },
 
     openDialogCreateSprint(state: SprintState) {

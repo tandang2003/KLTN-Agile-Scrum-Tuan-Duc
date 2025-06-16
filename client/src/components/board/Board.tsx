@@ -1,7 +1,6 @@
-import Card from '@/components/board/Card'
-import Column from '@/components/board/Column'
+import RenderColumns from '@/components/board/RenderColumns'
 import { DataOnMoveType } from '@/components/board/type'
-import KanbanBoard from '@/components/kanban/KanbanBoard'
+import KanbanCard from '@/components/kanban/KanbanCard'
 import KanbanProvider from '@/components/kanban/KanbanProvider'
 import {
   BoardModelType,
@@ -22,21 +21,18 @@ import {
   useSensors
 } from '@dnd-kit/core'
 
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable'
+import { arrayMove } from '@dnd-kit/sortable'
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type BoardProps = {
   data: BoardModelType
+  disabled?: boolean
   // onMove?: (active: Active, over: Over) => void
   onMove?: (data: DataOnMoveType) => void
 }
 
-const Board = ({ data: board, onMove }: BoardProps) => {
+const Board = ({ data: board, onMove, disabled = false }: BoardProps) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10
@@ -77,34 +73,6 @@ const Board = ({ data: board, onMove }: BoardProps) => {
 
   //   prevColumnsRef.current = data.columns
   // }, [data.columns])
-
-  const renderColumn = useCallback(
-    ([keyColumn, valueColumn]: [Id, ColumnModelType]) => {
-      const cardsInColumn = valueColumn.cardIds
-        .map((cardId) => data.cards.find((card) => card.id === cardId))
-        .filter((card): card is CardModelType => card !== undefined)
-
-      return (
-        <SortableContext
-          key={keyColumn}
-          id={keyColumn}
-          strategy={verticalListSortingStrategy}
-          items={valueColumn.cardIds}
-        >
-          <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
-            <KanbanBoard id={keyColumn}>
-              <Column
-                id={keyColumn}
-                name={valueColumn.name}
-                items={cardsInColumn}
-              />
-            </KanbanBoard>
-          </div>
-        </SortableContext>
-      )
-    },
-    [data.cards] // Only rerun if cards list changes
-  )
 
   const activeItemData = useMemo(() => {
     if (!activeItemRef.current) return undefined
@@ -333,13 +301,27 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      disabled={disabled}
     >
       <div className='flex bg-transparent'>
-        {Object.entries(data.columns).map(renderColumn)}
+        {Object.entries(data.columns).map(([columnId, column]) => {
+          const cardsInColumn = column.cardIds
+            .map((cardId) => data.cards.find((card) => card?.id === cardId))
+            .filter((card): card is CardModelType => !!card)
+
+          return (
+            <RenderColumns
+              key={columnId}
+              id={columnId}
+              column={column}
+              cards={cardsInColumn}
+            />
+          )
+        })}
       </div>
       <DragOverlay dropAnimation={dropAnimation}>
         {activeDragTypeRef.current === 'card' && activeItemData && (
-          <Card
+          <KanbanCard
             data={{
               ...activeItemData
             }}

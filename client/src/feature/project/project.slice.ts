@@ -16,7 +16,6 @@ const getTokenProjectThunk = createAsyncThunk<TokenProject, Id>(
   async (workspaceId, { rejectWithValue }) => {
     try {
       const data = (await tokenService.getTokenProject(workspaceId)).data
-      console.log(data)
       return {
         token: data.project_authorization_token,
         projectIds: data.project_ids,
@@ -33,6 +32,9 @@ const projectSlice = createSlice({
   name: 'project',
   initialState: initialState,
   reducers: {
+    setProjectCurrent: (state: ProjectState, action: PayloadAction<Id>) => {
+      state.projectId = action.payload
+    },
     setProjectState: (
       state: ProjectState,
       action: PayloadAction<ProjectState>
@@ -61,5 +63,5 @@ const projectSlice = createSlice({
 
 const projectReducer = projectSlice.reducer
 export { getTokenProjectThunk, projectReducer }
-export const { setProjectState } = projectSlice.actions
+export const { setProjectState, setProjectCurrent } = projectSlice.actions
 export default projectSlice

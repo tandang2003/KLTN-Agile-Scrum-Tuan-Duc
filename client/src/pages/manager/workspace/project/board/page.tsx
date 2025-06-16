@@ -3,8 +3,9 @@ import FilterBoard from '@/components/board/FilterBoard'
 import { DataOnMoveType, Position } from '@/components/board/type'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { setCurrentSprintBoard } from '@/feature/board/board.slice'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import useAppId from '@/hooks/use-app-id'
 import useBoard from '@/hooks/use-board'
 import { DEFAULT_POSITION, toBoardModel } from '@/lib/board.helper'
 import boardService from '@/services/board.service'
@@ -12,16 +13,22 @@ import issueService from '@/services/issue.service'
 import { IssueResponse } from '@/types/issue.type'
 import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
+import { ProjectParams } from '@/types/route.type'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
 import { ComponentProps, useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 type OnMove = ComponentProps<typeof Board>['onMove']
 
 const BoardPage = () => {
-  const { projectId } = useAppId()
+  const { projectId, currentSprintId } = useParams<ProjectParams>()
+
   const { sprint } = useBoard()
+
+  const dispatch = useAppDispatch()
+
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
@@ -42,11 +49,20 @@ const BoardPage = () => {
           sprintId: sprint?.id as Id
         })
         .then((res) => {
-          console.log('getPositionBySprint', res)
           setColumns(res)
         })
     }
   }, [projectId, sprint?.id])
+
+  useEffect(() => {
+    if (currentSprintId) {
+      dispatch(
+        setCurrentSprintBoard({
+          id: currentSprintId
+        })
+      )
+    }
+  }, [currentSprintId])
 
   const handleOnChangeAPI = useCallback(
     (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
@@ -189,10 +205,16 @@ type RenderBoardProps = {
 
 const RenderBoard = ({ data, handleOnMove }: RenderBoardProps) => {
   const dataToRender = cloneDeep(toBoardModel(data.items, data.columns))
+  const role = useAppSelector((state) => state.authSlice.user?.role)
+  if (!role) return null
   return (
     <div className='flex-1'>
       <ScrollArea className='h-full'>
-        <Board data={dataToRender} onMove={handleOnMove} />
+        <Board
+          data={dataToRender}
+          onMove={handleOnMove}
+          disabled={role === 'teacher'}
+        />
         <ScrollBar orientation='vertical' />
         <ScrollBar orientation='horizontal' />
       </ScrollArea>

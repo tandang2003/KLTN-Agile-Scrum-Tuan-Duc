@@ -7,35 +7,20 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppDispatch } from '@/context/redux/hook'
-import { setCurrentSprint } from '@/feature/board/board.slice'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import { setCurrentSprintBoard } from '@/feature/board/board.slice'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
-import useBoard from '@/hooks/use-board'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
-import { useState } from 'react'
 type FilterBoardProps = {}
 
 const FilterBoard = ({}: FilterBoardProps) => {
   const { workspaceId } = useAppId()
-  const { sprint } = useBoard()
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
   const dispatch = useAppDispatch()
-
-  const handleSetSprint = (item: SprintModel | null) => {
-    dispatch(
-      setCurrentSprint(
-        item
-          ? {
-              id: item.id
-            }
-          : undefined
-      )
-    )
-  }
 
   return (
     <Popover>
@@ -57,13 +42,7 @@ const FilterBoard = ({}: FilterBoardProps) => {
                 isLoading={isFetching}
                 data={data}
               >
-                {(data) => (
-                  <SprintTabContent
-                    items={data}
-                    initialValue={sprint?.id ?? null}
-                    onValueChange={handleSetSprint}
-                  />
-                )}
+                {(data) => <SprintTabContent items={data} />}
               </LoadingBoundary>
             </TabsContent>
           </div>
@@ -75,16 +54,16 @@ const FilterBoard = ({}: FilterBoardProps) => {
 
 type SprintTabContentProps = {
   items: SprintModel[]
-  initialValue?: Id | null
-  onValueChange?: (sprint: SprintModel | null) => void
+  // initialValue?: Id | null
+  // onValueChange?: (sprint: SprintModel | null) => void
 }
 
-const SprintTabContent = ({
-  items,
-  onValueChange,
-  initialValue = null
-}: SprintTabContentProps) => {
-  const [selectItem, setSelectItem] = useState<Id | null>(initialValue)
+const SprintTabContent = ({ items }: SprintTabContentProps) => {
+  const currentSprint = useAppSelector(
+    (state) => state.boardSlice.currentSprint
+  )
+  const dispatch = useAppDispatch()
+
   return (
     <div className='flex flex-col gap-3'>
       {items.map((item, index) => {
@@ -93,12 +72,15 @@ const SprintTabContent = ({
             key={item.id}
             className='flex items-start gap-2 border-2 p-2'
             onClick={() => {
-              setSelectItem(selectItem === item.id ? null : item.id)
-              onValueChange?.(selectItem === item.id ? null : item)
+              dispatch(
+                setCurrentSprintBoard({
+                  id: item.id
+                })
+              )
             }}
           >
             <div className='border-accent grid size-[20px] place-items-center rounded-xs border-2 bg-white shadow'>
-              {item.id === selectItem && (
+              {item.id === currentSprint?.id && (
                 <Icon icon={'octicon:check-16'} size={15} />
               )}
             </div>

@@ -10,6 +10,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
@@ -62,42 +63,44 @@ const SprintCardInProductBacklog = ({
         {item.id}
       </ToolTip>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end'>
-          {item.status === 'DONE' && (
-            <DropdownMenuItem onClick={handleReopen}>Reopen</DropdownMenuItem>
-          )}
-          <DropdownMenuItem
-            onClick={() => {
-              action(item.id)
-            }}
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                {sprints &&
-                  sprints.map((sprint) => (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        handleUpdateSprint(sprint.id)
-                      }}
-                      key={sprint.id}
-                      className='cursor-pointer'
-                    >
-                      {sprint.title}
-                    </DropdownMenuItem>
-                  ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <RequiredAuth mode='hide' roles={['student']}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end'>
+            {item.status === 'DONE' && (
+              <DropdownMenuItem onClick={handleReopen}>Reopen</DropdownMenuItem>
+            )}
+            <DropdownMenuItem
+              onClick={() => {
+                action(item.id)
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  {sprints &&
+                    sprints.map((sprint) => (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleUpdateSprint(sprint.id)
+                        }}
+                        key={sprint.id}
+                        className='cursor-pointer'
+                      >
+                        {sprint.title}
+                      </DropdownMenuItem>
+                    ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </RequiredAuth>
     </div>
   )
 }

@@ -57,7 +57,6 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
   })
 
   useEffect(() => {
-    console.log(form.getValues())
     if (Object.keys(form.formState.errors).length > 0) {
       console.log('❌ Form Errors:', form.formState.errors)
 

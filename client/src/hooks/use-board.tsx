@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setCurrentSprint } from '@/feature/board/board.slice'
+import { setCurrentSprintBoard } from '@/feature/board/board.slice'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { Id } from '@/types/other.type'
 import { useEffect } from 'react'
@@ -17,7 +17,7 @@ const useBoard = () => {
   useEffect(() => {
     if (data) {
       dispatch(
-        setCurrentSprint({
+        setCurrentSprintBoard({
           id: data.currentSprint?.id
         })
       )

@@ -2,7 +2,8 @@ import { RoleType } from '@/types/auth.type'
 import { Id } from '@/types/other.type'
 
 type ProjectParams = {
-  projectId: string
+  projectId: Id
+  currentSprintId?: Id
 }
 
 type WorkspaceParams = {

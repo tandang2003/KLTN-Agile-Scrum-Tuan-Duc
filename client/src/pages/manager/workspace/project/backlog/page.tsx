@@ -4,8 +4,12 @@ import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
+import { ProjectParams } from '@/types/route.type'
+import { useParams } from 'react-router-dom'
 
 const BacklogPage = () => {
+  const { projectId, currentSprintId } = useParams<ProjectParams>()
+
   const { workspaceId } = useAppId()
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
