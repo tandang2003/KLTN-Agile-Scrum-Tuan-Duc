@@ -19,12 +19,11 @@ public class LogTaskMapperIml implements LogTaskMapper {
       builder.description(entity.getDescription());
       builder.status(entity.getStatus()
                            .name());
+      builder.open(entity.isOpen());
       builder.priority(entity.getPriority()
                              .name());
-//            builder.storyPoint(entity.getStoryPoint());
       builder.dtStart(entity.getDtStart());
       builder.dtEnd(entity.getDtEnd());
-//            builder.dtPlanning(entity.getDtPlanning());
       builder.complexDescription(entity.getComplexOfDescription());
       if (entity.getAssignee() != null)
         builder.assignee(entity.getAssignee()

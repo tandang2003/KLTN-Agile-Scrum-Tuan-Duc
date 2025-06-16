@@ -44,6 +44,7 @@ public class LogTask extends ILog {
   @Field("comments")
   private List<Comment> comments;
   private List<Relation<String>> relations;
+  private boolean open;
 
   public LogTask() {
     super();
@@ -69,6 +70,7 @@ public class LogTask extends ILog {
     this.attachment = builder.attachment;
     this.comments = builder.comments;
     this.relations = builder.relations;
+    this.open = builder.open; // Default value for open
   }
 
   public static LogTaskBuilder builder() {
@@ -95,6 +97,7 @@ public class LogTask extends ILog {
     private List<Attachment> attachment;
     private List<Comment> comments;
     private List<Relation<String>> relations;
+    private boolean open=true; // Default value for open
 
     public LogTaskBuilder relations(List<Relation<String>> relations) {
       this.relations = relations;
@@ -109,6 +112,10 @@ public class LogTask extends ILog {
 
     public LogTaskBuilder sprintId(String sprintId) {
       this.sprintId = sprintId;
+      return this;
+    }
+    public LogTaskBuilder open(boolean open) {
+      this.open = open;
       return this;
     }
 

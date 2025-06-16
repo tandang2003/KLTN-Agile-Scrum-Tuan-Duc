@@ -31,7 +31,7 @@ public class Issue extends BaseEntity {
 //    })
 //    private ProjectSprint projectSprint;
   @ManyToMany(fetch = FetchType.LAZY,
-             cascade = CascadeType.REMOVE)
+              cascade = CascadeType.REMOVE)
   @JoinTable(name = "issue_resources",
              joinColumns = @JoinColumn(name = "issue_id"),
              inverseJoinColumns = @JoinColumn(name = "resource_id"))
@@ -70,6 +70,7 @@ public class Issue extends BaseEntity {
              fetch = FetchType.EAGER,
              cascade = CascadeType.ALL)
   private List<IssueRelation> affectTo;
+  private boolean open = true;
 
   public Issue(IssueEntityBuilder builder) {
     super(builder);
@@ -89,6 +90,7 @@ public class Issue extends BaseEntity {
     this.resources = builder.resources;
     this.project = builder.project;
     this.sprint = builder.sprint;
+    this.open = builder.open;
   }
 
   public Issue() {
@@ -109,6 +111,7 @@ public class Issue extends BaseEntity {
   public static class IssueEntityBuilder extends BaseEntityBuilder<Issue, IssueEntityBuilder> {
     private String position;
     private List<Resource> resources;
+    private boolean open = true;
     private String name;
     private String description;
     private IssueStatus status;
@@ -142,6 +145,11 @@ public class Issue extends BaseEntity {
 
     public IssueEntityBuilder name(String name) {
       this.name = name;
+      return this;
+    }
+
+    public IssueEntityBuilder open(boolean open) {
+      this.open = open;
       return this;
     }
 
@@ -415,5 +423,13 @@ public class Issue extends BaseEntity {
 
   public void setAffectTo(List<IssueRelation> affectTo) {
     this.affectTo = affectTo;
+  }
+
+  public boolean isOpen() {
+    return open;
+  }
+
+  public void setOpen(boolean open) {
+    this.open = open;
   }
 }
