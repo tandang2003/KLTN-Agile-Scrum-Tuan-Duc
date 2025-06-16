@@ -15,8 +15,9 @@ import {
   useUpdateSprintMutation
 } from '@/feature/sprint/sprint.api'
 import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
-import { WEIGHT_POSITION } from '@/lib/const'
+import { HttpStatusCode, WEIGHT_POSITION } from '@/lib/const'
 import { handleErrorApi } from '@/lib/form'
+import boardService from '@/services/board.service'
 import { Id } from '@/types/other.type'
 import { BaseSprintFormType } from '@/types/sprint.type'
 import { UseFormReturn } from 'react-hook-form'
@@ -57,10 +58,17 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
         dispatch(closeDialogCreateSprint())
       })
       .catch((error) => {
-        handleErrorApi({
-          error: error,
-          setError: form.setError
-        })
+        if (error.status === HttpStatusCode.UnprocessableEntity) {
+          handleErrorApi({
+            error: error,
+            setError: form.setError
+          })
+          return
+        }
+        if (error.status === HttpStatusCode.Conflict) {
+          toast.error('Has sprint already exists in this time')
+          return
+        }
         toast.error('Create sprint failed')
       })
   }

@@ -38,6 +38,30 @@ const boardService = {
     }
     return dataSprint
   },
+
+  saveNewPositionSprint: async (
+    req: Omit<NewPositionReq, 'issueId' | 'status'>
+  ) => {
+    const { projectId, sprintId } = req
+
+    const responseSprint = await httpService.get<PositionSprint | null>(
+      `/project/${projectId}/position`
+    )
+
+    const positionSprint: PositionSprint = responseSprint.data || {}
+    const position: Position = DEFAULT_POSITION
+
+    const positionSprintUpdated: PositionSprint = {
+      ...positionSprint,
+      [sprintId]: position
+    }
+
+    const response = await httpService.put<ResponseApi<void>, PositionSprint>(
+      `/project/${projectId}/position`,
+      positionSprintUpdated
+    )
+    return response.data.data
+  },
   saveNewPosition: async (req: NewPositionReq) => {
     const { projectId, sprintId, issueId, status } = req
     const responseSprint = await httpService.get<PositionSprint | null>(
@@ -46,6 +70,7 @@ const boardService = {
 
     const positionSprint: PositionSprint = responseSprint.data || {}
     const position: Position = positionSprint[sprintId] || DEFAULT_POSITION
+
     const positionUpdated: Position = {
       ...position,
       [status]: [...(position[status] || []), issueId]
