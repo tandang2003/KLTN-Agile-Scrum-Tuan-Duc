@@ -2,6 +2,7 @@ package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.resource.DailyResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
+import com.kltn.server.DTO.request.entity.resource.StoringAvatarSignatureRequest;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.model.collection.snapshot.ResourceSnapshot;
 import com.kltn.server.model.entity.Resource;
@@ -128,4 +129,17 @@ public abstract class ResourceMapper {
                       source = "publicId"),})
   @BeanMapping(ignoreByDefault = true)
   public abstract Resource toResource(DailyResourceSignatureRequest request);
+
+  @Mappings({@Mapping(target = "name",
+                      source = "request.name"),
+             @Mapping(target = "extension",
+                      source = "extension"),
+             @Mapping(target = "contentType",
+                      source = "contentType"),
+             @Mapping(target = "placeContent",
+                      expression = "java(com.kltn.server.model.type.resource.PlaceContent.AVATAR)"),
+             @Mapping(target = "size",
+                      source = "size"),})
+  @BeanMapping(ignoreByDefault = true)
+  public abstract Resource toResource(StoringAvatarSignatureRequest request) ;
 }

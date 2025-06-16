@@ -3,6 +3,7 @@ package com.kltn.server.controller;
 import com.kltn.server.DTO.request.entity.resource.DailyResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
+import com.kltn.server.DTO.request.entity.resource.StoringAvatarSignatureRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RestController
-@RequestMapping("/resource")
+  @RequestMapping("/resource")
 public class ResourceController {
   private ResourceService resourceService;
 
@@ -72,6 +73,13 @@ public class ResourceController {
   public ResponseEntity<ApiResponse<ResourceResponse>> uploadBacklogFile(
     @RequestBody DailyResourceSignatureRequest request) {
     var response = resourceService.uploadFileToBacklogSprint(request);
+    return ResponseEntity.ok()
+                         .body(response);
+  }
+  @PostMapping("avatar")
+  public ResponseEntity<ApiResponse<ResourceResponse>> uploadBacklogFile(
+    @RequestBody StoringAvatarSignatureRequest request) {
+    var response = resourceService.uploadAvatar(request);
     return ResponseEntity.ok()
                          .body(response);
   }

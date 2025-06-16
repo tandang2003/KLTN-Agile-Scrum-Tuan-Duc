@@ -25,6 +25,10 @@
       private String uniId;
       private String className;
       private String uniPassword;
+      @OneToOne
+      @JoinColumn(name = "avatar_id",
+                  referencedColumnName = "id")
+      private Resource avatar;
       @ManyToOne
       @JoinColumn(name = "role_id")
       private Role role;
@@ -282,6 +286,14 @@
       public Set<Workspace> getWorkspaceJoin() {
           return workspacesUserProjects.stream().map(WorkspacesUsersProjects::getWorkspace).collect(Collectors.toSet());
       }
+
+    public Resource getAvatar() {
+      return avatar;
+    }
+
+    public void setAvatar(Resource avatar) {
+      this.avatar = avatar;
+    }
   }
 
 
