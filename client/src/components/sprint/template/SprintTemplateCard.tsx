@@ -13,7 +13,7 @@ import {
   setCurrentSprint
 } from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode } from '@/lib/const'
-import { getStatusSprint } from '@/lib/sprint'
+import { getStatusSprint } from '@/lib/sprint.helper'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'

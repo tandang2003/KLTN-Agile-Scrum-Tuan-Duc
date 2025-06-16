@@ -1,5 +1,7 @@
+import SprintColumnsAction from '@/components/datatable/sprint/sprintColumnsAction'
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
+import { getStatusSprint } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintWorkspaceDataTable } from '@/types/sprint.type'
 import { ColumnDef } from '@tanstack/react-table'
@@ -13,9 +15,13 @@ const columns: ColumnDef<SprintColumns>[] = [
     size: 100
   },
   {
-    accessorKey: 'miniumStoryPoint',
+    accessorKey: 'storyPoint',
     header: 'Point',
-    size: 100
+    size: 50,
+    cell: ({ row }) => {
+      const value: number = row.getValue('storyPoint')
+      return <div>{value}</div>
+    }
   },
   {
     accessorKey: '',
@@ -23,17 +29,25 @@ const columns: ColumnDef<SprintColumns>[] = [
     cell: ({ row }) => {
       const start: Date = row.getValue('start')
       const end: Date = row.getValue('end')
-      const current = new Date()
-      if (current <= start) {
-        return <Badge>Pending</Badge>
-      }
-      if (current >= start) {
-        return <Badge>Doing</Badge>
-      }
-      if (current <= end) {
-        return <Badge>End</Badge>
-      }
-      return <Badge>null</Badge>
+      return (
+        <Badge
+          statusSprint={getStatusSprint({
+            start,
+            end
+          })}
+        >
+          {getStatusSprint({ start, end })}
+        </Badge>
+      )
+    }
+  },
+
+  {
+    accessorKey: 'start',
+    header: 'Date start',
+    cell: ({ row }) => {
+      const value: Date = row.getValue('start')
+      return formatDate(value)
     }
   },
   {
@@ -51,19 +65,19 @@ const columns: ColumnDef<SprintColumns>[] = [
     }
   },
   {
-    accessorKey: 'start',
-    header: 'Date start',
-    cell: ({ row }) => {
-      const value: Date = row.getValue('start')
-      return formatDate(value)
-    }
-  },
-  {
     accessorKey: 'end',
     header: 'Date end',
     cell: ({ row }) => {
       const value: Date = row.getValue('end')
       return formatDate(value)
+    }
+  },
+  {
+    accessorKey: 'action',
+    header: '',
+    size: 10,
+    cell: ({ row }) => {
+      return <SprintColumnsAction />
     }
   }
 ]

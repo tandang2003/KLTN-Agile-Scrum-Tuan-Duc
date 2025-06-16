@@ -57,6 +57,7 @@ export const ProviderCommentProvider = ({
     const stompClient = Stomp.over(socket)
     stompClient.connectHeaders = headers
     stompClient.reconnectDelay = 5000
+    stompClient.debug = () => {}
     stompClient.onConnect = () => {
       // console.log('Connected to WebSocket')
       setIsReady(stompClient.connected)

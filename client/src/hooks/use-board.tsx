@@ -1,14 +1,12 @@
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setCurrentSprintBoard } from '@/feature/board/board.slice'
+import { setSprintIdFilter } from '@/feature/board/board.slice'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { Id } from '@/types/other.type'
 import { useEffect } from 'react'
 
 const useBoard = () => {
   const dispatch = useAppDispatch()
-  const boardSprintCurrent = useAppSelector(
-    (state) => state.boardSlice.filterSprint
-  )
+  const { sprintId } = useAppSelector((state) => state.boardSlice.filter)
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { data, isFetching } = useGetWorkspaceQuery(workspaceId as Id, {
     skip: !workspaceId
@@ -16,16 +14,12 @@ const useBoard = () => {
 
   useEffect(() => {
     if (data) {
-      dispatch(
-        setCurrentSprintBoard({
-          id: data.currentSprint?.id
-        })
-      )
+      dispatch(setSprintIdFilter(data.currentSprint?.id))
     }
   }, [data])
   return {
     isFetching,
-    sprint: boardSprintCurrent
+    sprint: sprintId
   }
 }
 

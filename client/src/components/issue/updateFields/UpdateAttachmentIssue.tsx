@@ -33,7 +33,6 @@ const UpdateAttachmentIssue = ({
       if (!data) return
       try {
         const resolvedFiles = await Promise.all(data)
-        console.log('Resolved files:', resolvedFiles)
         setFiles(resolvedFiles)
       } catch (err) {
         console.error('Failed to resolve file promises:', err)

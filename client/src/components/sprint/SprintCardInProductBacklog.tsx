@@ -16,6 +16,7 @@ import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import { HttpStatusCode } from '@/lib/const'
+import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
@@ -40,11 +41,20 @@ const SprintCardInProductBacklog = ({
     })
       .unwrap()
       .then(() => {
-        toast.message("Issue's sprint updated successfully")
+        boardService
+          .saveNewPosition({
+            projectId: item.projectId,
+            sprintId: sprintId,
+            issueId: item.id,
+            status: 'BACKLOG'
+          })
+          .then(() => {
+            toast.message(`Issue ${item.name} moved to sprint successfully`)
+          })
       })
       .catch((err) => {
         if (err.status === HttpStatusCode.Conflict)
-          toast.error('Sprint is running')
+          toast.error("Sprint is running, cannot update issue's sprint")
         else toast.error("Another error occurred while updating issue's sprint")
       })
   }
