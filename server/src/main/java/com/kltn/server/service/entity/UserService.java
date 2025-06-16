@@ -55,7 +55,11 @@ public class UserService {
                               .orElse(null);
     return user != null;
   }
+public User save(User user) {
 
+      return userRepository.save(user);
+
+  }
   public ApiResponse<Void> checkingUserWorkspaceProject(String uniId, String workspaceId) {
     User user = getUserByUniId(uniId);
     if (!workspaceRepository.existsById(workspaceId)) {
