@@ -1,12 +1,11 @@
 package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
-import com.kltn.server.DTO.response.base.TopicResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
-import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.Project;
+import com.kltn.server.model.entity.Sprint;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE,
         unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
-        uses = {TopicMapper.class})
+        uses = {TopicMapper.class, SprintMapper.class})
 
 public interface ProjectMapper {
     @Mappings({
@@ -40,9 +39,10 @@ public interface ProjectMapper {
             @Mapping(target = "createAt", source = "project.dtCreated"),
             @Mapping(target = "updateAt", source = "project.dtModified"),
             @Mapping(target = "topics", source = "topics", qualifiedByName = "toTopicResponse"),
-//            @Mapping(target = "sprints", source = "sprintResponses"),
+            @Mapping(target = "currentSprint", source = "sprint", qualifiedByName = "toResponse"),
+
     })
-    ProjectResponse toProjectResponseById(Project project, List<Topic> topics);
+    ProjectResponse toProjectResponseById(Project project, List<Topic> topics, Sprint sprint);
 
 
     @Mappings({

@@ -489,11 +489,13 @@ public class IssueService {
       List<Issue> issues = projectService.getProjectById(projectId)
           .getIssues();
       issues = issues.stream()
-          .filter(issue -> issue.getSprint() == null
-              || (issue.getSprint() != null && issue.getSprint().getDtEnd().isBefore(Instant.now())
-                  && !issue.getStatus()
-                      .equals(
-                          IssueStatus.DONE)))
+          .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && issue.getSprint()
+              .getDtEnd()
+              .isBefore(
+                  Instant.now())
+              && issue.isOpen() && !issue.getStatus()
+                  .equals(
+                      IssueStatus.DONE)))
           .toList();
 
       return buildResponseFromIssues(issues);
@@ -527,7 +529,15 @@ public class IssueService {
     var task = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
-
+    if (request.getStatus()
+        .equals(IssueStatus.DONE)) {
+      task.setOpen(false);
+    } else if (task.getStatus()
+        .equals(IssueStatus.DONE)
+        && !request.getStatus()
+            .equals(IssueStatus.DONE)) {
+      task.setOpen(true);
+    }
     task.setStatus(request.getStatus());
 
     task.setPosition(request.getPosition());
@@ -540,6 +550,29 @@ public class IssueService {
         .data(taskMapper.toIssueResponse(task, taskMongo))
         .logData(changeLog)
         .build();
+  }
+
+  @SendKafkaEvent(topic = "task-log")
+  public ApiResponse<Boolean> reopen(String id) {
+    Issue issue = getEntityById(id);
+    if (issue.getStatus() != IssueStatus.DONE) {
+      throw AppException.builder()
+          .error(Error.INVALID_PARAMETER_REQUEST)
+          .message("Issue is not done")
+          .build();
+    }
+    issue.setStatus(IssueStatus.TODO);
+    issue.setOpen(true);
+    issue = saveEntity(issue);
+    var taskMongo = issueMongoService.getById(issue.getId());
+    ChangeLogRequest changeLog = changeLogMapper.taskToUpdate(new String[] { "open" }, issue, taskMongo);
+    return ApiResponse.<Boolean>builder()
+        .code(HttpStatus.OK.value())
+        .message("Reopen issue successfully")
+        .data(issue.isOpen())
+        .logData(changeLog)
+        .build();
+
   }
 
   private IssueResponse buildResponseFromSnapshot(IssueSnapshot snapshot) {

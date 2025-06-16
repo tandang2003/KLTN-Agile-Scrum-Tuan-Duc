@@ -1,6 +1,7 @@
 package com.kltn.server.service;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
+import com.kltn.server.DTO.request.entity.auth.TeacherRegisterRequest;
 import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
@@ -10,6 +11,7 @@ import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.entity.RoleRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.util.token.TokenUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -89,4 +91,20 @@ public class AuthenticationService {
                 .build();
 //        return null;
     }
+
+  public void register(@Valid TeacherRegisterRequest registerRequest) {
+    User user = userMapper.toUser(registerRequest);
+    boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
+    if (!check) {
+      Role role = roleRepository.getByName("teacher")
+                                .orElseThrow(() -> AppException.builder().error(Error.DB_SERVER_MISSING_DATA).build());
+      user.setPassword(pwEncoder.encode(user.getPassword()));
+      user.setRole(role);
+      userRepository.save(user);
+      return;
+    }
+    throw AppException.builder()
+                      .error(Error.EXISTED_DATA)
+                      .build();
+  }
 }

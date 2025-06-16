@@ -78,6 +78,14 @@ public class IssueController {
                          .body(task);
   }
 
+  @PutMapping("{id}/reopen")
+  @PreAuthorize("hasAuthority('update_task')")
+  public ResponseEntity<ApiResponse<Boolean>> updateTask(@PathVariable String id) {
+    var task = taskService.reopen(id);
+    return ResponseEntity.status(task.getCode())
+                         .body(task);
+  }
+
   @GetMapping("/list")
   public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("project_id") String projectId,
                                                                     @RequestParam(value = "sprint_id",
