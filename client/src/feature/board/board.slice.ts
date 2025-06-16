@@ -9,32 +9,27 @@ type Sprint = {
 
 type BoardState = {
   isLoading: boolean
-  currentSprint?: Sprint
-  filterSprint: FilterSprintBoard
+  filter: Partial<{
+    sprintId?: Id
+  }>
   items?: IssueResponse[]
   sprints?: Sprint[]
   position?: Position
 }
 const initialState: BoardState = {
   isLoading: true,
-  filterSprint: {}
+  filter: {}
 }
 
 const boardSlice = createSlice({
   name: 'boardSlice',
   initialState: initialState,
   reducers: {
-    setCurrentSprintBoard(
-      state: BoardState,
-      action: PayloadAction<Sprint | undefined>
-    ) {
-      state.currentSprint = action.payload
-    },
     setSprintIdFilter(
       state: BoardState,
       action: PayloadAction<Id | undefined>
     ) {
-      state.filterSprint.sprintId = action.payload
+      state.filter.sprintId = action.payload
     },
     saveIssues: (
       state: BoardState,
@@ -55,6 +50,5 @@ const boardSlice = createSlice({
 })
 const boardReducer = boardSlice.reducer
 export { boardReducer }
-export const { saveIssues, setCurrentSprintBoard, setSprintIdFilter } =
-  boardSlice.actions
+export const { saveIssues, setSprintIdFilter } = boardSlice.actions
 export default boardSlice

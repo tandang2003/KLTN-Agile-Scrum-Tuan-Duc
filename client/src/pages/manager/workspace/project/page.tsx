@@ -2,7 +2,7 @@ import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
 import { useAppDispatch } from '@/context/redux/hook'
-import { setCurrentSprintBoard } from '@/feature/board/board.slice'
+import { setSprintIdFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setProjectCurrent } from '@/feature/project/project.slice'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
@@ -26,11 +26,7 @@ const ProjectPage = () => {
 
   useEffect(() => {
     if (data?.currentSprint) {
-      dispatch(
-        setCurrentSprintBoard({
-          id: data.currentSprint.id
-        })
-      )
+      dispatch(setSprintIdFilter(data.currentSprint.id))
     }
   }, [data?.currentSprint, dispatch])
 

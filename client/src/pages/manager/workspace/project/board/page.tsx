@@ -4,7 +4,7 @@ import { DataOnMoveType, Position } from '@/components/board/type'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setCurrentSprintBoard } from '@/feature/board/board.slice'
+import { setSprintIdFilter } from '@/feature/board/board.slice'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { DEFAULT_POSITION } from '@/lib/board.helper'
 import boardService from '@/services/board.service'
@@ -21,17 +21,17 @@ import { toast } from 'sonner'
 const BoardPage = () => {
   const { projectId, currentSprintId } = useParams<ProjectParams>()
 
-  const filterSprint = useAppSelector((state) => state.boardSlice.filterSprint)
+  const { sprintId } = useAppSelector((state) => state.boardSlice.filter)
 
   const dispatch = useAppDispatch()
 
   const { data, isFetching, error } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
-      sprintId: filterSprint.sprintId as Id
+      sprintId: sprintId as Id
     },
     {
-      skip: !projectId || !filterSprint.sprintId
+      skip: !projectId || !sprintId
     }
   )
 
@@ -44,35 +44,33 @@ const BoardPage = () => {
   const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
 
   useEffect(() => {
-    if (!filterSprint) return
-  }, [filterSprint])
+    console.log('sprintId', sprintId, projectId)
+  }, [sprintId, projectId])
 
   useEffect(() => {
-    if (projectId && filterSprint) {
+    if (projectId && sprintId) {
+      console.log('data', projectId, sprintId)
+
       boardService
         .getPositionBySprint({
           projectId: projectId,
-          sprintId: filterSprint?.sprintId as Id
+          sprintId: sprintId
         })
         .then((res) => {
           setColumns(res)
         })
     }
-  }, [projectId, filterSprint])
+  }, [projectId, sprintId])
 
-  useEffect(() => {
-    if (currentSprintId) {
-      dispatch(
-        setCurrentSprintBoard({
-          id: currentSprintId
-        })
-      )
-    }
-  }, [currentSprintId])
+  // useEffect(() => {
+  //   if (currentSprintId) {
+  //     dispatch(setSprintIdFilter(currentSprintId))
+  //   }
+  // }, [currentSprintId])
 
   const handleOnChangeAPI = useCallback(
     (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
-      if (projectId && filterSprint?.sprintId) {
+      if (projectId && sprintId) {
         const promises = Promise.all([
           mode === 'same'
             ? Promise.resolve()
@@ -83,7 +81,7 @@ const BoardPage = () => {
               }),
           boardService.savePosition({
             projectId: projectId,
-            sprintId: filterSprint.sprintId,
+            sprintId: sprintId,
             position: position
           })
         ])
@@ -91,7 +89,7 @@ const BoardPage = () => {
         return promises
       }
     },
-    [projectId, filterSprint?.sprintId]
+    [projectId, sprintId]
   )
 
   const findColumn = useCallback(

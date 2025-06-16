@@ -7,12 +7,10 @@ import { SprintModel } from '@/types/model/sprint.model'
 
 type FilterBoardTabContentProps = {
   items: SprintModel[]
-  // initialValue?: Id | null
-  // onValueChange?: (sprint: SprintModel | null) => void
 }
 
 const FilterBoardTabContent = ({ items }: FilterBoardTabContentProps) => {
-  const { currentSprint } = useAppSelector((state) => state.boardSlice)
+  const { sprintId } = useAppSelector((state) => state.boardSlice.filter)
   const dispatch = useAppDispatch()
 
   return (
@@ -27,7 +25,7 @@ const FilterBoardTabContent = ({ items }: FilterBoardTabContentProps) => {
             }}
           >
             <div className='border-accent grid size-[20px] place-items-center rounded-xs border-2 bg-white shadow'>
-              {item.id === currentSprint?.id && (
+              {item.id === sprintId && (
                 <Icon icon={'octicon:check-16'} size={15} />
               )}
             </div>
