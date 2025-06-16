@@ -1,33 +1,24 @@
-import { Position } from '@/components/board/type'
+import { FilterSprintBoard, Position } from '@/components/board/type'
 import { IssueResponse } from '@/types/issue.type'
+import { Id } from '@/types/other.type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type Sprint = {
-  id: string
+  id?: Id
 }
 
 type BoardState = {
   isLoading: boolean
   currentSprint?: Sprint
+  filterSprint: FilterSprintBoard
   items?: IssueResponse[]
   sprints?: Sprint[]
   position?: Position
 }
 const initialState: BoardState = {
-  isLoading: true
+  isLoading: true,
+  filterSprint: {}
 }
-
-// const getPositionThunk = createAsyncThunk<Position, Id>(
-//   'boardSlice/get-position',
-//   async (req, { rejectWithValue }) => {
-//     try {
-//       const data = await boardService.getPosition(req)
-//       return data
-//     } catch (_) {
-//       return rejectWithValue('Get Position failed')
-//     }
-//   }
-// )
 
 const boardSlice = createSlice({
   name: 'boardSlice',
@@ -38,6 +29,12 @@ const boardSlice = createSlice({
       action: PayloadAction<Sprint | undefined>
     ) {
       state.currentSprint = action.payload
+    },
+    setSprintIdFilter(
+      state: BoardState,
+      action: PayloadAction<Id | undefined>
+    ) {
+      state.filterSprint.sprintId = action.payload
     },
     saveIssues: (
       state: BoardState,
@@ -58,5 +55,6 @@ const boardSlice = createSlice({
 })
 const boardReducer = boardSlice.reducer
 export { boardReducer }
-export const { saveIssues, setCurrentSprintBoard } = boardSlice.actions
+export const { saveIssues, setCurrentSprintBoard, setSprintIdFilter } =
+  boardSlice.actions
 export default boardSlice

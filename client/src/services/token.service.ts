@@ -1,3 +1,4 @@
+import { FilterSprintBoard } from '@/components/board/type'
 import {
   setAuthorization,
   setProjectAuthorization
@@ -46,7 +47,6 @@ const tokenService = {
   getWorkspaceLatest: (): Id | null => {
     return sessionStorage.getItem(StorageItem.ProjectIdLatest)
   },
-
   setTokenLocal: (token: string) => {
     sessionStorage.setItem(StorageItem.AccessToken, token)
     setAuthorization(token)
@@ -61,6 +61,21 @@ const tokenService = {
     const token = loadSessionStorage(StorageItem.AccessToken, undefined)
     setAuthorization(token)
     return token
+  },
+  setFilterSprintBoard: (filter: FilterSprintBoard) => {
+    sessionStorage.setItem(
+      StorageItem.FilterSprintBoard,
+      JSON.stringify(filter)
+    )
+  },
+  getFilterSprintBoard: (): FilterSprintBoard | null => {
+    const session = sessionStorage.getItem(StorageItem.FilterSprintBoard)
+    if (!session) return null
+    try {
+      return JSON.parse(session)
+    } catch (_) {
+      return null
+    }
   },
   clear: () => {
     sessionStorage.clear()

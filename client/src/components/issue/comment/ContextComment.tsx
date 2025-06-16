@@ -58,17 +58,17 @@ export const ProviderCommentProvider = ({
     stompClient.connectHeaders = headers
     stompClient.reconnectDelay = 5000
     stompClient.onConnect = () => {
-      console.log('Connected to WebSocket')
+      // console.log('Connected to WebSocket')
       setIsReady(stompClient.connected)
     }
 
     stompClient.onStompError = (frame) => {
-      console.error('Broker reported error: ' + frame.headers['message'])
-      console.error('Additional details: ' + frame.body)
+      // console.error('Broker reported error: ' + frame.headers['message'])
+      // console.error('Additional details: ' + frame.body)
     }
 
     stompClient.onDisconnect = () => {
-      console.log('Disconnect')
+      // console.log('Disconnect')
     }
     stompClient.activate()
     ws.current = stompClient

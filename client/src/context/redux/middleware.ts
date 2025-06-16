@@ -1,6 +1,10 @@
 import { RootState } from '@/context/redux/store'
 import { logoutThunk } from '@/feature/auth/auth.slice'
 import {
+  setCurrentSprintBoard,
+  setSprintIdFilter
+} from '@/feature/board/board.slice'
+import {
   getTokenProjectThunk,
   setProjectState
 } from '@/feature/project/project.slice'
@@ -38,6 +42,24 @@ const localStorageMiddleware: Middleware<{}, RootState> =
           projectIds
         })
     }
+
+    // if (setCurrentSprintBoard.match(action)) {
+    //   const filter = tokenService.getFilterSprintBoard()
+    //   if (!filter?.sprintId)
+    //     tokenService.setFilterSprintBoard({
+    //       ...filter,
+    //       sprintId: action.payload?.id
+    //     })
+    // }
+
+    // if (setSprintIdFilter.match(action)) {
+    //   const filter = tokenService.getFilterSprintBoard()
+    //   tokenService.setFilterSprintBoard({
+    //     ...filter,
+    //     sprintId: action.payload
+    //   })
+    // }
+
     return next(action)
   }
 

@@ -1,3 +1,4 @@
+import FilterBoardTabContent from '@/components/board/FilterBoardTabContent'
 import Icon from '@/components/Icon'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Button } from '@/components/ui/button'
@@ -7,8 +8,6 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setCurrentSprintBoard } from '@/feature/board/board.slice'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import { SprintModel } from '@/types/model/sprint.model'
@@ -20,7 +19,6 @@ const FilterBoard = ({}: FilterBoardProps) => {
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
-  const dispatch = useAppDispatch()
 
   return (
     <Popover>
@@ -42,56 +40,13 @@ const FilterBoard = ({}: FilterBoardProps) => {
                 isLoading={isFetching}
                 data={data}
               >
-                {(data) => <SprintTabContent items={data} />}
+                {(data) => <FilterBoardTabContent items={data} />}
               </LoadingBoundary>
             </TabsContent>
           </div>
         </Tabs>
       </PopoverContent>
     </Popover>
-  )
-}
-
-type SprintTabContentProps = {
-  items: SprintModel[]
-  // initialValue?: Id | null
-  // onValueChange?: (sprint: SprintModel | null) => void
-}
-
-const SprintTabContent = ({ items }: SprintTabContentProps) => {
-  const currentSprint = useAppSelector(
-    (state) => state.boardSlice.currentSprint
-  )
-  const dispatch = useAppDispatch()
-
-  return (
-    <div className='flex flex-col gap-3'>
-      {items.map((item, index) => {
-        return (
-          <div
-            key={item.id}
-            className='flex items-start gap-2 border-2 p-2'
-            onClick={() => {
-              dispatch(
-                setCurrentSprintBoard({
-                  id: item.id
-                })
-              )
-            }}
-          >
-            <div className='border-accent grid size-[20px] place-items-center rounded-xs border-2 bg-white shadow'>
-              {item.id === currentSprint?.id && (
-                <Icon icon={'octicon:check-16'} size={15} />
-              )}
-            </div>
-            <div className='min-w-[200px]'>
-              <div className=''>Sprint {index + 1}</div>
-              <div className='text-xs'>{item.title}</div>
-            </div>
-          </div>
-        )
-      })}
-    </div>
   )
 }
 

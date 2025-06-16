@@ -44,6 +44,10 @@ type DataOnMoveType = {
   indexTo: number | null
 }
 
+type FilterSprintBoard = Partial<{
+  sprintId: Id
+}>
+
 type NewPositionReq = {
   projectId: Id
   sprintId: Id
@@ -69,5 +73,6 @@ export type {
   DataOnMoveType,
   PositionSprint,
   PositionReq,
-  NewPositionReq
+  NewPositionReq,
+  FilterSprintBoard
 }

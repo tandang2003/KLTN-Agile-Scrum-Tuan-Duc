@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 const useBoard = () => {
   const dispatch = useAppDispatch()
   const boardSprintCurrent = useAppSelector(
-    (state) => state.boardSlice.currentSprint
+    (state) => state.boardSlice.filterSprint
   )
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { data, isFetching } = useGetWorkspaceQuery(workspaceId as Id, {

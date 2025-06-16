@@ -1,78 +1,32 @@
-import FilterBoard from '@/components/board/FilterBoard'
-import RenderBoard from '@/components/board/RenderBoard'
+import BoardContext from '@/components/board/BoardContext'
 import { DataOnMoveType, Position } from '@/components/board/type'
-import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setCurrentSprintBoard } from '@/feature/board/board.slice'
-import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { DEFAULT_POSITION } from '@/lib/board.helper'
 import boardService from '@/services/board.service'
 import issueService from '@/services/issue.service'
 import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
-import { ProjectParams } from '@/types/route.type'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { ReactNode, useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
-const BoardPage = () => {
-  const { projectId, currentSprintId } = useParams<ProjectParams>()
+type BoardProviderProps = {
+  children: ReactNode
+  projectId: Id
+  sprintId: Id
+  column: Position
+}
 
-  const filterSprint = useAppSelector((state) => state.boardSlice.filterSprint)
-
-  const dispatch = useAppDispatch()
-
-  const { data, isFetching, error } = useGetListIssueQuery(
-    {
-      projectId: projectId as Id,
-      sprintId: filterSprint.sprintId as Id
-    },
-    {
-      skip: !projectId || !filterSprint.sprintId
-    }
-  )
-
-  useEffect(() => {
-    if (error) {
-      toast.error('An error occurred while fetching issues')
-    }
-  }, [error])
-
+const BoardProvider = ({
+  children,
+  sprintId,
+  projectId
+}: BoardProviderProps) => {
   const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
-
-  useEffect(() => {
-    if (!filterSprint) return
-  }, [filterSprint])
-
-  useEffect(() => {
-    if (projectId && filterSprint) {
-      boardService
-        .getPositionBySprint({
-          projectId: projectId,
-          sprintId: filterSprint?.sprintId as Id
-        })
-        .then((res) => {
-          setColumns(res)
-        })
-    }
-  }, [projectId, filterSprint])
-
-  useEffect(() => {
-    if (currentSprintId) {
-      dispatch(
-        setCurrentSprintBoard({
-          id: currentSprintId
-        })
-      )
-    }
-  }, [currentSprintId])
 
   const handleOnChangeAPI = useCallback(
     (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
-      if (projectId && filterSprint?.sprintId) {
+      if (projectId && sprintId) {
         const promises = Promise.all([
           mode === 'same'
             ? Promise.resolve()
@@ -83,7 +37,7 @@ const BoardPage = () => {
               }),
           boardService.savePosition({
             projectId: projectId,
-            sprintId: filterSprint.sprintId,
+            sprintId: sprintId,
             position: position
           })
         ])
@@ -91,7 +45,7 @@ const BoardPage = () => {
         return promises
       }
     },
-    [projectId, filterSprint?.sprintId]
+    [projectId, sprintId]
   )
 
   const findColumn = useCallback(
@@ -173,29 +127,11 @@ const BoardPage = () => {
       })
     }
   }
-
   return (
-    <div>
-      <FilterBoard />
-      {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
-      {!isFetching && columns && (
-        <RenderBoard
-          data={{
-            columns: columns,
-            items: data || []
-          }}
-          handleOnMove={(data) => {
-            handleOnMove({
-              active: data.active,
-              columnTo: data.columnTo,
-              indexTo: data.indexTo
-            })
-          }}
-        />
-      )}
-      <DialogUpdateIssue />
-    </div>
+    <BoardContext.Provider value={{ sprintId }}>
+      {children}
+    </BoardContext.Provider>
   )
 }
 
-export default BoardPage
+export default BoardProvider
