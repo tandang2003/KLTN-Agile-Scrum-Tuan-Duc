@@ -1,6 +1,5 @@
 package com.kltn.server.model.collection;
 
-import com.kltn.server.model.base.BaseDocument;
 import com.kltn.server.model.collection.model.ILog;
 import com.kltn.server.model.type.task.LogType;
 import org.bson.types.ObjectId;
