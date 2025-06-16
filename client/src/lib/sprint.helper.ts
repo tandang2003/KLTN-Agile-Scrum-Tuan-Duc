@@ -1,12 +1,17 @@
-import { SprintModel } from '@/types/model/sprint.model'
 import { SprintStatusType } from '@/types/model/typeOf'
 import { SprintResponse } from '@/types/sprint.type'
 import { isAfter, isBefore } from 'date-fns'
 
-const getStatusSprint = (sprint: SprintModel): SprintStatusType => {
+const getStatusSprint = ({
+  start,
+  end
+}: {
+  start: Date
+  end: Date
+}): SprintStatusType => {
   const now = new Date()
-  if (isBefore(now, sprint.start)) return 'PENDING'
-  if (isAfter(now, sprint.end)) return 'COMPLETE'
+  if (isBefore(now, start)) return 'PENDING'
+  if (isAfter(now, end)) return 'COMPLETE'
   return 'RUNNING'
 }
 

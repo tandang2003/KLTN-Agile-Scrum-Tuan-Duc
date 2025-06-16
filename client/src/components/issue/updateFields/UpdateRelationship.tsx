@@ -25,6 +25,7 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
+import { useAppSelector } from '@/context/redux/hook'
 type UpdateRelationshipProps = {
   issueId: string
   initialData?: RelationshipResponse[]
@@ -42,15 +43,15 @@ const UpdateRelationship = ({
   const [initData, setInitData] =
     useState<Array<RelationshipResponse>>(initialData)
   const { projectId } = useAppId()
-  const { sprint } = useBoard()
+  const sprintId = useAppSelector((state) => state.sprintSlice.active?.id)
 
   const { data: issues } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
-      sprintId: sprint?.id as Id
+      sprintId: sprintId as Id
     },
     {
-      skip: !projectId || !sprint?.id
+      skip: !projectId || !sprintId
     }
   )
 

@@ -1,5 +1,5 @@
 import { normalizeError } from '@/lib/http.helper'
-import { sortSprintsByDateStart } from '@/lib/sprint'
+import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import sprintService from '@/services/sprint.service'
 import { Id } from '@/types/other.type'
 import {
