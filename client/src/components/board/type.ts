@@ -44,6 +44,30 @@ type DataOnMoveType = {
   indexTo: number | null
 }
 
+type NewPositionReq = {
+  projectId: Id
+  sprintId: Id
+  issueId: Id
+  status: IssueStatus
+}
+
+type PositionReq = {
+  projectId: Id
+  sprintId: Id
+  position: Position
+}
+
 type Position = Record<IssueStatus, Id[]>
 
-export type { Position, BaseCardProps, BoardProps, ColumnProps, DataOnMoveType }
+type PositionSprint = Record<Id, Record<IssueStatus, Id[]>>
+
+export type {
+  Position,
+  BaseCardProps,
+  BoardProps,
+  ColumnProps,
+  DataOnMoveType,
+  PositionSprint,
+  PositionReq,
+  NewPositionReq
+}

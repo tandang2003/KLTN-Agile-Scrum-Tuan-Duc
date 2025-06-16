@@ -3,8 +3,6 @@ import FilterBoard from '@/components/board/FilterBoard'
 import { DataOnMoveType, Position } from '@/components/board/type'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAppDispatch } from '@/context/redux/hook'
-import { getPositionThunk, saveIssues } from '@/feature/board/board.slice'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
 import useBoard from '@/hooks/use-board'
@@ -24,7 +22,6 @@ type OnMove = ComponentProps<typeof Board>['onMove']
 const BoardPage = () => {
   const { projectId } = useAppId()
   const { sprint } = useBoard()
-  const dispatch = useAppDispatch()
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
@@ -38,24 +35,22 @@ const BoardPage = () => {
   const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
 
   useEffect(() => {
-    if (!isFetching) {
-      dispatch(saveIssues(data))
-      if (projectId) dispatch(getPositionThunk(projectId))
+    if (projectId && sprint?.id) {
+      boardService
+        .getPositionBySprint({
+          projectId: projectId,
+          sprintId: sprint?.id as Id
+        })
+        .then((res) => {
+          console.log('getPositionBySprint', res)
+          setColumns(res)
+        })
     }
-  }, [data, isFetching, projectId, dispatch])
-
-  useEffect(() => {
-    if (projectId) {
-      boardService.getPosition(projectId).then((res) => {
-        setColumns(res)
-      })
-    }
-  }, [projectId])
+  }, [projectId, sprint?.id])
 
   const handleOnChangeAPI = useCallback(
     (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
-      if (projectId) {
-        console.log('Saving position:', position)
+      if (projectId && sprint?.id) {
         const promises = Promise.all([
           mode === 'same'
             ? Promise.resolve()
@@ -64,13 +59,17 @@ const BoardPage = () => {
                 status: issue.columnTo as IssueStatus,
                 position: ''
               }),
-          boardService.savePosition(projectId, position)
+          boardService.savePosition({
+            projectId: projectId,
+            sprintId: sprint.id as Id,
+            position: position
+          })
         ])
 
         return promises
       }
     },
-    [projectId]
+    [projectId, sprint?.id]
   )
 
   const findColumn = useCallback(

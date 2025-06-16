@@ -34,6 +34,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
+import boardService from '@/services/board.service'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
@@ -41,7 +42,6 @@ type CreateIssueFormProps = {
 
 const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
   const { projectId } = useAppId()
-
   const [create] = useCreateIssueMutation()
 
   const form = useForm<CreateIssueType>({
@@ -80,6 +80,15 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
         toast.success('Create issue success', {
           description: `Issue - ${response.name}`
         })
+        // Update position if available
+        if (req.sprintId) {
+          boardService.saveNewPosition({
+            projectId: projectId,
+            sprintId: req.sprintId,
+            issueId: response.id,
+            status: response.status
+          })
+        }
       })
       .catch((_) => toast.error('Create issue failed'))
       .finally(() => {

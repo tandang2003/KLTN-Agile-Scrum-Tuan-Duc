@@ -47,6 +47,9 @@ const SprintCardInProductBacklog = ({
         else toast.error("Another error occurred while updating issue's sprint")
       })
   }
+
+  const handleReopen = () => {}
+
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
       <ToolTip
@@ -64,9 +67,9 @@ const SprintCardInProductBacklog = ({
           <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem className='bg-red-500 text-white'>
-            Reopen
-          </DropdownMenuItem>
+          {item.status === 'DONE' && (
+            <DropdownMenuItem onClick={handleReopen}>Reopen</DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={() => {
               action(item.id)
