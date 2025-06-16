@@ -14,7 +14,7 @@ import { useSprintTable } from '@/components/datatable/sprint/useSprintDataTable
 import { useAppSelector } from '@/context/redux/hook'
 import { columns } from '@/components/datatable/sprint/sprintColumns'
 
-function DataTable() {
+function SprintDataTable() {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { table } = useSprintTable(workspaceId as Id)
 
@@ -73,4 +73,4 @@ function DataTable() {
     </div>
   )
 }
-export { DataTable as SprintDataTable }
+export default SprintDataTable

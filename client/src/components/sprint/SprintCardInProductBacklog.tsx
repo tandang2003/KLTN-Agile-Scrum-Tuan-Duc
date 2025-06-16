@@ -10,11 +10,13 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import { HttpStatusCode } from '@/lib/const'
+import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
@@ -39,14 +41,26 @@ const SprintCardInProductBacklog = ({
     })
       .unwrap()
       .then(() => {
-        toast.message("Issue's sprint updated successfully")
+        boardService
+          .saveNewPosition({
+            projectId: item.projectId,
+            sprintId: sprintId,
+            issueId: item.id,
+            status: 'BACKLOG'
+          })
+          .then(() => {
+            toast.message(`Issue ${item.name} moved to sprint successfully`)
+          })
       })
       .catch((err) => {
         if (err.status === HttpStatusCode.Conflict)
-          toast.error('Sprint is running')
+          toast.error("Sprint is running, cannot update issue's sprint")
         else toast.error("Another error occurred while updating issue's sprint")
       })
   }
+
+  const handleReopen = () => {}
+
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
       <ToolTip
@@ -59,42 +73,44 @@ const SprintCardInProductBacklog = ({
         {item.id}
       </ToolTip>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end'>
-          <DropdownMenuItem className='bg-red-500 text-white'>
-            Reopen
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              action(item.id)
-            }}
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                {sprints &&
-                  sprints.map((sprint) => (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        handleUpdateSprint(sprint.id)
-                      }}
-                      key={sprint.id}
-                      className='cursor-pointer'
-                    >
-                      {sprint.title}
-                    </DropdownMenuItem>
-                  ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <RequiredAuth mode='hide' roles={['student']}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end'>
+            {item.status === 'DONE' && (
+              <DropdownMenuItem onClick={handleReopen}>Reopen</DropdownMenuItem>
+            )}
+            <DropdownMenuItem
+              onClick={() => {
+                action(item.id)
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  {sprints &&
+                    sprints.map((sprint) => (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleUpdateSprint(sprint.id)
+                        }}
+                        key={sprint.id}
+                        className='cursor-pointer'
+                      >
+                        {sprint.title}
+                      </DropdownMenuItem>
+                    ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </RequiredAuth>
     </div>
   )
 }

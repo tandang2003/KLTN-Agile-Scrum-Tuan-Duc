@@ -1,13 +1,15 @@
-import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
-import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
+import { useAppDispatch } from '@/context/redux/hook'
+import { setSprintIdFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
+import { setProjectCurrent } from '@/feature/project/project.slice'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { Id } from '@/types/other.type'
-import { ProjectResponse } from '@/types/project.type'
+import { ProjectDetailResponse } from '@/types/project.type'
 import { ProjectParams } from '@/types/route.type'
+import { useEffect } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
 
 const ProjectPage = () => {
@@ -16,12 +18,21 @@ const ProjectPage = () => {
     skip: !projectId
   })
 
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (projectId) dispatch(setProjectCurrent(projectId))
+  }, [projectId, dispatch])
+
+  useEffect(() => {
+    if (data?.currentSprint) {
+      dispatch(setSprintIdFilter(data.currentSprint.id))
+    }
+  }, [data?.currentSprint, dispatch])
+
   return (
     <SectionContainer className='flex flex-col'>
-      <DialogUpdateIssue />
-
-      <DialogCreateIssue />
-      <LoadingBoundary<ProjectResponse>
+      <LoadingBoundary<ProjectDetailResponse>
         fallback={''}
         data={data}
         isLoading={isFetching}
@@ -37,7 +48,12 @@ const ProjectPage = () => {
             <div className='pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
             </div>
-            <Outlet />
+            <Outlet
+              context={{
+                projectId: data.id,
+                currentSprintId: data.currentSprint.id
+              }}
+            />
           </>
         )}
       </LoadingBoundary>

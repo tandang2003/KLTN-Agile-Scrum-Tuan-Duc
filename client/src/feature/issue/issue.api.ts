@@ -7,6 +7,7 @@ import {
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
+import axios from 'axios'
 
 const issueApi = createApi({
   reducerPath: 'issueApi',
@@ -25,7 +26,20 @@ const issueApi = createApi({
           const data = await issueService.getIssues(projectId, sprintId)
           return { data: data }
         } catch (error) {
-          return { error }
+          if (axios.isAxiosError(error)) {
+            return {
+              error: {
+                status: error.response?.status || 500,
+                data: error.response?.data || 'An error occurred'
+              }
+            }
+          }
+          return {
+            error: {
+              status: 500,
+              data: 'An unexpected error occurred'
+            }
+          }
         }
       },
       providesTags(result) {
@@ -89,6 +103,9 @@ const issueApi = createApi({
         } catch (error) {
           return { error }
         }
+      },
+      invalidatesTags: (_, __, { id }) => {
+        return [{ type: 'Issues', id: id }]
       }
     })
   })

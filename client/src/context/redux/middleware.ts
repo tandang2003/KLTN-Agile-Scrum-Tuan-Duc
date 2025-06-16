@@ -38,6 +38,7 @@ const localStorageMiddleware: Middleware<{}, RootState> =
           projectIds
         })
     }
+
     return next(action)
   }
 

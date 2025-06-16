@@ -67,7 +67,8 @@ export enum HttpStatusCode {
 export enum StorageItem {
   AccessToken = 'accessToken',
   ProjectIdLatest = 'projectIdLatest',
-  ProjectToken = 'projectToken'
+  ProjectToken = 'projectToken',
+  FilterSprintBoard = 'filterSprintBoard'
 }
 export const HOME_PATH = '/'
 export const LOGIN_PATH = '/auth/login'

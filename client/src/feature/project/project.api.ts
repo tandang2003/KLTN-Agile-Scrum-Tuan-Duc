@@ -1,6 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import projectService from '@/services/project.service'
-import { CreateProjectRequest, ProjectResponse } from '@/types/project.type'
+import {
+  CreateProjectRequest,
+  ProjectDetailResponse,
+  ProjectResponse
+} from '@/types/project.type'
 import { Id } from '@/types/other.type'
 import { UserResponse } from '@/types/user.type'
 
@@ -19,7 +23,7 @@ const projectApi = createApi({
         }
       }
     }),
-    getProject: builder.query<ProjectResponse, Id>({
+    getProject: builder.query<ProjectDetailResponse, Id>({
       async queryFn(arg) {
         try {
           const data = await projectService.getProject(arg)

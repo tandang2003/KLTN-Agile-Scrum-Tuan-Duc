@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import Icon from '@/components/Icon'
 import { memo } from 'react'
+import useKanbanContext from '@/components/kanban/useKanbanContext'
 type KanbanCardProps = {
   data: CardModelType
   container?: string
@@ -40,7 +41,7 @@ const KanbanCard = ({
       numAssigner
     }
   })
-
+  const { disabled } = useKanbanContext()
   const style = {
     transition,
     transform: CSS.Translate.toString(transform),
@@ -62,15 +63,16 @@ const KanbanCard = ({
         container
       )}
     >
-      <Button
-        className={cn(
-          'absolute top-1 right-1 bg-transparent p-0 hover:cursor-grab hover:bg-gray-400',
-          isDragging ? 'cursor-grab' : undefined
-        )}
-        {...listeners}
-      >
-        <Icon icon={'lsicon:drag-filled'} className='text-black' />
-      </Button>
+      {!disabled && (
+        <Button
+          variant='ghost'
+          className='absolute top-2 right-2 z-10 rounded-full p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none'
+          {...listeners}
+          {...attributes}
+        >
+          <Icon icon={'material-symbols:drag-handle-outline'} size={20} />
+        </Button>
+      )}
       <CardUI
         className='rounded-none border-none bg-transparent p-0 shadow-none'
         onClick={() => onClick?.()}

@@ -16,6 +16,7 @@ import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import BoardPage from '@/pages/manager/workspace/project/board/page'
 import ProjectLayout from '@/pages/manager/workspace/project/layout'
 import ProjectPage from '@/pages/manager/workspace/project/page'
+import ReportPage from '@/pages/manager/workspace/project/report/page'
 import NotFoundPage from '@/pages/not-found'
 import UserPage from '@/pages/user/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
@@ -86,6 +87,7 @@ const AppRoutes = () => {
                   {/* http://localhost:3000/manager/workspace/project/1/board */}
                   <Route path='board' index element={<BoardPage />} />
                   <Route path='backlog' element={<BacklogPage />} />
+                  <Route path='report' element={<ReportPage />} />
                 </Route>
               </Route>
             </Route>

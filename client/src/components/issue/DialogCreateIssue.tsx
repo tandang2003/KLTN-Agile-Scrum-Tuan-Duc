@@ -15,7 +15,7 @@ type DialogCreateIssueProps = {}
 
 const DialogCreateIssue = ({}: DialogCreateIssueProps) => {
   const { isCreateIssue } = useAppSelector((state) => state.triggerSlice)
-  const sprint = useAppSelector((state) => state.sprintSlice.current)
+  const sprint = useAppSelector((state) => state.sprintSlice.active)
   const dispatch = useAppDispatch()
 
   return (
