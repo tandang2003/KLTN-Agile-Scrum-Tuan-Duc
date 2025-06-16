@@ -13,7 +13,9 @@ public record ProjectResponse(
                               List<TopicResponse> topics,
                               List<SprintResponse> sprints,
                               Instant createdAt,
-                              Instant updatedAt) {
+                              Instant updatedAt,
+  SprintResponse currentSprint
+  ) {
 
     public static class ProjectResponseBuilder {
         private String id;
@@ -25,6 +27,7 @@ public record ProjectResponse(
         private List<SprintResponse> sprints;
         private Instant createdAt;
         private Instant updatedAt;
+        private SprintResponse currentSprint;
 
 
         public ProjectResponseBuilder id(String id) {
@@ -71,10 +74,14 @@ public record ProjectResponse(
             this.sprints = sprints;
             return this;
         }
+        public ProjectResponseBuilder currentSprint(SprintResponse currentSprint) {
+            this.currentSprint = currentSprint;
+            return this;
+        }
 
 
         public ProjectResponse build() {
-            return new ProjectResponse(id, name, description, start, end, topics, sprints, createdAt, updatedAt);
+            return new ProjectResponse(id, name, description, start, end, topics, sprints, createdAt, updatedAt,currentSprint);
         }
     }
 
