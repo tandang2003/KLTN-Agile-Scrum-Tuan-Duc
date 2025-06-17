@@ -129,4 +129,14 @@ public class IssueController {
     return ResponseEntity.status(task.getCode())
                          .body(task);
   }
+
+  @GetMapping("{id}/checking-relations")
+  public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssueRelations(@PathVariable String id,
+                                                                            @RequestParam(value = "type",
+                                                                                          required = false) String type) {
+    var task = taskService.getIssueWithTypeRelation(id, type);
+    return ResponseEntity.status(task.getCode())
+                         .body(task);
+  }
+
 }
