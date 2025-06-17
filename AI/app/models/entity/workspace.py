@@ -2,18 +2,19 @@ from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
+from app.models.baseEntity import BaseEntity
+
 Base = declarative_base()
 
 class Workspace(Base):
     __tablename__ = 'workspaces'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)  # assuming BaseEntity defines id
+    id = Column(String, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
     name = Column(String(255), nullable=False)
     description = Column(Text)  # LONGTEXT equivalent
     start = Column(DateTime)  # Instant can map to DateTime in Python
     end = Column(DateTime)
 
-    owner_id = Column(Integer, ForeignKey('users.id'))
+    owner_id = Column(String, ForeignKey("users.id"))
     owner = relationship("User", back_populates="workspaces")
 
     # OneToMany relationship, join column workspace_id on WorkspacesUsersProjects side

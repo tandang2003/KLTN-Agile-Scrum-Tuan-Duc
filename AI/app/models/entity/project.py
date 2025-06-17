@@ -7,7 +7,8 @@ Base = declarative_base()
 class Project(Base):
     __tablename__ = 'projects'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
+
     name = Column(String(255), nullable=False)
     description = Column(Text)
 

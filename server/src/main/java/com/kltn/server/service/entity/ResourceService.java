@@ -139,10 +139,6 @@ public class ResourceService {
   }
 
   public ApiResponse<ResourceResponse> uploadFileToDailySprint(DailyResourceSignatureRequest request) {
-    Resource resource = resourceMapper.toResource(request);
-    resource.setUser(userService.getCurrentUser());
-    repository.save(resource);
-//    Sprint sprint = sprintService.getSprintById(request.getSprintId());
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
                                                                                            .sprintId(
                                                                                              request.getSprintId())
@@ -150,6 +146,16 @@ public class ResourceService {
                                                                                              request.getProjectId())
                                                                                            .build());
     List<Resource> dailyFiles = projectSprint.getDailyFiles();
+    if (dailyFiles != null && dailyFiles.size() >= 2) {
+      throw AppException.builder()
+                        .error(Error.DAILY_FILE_ALREADY_UPLOAD)
+                        .build();
+    }
+    Resource resource = resourceMapper.toResource(request);
+    resource.setUser(userService.getCurrentUser());
+    repository.save(resource);
+//    Sprint sprint = sprintService.getSprintById(request.getSprintId());
+
     if (projectSprint.getDailyFiles() == null) {
       dailyFiles = new ArrayList<>();
     }
