@@ -8,7 +8,8 @@ Base = declarative_base()
 class Skill(Base):
     __tablename__ = 'skills'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)  # from BaseEntity
+    id = Column(String, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
+
     name = Column(String(255), nullable=False)
 
     personal_skills = relationship("PersonalSkill", back_populates="skill")
