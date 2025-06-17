@@ -7,6 +7,7 @@ import {
 } from '@/types/project.type'
 import { Id } from '@/types/other.type'
 import { UserResponse } from '@/types/user.type'
+import { ResourceOfSprintResponseType } from '@/types/resource.type'
 
 const projectApi = createApi({
   reducerPath: 'projectApi',
@@ -42,6 +43,22 @@ const projectApi = createApi({
           return { error }
         }
       }
+    }),
+    getResources: builder.query<
+      ResourceOfSprintResponseType,
+      {
+        projectId: Id
+        sprintId: Id
+      }
+    >({
+      async queryFn({ projectId, sprintId }) {
+        try {
+          const data = await projectService.getResources(projectId, sprintId)
+          return { data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -51,5 +68,6 @@ export default projectApi
 export const {
   useCreateProjectMutation,
   useGetProjectQuery,
-  useGetMembersQuery
+  useGetMembersQuery,
+  useGetResourcesQuery
 } = projectApi

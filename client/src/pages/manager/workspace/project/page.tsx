@@ -5,6 +5,8 @@ import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintIdFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setProjectCurrent } from '@/feature/project/project.slice'
+import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
+import { toISODateString } from '@/lib/date.helper'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { Id } from '@/types/other.type'
 import { ProjectDetailResponse } from '@/types/project.type'
@@ -26,6 +28,13 @@ const ProjectPage = () => {
 
   useEffect(() => {
     if (data?.currentSprint) {
+      dispatch(
+        setSprintCurrent({
+          id: data.currentSprint.id,
+          start: toISODateString(data.currentSprint.start),
+          end: toISODateString(data.currentSprint.end)
+        })
+      )
       dispatch(setSprintIdFilter(data.currentSprint.id))
     }
   }, [data?.currentSprint, dispatch])
