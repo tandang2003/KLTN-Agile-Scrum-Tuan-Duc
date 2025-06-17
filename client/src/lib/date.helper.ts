@@ -22,4 +22,13 @@ const parseStringToDate = (dateString: string): Date => {
   return new Date(dateString)
 }
 
-export { formatDateToString, formatDateRange, parseStringToDate }
+const toISODateString = (date: Date): string => {
+  return new Date(date).toISOString()
+}
+
+export {
+  formatDateToString,
+  formatDateRange,
+  parseStringToDate,
+  toISODateString
+}

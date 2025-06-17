@@ -2,9 +2,11 @@ import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
 import {
   CloudinaryUploadResultType,
+  CreateResourceDailyRequestType,
   CreateResourceRequestType,
   GetSignatureRequestType,
-  GetSignatureResponseType
+  GetSignatureResponseType,
+  ResourceResponseType
 } from '@/types/resource.type'
 
 const resourceService = {
@@ -61,16 +63,26 @@ const resourceService = {
   },
 
   deleteResource: async (resourceId: string) => {
-    // const res = await httpService.delete<ResponseApi<void>>(
-    //   `/resource/${resourceId}`
-    // )
-    // return res.data.data
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        console.log(`Resource with ID ${resourceId} deleted`)
-        resolve()
-      }, 1000)
-    })
+    const res = await httpService.delete<ResponseApi<void>>(
+      `/resource/${resourceId}`
+    )
+    return res.data.data
+  },
+
+  createResourceDaily: async (req: CreateResourceDailyRequestType) => {
+    const res = await httpService.post<
+      ResponseApi<ResourceResponseType>,
+      CreateResourceDailyRequestType
+    >('/resource/daily', req)
+    return res.data.data
+  },
+
+  createResourceBacklog: async (req: CreateResourceDailyRequestType) => {
+    const res = await httpService.post<
+      ResponseApi<ResourceResponseType>,
+      CreateResourceDailyRequestType
+    >('/resource/backlog', req)
+    return res.data.data
   }
 }
 

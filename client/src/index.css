@@ -168,6 +168,9 @@
 @utility active-tag {
   @apply active-bg font-bold text-white!;
 }
+@utility cancel {
+  @apply bg-red-500! text-white! hover:bg-red-600!;
+}
 
 .container {
   @apply mx-auto max-w-[1440px];

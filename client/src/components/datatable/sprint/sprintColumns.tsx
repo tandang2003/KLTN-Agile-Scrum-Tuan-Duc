@@ -1,6 +1,7 @@
 import SprintColumnsAction from '@/components/datatable/sprint/sprintColumnsAction'
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
+import { useAppSelector } from '@/context/redux/hook'
 import { getStatusSprint } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintWorkspaceDataTable } from '@/types/sprint.type'
@@ -77,7 +78,15 @@ const columns: ColumnDef<SprintColumns>[] = [
     header: '',
     size: 10,
     cell: ({ row }) => {
-      return <SprintColumnsAction />
+      const sprintId: string = row.original.id
+      const id = useAppSelector((state) => state.sprintSlice.current?.id)
+      console.log('id', id, sprintId, id === sprintId)
+      return (
+        <SprintColumnsAction
+          sprintId={sprintId}
+          onlyView={id === sprintId ? false : true}
+        />
+      )
     }
   }
 ]
