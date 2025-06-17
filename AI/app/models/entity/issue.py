@@ -31,7 +31,8 @@ class IssueTag(enum.Enum):
 class Issue(Base):
     __tablename__ = 'issues'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id
+    id = Column(String, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
+
 
     description = Column(Text)  # LONGTEXT equivalent
     name = Column(String)

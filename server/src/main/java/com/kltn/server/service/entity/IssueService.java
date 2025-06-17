@@ -17,16 +17,19 @@ import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.IssueMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
 import com.kltn.server.model.entity.embeddedKey.IssueRelationId;
 import com.kltn.server.model.entity.relationship.IssueRelation;
+import com.kltn.server.model.entity.relationship.PersonalSkill;
 import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueRelationType;
 import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.model.type.task.IssueTag;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.relation.IssueRelationRepository;
+import com.kltn.server.repository.entity.relation.PersonalSkillRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,7 @@ import java.util.*;
 public class IssueService {
   private final SprintService sprintService;
   private final UserMapper userMapper;
+  private final PersonalSkillRepository personalSkillRepository;
   private IssueMapper taskMapper;
   private ProjectSprintService projectSprintService;
   private IssueRepository taskRepository;
@@ -56,11 +60,12 @@ public class IssueService {
 
   @Autowired
   public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
-      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
-      ResourceService resourceService, ChangeLogMapper changeLogMapper,
-      IssueMongoService issueMongoService, UserService userService,
-      ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository,
-      SprintService sprintService, UserMapper userMapper) {
+                      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
+                      ResourceService resourceService, ChangeLogMapper changeLogMapper,
+                      IssueMongoService issueMongoService, UserService userService,
+                      ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository,
+                      SprintService sprintService, UserMapper userMapper,
+                      PersonalSkillRepository personalSkillRepository) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -75,6 +80,7 @@ public class IssueService {
     this.topicMapper = topicMapper;
     this.subTaskMapper = subTaskMapper;
     this.userMapper = userMapper;
+    this.personalSkillRepository = personalSkillRepository;
   }
 
   @SendKafkaEvent(topic = "task-log")
@@ -341,7 +347,7 @@ public class IssueService {
                 .message("Cannot assign issue to sprint that has already started")
                 .build();
           }
-
+          task.setStatus(IssueStatus.TODO);
           task.setSprint(targetSprint);
           if (task.getDtStart() == null || task.getDtStart()
               .isBefore(targetSprint.getDtStart())) {
@@ -488,15 +494,21 @@ public class IssueService {
       List<Issue> issues = projectService.getProjectById(projectId)
           .getIssues();
       issues = issues.stream()
-          .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && issue.getSprint()
-              .getDtEnd()
-              .isBefore(
-                  Instant.now())
-              && issue.isOpen() && !issue.getStatus()
-                  .equals(
-                      IssueStatus.DONE)))
-          .toList();
-
+                     .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && issue.getSprint()
+                                                                                                      .getDtEnd()
+                                                                                                      .isBefore(
+                                                                                                        Instant.now()) && issue.isOpen() && !issue.getStatus()
+                                                                                                                                                  .equals(
+                                                                                                                                                    IssueStatus.DONE)))
+                     .toList();
+      issues.forEach(issue -> {
+        if (!issue.getStatus()
+                  .equals(IssueStatus.BACKLOG)) {
+          issue.setOpen(true);
+          issue.setStatus(IssueStatus.BACKLOG);
+          taskRepository.save(issue);
+        }
+      });
       return buildResponseFromIssues(issues);
     }
 
@@ -531,10 +543,11 @@ public class IssueService {
     if (request.getStatus()
         .equals(IssueStatus.DONE)) {
       task.setOpen(false);
-    } else if (task.getStatus()
-        .equals(IssueStatus.DONE)
-        && !request.getStatus()
-            .equals(IssueStatus.DONE)) {
+      task.setDtEnd(Instant.now());
+    }
+    else if (task.getStatus()
+                 .equals(IssueStatus.DONE) && !request.getStatus()
+                                                      .equals(IssueStatus.DONE)) {
       task.setOpen(true);
     }
     task.setStatus(request.getStatus());
@@ -560,8 +573,10 @@ public class IssueService {
           .message("Issue is not done")
           .build();
     }
-    issue.setStatus(IssueStatus.TODO);
+//    changed
+    issue.setStatus(IssueStatus.BACKLOG);
     issue.setOpen(true);
+    issue.setSprint(null);
     issue = saveEntity(issue);
     var taskMongo = issueMongoService.getById(issue.getId());
     ChangeLogRequest changeLog = changeLogMapper.taskToUpdate(new String[] { "open" }, issue, taskMongo);
@@ -714,4 +729,145 @@ public class IssueService {
                                                                                   .getId()));
     };
   }
+
+  public int getNumberOfIssuesAtStart(Project project, Sprint sprint) {
+    return taskRepository.countByProjectIdAndSprintIdAndDtCreatedBefore(project.getId(), sprint.getId(),
+                                                                        sprint.getDtStart());
+  }
+
+  public int getNumberOfIssuesAdded(Project project, Sprint sprint) {
+    return taskRepository.countByProjectIdAndSprintIdAndDtCreatedAfter(project.getId(), sprint.getId(),
+                                                                       sprint.getDtStart());
+  }
+
+  public int getNumberOfIssuesRemoved(Project project, Sprint sprint) {
+    return taskRepository.countByProjectIdAndSprintIdAndDtEndBeforeAndStatus(project.getId(), sprint.getId(),
+                                                                             Instant.now(), IssueStatus.DONE);
+  }
+
+  public int getNumberOfIssuesByStatus(Project project, Sprint sprint, IssueStatus status) {
+    return taskRepository.countByProjectIdAndSprintIdAndStatus(project.getId(), sprint.getId(), status);
+  }
+
+  public int getNumberOfMembersInSprint(Project project, Sprint sprint) {
+    return taskRepository.countByProjectIdAndSprintIdAndAssigneeNotNull(project.getId(), sprint.getId());
+  }
+
+  public List<Issue> getIssuesBySprintId(String projectId, String sprintId) {
+    return taskRepository.findAllByProjectIdAndSprintId(projectId, sprintId)
+                         .orElseThrow(() -> AppException.builder()
+                                                        .error(Error.NOT_FOUND)
+                                                        .message("No issues found for project and sprint")
+                                                        .build());
+  }
+
+  public int getNumberOfAffectVersions(String id) {
+    return taskRepository.getNumberOfAffectVersions(id);
+  }
+
+  public int getNumberOfFixVersions(String id) {
+    int result = 1;
+    Issue issue = getEntityById(id);
+    var project = issue.getProject();
+    Instant now = Instant.now();
+
+    List<Sprint> finishedSprints = project.getSprints()
+                                          .stream()
+                                          .filter(sprint -> sprint.getDtEnd()
+                                                                  .isBefore(now))
+                                          .toList();
+
+    if (finishedSprints.isEmpty()) {
+      return result;
+    }
+
+    for (Sprint sprint : finishedSprints) {
+      List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(project.getId(), sprint.getId());
+      if (snapshots.stream()
+                   .anyMatch(s -> s.getNkTaskId()
+                                   .equals(id))) {
+        result++;
+      }
+    }
+
+    return result;
+  }
+
+  public int getNumberOfLink(String id) {
+    Issue issue = getEntityById(id);
+    int result = 0;
+    if (issue.getAffectTo() != null && !issue.getAffectTo()
+                                             .isEmpty()) {
+      result += issue.getAffectTo()
+                     .size();
+    }
+    if (issue.getAffectBy() != null && !issue.getAffectBy()
+                                             .isEmpty()) {
+      result += issue.getAffectBy()
+                     .size();
+    }
+    return result;
+  }
+
+  public int getNumberOfBlocked(String id) {
+    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.IS_BLOCKED_BY, id);
+  }
+
+  public int getNumberOfBlock(String id) {
+    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.BLOCKS, id);
+  }
+
+  public int getNumberOfComments(String id) {
+    var issueMongo = issueMongoService.getById(id);
+    if (issueMongo == null || issueMongo.getComments() == null) {
+      return 0;
+    }
+    return issueMongo.getComments()
+                     .size();
+  }
+
+  public int getNumChangeFixVersion(String id) {
+    int result = 0;
+    Issue issue = getEntityById(id);
+    var project = issue.getProject();
+    Instant now = Instant.now();
+
+    List<Sprint> finishedSprints = project.getSprints()
+                                          .stream()
+                                          .filter(sprint -> sprint.getDtEnd()
+                                                                  .isBefore(now))
+                                          .toList();
+    for (Sprint sprint : finishedSprints) {
+      List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(project.getId(), sprint.getId());
+      if (snapshots.stream()
+                   .anyMatch(s -> s.getNkTaskId()
+                                   .equals(id) && IssueStatus.fromString(s.getStatus())
+                                                             .equals(IssueStatus.DONE))) {
+        result++;
+      }
+    }
+    return result;
+  }
+
+  public double calculateCompatibleOfAssignee(Issue issue) {
+    User assignee = issue.getAssignee();
+    if (assignee == null) {return 0;}
+    var issueMongo = issueMongoService.getById(issue.getId());
+
+    int point = 0;
+    List<Topic> topics = issueMongo.getTopics();
+    List<PersonalSkill> skills = personalSkillRepository.findByUser(assignee)
+                                                        .orElse(new ArrayList<>());
+    for (PersonalSkill skill : skills) {
+      if (topics.stream()
+                .anyMatch(topic -> topic.getName()
+                                        .equals(skill.getSkill()
+                                                     .getName()))) {
+        point += skill.getProficiency();
+      }
+    }
+    return point / (double) skills.size();
+  }
+
+
 }
