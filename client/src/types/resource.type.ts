@@ -30,9 +30,36 @@ type CreateResourceRequestType = {
   size: number
 }
 
+type CreateResourceDailyRequestType = {
+  name: string
+  extension: string
+  publicId: string
+  contentType: 'IMAGE' | 'FILE'
+  size: number
+  projectId: string
+  sprintId: string
+}
+
+type ResourceResponseType = {
+  id: string
+  name: string
+  contentType: 'IMAGE' | 'FILE'
+  placeContent: string
+  size: number
+  url: string
+}
+
+type ResourceOfSprintResponseType = {
+  daily: ResourceResponseType[]
+  fileBacklog: ResourceResponseType | null
+}
+
 export type {
   GetSignatureRequestType,
   GetSignatureResponseType,
   CloudinaryUploadResultType,
-  CreateResourceRequestType
+  CreateResourceRequestType,
+  ResourceResponseType,
+  CreateResourceDailyRequestType,
+  ResourceOfSprintResponseType
 }

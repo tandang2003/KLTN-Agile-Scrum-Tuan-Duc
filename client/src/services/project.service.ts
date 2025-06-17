@@ -6,6 +6,7 @@ import {
   ProjectDetailResponse,
   ProjectResponse
 } from '@/types/project.type'
+import { ResourceOfSprintResponseType } from '@/types/resource.type'
 import { UserResponse } from '@/types/user.type'
 
 const projectService = {
@@ -29,6 +30,13 @@ const projectService = {
     const response = await httpService.get<ResponseApi<UserResponse[]>>(
       `/project/${projectId}/members`
     )
+
+    return response.data.data
+  },
+  getResources: async (projectId: Id, sprintId: Id) => {
+    const response = await httpService.get<
+      ResponseApi<ResourceOfSprintResponseType>
+    >(`/project/${projectId}/${sprintId}/resource`)
 
     return response.data.data
   }
