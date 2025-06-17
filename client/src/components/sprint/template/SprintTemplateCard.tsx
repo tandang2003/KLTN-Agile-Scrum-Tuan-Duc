@@ -10,7 +10,7 @@ import { useAppDispatch } from '@/context/redux/hook'
 import { useDeleteSprintMutation } from '@/feature/sprint/sprint.api'
 import {
   openDialogUpdateSprint,
-  setCurrentSprint
+  setSprintForm
 } from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode } from '@/lib/const'
 import { getStatusSprint } from '@/lib/sprint.helper'
@@ -31,7 +31,7 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
   const handleUpdate = () => {
     const { id, start, end } = data
     dispatch(
-      setCurrentSprint({
+      setSprintForm({
         id: id,
         start: new Date(start).toISOString(),
         end: new Date(end).toISOString()

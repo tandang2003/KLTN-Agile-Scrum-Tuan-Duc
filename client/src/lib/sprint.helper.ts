@@ -1,3 +1,4 @@
+import { store } from '@/context/redux/store'
 import { SprintStatusType } from '@/types/model/typeOf'
 import { SprintResponse } from '@/types/sprint.type'
 import { isAfter, isBefore } from 'date-fns'
@@ -9,9 +10,15 @@ const getStatusSprint = ({
   start: Date
   end: Date
 }): SprintStatusType => {
-  const now = new Date()
-  if (isBefore(now, start)) return 'PENDING'
-  if (isAfter(now, end)) return 'COMPLETE'
+  const currentSprint = store.getState().sprintSlice.current
+  if (!currentSprint) {
+    throw new Error('Start and end dates must be provided')
+  }
+  const startCurrentSprint = new Date(currentSprint.start)
+  const endCurrentSprint = new Date(currentSprint.end)
+
+  if (isBefore(startCurrentSprint, start)) return 'PENDING'
+  if (isAfter(endCurrentSprint, end)) return 'COMPLETE'
   return 'RUNNING'
 }
 

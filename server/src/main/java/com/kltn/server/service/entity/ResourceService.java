@@ -54,8 +54,8 @@ public class ResourceService {
 
   @Autowired
   public ResourceService(ResourceRepository repository, ResourceMapper resourceMapper, UserService userService,
-                         ProjectRepository projectService, IssueRepository issueRepository, FileService fileService,
-                         SprintService sprintService, ProjectSprintService projectSprintService) {
+      ProjectRepository projectService, IssueRepository issueRepository, FileService fileService,
+      SprintService sprintService, ProjectSprintService projectSprintService) {
     this.issueRepository = issueRepository;
     this.repository = repository;
     this.resourceMapper = resourceMapper;
@@ -69,9 +69,9 @@ public class ResourceService {
 
   public Resource getById(String id) {
     return repository.findById(id)
-                     .orElseThrow(() -> AppException.builder()
-                                                    .error(Error.NOT_FOUND)
-                                                    .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.NOT_FOUND)
+            .build());
   }
 
   public ApiResponse<ResourcePathResponse> getResourceById(String id) {
@@ -80,25 +80,25 @@ public class ResourceService {
     String resourceUrl = url.toString();
 
     return ApiResponse.<ResourcePathResponse>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("Get resource successfully")
-                      .data(ResourcePathResponse.builder()
-                                                .path(resourceUrl)
-                                                .size(resource.getSize())
-                                                .build())
-                      .build();
+        .code(HttpStatus.OK.value())
+        .message("Get resource successfully")
+        .data(ResourcePathResponse.builder()
+            .path(resourceUrl)
+            .size(resource.getSize())
+            .build())
+        .build();
   }
 
   public ApiResponse<ResourceSignatureResponse> getSignature(ResourceSignatureRequest request) {
     Map<String, Object> paramsToSign = new HashMap<>();
 
     String uniIdUser = SecurityContextHolder.getContext()
-                                            .getAuthentication()
-                                            .getPrincipal()
-                                            .toString();
+        .getAuthentication()
+        .getPrincipal()
+        .toString();
 
     String folder = Paths.get(request.getProjectId(), request.getIssueId(), uniIdUser)
-                         .toString();
+        .toString();
     paramsToSign.put("folder", folder);
 
     String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
@@ -107,13 +107,13 @@ public class ResourceService {
     FileSignature fileSignature = fileService.getSignature(paramsToSign);
 
     var data = new ResourceSignatureResponse(fileSignature.getFolder(), fileSignature.getSignature(), timestamp,
-                                             fileSignature.getApiKey(), fileSignature.getCloudName(),
-                                             fileSignature.getUrlUpload());
+        fileSignature.getApiKey(), fileSignature.getCloudName(),
+        fileSignature.getUrlUpload());
     return ApiResponse.<ResourceSignatureResponse>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("Get Signature")
-                      .data(data)
-                      .build();
+        .code(HttpStatus.OK.value())
+        .message("Get Signature")
+        .data(data)
+        .build();
 
   }
 
@@ -131,20 +131,20 @@ public class ResourceService {
     issueService.saveEntity(issue);
     repository.save(resource);
     return ApiResponse.<ResourceResponse>builder()
-                      .code(HttpStatus.CREATED.value())
-                      .message("Upload file successfully")
-                      .data(resourceMapper.toResourceResponse(resource))
-                      .build();
+        .code(HttpStatus.CREATED.value())
+        .message("Upload file successfully")
+        .data(resourceMapper.toResourceResponse(resource))
+        .build();
 
   }
 
   public ApiResponse<ResourceResponse> uploadFileToDailySprint(DailyResourceSignatureRequest request) {
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
-                                                                                           .sprintId(
-                                                                                             request.getSprintId())
-                                                                                           .projectId(
-                                                                                             request.getProjectId())
-                                                                                           .build());
+        .sprintId(
+            request.getSprintId())
+        .projectId(
+            request.getProjectId())
+        .build());
     List<Resource> dailyFiles = projectSprint.getDailyFiles();
     if (dailyFiles != null && dailyFiles.size() >= 2) {
       throw AppException.builder()
@@ -163,37 +163,36 @@ public class ResourceService {
     projectSprint.setDailyFiles(dailyFiles);
     projectSprintService.save(projectSprint);
     return ApiResponse.<ResourceResponse>builder()
-                      .code(HttpStatus.CREATED.value())
-                      .message("Upload file successfully")
-                      .data(resourceMapper.toResourceResponse(resource))
-                      .build();
+        .code(HttpStatus.CREATED.value())
+        .message("Upload file successfully")
+        .data(resourceMapper.toResourceResponse(resource))
+        .build();
 
   }
-
 
   public ApiResponse<ResourceResponse> uploadFileToBacklogSprint(DailyResourceSignatureRequest request) {
     Resource resource = resourceMapper.toResource(request);
     resource.setUser(userService.getCurrentUser());
     repository.save(resource);
-//    Sprint sprint = sprintService.getSprintById(request.getSprintId());
+    // Sprint sprint = sprintService.getSprintById(request.getSprintId());
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
-                                                                                           .sprintId(
-                                                                                             request.getSprintId())
-                                                                                           .projectId(
-                                                                                             request.getProjectId())
-                                                                                           .build());
-    if (projectSprint.getDailyFiles() != null) {
+        .sprintId(
+            request.getSprintId())
+        .projectId(
+            request.getProjectId())
+        .build());
+    if (projectSprint.getFileBackLog() != null) {
       throw AppException.builder()
-                        .error(Error.BACKLOG_FILE_ALREADY_UPLOAD)
-                        .build();
+          .error(Error.BACKLOG_FILE_ALREADY_UPLOAD)
+          .build();
     }
     projectSprint.setFileBackLog(resource);
     projectSprintService.save(projectSprint);
     return ApiResponse.<ResourceResponse>builder()
-                      .code(HttpStatus.CREATED.value())
-                      .message("Upload file successfully")
-                      .data(resourceMapper.toResourceResponse(resource))
-                      .build();
+        .code(HttpStatus.CREATED.value())
+        .message("Upload file successfully")
+        .data(resourceMapper.toResourceResponse(resource))
+        .build();
 
   }
 
@@ -218,7 +217,7 @@ public class ResourceService {
     Resource resource = getById(id);
     for (Issue issue : resource.getIssues()) {
       issue.getResources()
-           .remove(resource);
+          .remove(resource);
     }
     issueRepository.saveAll(resource.getIssues());
     if (resource.getProjectSprint() != null) {
@@ -228,13 +227,13 @@ public class ResourceService {
     }
     for (ProjectSprint projectSprint : resource.getIssueDailyFiles()) {
       projectSprint.getDailyFiles()
-                   .remove(resource);
+          .remove(resource);
     }
     projectSprintRepository.saveAll(resource.getIssueDailyFiles());
     repository.delete(resource);
     return ApiResponse.<Void>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("Delete file successfully")
-                      .build();
+        .code(HttpStatus.OK.value())
+        .message("Delete file successfully")
+        .build();
   }
 }
