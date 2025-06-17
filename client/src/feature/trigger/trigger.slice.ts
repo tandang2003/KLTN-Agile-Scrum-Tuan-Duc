@@ -1,17 +1,30 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+type AlertType = 'success' | 'error' | 'info' | 'warning'
+
+interface AlertState {
+  message: string
+  type: AlertType
+  visible: boolean
+}
 
 type TriggerState = {
   isCreateProject: boolean
   isCreateIssue: boolean
   isUpdateIssue: boolean
   isOpenDialogSkill: boolean
+  alert: AlertState
 }
 
 const initialState: TriggerState = {
   isCreateProject: false,
   isCreateIssue: false,
   isUpdateIssue: false,
-  isOpenDialogSkill: false
+  isOpenDialogSkill: false,
+  alert: {
+    message: '',
+    type: 'info',
+    visible: false
+  }
 }
 
 const triggerSlice = createSlice({
@@ -41,6 +54,17 @@ const triggerSlice = createSlice({
     },
     disableDialogSkill: (state: TriggerState) => {
       state.isOpenDialogSkill = false
+    },
+    showAlert: (
+      state,
+      action: PayloadAction<{ message: string; type: AlertType }>
+    ) => {
+      state.alert.message = action.payload.message
+      state.alert.type = action.payload.type
+      state.alert.visible = true
+    },
+    hideAlert: (state) => {
+      state.alert.visible = false
     }
   }
 })
@@ -55,6 +79,8 @@ export const {
   enableUpdateIssue,
   disableUpdateIssue,
   enableDialogSkill,
-  disableDialogSkill
+  disableDialogSkill,
+  showAlert,
+  hideAlert
 } = triggerSlice.actions
 export default triggerSlice

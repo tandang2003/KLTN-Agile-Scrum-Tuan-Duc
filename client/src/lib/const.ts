@@ -73,3 +73,5 @@ export enum StorageItem {
 export const HOME_PATH = '/'
 export const LOGIN_PATH = '/auth/login'
 export const WEIGHT_POSITION = 1000
+export const MAX_SIZE = 2 * 1024 * 1024 // 2MB
+export const REPORT_DIR = '_report'

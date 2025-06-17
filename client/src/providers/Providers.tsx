@@ -1,3 +1,4 @@
+import AlertHost from '@/components/AleartHost'
 import Loading from '@/components/Loading'
 import AppGlobalState from '@/providers/AppGlobalState'
 import StateLoader from '@/providers/StateLoader'
@@ -9,6 +10,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
     <AppGlobalState>
       <StateLoader loading={<Loading />}>
         <Toaster expand={true} richColors position='bottom-right' />
+        <AlertHost />
         {children}
       </StateLoader>
     </AppGlobalState>

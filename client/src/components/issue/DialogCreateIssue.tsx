@@ -9,7 +9,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { disableCreateIssue } from '@/feature/trigger/trigger.slice'
-import { parseStringToDate } from '@/lib/date'
+import { parseStringToDate } from '@/lib/date.helper'
 
 type DialogCreateIssueProps = {}
 

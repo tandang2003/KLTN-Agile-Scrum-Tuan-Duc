@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import { setCurrentSprint } from '@/feature/sprint/sprint.slice'
+import { setSprintForm } from '@/feature/sprint/sprint.slice'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { cn } from '@/lib/utils'
@@ -55,7 +55,7 @@ const ListIssueInSprint = ({
             onClick={() => {
               dispatch(enableCreateIssue())
               dispatch(
-                setCurrentSprint({
+                setSprintForm({
                   id: sprintId,
                   start: new Date(start).toISOString(),
                   end: new Date(end).toISOString()

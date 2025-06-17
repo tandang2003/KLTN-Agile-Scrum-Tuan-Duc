@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import HtmlViewer from '@/components/HtmlViewer'
-import { formatDateToString } from '@/lib/date'
+import { formatDateToString } from '@/lib/date.helper'
 import ToolTip from '@/components/Tooltip'
 
 type ItemCommentProps = {
