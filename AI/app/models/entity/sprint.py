@@ -7,7 +7,7 @@ Base = declarative_base()
 class Sprint(Base):
     __tablename__ = 'sprints'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
+    id = Column(String, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
     title = Column(Text)  # LONGTEXT equivalent in SQLAlchemy is Text
     dt_start = Column(DateTime)
     dt_end = Column(DateTime)

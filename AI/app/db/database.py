@@ -22,5 +22,6 @@ def get_db():
         yield db
     finally:
         db.close()
+
 def get_mongo_db():
   return mongo_db

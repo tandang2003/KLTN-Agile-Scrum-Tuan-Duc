@@ -1,13 +1,14 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from app.models.entity.workspace import Workspace
 
 Base = declarative_base()
 
-class User(Base):
+class User(Base) :
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)  # from BaseEntity
+    id = Column(String, primary_key=True, autoincrement=True)  # Assuming BaseEntity has id field
     name = Column(String(255))
     password = Column(String(255))
     email = Column(String(255))
