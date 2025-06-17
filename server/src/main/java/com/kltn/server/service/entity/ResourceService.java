@@ -3,6 +3,7 @@ package com.kltn.server.service.entity;
 import com.kltn.server.DTO.request.entity.resource.DailyResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
+import com.kltn.server.DTO.request.entity.resource.StoringAvatarSignatureRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.resource.ResourcePathResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
@@ -13,6 +14,7 @@ import com.kltn.server.mapper.entity.ResourceMapper;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.entity.Sprint;
+import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.IssueRepository;
@@ -185,6 +187,22 @@ public class ResourceService {
         .message("Upload file successfully")
         .data(resourceMapper.toResourceResponse(resource))
         .build();
+
+  }
+
+
+  public ApiResponse<ResourceResponse> uploadAvatar(StoringAvatarSignatureRequest request) {
+    Resource resource = resourceMapper.toResource(request);
+    User user = userService.getCurrentUser();
+    resource.setUser(user);
+    resource = repository.save(resource);
+    user.setAvatar(resource);
+    userService.save(user);
+    return ApiResponse.<ResourceResponse>builder()
+                      .code(HttpStatus.CREATED.value())
+                      .message("Upload avatar successfully")
+                      .data(resourceMapper.toResourceResponse(resource))
+                      .build();
 
   }
 

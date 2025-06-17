@@ -22,6 +22,7 @@ import com.kltn.server.model.entity.*;
 import com.kltn.server.model.entity.embeddedKey.IssueRelationId;
 import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.type.task.IssuePriority;
+import com.kltn.server.model.type.task.IssueRelationType;
 import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.model.type.task.IssueTag;
 import com.kltn.server.repository.entity.IssueRepository;
@@ -478,12 +479,10 @@ public class IssueService {
         .build();
   }
 
-  @Transactional
   public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
 
     String sprintId = request.getSprintId();
     String projectId = request.getProjectId();
-    System.out.println(sprintId);
     if (sprintId == null || sprintId.isEmpty()) {
       // check relationship
       List<Issue> issues = projectService.getProjectById(projectId)
@@ -695,5 +694,24 @@ public class IssueService {
         .message("Get relations successfully")
         .data(responses)
         .build();
+  }
+
+  public ApiResponse<List<IssueResponse>> getIssueWithTypeRelation(String id, String type) {
+    Issue issue = getEntityById(id);
+    return switch (IssueRelationType.fromValue(type)) {
+      case IssueRelationType.IS_BLOCKED_BY, IssueRelationType.IS_RELATED_TO, IssueRelationType.IS_DEPENDED_ON_BY,
+           IssueRelationType.IS_SUPERSEDED_BY, IssueRelationType.IS_DUPLICATED_BY -> {
+        List<Issue> issues = taskRepository.findByProjectIdAndIdNot(issue.getProject()
+                                                                         .getId(), issue.getId())
+                                           .orElseThrow(() -> AppException.builder()
+                                                                          .error(Error.NOT_FOUND)
+                                                                          .build());
+        yield buildResponseFromIssues(issues);
+
+      }
+      default -> getIssuesBySprintId(new IssueOfSprintRequest(issue.getSprint()
+                                                                   .getId(), issue.getProject()
+                                                                                  .getId()));
+    };
   }
 }
