@@ -51,7 +51,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
     volumes:
-#      - kafka_data2:/var/lib/kafka/data
+      #      - kafka_data2:/var/lib/kafka/data
       - kafka_data2:/kafka/kafka-logs
 
   kafka3:

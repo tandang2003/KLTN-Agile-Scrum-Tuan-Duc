@@ -11,7 +11,6 @@ const getStatusSprint = ({
   end: Date
 }): SprintStatusType => {
   const currentSprint = store.getState().sprintSlice.current
-
   if (!currentSprint) {
     // Hard fix
     return 'PENDING'
