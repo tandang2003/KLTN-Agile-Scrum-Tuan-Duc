@@ -38,13 +38,6 @@ const authService = {
     const { access_token } = body.data
     tokenService.setTokenLocal(access_token)
     return body
-  },
-  getInfo: async (options?: object) => {
-    const response = await httpService.get<ResponseApi<UserInfoResponse>>(
-      '/user',
-      options
-    )
-    return response.data
   }
 }
 

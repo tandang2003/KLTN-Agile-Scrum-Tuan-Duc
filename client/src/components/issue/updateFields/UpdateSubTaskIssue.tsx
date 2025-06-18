@@ -224,11 +224,7 @@ const SubTaskItemForm = forwardRef<HTMLInputElement, CreateSubTaskProps>(
           <Button type='button' onClick={handleAppend}>
             Add
           </Button>
-          <Button
-            type='button'
-            onClick={() => cancel()}
-            className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
-          >
+          <Button type='button' onClick={() => cancel()} className='cancel'>
             Cancel
           </Button>
         </div>

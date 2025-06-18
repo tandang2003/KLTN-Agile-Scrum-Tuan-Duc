@@ -85,20 +85,4 @@ function loadSessionStorage<T>(
   }
 }
 
-async function urlToFile(url: string, filename: string) {
-  const response = await fetch(url)
-  const blob = await response.blob()
-  const contentType =
-    response.headers.get('Content-Type') || 'application/octet-stream'
-  return new File([blob], filename, { type: contentType })
-}
-
-export {
-  cn,
-  formatDate,
-  invertColor,
-  toQueryString,
-  uuid,
-  loadSessionStorage,
-  urlToFile
-}
+export { cn, formatDate, invertColor, toQueryString, uuid, loadSessionStorage }

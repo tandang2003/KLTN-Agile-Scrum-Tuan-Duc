@@ -2,6 +2,7 @@ import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
 import {
   CloudinaryUploadResultType,
+  CreateResourceAvatarRequestType,
   CreateResourceDailyRequestType,
   CreateResourceRequestType,
   GetSignatureRequestType,
@@ -15,12 +16,12 @@ const resourceService = {
   ): Promise<GetSignatureResponseType> => {
     const res = await httpService.post<
       ResponseApi<GetSignatureResponseType>,
-      GetSignatureRequestType & { userId: string }
-    >('/resource/signature', { ...req, userId: '1' })
+      GetSignatureRequestType
+    >('/resource/signature', req)
     return res.data.data
   },
 
-  uploadFileToCloudinary: async (
+  uploadFileToCloudinaryWithSignature: async (
     file: File,
     {
       urlUpload,
@@ -56,7 +57,7 @@ const resourceService = {
 
   createResource: async (req: CreateResourceRequestType) => {
     const res = await httpService.post<
-      ResponseApi<void>,
+      ResponseApi<ResourceResponseType>,
       CreateResourceRequestType
     >('/resource/issue', req)
     return res.data.data
@@ -83,6 +84,42 @@ const resourceService = {
       CreateResourceDailyRequestType
     >('/resource/backlog', req)
     return res.data.data
+  },
+  createResourceAvatar: async (req: CreateResourceAvatarRequestType) => {
+    const res = await httpService.post<
+      ResponseApi<ResourceResponseType>,
+      CreateResourceAvatarRequestType
+    >('/resource/avatar', req)
+    return res.data.data
+  },
+  uploadFileToCloudinary: async (
+    file: File,
+    req: GetSignatureRequestType
+  ): Promise<CloudinaryUploadResultType> => {
+    const responseSignature = await httpService.post<
+      ResponseApi<GetSignatureResponseType>,
+      GetSignatureRequestType
+    >('/resource/signature', req)
+
+    const { apiKey, folder, signature, timestamp, url } =
+      responseSignature.data.data
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('api_key', apiKey)
+    formData.append('timestamp', timestamp.toString())
+    formData.append('signature', signature)
+    formData.append('folder', folder)
+    formData.append('overwrite', 'false')
+    formData.append('use_filename', 'true')
+    formData.append('unique_filename', 'true')
+
+    const res = await fetch(url, {
+      method: 'POST',
+      body: formData
+    })
+
+    return await res.json()
   }
 }
 

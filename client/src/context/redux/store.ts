@@ -7,6 +7,7 @@ import issueApi from '@/feature/issue/issue.api'
 import projectApi from '@/feature/project/project.api'
 import skillApi from '@/feature/skill/skill.api'
 import sprintApi from '@/feature/sprint/sprint.api'
+import userApi from '@/feature/user/user.api'
 import workspaceApi from '@/feature/workspace/workspace.api'
 import tokenService from '@/services/token.service'
 import { configureStore } from '@reduxjs/toolkit'
@@ -34,6 +35,7 @@ export const store = configureStore({
       .concat(sprintApi.middleware)
       .concat(issueApi.middleware)
       .concat(skillApi.middleware)
+      .concat(userApi.middleware)
 })
 
 setupListeners(store.dispatch)

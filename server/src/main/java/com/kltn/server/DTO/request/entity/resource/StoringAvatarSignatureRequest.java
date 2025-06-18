@@ -16,6 +16,7 @@ public class StoringAvatarSignatureRequest {
   private ContentType contentType;
   @NotNull
   private long size;
+  private String publicId;
 
   public String getName() {
     return name;
@@ -24,7 +25,6 @@ public class StoringAvatarSignatureRequest {
   public void setName(String name) {
     this.name = name;
   }
-
 
   public String getExtension() {
     return extension;
@@ -48,6 +48,14 @@ public class StoringAvatarSignatureRequest {
 
   public void setSize(long size) {
     this.size = size;
+  }
+
+  public String getPublicId() {
+    return publicId;
+  }
+
+  public void setPublicId(String publicId) {
+    this.publicId = publicId;
   }
 
 }

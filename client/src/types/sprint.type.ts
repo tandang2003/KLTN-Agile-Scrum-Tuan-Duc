@@ -45,13 +45,13 @@ type SprintResponse = SprintModel
 
 type SprintWorkspaceDataTable = SprintModel
 
+export { BaseSprintFormSchema, CreateSprintFormSchema, UpdateSprintFormSchema }
 export type {
-  CreateSprintFormType,
+  BaseSprintFormType, CreateSprintFormType,
   CreateSprintRequest,
   SprintResponse,
   SprintWorkspaceDataTable,
   UpdateSprintFormType,
-  UpdateSprintRequest,
-  BaseSprintFormType
+  UpdateSprintRequest
 }
-export { CreateSprintFormSchema, UpdateSprintFormSchema, BaseSprintFormSchema }
+
