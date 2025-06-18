@@ -169,7 +169,7 @@
   @apply active-bg font-bold text-white!;
 }
 @utility cancel {
-  @apply bg-red-500! text-white! hover:bg-red-600!;
+  @apply bg-red-400! text-white! hover:cursor-pointer hover:bg-red-600!;
 }
 
 .container {

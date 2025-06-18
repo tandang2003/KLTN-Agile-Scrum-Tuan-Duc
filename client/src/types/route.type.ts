@@ -14,12 +14,13 @@ type InviteProjectParams = {
   token: string
 }
 
-type ManagerLayoutContextType = {
+type UserLayoutContextType = {
   user: {
     id: Id
     name: string
     uniId: string
     role: RoleType
+    avatar?: string
   }
 }
 
@@ -27,5 +28,5 @@ export type {
   ProjectParams,
   WorkspaceParams,
   InviteProjectParams,
-  ManagerLayoutContextType
+  UserLayoutContextType
 }
