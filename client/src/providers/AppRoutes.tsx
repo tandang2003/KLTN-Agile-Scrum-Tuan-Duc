@@ -18,6 +18,7 @@ import ProjectLayout from '@/pages/manager/workspace/project/layout'
 import ProjectPage from '@/pages/manager/workspace/project/page'
 import ReportPage from '@/pages/manager/workspace/project/report/page'
 import NotFoundPage from '@/pages/not-found'
+import UserLayout from '@/pages/user/layout'
 import UserPage from '@/pages/user/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
@@ -50,7 +51,7 @@ const AppRoutes = () => {
             path='user'
             element={
               <RequiredAuth mode='login'>
-                <ManagerLayout />
+                <UserLayout />
               </RequiredAuth>
             }
           >

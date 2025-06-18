@@ -4,7 +4,6 @@ import { IssueResponse } from '@/types/issue.type'
 import { issueStatusList } from '@/types/model/typeOf'
 
 const DEFAULT_POSITION: Position = {
-  BACKLOG: [],
   TODO: [],
   INPROCESS: [],
   REVIEW: [],

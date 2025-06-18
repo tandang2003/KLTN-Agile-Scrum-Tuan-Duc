@@ -3,8 +3,7 @@ import RenderBoard from '@/components/board/RenderBoard'
 import { DataOnMoveType, Position } from '@/components/board/type'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setSprintIdFilter } from '@/feature/board/board.slice'
+import { useAppSelector } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { DEFAULT_POSITION } from '@/lib/board.helper'
 import boardService from '@/services/board.service'
@@ -19,11 +18,9 @@ import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 const BoardPage = () => {
-  const { projectId, currentSprintId } = useParams<ProjectParams>()
+  const { projectId } = useParams<ProjectParams>()
 
   const { sprintId } = useAppSelector((state) => state.boardSlice.filter)
-
-  const dispatch = useAppDispatch()
 
   const { data, isFetching, error } = useGetListIssueQuery(
     {
@@ -42,10 +39,6 @@ const BoardPage = () => {
   }, [error])
 
   const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
-
-  useEffect(() => {
-    console.log('sprintId', sprintId, projectId)
-  }, [sprintId, projectId])
 
   useEffect(() => {
     if (projectId && sprintId) {
