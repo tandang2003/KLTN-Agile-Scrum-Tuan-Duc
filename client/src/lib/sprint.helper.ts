@@ -11,8 +11,10 @@ const getStatusSprint = ({
   end: Date
 }): SprintStatusType => {
   const currentSprint = store.getState().sprintSlice.current
+
   if (!currentSprint) {
-    throw new Error('Start and end dates must be provided')
+    // Hard fix
+    return 'PENDING'
   }
   const startCurrentSprint = new Date(currentSprint.start)
   const endCurrentSprint = new Date(currentSprint.end)
