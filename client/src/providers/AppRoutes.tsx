@@ -1,5 +1,7 @@
 import GuestOnly from '@/components/wrapper/GuestOnly'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import RequiredProject from '@/components/wrapper/RequiredProject'
+import RequiredWorkspace from '@/components/wrapper/RequiredWorkspace'
 import AuthLayout from '@/pages/auth/layout'
 import LoginPage from '@/pages/auth/login/page'
 import RegisterPage from '@/pages/auth/register/page'
@@ -14,7 +16,6 @@ import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 import WorkspacePage from '@/pages/manager/workspace/page'
 import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import BoardPage from '@/pages/manager/workspace/project/board/page'
-import ProjectLayout from '@/pages/manager/workspace/project/layout'
 import ProjectPage from '@/pages/manager/workspace/project/page'
 import ReportPage from '@/pages/manager/workspace/project/report/page'
 import NotFoundPage from '@/pages/not-found'
@@ -82,13 +83,20 @@ const AppRoutes = () => {
                 </Route>
               </Route>
               {/* http://localhost:3000/manager/workspace/project/1 */}
-              <Route path='project' element={<ProjectLayout />}>
-                <Route path=':projectId' element={<ProjectPage />}>
-                  <Route index element={<Navigate to='backlog' replace />} />
-                  {/* http://localhost:3000/manager/workspace/project/1/board */}
-                  <Route path='board' index element={<BoardPage />} />
-                  <Route path='backlog' element={<BacklogPage />} />
-                  <Route path='report' element={<ReportPage />} />
+              <Route path='project'>
+                <Route element={<RequiredWorkspace />}>
+                  <Route element={<RequiredProject />}>
+                    <Route path=':projectId' element={<ProjectPage />}>
+                      <Route
+                        index
+                        element={<Navigate to='backlog' replace />}
+                      />
+                      {/* http://localhost:3000/manager/workspace/project/1/board */}
+                      <Route path='board' index element={<BoardPage />} />
+                      <Route path='backlog' element={<BacklogPage />} />
+                      <Route path='report' element={<ReportPage />} />
+                    </Route>
+                  </Route>
                 </Route>
               </Route>
             </Route>

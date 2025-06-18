@@ -74,7 +74,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
               <AccordionContent ref={refContent}>
                 {sprintId && (
                   <ListIssueInSprint
-                    sprintId={sprintId}
+                    sprintId={item.id}
                     start={item.start}
                     end={item.end}
                   />
