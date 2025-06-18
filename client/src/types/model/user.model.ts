@@ -1,4 +1,5 @@
 import { Id } from '@/types/other.type'
+import { ResourceResponseType } from '@/types/resource.type'
 
 type UserModel = {
   id: Id
@@ -8,6 +9,7 @@ type UserModel = {
   uniId: string
   uniPassword: string
   role: 'student' | 'teacher'
+  avatar?: ResourceResponseType
 }
 
 export type { UserModel }

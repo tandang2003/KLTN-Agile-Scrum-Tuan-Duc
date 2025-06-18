@@ -1,7 +1,4 @@
-import {
-  createFileFromUrl,
-  MediaMediaUploadingProps
-} from '@/components/media/media'
+import { MediaMediaUploadingProps } from '@/components/media/media'
 import { useMediaContext } from '@/components/media/MediaContext'
 import MediaLoading from '@/components/media/MediaLoading'
 import {
@@ -12,7 +9,7 @@ import {
 import resourceService from '@/services/resource.service'
 
 import { Upload } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
 const MediaUploading = ({
@@ -100,16 +97,14 @@ const MediaUploading = ({
             const { apiKey, folder, signature, timestamp, url } =
               await signatureFn()
 
-            const response = await resourceService.uploadFileToCloudinary(
-              file,
-              {
+            const response =
+              await resourceService.uploadFileToCloudinaryWithSignature(file, {
                 apiKey: apiKey,
                 folder: folder,
                 signature: signature,
                 timestamp: timestamp,
                 urlUpload: url
-              }
-            )
+              })
 
             if (createFn) {
               const resource = await createFn({

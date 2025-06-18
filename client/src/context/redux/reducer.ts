@@ -9,6 +9,7 @@ import { skillReducer } from '@/feature/skill/skill.slice'
 import sprintApi from '@/feature/sprint/sprint.api'
 import { sprintReducer } from '@/feature/sprint/sprint.slice'
 import { triggerReducer } from '@/feature/trigger/trigger.slice'
+import userApi from '@/feature/user/user.api'
 import workspaceApi from '@/feature/workspace/workspace.api'
 import { workspaceReducer } from '@/feature/workspace/workspace.slice'
 import { combineReducers } from '@reduxjs/toolkit'
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   [sprintApi.reducerPath]: sprintApi.reducer,
   [issueApi.reducerPath]: issueApi.reducer,
   [skillApi.reducerPath]: skillApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
   authSlice: authReducer,
   workspaceSlice: workspaceReducer,
   projectSlice: projectReducer,
