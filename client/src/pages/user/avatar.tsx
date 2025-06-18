@@ -39,6 +39,11 @@ const UserAvatar = ({}: UserAvatarProps) => {
     ref.current.click()
   }
 
+  useEffect(() => {
+    if (!data) return
+    setAvatar(data.url)
+  }, [data])
+
   return (
     <Avatar className='group relative mx-auto size-[200px]'>
       <AvatarImage
