@@ -31,7 +31,6 @@ const DialogUpdateIssue = () => {
       skip: !isUpdateIssue || !id
     }
   )
-  console.log(data)
   return (
     <DialogController
       open={isUpdateIssue}

@@ -35,6 +35,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
 import boardService from '@/services/board.service'
+import { DEFAULT_STATUS } from '@/lib/const'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
@@ -71,7 +72,8 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
     if (!projectId) return
     const req: CreateIssueRequest = {
       projectId: projectId,
-      ...values
+      ...values,
+      status: DEFAULT_STATUS
     }
     create(req)
       .unwrap()

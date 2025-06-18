@@ -51,7 +51,6 @@ const KanbanCard = ({
     opacity: isDragging ? 0.7 : undefined,
     border: isDragging ? '1px solid red' : undefined
   }
-
   return (
     <div
       ref={setNodeRef}
@@ -63,16 +62,16 @@ const KanbanCard = ({
         container
       )}
     >
-      {!disabled && (
-        <Button
-          variant='ghost'
-          className='absolute top-2 right-2 z-10 rounded-full p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none'
-          {...listeners}
-          {...attributes}
-        >
-          <Icon icon={'material-symbols:drag-handle-outline'} size={20} />
-        </Button>
-      )}
+      {/* {disabled === false && ( */}
+      <Button
+        variant='ghost'
+        className='absolute top-2 right-2 z-10 rounded-full p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none'
+        {...listeners}
+        {...attributes}
+      >
+        <Icon icon={'material-symbols:drag-handle-outline'} size={20} />
+      </Button>
+      {/* )} */}
       <CardUI
         className='rounded-none border-none bg-transparent p-0 shadow-none'
         onClick={() => onClick?.()}

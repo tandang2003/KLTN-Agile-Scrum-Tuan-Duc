@@ -88,21 +88,34 @@ appAxios.interceptors.response.use(
       }
 
       case HttpStatusCode.Unauthorized: {
-        const response = await authService.refresh()
-        if (response.code >= 400) {
-          toast.error('Refresh token is expired')
+        // prevent infinite loop
+        const originalRequest: any = err.config
+        if (originalRequest._retry) {
+          toast.error('Session expired. Please login again.')
           return Promise.reject(err)
-        } else {
-          const newToken = response.data.access_token
+        }
+        originalRequest._retry = true
 
-          if (!err.config) {
+        try {
+          const response = await authService.refresh()
+          if (response.code >= 400) {
+            toast.error('Refresh token is expired')
             return Promise.reject(err)
+          } else {
+            const newToken = response.data.access_token
+
+            if (!err.config) {
+              return Promise.reject(err)
+            }
+
+            err.config.headers = err.config.headers || {}
+            err.config.headers['Authorization'] = `Bearer ${newToken}`
+
+            return appAxios(err.config)
           }
-
-          err.config.headers = err.config.headers || {}
-          err.config.headers['Authorization'] = `Bearer ${newToken}`
-
-          return appAxios(err.config)
+        } catch (refreshErr) {
+          toast.error('Failed to refresh session')
+          return Promise.reject(refreshErr)
         }
       }
 
