@@ -40,6 +40,14 @@ type CreateResourceDailyRequestType = {
   sprintId: string
 }
 
+type CreateResourceAvatarRequestType = {
+  name: string
+  extension: string
+  contentType: 'IMAGE' | 'FILE'
+  size: number
+  publicId: string
+}
+
 type ResourceResponseType = {
   id: string
   name: string
@@ -47,6 +55,7 @@ type ResourceResponseType = {
   placeContent: string
   size: number
   url: string
+  extension: string
 }
 
 type ResourceOfSprintResponseType = {
@@ -61,5 +70,6 @@ export type {
   CreateResourceRequestType,
   ResourceResponseType,
   CreateResourceDailyRequestType,
-  ResourceOfSprintResponseType
+  ResourceOfSprintResponseType,
+  CreateResourceAvatarRequestType
 }
