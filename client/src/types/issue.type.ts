@@ -22,12 +22,6 @@ type SubTaskResponse = {
   checked: boolean
 }
 
-type AttachmentResponse = {
-  id: string
-  name: string
-  url: string
-}
-
 type UserDetail = {
   id: string
   name: string
@@ -49,7 +43,7 @@ type IssueResponse = {
   reviewer?: UserDetail
   topics?: TopicResponse[]
   subtasks?: SubTaskResponse[]
-  resources?: AttachmentResponse[]
+  resources?: ResourceResponse[]
   start?: Date
   end?: Date
 }
@@ -68,6 +62,7 @@ type ResourceResponse = {
   extension: string
   contentType: string
   size: number
+  url: string
 }
 
 const SubTaskModelSchema = z.object({

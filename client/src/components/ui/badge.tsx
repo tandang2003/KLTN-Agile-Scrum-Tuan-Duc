@@ -30,7 +30,6 @@ const badgeVariants = cva<{
           'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground'
       },
       status: {
-        BACKLOG: 'text-black bg-gray-400 font-semibold',
         TODO: 'text-white bg-yellow-600 font-semibold',
         INPROCESS: 'text-black bg-blue-300 font-semibold',
         REVIEW: 'text-white bg-red-500 font-semibold',
@@ -52,7 +51,7 @@ const badgeVariants = cva<{
 
     defaultVariants: {
       variant: 'default',
-      status: 'BACKLOG'
+      status: 'TODO'
     }
   }
 )

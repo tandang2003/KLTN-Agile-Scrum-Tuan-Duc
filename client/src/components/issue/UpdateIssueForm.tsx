@@ -1,5 +1,5 @@
 import SectionComment from '@/components/issue/comment/SectionComment'
-import UpdateAttachmentIssue from '@/components/issue/updateFields/UpdateAttachmentIssue'
+import { UpdateAttachmentIssue } from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
 import UpdateDropDownMenu from '@/components/issue/updateFields/UpdateDropdownMenu'
@@ -13,7 +13,6 @@ import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { urlToFile } from '@/lib/utils'
 import {
   IssueDetailResponse,
   UpdateIssueSchema,
@@ -93,8 +92,13 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <div>
               <UpdateAttachmentIssue
                 issueId={data.id}
-                files={data.resources?.map((item) => {
-                  return urlToFile(item.url, item.name)
+                data={data.resources?.map((item) => {
+                  return {
+                    filename: item.name,
+                    url: item.url,
+                    id: item.id,
+                    extension: item.extension
+                  }
                 })}
               />
             </div>
