@@ -8,6 +8,7 @@ import com.kltn.server.model.collection.snapshot.ProjectSnapshot;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
+import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.repository.document.IssueLogRepository;
 import com.kltn.server.repository.document.snapshot.SnapshotRepository;
 import com.kltn.server.repository.entity.IssueRepository;
@@ -38,12 +39,13 @@ public class SnapshotConsumer {
     this.snapshotMapper = snapshotMapper;
   }
 
-  @KafkaListener(topics = "snapshot", groupId = "snapshot-1")
+  @KafkaListener(topics = "snapshot",
+                 groupId = "snapshot-1")
   public void consumeSnapshot1(SnapshotRequest snapshotRequest) {
     boolean flag = projectSprintRepository.existsById(ProjectSprintId.builder()
                                                                      .projectId(snapshotRequest.getProjectId())
                                                                      .sprintId(snapshotRequest.getSprintId())
-                                                                     .build()) & snapshotRepository.existsByProjectIdAndSprintId(
+                                                                     .build()) & !snapshotRepository.existsByProjectIdAndSprintId(
       snapshotRequest.getProjectId(), snapshotRequest.getSprintId());
     if (flag) {
       Optional<List<Issue>> tasks = issueRepository.findAllByProjectIdAndSprintId(snapshotRequest.getProjectId(),
@@ -51,31 +53,23 @@ public class SnapshotConsumer {
       if (tasks.isPresent()) {
         List<Issue> issues = tasks.get();
         Map<String, List<Resource>> mapResources = issues.stream()
-                                                         .collect(Collectors.toMap(BaseEntity::getId,
-                                                                                   issue -> issue.getResources()
-                                                                                                 .stream()
-                                                                                                 .toList()));
+                                                         .collect(
+                                                           Collectors.toMap(BaseEntity::getId, Issue::getResources));
         Map<String, List<Relation<String>>> relationships = new HashMap<>();
         for (Issue issue : issues) {
           List<Relation<String>> relations = new ArrayList<>();
-          issue.getAffectBy()
-               .forEach(r -> relations.add(Relation.<String>builder()
-                                                   .related(r.getIssueRelated()
-                                                             .getId())
-                                                   .relationType(r.getTypeRelation())
-                                                   .build()));
-          issue.getAffectTo()
-               .forEach(r -> relations.add(Relation.<String>builder()
-                                                   .related(r.getIssueRelated()
-                                                             .getId())
-                                                   .relationType(r.getTypeRelation())
-                                                   .build()));
-
+          List<IssueRelation> ir = issueRepository.getIssueRelation(issue.getId());
+          ir.forEach(r -> relations.add(Relation.<String>builder()
+                                                .related(r.getIssueRelated()
+                                                          .getId())
+                                                .relationType(r.getTypeRelation())
+                                                .build()));
           relationships.put(issue.getId(), relations);
         }
 
         ProjectSnapshot projectSnapshot = snapshotMapper.toSnapshot(snapshotRequest.getProjectId(),
-                                                                    snapshotRequest.getSprintId(), issues.stream()
+                                                                    snapshotRequest.getSprintId(),
+                                                                    issues.stream()
                                                                                                          .collect(
                                                                                                            Collectors.toMap(
                                                                                                              issue -> issue,
@@ -96,12 +90,13 @@ public class SnapshotConsumer {
   }
 
 
-  @KafkaListener(topics = "snapshot", groupId = "snapshot-1")
+  @KafkaListener(topics = "snapshot",
+                 groupId = "snapshot-1")
   public void consumeSnapshot2(SnapshotRequest snapshotRequest) {
     boolean flag = projectSprintRepository.existsById(ProjectSprintId.builder()
                                                                      .projectId(snapshotRequest.getProjectId())
                                                                      .sprintId(snapshotRequest.getSprintId())
-                                                                     .build()) & snapshotRepository.existsByProjectIdAndSprintId(
+                                                                     .build()) & !snapshotRepository.existsByProjectIdAndSprintId(
       snapshotRequest.getProjectId(), snapshotRequest.getSprintId());
     if (flag) {
       Optional<List<Issue>> tasks = issueRepository.findAllByProjectIdAndSprintId(snapshotRequest.getProjectId(),
@@ -109,25 +104,30 @@ public class SnapshotConsumer {
       if (tasks.isPresent()) {
         List<Issue> issues = tasks.get();
         Map<String, List<Resource>> mapResources = issues.stream()
-                                                         .collect(Collectors.toMap(BaseEntity::getId,
-                                                                                   issue -> issue.getResources()
-                                                                                                 .stream()
-                                                                                                 .toList()));
+                                                         .collect(
+                                                           Collectors.toMap(BaseEntity::getId, Issue::getResources));
         Map<String, List<Relation<String>>> relationships = new HashMap<>();
         for (Issue issue : issues) {
           List<Relation<String>> relations = new ArrayList<>();
-          issue.getAffectBy()
-               .forEach(r -> relations.add(Relation.<String>builder()
-                                                   .related(r.getIssueRelated()
-                                                             .getId())
-                                                   .relationType(r.getTypeRelation())
-                                                   .build()));
-          issue.getAffectTo()
-               .forEach(r -> relations.add(Relation.<String>builder()
-                                                   .related(r.getIssueRelated()
-                                                             .getId())
-                                                   .relationType(r.getTypeRelation())
-                                                   .build()));
+          List<IssueRelation> ir = issueRepository.getIssueRelation(issue.getId());
+          ir.forEach(r -> relations.add(Relation.<String>builder()
+                                                .related(r.getIssueRelated()
+                                                          .getId())
+                                                .relationType(r.getTypeRelation())
+                                                .build()));
+//          issue.getAffectBy()
+//               .forEach(r ->
+//                          relations.add(Relation.<String>builder()
+//                                                   .related(r.getIssueRelated()
+//                                                             .getId())
+//                                                   .relationType(r.getTypeRelation())
+//                                                   .build()));
+//          issue.getAffectTo()
+//               .forEach(r -> relations.add(Relation.<String>builder()
+//                                                   .related(r.getIssueRelated()
+//                                                             .getId())
+//                                                   .relationType(r.getTypeRelation())
+//                                                   .build()));
 
           relationships.put(issue.getId(), relations);
         }
@@ -151,12 +151,13 @@ public class SnapshotConsumer {
     }
   }
 
-  @KafkaListener(topics = "snapshot", groupId = "snapshot-1")
+  @KafkaListener(topics = "snapshot",
+                 groupId = "snapshot-1")
   public void consumeSnapshot3(SnapshotRequest snapshotRequest) {
     boolean flag = projectSprintRepository.existsById(ProjectSprintId.builder()
                                                                      .projectId(snapshotRequest.getProjectId())
                                                                      .sprintId(snapshotRequest.getSprintId())
-                                                                     .build()) & snapshotRepository.existsByProjectIdAndSprintId(
+                                                                     .build()) & !snapshotRepository.existsByProjectIdAndSprintId(
       snapshotRequest.getProjectId(), snapshotRequest.getSprintId());
     if (flag) {
       Optional<List<Issue>> tasks = issueRepository.findAllByProjectIdAndSprintId(snapshotRequest.getProjectId(),
@@ -164,25 +165,30 @@ public class SnapshotConsumer {
       if (tasks.isPresent()) {
         List<Issue> issues = tasks.get();
         Map<String, List<Resource>> mapResources = issues.stream()
-                                                         .collect(Collectors.toMap(BaseEntity::getId,
-                                                                                   issue -> issue.getResources()
-                                                                                                 .stream()
-                                                                                                 .toList()));
+                                                         .collect(
+                                                           Collectors.toMap(BaseEntity::getId, Issue::getResources));
         Map<String, List<Relation<String>>> relationships = new HashMap<>();
         for (Issue issue : issues) {
           List<Relation<String>> relations = new ArrayList<>();
-          issue.getAffectBy()
-               .forEach(r -> relations.add(Relation.<String>builder()
-                                                   .related(r.getIssueRelated()
-                                                             .getId())
-                                                   .relationType(r.getTypeRelation())
-                                                   .build()));
-          issue.getAffectTo()
-               .forEach(r -> relations.add(Relation.<String>builder()
-                                                   .related(r.getIssueRelated()
-                                                             .getId())
-                                                   .relationType(r.getTypeRelation())
-                                                   .build()));
+          List<IssueRelation> ir = issueRepository.getIssueRelation(issue.getId());
+          ir.forEach(r -> relations.add(Relation.<String>builder()
+                                                .related(r.getIssueRelated()
+                                                          .getId())
+                                                .relationType(r.getTypeRelation())
+                                                .build()));
+//          issue.getAffectBy()
+//               .forEach(r ->
+//                          relations.add(Relation.<String>builder()
+//                                                   .related(r.getIssueRelated()
+//                                                             .getId())
+//                                                   .relationType(r.getTypeRelation())
+//                                                   .build()));
+//          issue.getAffectTo()
+//               .forEach(r -> relations.add(Relation.<String>builder()
+//                                                   .related(r.getIssueRelated()
+//                                                             .getId())
+//                                                   .relationType(r.getTypeRelation())
+//                                                   .build()));
 
           relationships.put(issue.getId(), relations);
         }

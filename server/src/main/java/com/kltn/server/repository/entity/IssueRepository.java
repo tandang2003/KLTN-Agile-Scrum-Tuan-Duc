@@ -1,7 +1,10 @@
 package com.kltn.server.repository.entity;
 
+import com.kltn.server.model.collection.model.Relation;
 import com.kltn.server.model.entity.Issue;
+import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.entity.User;
+import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.type.task.IssueStatus;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,12 +30,16 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndSprintIdAndStatus(String projectId, String sprintId, IssueStatus status);
 
   int countByProjectIdAndSprintIdAndAssigneeNotNull(String projectId, String sprintId);
-  @Query(
-    "SELECT COUNT(DISTINCT i.sprint) " +
-    "FROM IssueRelation ir " +
-    "JOIN ir.issueRelated i " +
-    "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " +
-    "AND ir.issue.id = :issueId"
-  )
+
+  @Query("SELECT COUNT(DISTINCT i.sprint) " + "FROM IssueRelation ir " + "JOIN ir.issueRelated i " + "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " + "AND ir.issue.id = :issueId")
   int getNumberOfAffectVersions(@Param("issueId") String id);
+
+  @Query(value = "SELECT r.* FROM issues i JOIN issue_resources rs ON i.id=rs.issue_id" + "JOIN resources r ON r" +
+                 ".id=rs.issue_id",
+         nativeQuery = true)
+  List<Resource> getResources(String issueId);
+
+  @Query(value = "SELECT ir.* FROM issue_relation ir WHERE ir.issue_id= :issueId ",
+         nativeQuery = true)
+  List<IssueRelation> getIssueRelation(String issueId);
 }
