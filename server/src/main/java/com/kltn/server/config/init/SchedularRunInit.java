@@ -18,6 +18,7 @@ public class SchedularRunInit implements CommandLineRunner {
     @Autowired
     private SprintRepository sprintRepository;
 
+
     @Override
     public void run(String... args) throws Exception {
         List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(java.time.Instant.now());
