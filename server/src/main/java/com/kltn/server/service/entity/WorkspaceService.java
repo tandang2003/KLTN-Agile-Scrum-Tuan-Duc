@@ -8,6 +8,7 @@ import com.kltn.server.DTO.response.auth.WorkspaceAuthorizationResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppListArgumentNotValidException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
@@ -334,8 +335,8 @@ public class WorkspaceService {
 
   private void setCurrentSprint(Workspace workspace) {
     List<Sprint> sprints = workspace.getSprints();
-    Instant now = Instant.now()
-        .truncatedTo(ChronoUnit.DAYS);
+    Instant now = ClockSimulator.now()
+                                .truncatedTo(ChronoUnit.DAYS);
     if (sprints != null && !sprints.isEmpty()) {
       Sprint nextSprint = sprints.getFirst();
       long days = 0;

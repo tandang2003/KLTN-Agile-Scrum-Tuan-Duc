@@ -4,23 +4,27 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class ClockSimulator {
-  private Instant realTime;
-  private Instant simulatedTime;
-  private volatile long timeSpeech;
+  private static Instant realTime;
+  private static Instant simulatedTime;
+  private static volatile long timeSpeech;
   public ClockSimulator(long timeSpeech) {
-    this.realTime = Instant.now();
-    this.simulatedTime = Instant.now();
-    this.timeSpeech = timeSpeech;
+    realTime = Instant.now();
+    simulatedTime = Instant.now();
+    ClockSimulator.timeSpeech = timeSpeech;
   }
-  public void setTimeSpeech(long newSpeech) {
+  public static void setTimeSpeech(long newSpeech) {
     // cập nhật thời gian ảo hiện tại trước
     simulatedTime = now();
     realTime = Instant.now();
-    this.timeSpeech = newSpeech;
+    timeSpeech = newSpeech;
   }
-  public Instant now() {
+  public static Instant now() {
     long realElapsedMillis = Duration.between(realTime, Instant.now()).toSeconds();
     long simulatedElapsedMillis = realElapsedMillis * timeSpeech;
     return simulatedTime.plusSeconds(simulatedElapsedMillis);
+  }
+
+  public static long getTimeSpeech() {
+    return timeSpeech;
   }
 }

@@ -1,11 +1,14 @@
 package com.kltn.server.model.collection.model;
 
+import com.kltn.server.config.init.ClockSimulator;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-
+@Component
 public class Comment {
   private ObjectId id;
   @Field // issueId
@@ -57,7 +60,7 @@ public class Comment {
         this.id = new ObjectId();
       }
       if (createdAt == null) {
-        this.createdAt = Instant.now();
+        this.createdAt = ClockSimulator.now();
       }
     }
 

@@ -10,6 +10,7 @@ import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.resource.ResourceOfSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.kafka.SendKafkaEvent;
@@ -268,8 +269,8 @@ public class ProjectService {
   }
 
   public Sprint getCurrentSprint(List<Sprint> sprints) {
-    Instant now = Instant.now()
-        .truncatedTo(ChronoUnit.DAYS);
+    Instant now = ClockSimulator.now()
+                                .truncatedTo(ChronoUnit.DAYS);
     if (sprints != null && !sprints.isEmpty()) {
       Sprint nextSprint = sprints.getFirst();
       long days = 0;

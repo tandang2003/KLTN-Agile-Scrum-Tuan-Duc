@@ -7,6 +7,7 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
@@ -174,7 +175,7 @@ public class IssueService {
     if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId()
         .isEmpty()) {
       Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
-      Instant now = Instant.now();
+      Instant now = ClockSimulator.now();
       if (now.isAfter(sprint.getDtStart())) {
         throw AppException.builder()
             .error(Error.SPRINT_ALREADY_START)
@@ -266,7 +267,7 @@ public class IssueService {
         .isEmpty()) {
       Sprint sprint = sprintService.getSprintById(id);
       if (sprint.getDtEnd()
-          .isBefore(Instant.now())) {
+          .isBefore(ClockSimulator.now())) {
         List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(entity.getProject()
             .getId(), sprint.getId());
         if (snapshots.isEmpty()) {
@@ -327,7 +328,7 @@ public class IssueService {
       case "sprint":
         Sprint targetSprint = sprintService.getSprintById(updateRequest.getSprintId());
         Sprint currentSprint = task.getSprint();
-        Instant now = Instant.now();
+        Instant now = ClockSimulator.now();
 
         if (currentSprint == null || currentSprint.getDtEnd()
             .isBefore(now)) {
@@ -497,7 +498,7 @@ public class IssueService {
                      .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && issue.getSprint()
                                                                                                       .getDtEnd()
                                                                                                       .isBefore(
-                                                                                                        Instant.now()) && issue.isOpen() && !issue.getStatus()
+                                                                                                        ClockSimulator.now()) && issue.isOpen() && !issue.getStatus()
                                                                                                                                                   .equals(
                                                                                                                                                     IssueStatus.DONE)))
                      .toList();
@@ -513,7 +514,7 @@ public class IssueService {
     }
 
     Sprint sprint = sprintService.getSprintById(sprintId);
-    if (Instant.now()
+    if (ClockSimulator.now()
         .isAfter(sprint.getDtEnd())) {
       List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(projectId, sprintId);
       List<IssueResponse> responses = snapshots.stream()
@@ -543,7 +544,7 @@ public class IssueService {
     if (request.getStatus()
         .equals(IssueStatus.DONE)) {
       task.setOpen(false);
-      task.setDtEnd(Instant.now());
+      task.setDtEnd(ClockSimulator.now());
     }
     else if (task.getStatus()
                  .equals(IssueStatus.DONE) && !request.getStatus()
@@ -742,7 +743,7 @@ public class IssueService {
 
   public int getNumberOfIssuesRemoved(Project project, Sprint sprint) {
     return taskRepository.countByProjectIdAndSprintIdAndDtEndBeforeAndStatus(project.getId(), sprint.getId(),
-                                                                             Instant.now(), IssueStatus.DONE);
+                                                                             ClockSimulator.now(), IssueStatus.DONE);
   }
 
   public int getNumberOfIssuesByStatus(Project project, Sprint sprint, IssueStatus status) {
@@ -769,7 +770,7 @@ public class IssueService {
     int result = 1;
     Issue issue = getEntityById(id);
     var project = issue.getProject();
-    Instant now = Instant.now();
+    Instant now = ClockSimulator.now();
 
     List<Sprint> finishedSprints = project.getSprints()
                                           .stream()
@@ -830,7 +831,7 @@ public class IssueService {
     int result = 0;
     Issue issue = getEntityById(id);
     var project = issue.getProject();
-    Instant now = Instant.now();
+    Instant now = ClockSimulator.now();
 
     List<Sprint> finishedSprints = project.getSprints()
                                           .stream()
