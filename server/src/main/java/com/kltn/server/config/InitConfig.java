@@ -1,5 +1,6 @@
 package com.kltn.server.config;
 
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.config.properties.CacheProperties;
 import com.kltn.server.config.security.CustomJWTValidation;
 import com.kltn.server.mapper.document.ChangeLogMapper;
@@ -33,75 +34,86 @@ import org.springframework.security.oauth2.jwt.*;
 @EnableJpaAuditing
 public class InitConfig {
 
-    private TokenKeyUtils tokenKeyUtils;
+  private TokenKeyUtils tokenKeyUtils;
 
-    @Autowired
-    public InitConfig(TokenKeyUtils tokenKeyUtils) {
-        this.tokenKeyUtils = tokenKeyUtils;
-    }
+  @Autowired
+  public InitConfig(TokenKeyUtils tokenKeyUtils) {
+    this.tokenKeyUtils = tokenKeyUtils;
+  }
 
-    public InitConfig() {
-    }
+  public InitConfig() {
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
 
-    // For JWT
-    @Bean
-    @Primary
-    JwtEncoder accessTokenEncoder() {
-        JWK jwk = new RSAKey.Builder(tokenKeyUtils.getAccessPublicKey()).privateKey(tokenKeyUtils.getAccessPrivateKey()).build();
-        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwkSource);
-    }
+  // For JWT
+  @Bean
+  @Primary
+  JwtEncoder accessTokenEncoder() {
+    JWK jwk = new RSAKey.Builder(tokenKeyUtils.getAccessPublicKey()).privateKey(tokenKeyUtils.getAccessPrivateKey())
+                                                                    .build();
+    JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+    return new NimbusJwtEncoder(jwkSource);
+  }
 
-    @Bean
-    @Primary
-    JwtDecoder accessTokenDecoder() {
-        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getAccessPublicKey()).build();
-        decoder.setJwtValidator(tokenValidator());
-        return decoder;
-    }
+  @Bean
+  @Primary
+  JwtDecoder accessTokenDecoder() {
+    NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getAccessPublicKey())
+                                               .build();
+    decoder.setJwtValidator(tokenValidator());
+    return decoder;
+  }
 
-    @Bean
-    OAuth2TokenValidator<Jwt> tokenValidator() {
-        return new CustomJWTValidation();
-    }
+  @Bean
+  OAuth2TokenValidator<Jwt> tokenValidator() {
+    return new CustomJWTValidation();
+  }
 
-    @Bean
-    @Qualifier("refreshTokenEncoder")
-    JwtEncoder refreshTokenEncoder() {
-        JWK jwk = new RSAKey.Builder(tokenKeyUtils.getRefreshPublicKey()).privateKey(tokenKeyUtils.getRefreshPrivateKey()).build();
-        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwkSource);
-    }
+  @Bean
+  @Qualifier("refreshTokenEncoder")
+  JwtEncoder refreshTokenEncoder() {
+    JWK jwk = new RSAKey.Builder(tokenKeyUtils.getRefreshPublicKey()).privateKey(tokenKeyUtils.getRefreshPrivateKey())
+                                                                     .build();
+    JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+    return new NimbusJwtEncoder(jwkSource);
+  }
 
-    @Bean
-    @Qualifier("refreshTokenDecoder")
-    JwtDecoder refreshTokenDecoder() {
-        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getRefreshPublicKey()).build();
-        decoder.setJwtValidator(tokenValidator());
-        return decoder;
-    }
+  @Bean
+  @Qualifier("refreshTokenDecoder")
+  JwtDecoder refreshTokenDecoder() {
+    NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getRefreshPublicKey())
+                                               .build();
+    decoder.setJwtValidator(tokenValidator());
+    return decoder;
+  }
 
-    @Bean
-    @Qualifier("verifyTokenEncoder")
-    JwtEncoder verifyTokenEncoder() {
-        JWK jwk = new RSAKey.Builder(tokenKeyUtils.getVerifyPublicKey()).privateKey(tokenKeyUtils.getVerifyPrivateKey()).build();
-        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwkSource);
-    }
+  @Bean
+  @Qualifier("verifyTokenEncoder")
+  JwtEncoder verifyTokenEncoder() {
+    JWK jwk = new RSAKey.Builder(tokenKeyUtils.getVerifyPublicKey()).privateKey(tokenKeyUtils.getVerifyPrivateKey())
+                                                                    .build();
+    JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+    return new NimbusJwtEncoder(jwkSource);
+  }
 
-    @Bean
-    @Qualifier("verifyTokenDecoder")
-    JwtDecoder verifyTokenDecoder() {
-        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getVerifyPublicKey()).build();
+  @Bean
+  @Qualifier("verifyTokenDecoder")
+  JwtDecoder verifyTokenDecoder() {
+    NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(tokenKeyUtils.getVerifyPublicKey())
+                                               .build();
 //        decoder.setJwtValidator(tokenValidator());
-        return decoder;
-    }
+    return decoder;
+  }
+
+  @Bean
+  ClockSimulator clockSimulator() {
+    return new ClockSimulator(1);
+  }
 
 //    //    @Bean
 //    public LogTaskMapper logTaskMapper() {
