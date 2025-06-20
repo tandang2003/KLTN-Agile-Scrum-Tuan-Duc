@@ -2,28 +2,26 @@ package com.kltn.server.schedular;
 
 import com.kltn.server.DTO.request.kafka.SnapshotRequest;
 import com.kltn.server.config.init.ClockSimulator;
-import com.kltn.server.model.entity.Project;
-import com.kltn.server.model.entity.Sprint;
-import com.kltn.server.model.entity.relationship.ProjectSprint;
-import com.kltn.server.repository.entity.SprintRepository;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
-import com.kltn.server.service.entity.ProjectService;
-import com.kltn.server.service.entity.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class SprintScheduler {
@@ -54,20 +52,17 @@ public class SprintScheduler {
 
     Runnable task = () -> {
       System.out.println("send messeage");
-      kafkaTemplate.send("snapshot", SnapshotRequest.builder()
-                                                    .projectId(projectId)
-                                                    .sprintId(sprintId)
-                                                    .build());
+      sendMessage(sprintId, projectId);
     };
     Instant end = endTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
                          .toInstant();
     if (clockSimulator.now()
-                      .isAfter(end) ){
-      System.out.println("special case");
-      kafkaTemplate.send("snapshot", SnapshotRequest.builder()
-                                                    .projectId(projectId)
-                                                    .sprintId(sprintId)
-                                                    .build());
+                      .isAfter(end)) {
+//      kafkaTemplate.send("snapshot", SnapshotRequest.builder()
+//                                                    .projectId(projectId)
+//                                                    .sprintId(sprintId)
+//                                                    .build());
+      sendMessage(projectId, sprintId);
       return;
     }
 
@@ -125,5 +120,20 @@ public class SprintScheduler {
 
   public Set<String> getScheduledSprintIds() {
     return tasks.keySet();
+  }
+
+  private void sendMessage(String projectId, String sprintId) {
+    String curUser = SecurityContextHolder.getContext()
+                                          .getAuthentication()
+                                          .getPrincipal()
+                                          .toString();
+    Message<SnapshotRequest> message = MessageBuilder.withPayload(SnapshotRequest.builder()
+                                                                                 .projectId(projectId)
+                                                                                 .sprintId(sprintId)
+                                                                                 .build())
+                                                     .setHeader(KafkaHeaders.TOPIC, "snapshotConsumer")
+                                                     .setHeader("X-Auth-User", curUser)
+                                                     .build();
+    kafkaTemplate.send("snapshot", message);
   }
 }

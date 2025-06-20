@@ -181,7 +181,7 @@ public class WorkspaceService {
   }
 
   // @SendMailEvent(topic = "send-mail")
-  @Transactional
+//  @Transactional
   public ApiResponse<Void> addStudentToWorkspace(String workspaceId, String[] uniIds) {
     Workspace workspace = workspaceRepository.findById(workspaceId)
         .orElseThrow(() -> AppException.builder()

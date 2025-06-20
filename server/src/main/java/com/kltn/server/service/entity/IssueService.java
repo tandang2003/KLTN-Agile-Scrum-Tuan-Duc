@@ -35,6 +35,8 @@ import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -477,6 +479,11 @@ public class IssueService {
             .error(Error.INVALID_PARAMETER_REQUEST)
             .build();
     }
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null) {
+      System.out.println(authentication.getPrincipal().toString());
+    }
+
     return ApiResponse.<IssueResponse>builder()
         .code(HttpStatus.OK.value())
         .message("Update task successfully")
