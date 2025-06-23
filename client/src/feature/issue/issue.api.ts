@@ -12,7 +12,7 @@ import axios from 'axios'
 const issueApi = createApi({
   reducerPath: 'issueApi',
   baseQuery: () => ({ data: {} }),
-  tagTypes: ['Issues'],
+  tagTypes: ['Issues', 'SprintIssue'],
   endpoints: (builder) => ({
     getListIssue: builder.query<
       IssueResponse[],
@@ -42,13 +42,17 @@ const issueApi = createApi({
           }
         }
       },
-      providesTags(result) {
+      providesTags(result, _, { sprintId }) {
         if (result) {
           const final = [
             ...result.map((item) => ({
               type: 'Issues' as const,
               id: item.id
             })),
+            {
+              type: 'SprintIssue' as const,
+              id: sprintId ? sprintId : 'BACKLOG'
+            },
             {
               type: 'Issues' as const,
               id: 'LIST'
@@ -60,6 +64,10 @@ const issueApi = createApi({
           {
             type: 'Issues' as const,
             id: 'LIST'
+          },
+          {
+            type: 'SprintIssue' as const,
+            id: sprintId ? sprintId : 'BACKLOG'
           }
         ]
         return final
@@ -108,6 +116,54 @@ const issueApi = createApi({
         return error ? [] : [{ type: 'Issues', id: id }]
       }
     }),
+    moveIssueToSprint: builder.mutation<
+      IssueDetailResponse,
+      Pick<UpdateIssueRequest, 'id' | 'sprintId'>
+    >({
+      async queryFn(arg) {
+        try {
+          const data = await issueService.updateIssue({
+            ...arg,
+            fieldChanging: 'sprint'
+          })
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, { sprintId }) => {
+        return error
+          ? []
+          : [
+              { type: 'SprintIssue', id: sprintId },
+              { type: 'SprintIssue', id: 'BACKLOG' }
+            ]
+      }
+    }),
+    moveIssueToBacklog: builder.mutation<
+      IssueDetailResponse,
+      Pick<UpdateIssueRequest, 'id' | 'sprintId'>
+    >({
+      async queryFn({ id }) {
+        try {
+          const data = await issueService.updateIssue({
+            id: id,
+            fieldChanging: 'sprint'
+          })
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, { sprintId }) => {
+        return error
+          ? []
+          : [
+              { type: 'SprintIssue', id: 'BACKLOG' },
+              { type: 'SprintIssue', id: sprintId }
+            ]
+      }
+    }),
     reopenIssue: builder.mutation<undefined, Id>({
       async queryFn(arg) {
         try {
@@ -135,5 +191,7 @@ export const {
   useLazyGetIssueQuery,
   useUpdateIssueMutation,
   useLazyGetListIssueQuery,
+  useMoveIssueToSprintMutation,
+  useMoveIssueToBacklogMutation,
   useReopenIssueMutation
 } = issueApi

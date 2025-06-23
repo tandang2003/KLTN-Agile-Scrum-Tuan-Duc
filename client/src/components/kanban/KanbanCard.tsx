@@ -9,7 +9,6 @@ import {
   CardTitle,
   Card as CardUI
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import Icon from '@/components/Icon'
 import { memo } from 'react'
 import useKanbanContext from '@/components/kanban/useKanbanContext'

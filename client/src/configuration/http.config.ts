@@ -91,7 +91,7 @@ appAxios.interceptors.response.use(
           error.response?.data.message ?? 'Server Error'
         // prevent infinite loop
         const originalRequest: any = err.config
-
+        console.log(messageBody)
         if (messageBody === 'Invalid credentials') {
           if (originalRequest._retry) {
             toast.error('Session expired. Please login again.')
@@ -102,23 +102,19 @@ appAxios.interceptors.response.use(
 
           try {
             const response = await authService.refresh()
-            if (response.code >= 400) {
-              toast.error('Refresh token is expired')
+
+            const newToken = response.data.access_token
+
+            if (!err.config) {
               return Promise.reject(err)
-            } else {
-              const newToken = response.data.access_token
-
-              if (!err.config) {
-                return Promise.reject(err)
-              }
-
-              err.config.headers = err.config.headers || {}
-              err.config.headers['Authorization'] = `Bearer ${newToken}`
-
-              return appAxios(err.config)
             }
+
+            err.config.headers = err.config.headers || {}
+            err.config.headers['Authorization'] = `Bearer ${newToken}`
+
+            return appAxios(err.config)
           } catch (refreshErr) {
-            toast.error('Failed to refresh session')
+            toast.error('Refresh token is expired')
             return Promise.reject(refreshErr)
           }
         }

@@ -7,8 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
+import { useMoveIssueToBacklogMutation } from '@/feature/issue/issue.api'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 import { IssueResponse } from '@/types/issue.type'
 import { toast } from 'sonner'
 
@@ -18,13 +19,13 @@ type SprintCardInSprintProps = {
 }
 
 const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
+  const { id } = useSprintCurrent()
   const { action } = useOpenIssueUpdate()
-  const [update] = useUpdateIssueMutation()
+  const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const handleMoveToBacklog = () => {
-    update({
+    moveToBacklog({
       id: item.id,
-      sprintId: undefined,
-      fieldChanging: 'sprint'
+      sprintId: item.sprintId
     })
       .unwrap()
       .then(() => {
@@ -64,9 +65,16 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
           >
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleMoveToBacklog}>
-            Move to backlog
-          </DropdownMenuItem>
+          {item.sprintId !== id && (
+            <DropdownMenuItem onClick={handleMoveToBacklog}>
+              Move to backlog
+            </DropdownMenuItem>
+          )}
+          {item.status === 'DONE' && (
+            <DropdownMenuItem onClick={handleMoveToBacklog}>
+              Reopen
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

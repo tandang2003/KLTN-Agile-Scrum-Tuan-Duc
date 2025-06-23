@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import {
-  useReopenIssueMutation,
-  useUpdateIssueMutation
+  useMoveIssueToSprintMutation,
+  useReopenIssueMutation
 } from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
@@ -31,20 +31,20 @@ const SprintCardInProductBacklog = ({
   data: item
 }: SprintCardInProductBacklogProps) => {
   const { workspaceId } = useAppId()
-  const [update] = useUpdateIssueMutation()
+  const [moveToSprint] = useMoveIssueToSprintMutation()
   const [reopen] = useReopenIssueMutation()
-  const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
+  const { data: sprints, refetch } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
   const { action } = useOpenIssueUpdate()
   const handleUpdateSprint = (sprintId: Id) => {
-    update({
+    moveToSprint({
       id: item.id,
-      sprintId: sprintId,
-      fieldChanging: 'sprint'
+      sprintId: sprintId
     })
       .unwrap()
       .then(() => {
+        refetch()
         boardService
           .saveNewPosition({
             projectId: item.projectId,

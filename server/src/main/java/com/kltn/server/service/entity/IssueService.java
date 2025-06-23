@@ -60,12 +60,12 @@ public class IssueService {
 
   @Autowired
   public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
-                      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
-                      ResourceService resourceService, ChangeLogMapper changeLogMapper,
-                      IssueMongoService issueMongoService, UserService userService,
-                      ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository,
-                      SprintService sprintService, UserMapper userMapper,
-                      PersonalSkillRepository personalSkillRepository) {
+      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
+      ResourceService resourceService, ChangeLogMapper changeLogMapper,
+      IssueMongoService issueMongoService, UserService userService,
+      ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository,
+      SprintService sprintService, UserMapper userMapper,
+      PersonalSkillRepository personalSkillRepository) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -325,10 +325,18 @@ public class IssueService {
         changeLog = changeLogMapper.taskToUpdate(new String[] { "description" }, task, taskMongo);
         break;
       case "sprint":
-        Sprint targetSprint = sprintService.getSprintById(updateRequest.getSprintId());
+        Sprint targetSprint = updateRequest.getSprintId() == null || updateRequest.getSprintId().isEmpty() ? null
+            : sprintService.getSprintById(updateRequest.getSprintId());
+        if (targetSprint == null) {
+          // remove sprint
+          task.setSprint(null);
+          task.setStatus(IssueStatus.BACKLOG);
+          task = saveEntity(task);
+          changeLog = changeLogMapper.taskToUpdate(new String[] { "sprint" }, task, taskMongo);
+          break;
+        }
         Sprint currentSprint = task.getSprint();
         Instant now = Instant.now();
-
         if (currentSprint == null || currentSprint.getDtEnd()
             .isBefore(now)) {
           // sprint moi da ket thuc, khong the gan lai
@@ -494,16 +502,18 @@ public class IssueService {
       List<Issue> issues = projectService.getProjectById(projectId)
           .getIssues();
       issues = issues.stream()
-                     .filter(issue -> issue.getSprint() == null || (issue.getSprint() != null && issue.getSprint()
-                                                                                                      .getDtEnd()
-                                                                                                      .isBefore(
-                                                                                                        Instant.now()) && issue.isOpen() && !issue.getStatus()
-                                                                                                                                                  .equals(
-                                                                                                                                                    IssueStatus.DONE)))
-                     .toList();
+          .filter(issue -> issue.getSprint() == null ||
+              (issue.getSprint() != null && issue.getSprint()
+                  .getDtEnd()
+                  .isBefore(
+                      Instant.now())
+                  && issue.isOpen() && !issue.getStatus()
+                      .equals(
+                          IssueStatus.DONE)))
+          .toList();
       issues.forEach(issue -> {
         if (!issue.getStatus()
-                  .equals(IssueStatus.BACKLOG)) {
+            .equals(IssueStatus.BACKLOG)) {
           issue.setOpen(true);
           issue.setStatus(IssueStatus.BACKLOG);
           taskRepository.save(issue);
@@ -544,11 +554,12 @@ public class IssueService {
         .equals(IssueStatus.DONE)) {
       task.setOpen(false);
       task.setDtEnd(Instant.now());
-    }
-    else if (task.getStatus()
-                 .equals(IssueStatus.DONE) && !request.getStatus()
-                                                      .equals(IssueStatus.DONE)) {
+    } else if (task.getStatus()
+        .equals(IssueStatus.DONE)
+        && !request.getStatus()
+            .equals(IssueStatus.DONE)) {
       task.setOpen(true);
+      task.setDtEnd(null);
     }
     task.setStatus(request.getStatus());
 
@@ -573,7 +584,7 @@ public class IssueService {
           .message("Issue is not done")
           .build();
     }
-//    changed
+    // changed
     issue.setStatus(IssueStatus.BACKLOG);
     issue.setOpen(true);
     issue.setSprint(null);
@@ -715,34 +726,35 @@ public class IssueService {
     Issue issue = getEntityById(id);
     return switch (IssueRelationType.fromValue(type)) {
       case IssueRelationType.IS_BLOCKED_BY, IssueRelationType.IS_RELATED_TO, IssueRelationType.IS_DEPENDED_ON_BY,
-           IssueRelationType.IS_SUPERSEDED_BY, IssueRelationType.IS_DUPLICATED_BY -> {
+          IssueRelationType.IS_SUPERSEDED_BY, IssueRelationType.IS_DUPLICATED_BY -> {
         List<Issue> issues = taskRepository.findByProjectIdAndIdNot(issue.getProject()
-                                                                         .getId(), issue.getId())
-                                           .orElseThrow(() -> AppException.builder()
-                                                                          .error(Error.NOT_FOUND)
-                                                                          .build());
+            .getId(), issue.getId())
+            .orElseThrow(() -> AppException.builder()
+                .error(Error.NOT_FOUND)
+                .build());
         yield buildResponseFromIssues(issues);
 
       }
       default -> getIssuesBySprintId(new IssueOfSprintRequest(issue.getSprint()
-                                                                   .getId(), issue.getProject()
-                                                                                  .getId()));
+          .getId(),
+          issue.getProject()
+              .getId()));
     };
   }
 
   public int getNumberOfIssuesAtStart(Project project, Sprint sprint) {
     return taskRepository.countByProjectIdAndSprintIdAndDtCreatedBefore(project.getId(), sprint.getId(),
-                                                                        sprint.getDtStart());
+        sprint.getDtStart());
   }
 
   public int getNumberOfIssuesAdded(Project project, Sprint sprint) {
     return taskRepository.countByProjectIdAndSprintIdAndDtCreatedAfter(project.getId(), sprint.getId(),
-                                                                       sprint.getDtStart());
+        sprint.getDtStart());
   }
 
   public int getNumberOfIssuesRemoved(Project project, Sprint sprint) {
     return taskRepository.countByProjectIdAndSprintIdAndDtEndBeforeAndStatus(project.getId(), sprint.getId(),
-                                                                             Instant.now(), IssueStatus.DONE);
+        Instant.now(), IssueStatus.DONE);
   }
 
   public int getNumberOfIssuesByStatus(Project project, Sprint sprint, IssueStatus status) {
@@ -755,10 +767,10 @@ public class IssueService {
 
   public List<Issue> getIssuesBySprintId(String projectId, String sprintId) {
     return taskRepository.findAllByProjectIdAndSprintId(projectId, sprintId)
-                         .orElseThrow(() -> AppException.builder()
-                                                        .error(Error.NOT_FOUND)
-                                                        .message("No issues found for project and sprint")
-                                                        .build());
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.NOT_FOUND)
+            .message("No issues found for project and sprint")
+            .build());
   }
 
   public int getNumberOfAffectVersions(String id) {
@@ -772,10 +784,10 @@ public class IssueService {
     Instant now = Instant.now();
 
     List<Sprint> finishedSprints = project.getSprints()
-                                          .stream()
-                                          .filter(sprint -> sprint.getDtEnd()
-                                                                  .isBefore(now))
-                                          .toList();
+        .stream()
+        .filter(sprint -> sprint.getDtEnd()
+            .isBefore(now))
+        .toList();
 
     if (finishedSprints.isEmpty()) {
       return result;
@@ -784,8 +796,8 @@ public class IssueService {
     for (Sprint sprint : finishedSprints) {
       List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(project.getId(), sprint.getId());
       if (snapshots.stream()
-                   .anyMatch(s -> s.getNkTaskId()
-                                   .equals(id))) {
+          .anyMatch(s -> s.getNkTaskId()
+              .equals(id))) {
         result++;
       }
     }
@@ -797,14 +809,14 @@ public class IssueService {
     Issue issue = getEntityById(id);
     int result = 0;
     if (issue.getAffectTo() != null && !issue.getAffectTo()
-                                             .isEmpty()) {
+        .isEmpty()) {
       result += issue.getAffectTo()
-                     .size();
+          .size();
     }
     if (issue.getAffectBy() != null && !issue.getAffectBy()
-                                             .isEmpty()) {
+        .isEmpty()) {
       result += issue.getAffectBy()
-                     .size();
+          .size();
     }
     return result;
   }
@@ -823,7 +835,7 @@ public class IssueService {
       return 0;
     }
     return issueMongo.getComments()
-                     .size();
+        .size();
   }
 
   public int getNumChangeFixVersion(String id) {
@@ -833,16 +845,17 @@ public class IssueService {
     Instant now = Instant.now();
 
     List<Sprint> finishedSprints = project.getSprints()
-                                          .stream()
-                                          .filter(sprint -> sprint.getDtEnd()
-                                                                  .isBefore(now))
-                                          .toList();
+        .stream()
+        .filter(sprint -> sprint.getDtEnd()
+            .isBefore(now))
+        .toList();
     for (Sprint sprint : finishedSprints) {
       List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(project.getId(), sprint.getId());
       if (snapshots.stream()
-                   .anyMatch(s -> s.getNkTaskId()
-                                   .equals(id) && IssueStatus.fromString(s.getStatus())
-                                                             .equals(IssueStatus.DONE))) {
+          .anyMatch(s -> s.getNkTaskId()
+              .equals(id)
+              && IssueStatus.fromString(s.getStatus())
+                  .equals(IssueStatus.DONE))) {
         result++;
       }
     }
@@ -851,23 +864,24 @@ public class IssueService {
 
   public double calculateCompatibleOfAssignee(Issue issue) {
     User assignee = issue.getAssignee();
-    if (assignee == null) {return 0;}
+    if (assignee == null) {
+      return 0;
+    }
     var issueMongo = issueMongoService.getById(issue.getId());
 
     int point = 0;
     List<Topic> topics = issueMongo.getTopics();
     List<PersonalSkill> skills = personalSkillRepository.findByUser(assignee)
-                                                        .orElse(new ArrayList<>());
+        .orElse(new ArrayList<>());
     for (PersonalSkill skill : skills) {
       if (topics.stream()
-                .anyMatch(topic -> topic.getName()
-                                        .equals(skill.getSkill()
-                                                     .getName()))) {
+          .anyMatch(topic -> topic.getName()
+              .equals(skill.getSkill()
+                  .getName()))) {
         point += skill.getProficiency();
       }
     }
     return point / (double) skills.size();
   }
-
 
 }

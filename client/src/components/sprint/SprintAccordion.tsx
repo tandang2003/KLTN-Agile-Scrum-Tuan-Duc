@@ -39,9 +39,13 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
         </AccordionItem>
       </Accordion>
 
-      <Accordion type='multiple' className='bg-accent w-full px-2'>
-        {sortSprintsByDateStart(sprints).map((item, index) => {
-          return (
+      {sortSprintsByDateStart(sprints).map((item, index) => {
+        return (
+          <Accordion
+            type='single'
+            collapsible
+            className='bg-accent w-full px-2'
+          >
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger
                 value={item.id}
@@ -81,9 +85,9 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                 )}
               </AccordionContent>
             </AccordionItem>
-          )
-        })}
-      </Accordion>
+          </Accordion>
+        )
+      })}
     </div>
   )
 }

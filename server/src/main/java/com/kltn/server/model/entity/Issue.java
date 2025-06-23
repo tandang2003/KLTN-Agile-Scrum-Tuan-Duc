@@ -10,6 +10,8 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 @Entity
 @Table(name = "issues")
 public class Issue extends BaseEntity {
@@ -17,24 +19,20 @@ public class Issue extends BaseEntity {
   @Column(columnDefinition = "LONGTEXT")
   private String description;
   @ManyToOne
-  @JoinColumn(name = "project_id",
-              updatable = false,
-              nullable = false)
+  @JoinColumn(name = "project_id", updatable = false, nullable = false)
   private Project project;
   @ManyToOne
   @JoinColumn(name = "sprint_id")
   private Sprint sprint;
-  //    @ManyToOne
-//    @JoinColumns({
-//            @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
-//            @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id", nullable = true)
-//    })
-//    private ProjectSprint projectSprint;
-  @ManyToMany(fetch = FetchType.LAZY,
-              cascade = CascadeType.REMOVE)
-  @JoinTable(name = "issue_resources",
-             joinColumns = @JoinColumn(name = "issue_id"),
-             inverseJoinColumns = @JoinColumn(name = "resource_id"))
+  // @ManyToOne
+  // @JoinColumns({
+  // @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
+  // @JoinColumn(name = "sprint_id", referencedColumnName = "sprint_id", nullable
+  // = true)
+  // })
+  // private ProjectSprint projectSprint;
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  @JoinTable(name = "issue_resources", joinColumns = @JoinColumn(name = "issue_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
   private List<Resource> resources;
   @ManyToOne
   @JoinColumn(name = "assignee_id")
@@ -45,7 +43,7 @@ public class Issue extends BaseEntity {
   private String name;
   @Enumerated(EnumType.STRING)
   private IssueStatus status;
-  //    private int storyPoint;
+  // private int storyPoint;
   @Enumerated(EnumType.STRING)
   private IssuePriority priority;
   @Enumerated(EnumType.STRING)
@@ -62,14 +60,11 @@ public class Issue extends BaseEntity {
   private Instant dtEnd;
   @Column(name = "dt_planning")
   private Instant dtPlanning;
-  @OneToMany(mappedBy = "issueRelated",
-             fetch = FetchType.LAZY,
-             cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "issueRelated", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<IssueRelation> affectBy;
-  @OneToMany(mappedBy = "issue",
-             fetch = FetchType.EAGER,
-             cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "issue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<IssueRelation> affectTo;
+  @ColumnDefault("true")
   private boolean open = true;
 
   public Issue(IssueEntityBuilder builder) {
@@ -115,23 +110,23 @@ public class Issue extends BaseEntity {
     private String name;
     private String description;
     private IssueStatus status;
-    //        private int storyPoint;
+    // private int storyPoint;
     private IssuePriority priority;
     private IssueTag tag;
     private int numChangeOfPriority;
     private int numChangeOfDescription;
     private int complexOfDescription;
 
-    //        private Sprint sprint;
-//        private Project project;
+    // private Sprint sprint;
+    // private Project project;
     private User assignee;
     private User reviewer;
     private Instant dtStart;
     private Instant dtEnd;
-    //        private Instant dtPlanning;
+    // private Instant dtPlanning;
     private Project project;
     private Sprint sprint;
-//        private ProjectSprint projectSprint;
+    // private ProjectSprint projectSprint;
 
     public IssueEntityBuilder project(Project project) {
       this.project = project;
@@ -168,10 +163,10 @@ public class Issue extends BaseEntity {
       return this;
     }
 
-//        public IssueEntityBuilder storyPoint(int storyPoint) {
-//            this.storyPoint = storyPoint;
-//            return this;
-//        }
+    // public IssueEntityBuilder storyPoint(int storyPoint) {
+    // this.storyPoint = storyPoint;
+    // return this;
+    // }
 
     public IssueEntityBuilder resource(List<Resource> resources) {
       this.resources = resources;
@@ -213,15 +208,15 @@ public class Issue extends BaseEntity {
       return this;
     }
 
-//        public IssueEntityBuilder sprint(Sprint sprint) {
-//            this.sprint = sprint;
-//            return this;
-//        }
-//
-//        public IssueEntityBuilder project(Project project) {
-//            this.project = project;
-//            return this;
-//        }
+    // public IssueEntityBuilder sprint(Sprint sprint) {
+    // this.sprint = sprint;
+    // return this;
+    // }
+    //
+    // public IssueEntityBuilder project(Project project) {
+    // this.project = project;
+    // return this;
+    // }
 
     public IssueEntityBuilder dtStart(Instant dtStart) {
       this.dtStart = dtStart;
@@ -233,15 +228,15 @@ public class Issue extends BaseEntity {
       return this;
     }
 
-//        public IssueEntityBuilder dtPlanning(Instant dtPlanning) {
-//            this.dtPlanning = dtPlanning;
-//            return this;
-//        }
+    // public IssueEntityBuilder dtPlanning(Instant dtPlanning) {
+    // this.dtPlanning = dtPlanning;
+    // return this;
+    // }
 
-//        public IssueEntityBuilder projectSprint(ProjectSprint projectSprint) {
-//            this.projectSprint = projectSprint;
-//            return this;
-//        }
+    // public IssueEntityBuilder projectSprint(ProjectSprint projectSprint) {
+    // this.projectSprint = projectSprint;
+    // return this;
+    // }
 
     @Override
     protected IssueEntityBuilder self() {
@@ -254,21 +249,21 @@ public class Issue extends BaseEntity {
     }
   }
 
-//    public Sprint getSprint() {
-//        return sprint;
-//    }
-//
-//    public void setSprint(Sprint sprint) {
-//        this.sprint = sprint;
-//    }
-//
-//    public Project getProject() {
-//        return project;
-//    }
-//
-//    public void setProject(Project project) {
-//        this.project = project;
-//    }
+  // public Sprint getSprint() {
+  // return sprint;
+  // }
+  //
+  // public void setSprint(Sprint sprint) {
+  // this.sprint = sprint;
+  // }
+  //
+  // public Project getProject() {
+  // return project;
+  // }
+  //
+  // public void setProject(Project project) {
+  // this.project = project;
+  // }
 
   public User getAssignee() {
     return assignee;
@@ -342,11 +337,9 @@ public class Issue extends BaseEntity {
     this.complexOfDescription = complexOfDescription;
   }
 
-
   public List<Resource> getResources() {
     return resources;
   }
-
 
   public void setResources(List<Resource> resources) {
 
@@ -385,13 +378,13 @@ public class Issue extends BaseEntity {
     this.dtEnd = dtEnd;
   }
 
-//    public Instant getDtPlanning() {
-//        return dtPlanning;
-//    }
-//
-//    public void setDtPlanning(Instant dtPlanning) {
-//        this.dtPlanning = dtPlanning;
-//    }
+  // public Instant getDtPlanning() {
+  // return dtPlanning;
+  // }
+  //
+  // public void setDtPlanning(Instant dtPlanning) {
+  // this.dtPlanning = dtPlanning;
+  // }
 
   public Project getProject() {
     return project;
