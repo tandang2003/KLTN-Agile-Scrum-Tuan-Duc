@@ -28,11 +28,11 @@ public class SnapshotMapperImpl implements SnapshotMapper {
     builder.name(entity.getName());
     builder.description(entity.getDescription());
     builder.status(entity.getStatus()
-                         .name());
+      .name());
     builder.priority(entity.getPriority()
-                           .name());
+      .name());
     builder.tag(entity.getTag()
-                      .name());
+      .name());
     builder.position(entity.getPosition());
     builder.dtStart(entity.getDtStart());
     builder.dtEnd(entity.getDtEnd());
@@ -42,17 +42,16 @@ public class SnapshotMapperImpl implements SnapshotMapper {
     builder.related(relationships.getOrDefault(entity.getId(), Collections.emptyList()));
     if (entity.getAssignee() != null)
       builder.assignee(entity.getAssignee()
-                             .getId());
+        .getId());
     if (entity.getReviewer() != null)
       builder.reviewer(entity.getReviewer()
-                             .getId());
+        .getId());
     if (mongo.getTopics() != null)
       builder.topics(mongo.getTopics());
     if (mongo.getComments() != null)
       builder.comments(mongo.getComments());
-    if (entity.getResources() != null)
+    if (resources != null && resources.isEmpty())
       builder.resources(resourceMapper.toSnapshotList(resources));
-
     return builder.build();
   }
 
@@ -65,13 +64,13 @@ public class SnapshotMapperImpl implements SnapshotMapper {
     builder.projectId(projectId);
     builder.sprintId(sprintId);
     builder.issues(issueMap.entrySet()
-                           .stream()
-                           .map((en) -> toIssueSnapshot(en.getKey(), en.getValue(), mapResources.get(en.getKey()
-                                                                                                       .getId()),
-                                                        relationships
+      .stream()
+      .map((en) -> toIssueSnapshot(en.getKey(), en.getValue(),
+        mapResources.get(en.getKey().getId()),
+        relationships
 
-                                                       ))
-                           .toList());
+      ))
+      .toList());
     return builder.build();
   }
 }

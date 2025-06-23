@@ -3,6 +3,7 @@ import { ResponseApi } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import {
   CreateProjectRequest,
+  InviteStudentProjectRequestType,
   ProjectDetailResponse,
   ProjectResponse
 } from '@/types/project.type'
@@ -37,6 +38,14 @@ const projectService = {
     const response = await httpService.get<
       ResponseApi<ResourceOfSprintResponseType>
     >(`/project/${projectId}/${sprintId}/resource`)
+
+    return response.data.data
+  },
+  inviteStudentToWProject: async (req: InviteStudentProjectRequestType) => {
+    const response = await httpService.post<
+      ResponseApi<ResourceOfSprintResponseType>,
+      InviteStudentProjectRequestType
+    >(`/project/invite`, req)
 
     return response.data.data
   }

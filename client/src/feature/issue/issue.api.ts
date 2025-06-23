@@ -104,8 +104,24 @@ const issueApi = createApi({
           return { error }
         }
       },
-      invalidatesTags: (_, __, { id }) => {
-        return [{ type: 'Issues', id: id }]
+      invalidatesTags: (_, error, { id }) => {
+        return error ? [] : [{ type: 'Issues', id: id }]
+      }
+    }),
+    reopenIssue: builder.mutation<undefined, Id>({
+      async queryFn(arg) {
+        try {
+          const data = await issueService.reopenIssue(arg)
+          if (data) {
+            return { data: undefined }
+          }
+          return { error: undefined }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, id) => {
+        return error ? [] : [{ type: 'Issues', id: id }]
       }
     })
   })
@@ -118,5 +134,6 @@ export const {
   useGetIssueQuery,
   useLazyGetIssueQuery,
   useUpdateIssueMutation,
-  useLazyGetListIssueQuery
+  useLazyGetListIssueQuery,
+  useReopenIssueMutation
 } = issueApi

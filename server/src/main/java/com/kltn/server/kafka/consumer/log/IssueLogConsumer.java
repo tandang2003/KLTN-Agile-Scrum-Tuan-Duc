@@ -27,30 +27,30 @@ public class IssueLogConsumer {
                 .build();
         changeLogRepository.save(projectLog);
     }
-
-    @KafkaListener(topics = "task-log", groupId = "task-log-1")
-    public void createTask2(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change((LogTask) project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
-
-    @KafkaListener(topics = "task-log", groupId = "task-log-1")
-    public void createTask3(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change((LogTask) project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
+//
+//    @KafkaListener(topics = "task-log", groupId = "task-log-1")
+//    public void createTask2(ChangeLogRequest project) {
+//        var projectLog = ChangeLog.builder()
+//                .type(project.type())
+//                .idRef(project.idRef())
+//                .entityTarget(project.entityTarget())
+//                .change((LogTask) project.change())
+//                .propertiesTargets(project.propertiesTargets())
+//                .build();
+//        changeLogRepository.save(projectLog);
+//    }
+//
+//    @KafkaListener(topics = "task-log", groupId = "task-log-1")
+//    public void createTask3(ChangeLogRequest project) {
+//        var projectLog = ChangeLog.builder()
+//                .type(project.type())
+//                .idRef(project.idRef())
+//                .entityTarget(project.entityTarget())
+//                .change((LogTask) project.change())
+//                .propertiesTargets(project.propertiesTargets())
+//                .build();
+//        changeLogRepository.save(projectLog);
+//    }
 
 
 }

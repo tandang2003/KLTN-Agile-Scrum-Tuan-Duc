@@ -44,7 +44,8 @@ spring:
               packages: send_project_customer, send_mail
             type:
               mapping: "project-created: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
-    bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+    bootstrap-servers: localhost:9092
+#    , localhost:9093, localhost:9094
 
 springdoc:
   swagger-ui:

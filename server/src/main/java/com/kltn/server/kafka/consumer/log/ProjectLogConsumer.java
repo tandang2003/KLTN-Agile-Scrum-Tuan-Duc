@@ -28,27 +28,27 @@ public class ProjectLogConsumer {
         changeLogRepository.save(projectLog);
     }
 
-    @KafkaListener(topics = "project-created", groupId = "create-1")
-    public void consumeObj2(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change(project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
+//    @KafkaListener(topics = "project-created", groupId = "create-1")
+//    public void consumeObj2(ChangeLogRequest project) {
+//        var projectLog = ChangeLog.builder()
+//                .type(project.type())
+//                .idRef(project.idRef())
+//                .entityTarget(project.entityTarget())
+//                .change(project.change())
+//                .propertiesTargets(project.propertiesTargets())
+//                .build();
+//        changeLogRepository.save(projectLog);
+//    }
 
-    @KafkaListener(topics = "project-created", groupId = "create-1")
-    public void consumeObj3(ChangeLogRequest project) {
-        var projectLog = ChangeLog.builder()
-                .type(project.type())
-                .idRef(project.idRef())
-                .entityTarget(project.entityTarget())
-                .change(project.change())
-                .propertiesTargets(project.propertiesTargets())
-                .build();
-        changeLogRepository.save(projectLog);
-    }
+//    @KafkaListener(topics = "project-created", groupId = "create-1")
+//    public void consumeObj3(ChangeLogRequest project) {
+//        var projectLog = ChangeLog.builder()
+//                .type(project.type())
+//                .idRef(project.idRef())
+//                .entityTarget(project.entityTarget())
+//                .change(project.change())
+//                .propertiesTargets(project.propertiesTargets())
+//                .build();
+//        changeLogRepository.save(projectLog);
+//    }
 }

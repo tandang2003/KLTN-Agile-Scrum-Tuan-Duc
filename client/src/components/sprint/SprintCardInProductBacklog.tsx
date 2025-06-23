@@ -11,7 +11,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
+import {
+  useReopenIssueMutation,
+  useUpdateIssueMutation
+} from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
@@ -29,6 +32,7 @@ const SprintCardInProductBacklog = ({
 }: SprintCardInProductBacklogProps) => {
   const { workspaceId } = useAppId()
   const [update] = useUpdateIssueMutation()
+  const [reopen] = useReopenIssueMutation()
   const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
@@ -46,7 +50,7 @@ const SprintCardInProductBacklog = ({
             projectId: item.projectId,
             sprintId: sprintId,
             issueId: item.id,
-            status: 'BACKLOG'
+            status: 'TODO'
           })
           .then(() => {
             toast.message(`Issue ${item.name} moved to sprint successfully`)
@@ -59,7 +63,18 @@ const SprintCardInProductBacklog = ({
       })
   }
 
-  const handleReopen = () => {}
+  const handleReopen = () => {
+    reopen(item.id)
+      .unwrap()
+      .then(() => {
+        toast.message(`Issue ${item.name} reopened successfully`)
+      })
+      .catch((err) => {
+        if (err.status === HttpStatusCode.Conflict)
+          toast.error('Issue is not in DONE status, cannot reopen')
+        else toast.error('Another error occurred while reopening issue')
+      })
+  }
 
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>

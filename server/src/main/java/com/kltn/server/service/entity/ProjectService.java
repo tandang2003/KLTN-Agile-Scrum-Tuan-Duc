@@ -280,7 +280,7 @@ public class ProjectService {
             .truncatedTo(ChronoUnit.DAYS);
         if ((start.isBefore(now) || start.equals(now)) && (end.isAfter(now) || end.equals(now))) {
           return sprint;
-        } else if (now.isBefore(start) && days <= start.until(now)
+        } else if (now.isBefore(start) && days >= start.until(now)
             .toDays()) {
           days = start.until(now)
               .toDays();

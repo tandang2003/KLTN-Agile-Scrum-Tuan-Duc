@@ -10,12 +10,10 @@ import { toast } from 'sonner'
 
 const appAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
-  // timeout: 5000,
   withCredentials: true
 })
 const manualAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
-  timeout: 1000,
   withCredentials: true
 })
 
@@ -88,35 +86,44 @@ appAxios.interceptors.response.use(
       }
 
       case HttpStatusCode.Unauthorized: {
+        const error = err as AxiosError<ResponseApiError>
+        const messageBody: string =
+          error.response?.data.message ?? 'Server Error'
         // prevent infinite loop
         const originalRequest: any = err.config
-        if (originalRequest._retry) {
-          toast.error('Session expired. Please login again.')
-          return Promise.reject(err)
-        }
-        originalRequest._retry = true
 
-        try {
-          const response = await authService.refresh()
-          if (response.code >= 400) {
-            toast.error('Refresh token is expired')
+        if (messageBody === 'Invalid credentials') {
+          if (originalRequest._retry) {
+            toast.error('Session expired. Please login again.')
+            originalRequest._retry = false
             return Promise.reject(err)
-          } else {
-            const newToken = response.data.access_token
-
-            if (!err.config) {
-              return Promise.reject(err)
-            }
-
-            err.config.headers = err.config.headers || {}
-            err.config.headers['Authorization'] = `Bearer ${newToken}`
-
-            return appAxios(err.config)
           }
-        } catch (refreshErr) {
-          toast.error('Failed to refresh session')
-          return Promise.reject(refreshErr)
+          originalRequest._retry = true
+
+          try {
+            const response = await authService.refresh()
+            if (response.code >= 400) {
+              toast.error('Refresh token is expired')
+              return Promise.reject(err)
+            } else {
+              const newToken = response.data.access_token
+
+              if (!err.config) {
+                return Promise.reject(err)
+              }
+
+              err.config.headers = err.config.headers || {}
+              err.config.headers['Authorization'] = `Bearer ${newToken}`
+
+              return appAxios(err.config)
+            }
+          } catch (refreshErr) {
+            toast.error('Failed to refresh session')
+            return Promise.reject(refreshErr)
+          }
         }
+
+        return Promise.reject(err)
       }
 
       case HttpStatusCode.Forbidden: {

@@ -42,6 +42,12 @@ const WorkspacePage = () => {
         loadingItems={{
           items: 10
         }}
+        emptyComponent={
+          <div className='flex flex-col items-center justify-center bg-gray-100 py-5'>
+            <Icon icon={'lucide:folder-x'} className='mb-4 text-4xl' />
+            <p className='text-muted-foreground'>No workspaces found</p>
+          </div>
+        }
         display='grid'
         className='grid-cols-3 gap-10'
         render={(item) => (
