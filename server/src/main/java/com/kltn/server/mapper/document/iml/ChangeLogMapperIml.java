@@ -26,7 +26,9 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
     changeLogBuilder.type(LogType.CREATE)
                     .idRef(task.getId())
                     .entityTarget(EntityTarget.TASK.name())
-                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+                    .change(logTaskMapper.entityToLogDomain(task, issueMongo))
+
+    ;
     return changeLogBuilder.build();
   }
 

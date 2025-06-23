@@ -5,6 +5,7 @@ import com.kltn.server.DTO.request.entity.sprint.SprintStudentUpdateTimeRequest;
 import com.kltn.server.DTO.request.entity.sprint.SprintTeacherUpdateTimeRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.entity.SprintMapper;
@@ -99,7 +100,7 @@ public class SprintService {
 
     public ApiResponse<SprintResponse> teacherUpdateSprint(SprintTeacherUpdateTimeRequest updateRequest) {
         Sprint sprint = getSprintById(updateRequest.id());
-        Instant now = Instant.now()
+        Instant now = ClockSimulator.now()
                              .truncatedTo(ChronoUnit.MINUTES);
         Instant start = sprint.getDtStart()
                               .truncatedTo(ChronoUnit.MINUTES);
@@ -178,8 +179,8 @@ public class SprintService {
                                         .orElseThrow(() -> AppException.builder()
                                                                        .error(Error.NOT_FOUND)
                                                                        .build());
-        Instant now = Instant.now()
-                             .truncatedTo(ChronoUnit.MINUTES);
+        Instant now = ClockSimulator.now()
+                                    .truncatedTo(ChronoUnit.MINUTES);
         Instant start = sprint.getDtStart()
                               .truncatedTo(ChronoUnit.MINUTES);
         Instant end = sprint.getDtEnd()

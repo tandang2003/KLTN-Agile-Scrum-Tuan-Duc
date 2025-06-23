@@ -2,6 +2,7 @@ package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.comment.CommentCreateRequest;
 import com.kltn.server.DTO.response.base.CommentResponse;
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.config.websocket.UserPrinciple;
 import com.kltn.server.service.mongo.CommentService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -37,7 +38,7 @@ public class CommentController {
     commentService.saveComment(issueId, userId, message.getContent());
     // send to /topic/room/{roomId}
     System.out.println("sent");
-    return new CommentResponse(userId, message.getContent(), Instant.now());
+    return new CommentResponse(userId, message.getContent(), ClockSimulator.now());
   }
 
   @GetMapping("/comments/{issueId}")

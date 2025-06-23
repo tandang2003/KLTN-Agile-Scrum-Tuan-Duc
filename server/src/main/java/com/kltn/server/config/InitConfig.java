@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -31,7 +32,6 @@ import org.springframework.security.oauth2.jwt.*;
 
 @Configuration
 @EnableAspectJAutoProxy
-@EnableJpaAuditing
 public class InitConfig {
 
   private TokenKeyUtils tokenKeyUtils;
