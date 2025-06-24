@@ -21,7 +21,7 @@ public class SchedularRunInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(java.time.Instant.now());
+        List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(ClockSimulator.now());
         sprints.forEach(sprint -> {
             sprintScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtEnd().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
         });

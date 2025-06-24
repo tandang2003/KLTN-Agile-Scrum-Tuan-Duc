@@ -42,8 +42,6 @@ const BoardPage = () => {
 
   useEffect(() => {
     if (projectId && sprintId) {
-      console.log('data', projectId, sprintId)
-
       boardService
         .getPositionBySprint({
           projectId: projectId,

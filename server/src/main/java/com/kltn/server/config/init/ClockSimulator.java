@@ -2,25 +2,40 @@ package com.kltn.server.config.init;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 public class ClockSimulator {
-  private Instant realTime;
-  private Instant simulatedTime;
-  private volatile long timeSpeech;
+  private static Instant realTime;
+  private static Instant simulatedTime;
+  private static volatile long timeSpeech;
+  private static ZoneId asiaHoChiMinh = ZoneId.of("Asia/Ho_Chi_Minh");
+
   public ClockSimulator(long timeSpeech) {
-    this.realTime = Instant.now();
-    this.simulatedTime = Instant.now();
-    this.timeSpeech = timeSpeech;
+    realTime = getInstantFromLocalDateTime();
+    simulatedTime = getInstantFromLocalDateTime();
+    ClockSimulator.timeSpeech = timeSpeech;
   }
-  public void setTimeSpeech(long newSpeech) {
+
+  public static void setTimeSpeech(long newSpeech) {
     // cập nhật thời gian ảo hiện tại trước
     simulatedTime = now();
-    realTime = Instant.now();
-    this.timeSpeech = newSpeech;
+    realTime = getInstantFromLocalDateTime();
+    timeSpeech = newSpeech;
   }
-  public Instant now() {
-    long realElapsedMillis = Duration.between(realTime, Instant.now()).toSeconds();
+
+  public static Instant now() {
+    long realElapsedMillis = Duration.between(realTime, getInstantFromLocalDateTime()).toSeconds();
     long simulatedElapsedMillis = realElapsedMillis * timeSpeech;
     return simulatedTime.plusSeconds(simulatedElapsedMillis);
+  }
+
+  private static Instant getInstantFromLocalDateTime() {
+    return LocalDateTime.now(asiaHoChiMinh).toInstant(ZoneOffset.UTC);
+  }
+
+  public static long getTimeSpeech() {
+    return timeSpeech;
   }
 }

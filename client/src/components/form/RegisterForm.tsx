@@ -19,7 +19,7 @@ import { HttpStatusCode } from 'axios'
 import { ValidationError } from '@/types/http.type'
 import { handleErrorApi } from '@/lib/form'
 import { toast } from 'sonner'
-import { NavLink, redirect } from 'react-router-dom'
+import { NavLink, redirect, useNavigate } from 'react-router-dom'
 
 const RegisterForm = ({
   className,
@@ -28,6 +28,7 @@ const RegisterForm = ({
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema)
   })
+  const navigate = useNavigate()
 
   const onSubmit = async (value: RegisterSchemaType) => {
     try {
@@ -37,14 +38,11 @@ const RegisterForm = ({
         password: value.password
       })
       if (data) {
-        toast.success('Register success, please login', {
-          action: {
-            label: 'Success',
-            onClick: () => {
-              redirect('/auth/login')
-            }
-          }
+        toast.success('Register success, please login')
+        navigate('/auth/login', {
+          replace: true
         })
+        return
       }
     } catch (e: any) {
       if (e instanceof ValidationError) {

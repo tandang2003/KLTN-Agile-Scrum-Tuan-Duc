@@ -1,6 +1,7 @@
 package com.kltn.server.service;
 
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.model.aggregate.IssueModel;
@@ -38,7 +39,7 @@ public class DecisionService {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
     Instant start = sprint.getDtStart();
-    Instant now = Instant.now();
+    Instant now = ClockSimulator.now();
     if (start.isAfter(now)) {
       throw AppException.builder()
                         .error(Error.SPRINT_CONFLICT_TIME)

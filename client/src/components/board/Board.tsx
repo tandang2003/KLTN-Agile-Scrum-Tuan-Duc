@@ -301,7 +301,6 @@ const Board = ({ data: board, onMove, disabled = false }: BoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
-      disabled={disabled}
     >
       <div className='flex bg-transparent'>
         {Object.entries(data.columns).map(([columnId, column]) => {

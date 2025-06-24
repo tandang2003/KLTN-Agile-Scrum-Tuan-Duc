@@ -65,6 +65,13 @@ const issueService = {
       CreateRelationshipIssueRequest
     >(`/issue/relation`, req)
     return res.data.data
+  },
+  reopenIssue: async (issueId: Id): Promise<boolean> => {
+    const res = await httpService.put<ResponseApi<boolean>, void>(
+      `/issue/${issueId}/reopen`,
+      undefined
+    )
+    return res.data.data
   }
 }
 export default issueService
