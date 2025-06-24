@@ -19,7 +19,9 @@ public class IssueLogConsumer {
   }
 
   @KafkaListener(topics = "task-log", groupId = "task-log-1")
-  public void createTask1(ChangeLogRequest project) {
+  public void createTask1(@Payload ChangeLogRequest project, @Header("X-Auth-User") String user) {
+    SecurityContextHolder.getContext()
+        .setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
     var projectLog = ChangeLog.builder()
         .type(project.type())
         .idRef(project.idRef())
@@ -27,7 +29,8 @@ public class IssueLogConsumer {
         .change(project.change())
         .propertiesTargets(project.propertiesTargets())
         .build();
-    changeLogRepository.save(projectLog);
+    projectLog = changeLogRepository.save(projectLog);
+    System.out.println(projectLog);
   }
   //
   // @KafkaListener(topics = "task-log", groupId = "task-log-1")

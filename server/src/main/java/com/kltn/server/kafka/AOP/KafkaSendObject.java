@@ -11,7 +11,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,8 +25,8 @@ public class KafkaSendObject<T> {
   private KafkaTemplate<String, Object> kafkaTemplate;
 
   @AfterReturning(pointcut = "@annotation(com.kltn.server.kafka.SendKafkaEvent)",
-                  returning = "result",
-                  argNames = "joinPoint,result")
+    returning = "result",
+    argNames = "joinPoint,result")
   public void sendKafkaEvent(JoinPoint joinPoint, Object result) {
     ApiResponse<?> apiResponse = (ApiResponse<?>) result;
     if (apiResponse.getLogData() != null) {
@@ -35,24 +34,27 @@ public class KafkaSendObject<T> {
       Method method = signature.getMethod();
       SendKafkaEvent sendKafkaEvent = method.getAnnotation(SendKafkaEvent.class);
       String curUser = SecurityContextHolder.getContext()
-                                            .getAuthentication()
-                                            .getPrincipal()
-                                            .toString();
+        .getAuthentication()
+        .getPrincipal()
+        .toString();
       Object logData = apiResponse.getLogData() != null ? apiResponse.getLogData() : apiResponse.getData();
 //            try {
       Message<Object> message = MessageBuilder.withPayload(logData)
-                                              .setHeader(KafkaHeaders.TOPIC, sendKafkaEvent.topic())
-                                              .setHeader("X-Auth-User", curUser)
-                                              .build();
-      CompletionStage<SendResult<String, Object>> sendResult = kafkaTemplate.send(message);
+        .setHeader("X-Auth-User", curUser)
+        .build();
+
+      CompletionStage<SendResult<String, Object>> sendResult = kafkaTemplate.send(
+        sendKafkaEvent.topic(),
+        message.getPayload()  // just the payload
+      );
       sendResult.whenComplete((re, ex) -> {
-                  System.out.println("Sent message=[" + logData + "] to with offset=[" + re.getRecordMetadata()
-                                                                                           .offset() + "]");
-                })
-                .exceptionally(e -> {
-                  System.out.println("Unable to send message=[" + logData + "] due to : " + e.getMessage());
-                  return null;
-                });
+          System.out.println("Sent message=[" + logData + "] to with offset=[" + re.getRecordMetadata()
+            .offset() + "]");
+        })
+        .exceptionally(e -> {
+          System.out.println("Unable to send message=[" + logData + "] due to : " + e.getMessage());
+          return null;
+        });
 //            } catch (Exception e) {
 //                System.out.println("ERROR :  " + e.getMessage());
 //            }

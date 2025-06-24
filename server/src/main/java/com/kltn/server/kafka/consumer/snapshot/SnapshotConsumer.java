@@ -46,7 +46,9 @@ public class SnapshotConsumer {
 
   @KafkaListener(topics = "snapshot", groupId = "snapshot-1")
   @Transactional
-  public void consumeSnapshot1(SnapshotRequest snapshotRequest) {
+  public void consumeSnapshot1(@Payload SnapshotRequest snapshotRequest, @Header("X-Auth-User") String user) {
+    SecurityContextHolder.getContext()
+        .setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
     boolean flag = projectSprintRepository.existsById(ProjectSprintId.builder()
         .projectId(snapshotRequest.getProjectId())
         .sprintId(snapshotRequest.getSprintId())
@@ -91,7 +93,6 @@ public class SnapshotConsumer {
         // });
       }
     }
-
   }
 
   // @KafkaListener(topics = "snapshot",

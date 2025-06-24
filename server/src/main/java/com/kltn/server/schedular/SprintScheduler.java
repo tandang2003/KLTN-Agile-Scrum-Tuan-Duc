@@ -3,6 +3,7 @@ package com.kltn.server.schedular;
 import com.kltn.server.DTO.request.kafka.SnapshotRequest;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -27,17 +29,16 @@ import java.util.concurrent.ScheduledFuture;
 public class SprintScheduler {
   private ProjectSprintRepository projectSprintRepository;
   private final TaskScheduler taskScheduler;
-  //  private final Map<String, ScheduledFuture<?>> tasks;
+  // private final Map<String, ScheduledFuture<?>> tasks;
   private KafkaTemplate<String, Object> kafkaTemplate;
   private ClockSimulator clockSimulator;
 
   private final Map<String, ScheduledFuture<?>> tasks;
   private final Map<String, LocalDateTime> taskEndTimes;
 
-
   @Autowired
   public SprintScheduler(ClockSimulator clockSimulator, ProjectSprintRepository projectSprintRepository,
-                         TaskScheduler taskScheduler, KafkaTemplate<String, Object> kafkaTemplate) {
+      TaskScheduler taskScheduler, KafkaTemplate<String, Object> kafkaTemplate) {
     this.clockSimulator = clockSimulator;
     this.taskScheduler = taskScheduler;
     this.kafkaTemplate = kafkaTemplate;
@@ -55,19 +56,19 @@ public class SprintScheduler {
       sendMessage(sprintId, projectId);
     };
     Instant end = endTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
-                         .toInstant();
+        .toInstant();
     if (clockSimulator.now()
-                      .isAfter(end)) {
-//      kafkaTemplate.send("snapshot", SnapshotRequest.builder()
-//                                                    .projectId(projectId)
-//                                                    .sprintId(sprintId)
-//                                                    .build());
+        .isAfter(end)) {
+      // kafkaTemplate.send("snapshot", SnapshotRequest.builder()
+      // .projectId(projectId)
+      // .sprintId(sprintId)
+      // .build());
       sendMessage(projectId, sprintId);
       return;
     }
 
     long delay = Duration.between(clockSimulator.now(), end)
-                         .getSeconds();
+        .getSeconds();
     delay = Math.max(0, delay);
     long timeSpeech = clockSimulator.getTimeSpeech();
     Instant now = clockSimulator.now();
@@ -81,7 +82,7 @@ public class SprintScheduler {
   public synchronized void scheduleSprintEnd(String sprintId, LocalDateTime endTime) {
     try {
       List<String> projectIds = projectSprintRepository.findProjectIdBySprintId(sprintId)
-                                                       .orElseThrow(() -> new RuntimeException("Sprint not found"));
+          .orElseThrow(() -> new RuntimeException("Sprint not found"));
 
       for (String projectId : projectIds) {
         scheduleSprintWithProject(sprintId, projectId, endTime);
@@ -111,7 +112,7 @@ public class SprintScheduler {
 
     for (Map.Entry<String, LocalDateTime> entry : savedTasks.entrySet()) {
       String[] ids = entry.getKey()
-                          .split(":");
+          .split(":");
       String sprintId = ids[0];
       String projectId = ids[1];
       scheduleSprintWithProject(sprintId, projectId, entry.getValue());
@@ -124,16 +125,16 @@ public class SprintScheduler {
 
   private void sendMessage(String projectId, String sprintId) {
     String curUser = SecurityContextHolder.getContext()
-                                          .getAuthentication()
-                                          .getPrincipal()
-                                          .toString();
+        .getAuthentication()
+        .getPrincipal()
+        .toString();
     Message<SnapshotRequest> message = MessageBuilder.withPayload(SnapshotRequest.builder()
-                                                                                 .projectId(projectId)
-                                                                                 .sprintId(sprintId)
-                                                                                 .build())
-                                                     .setHeader(KafkaHeaders.TOPIC, "snapshotConsumer")
-                                                     .setHeader("X-Auth-User", curUser)
-                                                     .build();
+        .projectId(projectId)
+        .sprintId(sprintId)
+        .build())
+        .setHeader(KafkaHeaders.TOPIC, "snapshotConsumer")
+        .setHeader("X-Auth-User", curUser)
+        .build();
     kafkaTemplate.send("snapshot", message);
   }
 }

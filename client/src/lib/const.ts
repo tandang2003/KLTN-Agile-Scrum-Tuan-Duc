@@ -70,7 +70,8 @@ export enum StorageItem {
   AccessToken = 'accessToken',
   ProjectIdLatest = 'projectIdLatest',
   ProjectToken = 'projectToken',
-  FilterSprintBoard = 'filterSprintBoard'
+  FilterSprintBoard = 'filterSprintBoard',
+  Simulator = 'simulator'
 }
 export const HOME_PATH = '/'
 export const LOGIN_PATH = '/auth/login'
