@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
 import {
@@ -19,7 +20,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useSimulatedClock } from '@/hooks/use-simulated-clock'
-import { formatDate } from '@/lib/utils'
 import simulatorService from '@/services/simulator.service'
 import {
   ClockSimulatorSchema,
@@ -47,7 +47,6 @@ const ClockSimulator = () => {
   })
   useEffect(() => {
     simulatorService.getSimulator().then((data) => {
-      console.log('Simulator data:', data)
       setInitTime(new Date(data.now))
       setTimeSpeech(data.timeSpeech)
       form.reset({
@@ -64,7 +63,6 @@ const ClockSimulator = () => {
 
   const handleSubmit = (values: ClockSimulatorType) => {
     simulatorService.setSimulator(values).then((date) => {
-      console.log('Simulator time set to:', date, values)
       setInitTime(new Date(date))
       setTimeSpeech(values.timeSpeech)
 
@@ -86,7 +84,8 @@ const ClockSimulator = () => {
           <p>{simulatedTime.toISOString()}</p>
         </div>
       </DialogTrigger>
-      <DialogContent className='top-1/4'>
+      <DialogContent className='top-1/4' aria-describedby={undefined}>
+        <DialogTitle />
         <DialogHeader>
           <h3 className='h3'>Simulator time</h3>
         </DialogHeader>

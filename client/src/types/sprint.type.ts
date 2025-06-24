@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 const BaseSprintFormSchema = z.object({
   title: stringSchema(),
-  storyPoint: z.number().positive(),
+  storyPoint: z.coerce.number().positive(),
   start: z.date(),
   predict: z.date(),
   end: z.date()
@@ -45,13 +45,16 @@ type SprintResponse = SprintModel
 
 type SprintWorkspaceDataTable = SprintModel
 
+type SprintOverview = Pick<SprintModel, 'id' | 'start' | 'end'>
+
 export { BaseSprintFormSchema, CreateSprintFormSchema, UpdateSprintFormSchema }
 export type {
-  BaseSprintFormType, CreateSprintFormType,
+  BaseSprintFormType,
+  CreateSprintFormType,
   CreateSprintRequest,
   SprintResponse,
   SprintWorkspaceDataTable,
   UpdateSprintFormType,
-  UpdateSprintRequest
+  UpdateSprintRequest,
+  SprintOverview
 }
-

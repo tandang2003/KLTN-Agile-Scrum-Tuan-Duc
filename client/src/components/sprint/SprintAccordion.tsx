@@ -42,11 +42,12 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
       {sortSprintsByDateStart(sprints).map((item, index) => {
         return (
           <Accordion
+            key={item.id}
             type='single'
             collapsible
             className='bg-accent w-full px-2'
           >
-            <AccordionItem key={item.id} value={item.id}>
+            <AccordionItem value={item.id}>
               <AccordionTrigger
                 value={item.id}
                 className='gap-2'

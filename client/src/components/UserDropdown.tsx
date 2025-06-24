@@ -1,5 +1,6 @@
 import LogoutButton from '@/components/LogoutButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -43,8 +44,8 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
             </AvatarFallback>
           </Avatar>
           <div className='grid flex-1 text-left text-sm leading-tight'>
-            <span className='truncate font-medium'>{user?.name ?? ''}</span>
-            <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
+            <span className='truncate font-medium'>{user.name ?? ''}</span>
+            <span className='truncate text-xs'>#{user.uniId ?? ''}</span>
           </div>
           <ChevronsUpDown className='ml-auto size-4' />
         </Button>
@@ -67,6 +68,9 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
               <span className='truncate font-medium'>{user?.name ?? ''}</span>
               <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
             </div>
+          </div>
+          <div className='px-2'>
+            <Badge className='w-full'>{user.role}</Badge>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

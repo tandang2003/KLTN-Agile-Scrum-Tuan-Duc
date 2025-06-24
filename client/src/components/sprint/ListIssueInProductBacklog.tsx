@@ -23,6 +23,7 @@ const ListIssueInProductBacklog = () => {
       skip: !projectId
     }
   )
+  console.log('projectId', projectId)
 
   return (
     <ListView<IssueResponse>

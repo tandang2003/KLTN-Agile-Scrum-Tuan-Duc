@@ -26,9 +26,12 @@ const ProjectPage = () => {
 
   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    if (projectId) dispatch(setProjectCurrent(projectId))
-  }, [projectId, dispatch])
+  // useEffect(() => {
+  //   if (projectId) {
+  //     console.log('setProjectCurrent', projectId)
+  //     dispatch(setProjectCurrent(projectId))
+  //   }
+  // }, [projectId, dispatch])
 
   useEffect(() => {
     if (data?.currentSprint) {

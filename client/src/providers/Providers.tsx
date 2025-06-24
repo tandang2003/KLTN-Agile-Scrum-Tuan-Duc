@@ -13,9 +13,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
       <StateLoader loading={<Loading />}>
         <Toaster expand={true} richColors position='bottom-right' />
         <AlertHost />
-        <RequiredAuthNoRedirect>
-          <ClockSimulator />
-        </RequiredAuthNoRedirect>
+
         {children}
       </StateLoader>
     </AppGlobalState>

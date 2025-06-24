@@ -13,16 +13,16 @@ import {
   SidebarTrigger
 } from '@/components/ui/sidebar'
 import UserDropdown from '@/components/UserDropdown'
-import { useAppSelector } from '@/context/redux/hook'
-import { RootState } from '@/context/redux/store'
+import { useGetListWorkspaceQuery } from '@/feature/workspace/workspace.api'
 
 function AppSidebar({
   children,
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const { listItemSideBar } = useAppSelector(
-    (state: RootState) => state.workspaceSlice
-  )
+  const { data: workspaces } = useGetListWorkspaceQuery({
+    page: 0,
+    size: 1
+  })
 
   const data = React.useMemo(() => {
     return {
@@ -57,7 +57,7 @@ function AppSidebar({
             url: '/manager/workspace',
             icon: <Icon icon={'carbon:workspace'} />,
             items:
-              listItemSideBar
+              workspaces?.items
                 ?.filter((item) => item)
                 .map(
                   (item) =>
@@ -66,11 +66,6 @@ function AppSidebar({
                       url: `/manager/workspace/${item.id}`
                     }
                 ) ?? []
-          },
-          {
-            title: 'Project',
-            url: '/manager/workspace/project/1',
-            icon: <Icon icon={'ant-design:project-twotone'} />
           }
         ]
       },
@@ -83,7 +78,7 @@ function AppSidebar({
         ]
       }
     }
-  }, [listItemSideBar])
+  }, [workspaces])
 
   return (
     <SidebarProvider defaultOpen={false}>
