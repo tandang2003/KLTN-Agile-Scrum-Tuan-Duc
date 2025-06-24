@@ -35,7 +35,7 @@ const ListIssueInProductBacklog = () => {
       }
       className={cn('gap-3')}
       render={(item) => {
-        return <SprintCardInProductBacklog data={item} />
+        return <SprintCardInProductBacklog key={item.id} data={item} />
       }}
       append={
         <RequiredAuth mode='hide' roles={['student']}>

@@ -2,11 +2,14 @@ package com.kltn.server.model.collection;
 
 import com.kltn.server.model.collection.model.ILog;
 import com.kltn.server.model.type.task.LogType;
+import jakarta.persistence.EntityListeners;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -14,6 +17,8 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
 
+@Document
+@EntityListeners(AuditingEntityListener.class)
 public class ChangeLog {
   @Field
   private LogType type;
@@ -191,5 +196,53 @@ public class ChangeLog {
 
   public void setChange(ILog change) {
     this.change = change;
+  }
+
+  public ObjectId getId() {
+    return id;
+  }
+
+  public void setId(ObjectId id) {
+    this.id = id;
+  }
+
+  public Instant getDTCreated() {
+    return DTCreated;
+  }
+
+  public void setDTCreated(Instant DTCreated) {
+    this.DTCreated = DTCreated;
+  }
+
+  public Instant getDTDeleted() {
+    return DTDeleted;
+  }
+
+  public void setDTDeleted(Instant DTDeleted) {
+    this.DTDeleted = DTDeleted;
+  }
+
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public String getDeletedBy() {
+    return deletedBy;
+  }
+
+  public void setDeletedBy(String deletedBy) {
+    this.deletedBy = deletedBy;
   }
 }

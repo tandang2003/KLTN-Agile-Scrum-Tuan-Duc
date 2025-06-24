@@ -6,7 +6,6 @@ import {
 } from '@/components/ui/navigation-menu'
 import { Link, useLocation } from 'react-router-dom'
 import { Id } from '@/types/other.type'
-import { cn } from '@/lib/utils'
 
 type ProjectNavigationProps = {
   id: Id

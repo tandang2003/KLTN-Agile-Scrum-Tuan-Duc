@@ -1,5 +1,9 @@
+import Icon from '@/components/Icon'
 import LoadingBoundary from '@/components/LoadingBoundary'
+import ProjectHeader from '@/components/project/ProjetcHeader'
+
 import { Skeleton } from '@/components/ui/skeleton'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import SectionContainer from '@/components/wrapper/SectionContainer'
 import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintIdFilter } from '@/feature/board/board.slice'
@@ -49,10 +53,7 @@ const ProjectPage = () => {
       >
         {(data) => (
           <>
-            <div className='rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 pb-2 text-white'>
-              <span className='text-sm'>{data.id}</span>
-              <h2 className='h2'>{data.name}</h2>
-            </div>
+            <ProjectHeader data={data} />
 
             <div className='pt-2 pb-4'>
               <ProjectNavigation id={data.id} />

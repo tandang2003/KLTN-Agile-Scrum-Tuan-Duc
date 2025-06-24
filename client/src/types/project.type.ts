@@ -30,12 +30,19 @@ type TokenProject = {
   projectId?: Id
 }
 
+type InviteStudentProjectRequestType = {
+  workspaceId: Id
+  projectId: Id
+  userId: Id[]
+}
+
 export type {
   CreateProjectFormType,
   ProjectResponse,
   CreateProjectRequest,
   TokenProjectResponse,
   ProjectDetailResponse,
-  TokenProject
+  TokenProject,
+  InviteStudentProjectRequestType
 }
 export { CreateProjectForm }

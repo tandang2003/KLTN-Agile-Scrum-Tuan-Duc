@@ -21,7 +21,6 @@ public interface ProjectSprintRepository extends JpaRepository<ProjectSprint, Pr
     @Query(value = "INSERT INTO project_sprint (project_id, sprint_id) VALUES (:projectId, :sprintId)", nativeQuery = true)
     void save(@Param("projectId") String projectId, @Param("sprintId") String sprintId);
 
-    @Modifying
     @Transactional
     @Query(value = "select project_id from project_sprint where sprint_id = :sprintId", nativeQuery = true)
     Optional<List<String>> findProjectIdBySprintId(String sprintId);

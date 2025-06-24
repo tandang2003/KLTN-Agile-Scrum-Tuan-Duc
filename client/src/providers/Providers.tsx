@@ -1,5 +1,7 @@
 import AlertHost from '@/components/AleartHost'
+import ClockSimulator from '@/components/ClockSimulator'
 import Loading from '@/components/Loading'
+import RequiredAuthNoRedirect from '@/components/wrapper/RequiredAuthNoRedirect'
 import AppGlobalState from '@/providers/AppGlobalState'
 import StateLoader from '@/providers/StateLoader'
 import { ReactNode } from 'react'
@@ -11,6 +13,9 @@ const Providers = ({ children }: { children: ReactNode }) => {
       <StateLoader loading={<Loading />}>
         <Toaster expand={true} richColors position='bottom-right' />
         <AlertHost />
+        <RequiredAuthNoRedirect>
+          <ClockSimulator />
+        </RequiredAuthNoRedirect>
         {children}
       </StateLoader>
     </AppGlobalState>

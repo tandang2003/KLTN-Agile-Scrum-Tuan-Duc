@@ -20,7 +20,6 @@ const RenderColumn = ({ id, column, cards }: RenderColumnProps) => {
       id={id}
       items={column.cardIds}
       strategy={verticalListSortingStrategy}
-      disabled={disabled}
     >
       <div className='relative z-20 h-[90vh] shrink-0 basis-[350px] border'>
         <KanbanBoard id={id}>
