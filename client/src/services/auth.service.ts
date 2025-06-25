@@ -1,4 +1,4 @@
-import appAxios from '@/configuration/http.config'
+import appAxios, { manualAxios } from '@/configuration/http.config'
 import httpService from '@/services/http.service'
 import tokenService from '@/services/token.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
@@ -26,7 +26,7 @@ const authService = {
   refresh: async (): Promise<ResponseApi<LoginRes>> => {
     try {
       const response =
-        await appAxios.post<ResponseApi<LoginRes>>(`/auth/refresh`)
+        await manualAxios.post<ResponseApi<LoginRes>>(`/auth/refresh`)
 
       const body: ResponseApi<LoginRes> = response.data
       const { access_token } = body.data

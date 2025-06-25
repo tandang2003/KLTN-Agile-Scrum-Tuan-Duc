@@ -3,7 +3,7 @@ import { SkillRequest, SkillResponse } from '@/types/skill.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 const skillApi = createApi({
-  reducerPath: 'SkillApi',
+  reducerPath: 'skillApi',
   baseQuery: () => ({ data: {} }), // you likely want to replace this with fetchBaseQuery if not using custom service
   tagTypes: ['Skills'],
   endpoints: (builder) => ({

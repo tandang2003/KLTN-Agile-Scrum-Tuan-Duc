@@ -21,7 +21,7 @@ const DialogCreateProject = ({ open, onOpen }: DialogCreateProjectProps) => {
             account and remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
-        <CreateProjectForm />
+        <CreateProjectForm setOpenDialog={onOpen} />
       </DialogContent>
     </DialogController>
   )

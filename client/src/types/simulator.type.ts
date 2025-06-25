@@ -6,13 +6,23 @@ const ClockSimulatorSchema = z
     timeSpeech: z.coerce.number().int().positive()
   })
   .refine((data) => new Date() < data.to, {
-    message: 'Date to must be in the future'
+    message: 'Date to must be in the future',
+    path: ['to']
   })
 
-type ClockSimulatorType = z.infer<typeof ClockSimulatorSchema>
+type ClockSimulatorReqType = z.infer<typeof ClockSimulatorSchema>
 type ClockSimulatorResponseType = {
   now: Date
   timeSpeech: number
 }
+type ClockSimulatorConfigType = {
+  initTime: Date
+  timeSpeech: number
+  timeEnd?: Date
+}
 export { ClockSimulatorSchema }
-export type { ClockSimulatorType, ClockSimulatorResponseType }
+export type {
+  ClockSimulatorReqType,
+  ClockSimulatorResponseType,
+  ClockSimulatorConfigType
+}

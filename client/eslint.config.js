@@ -10,6 +10,7 @@ export default tseslint.config(
   {
     ignores: [
       'dist',
+      'node_modules/**',
       'vite.config.ts',
       'src/components/ui/**',
       'src/components/sidebar/**'
@@ -64,7 +65,7 @@ export default tseslint.config(
         }
       ],
       '@typescript-eslint/no-empty-object-type': 'error',
-      '@typescript-eslint/ban-types': [
+      '@typescript-eslint/no-restricted-types': [
         'error',
         {
           types: {
@@ -76,8 +77,7 @@ export default tseslint.config(
             Object: false,
             object: false,
             Function: false
-          },
-          extendDefaults: true
+          }
         }
       ]
     }
