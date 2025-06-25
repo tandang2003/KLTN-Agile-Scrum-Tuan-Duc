@@ -19,70 +19,118 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useSimulatedClock } from '@/hooks/use-simulated-clock'
+import {
+  useSimulatedClock,
+  UseSimulatedClockOptions
+} from '@/hooks/use-simulated-clock'
+import { formatDate } from '@/lib/utils'
 import simulatorService from '@/services/simulator.service'
 import {
-  ClockSimulatorSchema,
-  ClockSimulatorType
+  ClockSimulatorReqType,
+  ClockSimulatorSchema
 } from '@/types/simulator.type'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ReactNode, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-type ClockSimulatorProps = {
-  children: ReactNode
-}
 
 const ClockSimulator = () => {
-  const [initTime, setInitTime] = useState<Date | null>(null)
-  const [timeSpeech, setTimeSpeech] = useState<number>(1)
   const [open, setOpen] = useState(false)
-  const form = useForm<ClockSimulatorType>({
-    resolver: zodResolver(ClockSimulatorSchema),
-    defaultValues: {
-      timeSpeech: 1,
-      to: new Date()
-    }
+  const [isReset, setIsReset] = useState(false)
+  const [config, setConfig] = useState<UseSimulatedClockOptions | null>(null)
+  const form = useForm<ClockSimulatorReqType>({
+    resolver: zodResolver(ClockSimulatorSchema)
   })
+
+  const hookConfig = useMemo(() => {
+    if (!config) {
+      return {
+        initTime: new Date(),
+        timeEnd: new Date(),
+        timeSpeech: 1
+      }
+    }
+
+    return config
+  }, [config])
+
+  const simulatedTime = useSimulatedClock(hookConfig)
+
+  const ClockDisplay = useMemo(
+    () => (
+      <div className='border-accent flex items-center gap-3 rounded-md border-2 bg-white px-4 py-2 shadow-md hover:cursor-pointer'>
+        <Icon icon={'mdi:clock'} size={30} />
+        <p>{formatDate(simulatedTime, 'HH:mm:ss dd/MM/yyyy')}</p>
+      </div>
+    ),
+    [simulatedTime]
+  )
+
+  // Fetch initial simulator configuration
   useEffect(() => {
-    simulatorService.getSimulator().then((data) => {
-      setInitTime(new Date(data.now))
-      setTimeSpeech(data.timeSpeech)
+    simulatorService.getSimulator().then((config) => {
+      setConfig({
+        initTime: config.initTime,
+        timeSpeech: config.timeSpeech,
+        timeEnd: config.timeEnd,
+        onReachedEnd: config.timeEnd ? handleResetSimulator : undefined
+      })
+      if (config.timeEnd) {
+        setIsReset(true)
+      }
       form.reset({
-        timeSpeech: data.timeSpeech,
-        to: data.now
+        timeSpeech: config.timeSpeech,
+        to: config.timeEnd
       })
     })
   }, [])
 
-  const simulatedTime = useSimulatedClock({
-    initialSimulatedTime: initTime ?? new Date(),
-    timeSpeech: timeSpeech
-  })
-
-  const handleSubmit = (values: ClockSimulatorType) => {
-    simulatorService.setSimulator(values).then((date) => {
-      setInitTime(new Date(date))
-      setTimeSpeech(values.timeSpeech)
-
+  const handleSubmit = (values: ClockSimulatorReqType) => {
+    simulatorService.setSimulator(values).then((config) => {
       toast.success('Simulator time set successfully', {
-        description: `Simulator time set to ${date.toLocaleString()}`
+        description: `Simulator time set to ${values.to.toLocaleString()}`
       })
-      form.reset({
-        timeSpeech: values.timeSpeech,
-        to: date
+      setConfig({
+        initTime: config.initTime,
+        timeSpeech: config.timeSpeech,
+        timeEnd: config.timeEnd,
+        onReachedEnd: handleResetSimulator
       })
+      setIsReset(true)
       setOpen(false)
     })
   }
+
+  const handleResetSimulator = useCallback(() => {
+    simulatorService
+      .resetSimulator()
+      .then((config) => {
+        toast.success('Simulator time reset successfully')
+        form.reset({
+          timeSpeech: config.timeSpeech,
+          to: config.timeEnd
+        })
+        console.log(config.initTime.toUTCString())
+        setConfig({
+          initTime: config.initTime,
+          timeSpeech: config.timeSpeech
+        })
+      })
+      .finally(() => {
+        setIsReset(false)
+        setOpen(false)
+      })
+  }, [form, simulatedTime])
+
+  // useEffect(() => {
+  //   console.log(simulatedTime)
+  // }, [simulatedTime])
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className='fixed bottom-5 left-5 z-50' asChild>
-        <div className='border-accent flex items-center gap-3 rounded-md border-2 bg-white px-4 py-2 shadow-md hover:cursor-pointer'>
-          <Icon icon={'mdi:clock'} size={30} />
-          <p>{simulatedTime.toISOString()}</p>
-        </div>
+        {ClockDisplay}
       </DialogTrigger>
       <DialogContent className='top-1/4' aria-describedby={undefined}>
         <DialogTitle />
@@ -100,6 +148,7 @@ const ClockSimulator = () => {
                     <FormLabel>Date to</FormLabel>
                     <FormControl>
                       <DatePickerWithPresets
+                        disabled={isReset}
                         date={field.value}
                         setDate={field.onChange}
                       />
@@ -117,7 +166,7 @@ const ClockSimulator = () => {
                 <FormItem className='mt-3'>
                   <FormLabel>Time Speech</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={isReset} />
                   </FormControl>
                   <FormDescription>
                     Set the time in epoch seconds, for example, 1700000000
@@ -127,9 +176,19 @@ const ClockSimulator = () => {
               )}
             />
             <DialogFooter>
-              <Button className='mt-4' type='submit'>
-                Ok
-              </Button>
+              {isReset ? (
+                <Button
+                  className='mt-4'
+                  type='button'
+                  onClick={handleResetSimulator}
+                >
+                  Reset
+                </Button>
+              ) : (
+                <Button className='mt-4' type='submit'>
+                  Ok
+                </Button>
+              )}
             </DialogFooter>
           </form>
         </Form>
