@@ -6,19 +6,20 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import useAppId from '@/hooks/use-app-id'
-import { useState, lazy, Suspense } from 'react'
+import { SprintOverview } from '@/types/sprint.type'
+import { lazy, Suspense, useState } from 'react'
 
 const LazyReportSprintSheet = lazy(
   () => import('@/components/ReportSprintSheet')
 )
 
 type SprintColumnsActionProps = {
-  sprintId: string
+  sprint: SprintOverview
   onlyView?: boolean
 }
 
 const SprintColumnsAction = ({
-  sprintId,
+  sprint,
   onlyView = false
 }: SprintColumnsActionProps) => {
   const [open, setOpen] = useState(false)
@@ -46,7 +47,7 @@ const SprintColumnsAction = ({
         <Suspense fallback={null}>
           <LazyReportSprintSheet
             projectId={projectId!}
-            sprintId={sprintId}
+            sprint={sprint}
             isOpen={open}
             disabled={onlyView}
             onOpenChange={setOpen}

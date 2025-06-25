@@ -83,7 +83,10 @@ const sprintApi = createApi({
           return { error }
         }
       },
-      invalidatesTags: (_, __, id) => [{ type: 'Sprints', id }]
+      invalidatesTags: (_, __, id) => [
+        { type: 'Sprints', id },
+        { type: 'Sprints', id: 'LIST' }
+      ]
     })
   })
 })

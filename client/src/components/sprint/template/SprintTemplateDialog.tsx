@@ -17,7 +17,6 @@ import {
 import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode, WEIGHT_POSITION } from '@/lib/const'
 import { handleErrorApi } from '@/lib/form'
-import boardService from '@/services/board.service'
 import { Id } from '@/types/other.type'
 import { BaseSprintFormType } from '@/types/sprint.type'
 import { UseFormReturn } from 'react-hook-form'
@@ -102,7 +101,7 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
   }
   return (
     <DialogController open={open} onOpen={onOpen}>
-      <DialogContent className='sm:max-w-[50vw]'>
+      <DialogContent aria-describedby={undefined} className='sm:max-w-[50vw]'>
         <DialogHeader>
           <DialogTitle>Sprint</DialogTitle>
         </DialogHeader>

@@ -34,6 +34,8 @@ const CreateWorkspaceForm = () => {
   const form = useForm<CreateWorkspaceSchemaType>({
     resolver: zodResolver(CreateWorkspaceSchema),
     defaultValues: {
+      name: '',
+      description: '',
       date: {
         from: new Date(),
         to: addDays(new Date(), 20)

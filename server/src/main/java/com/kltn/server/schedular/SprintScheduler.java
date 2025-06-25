@@ -128,13 +128,14 @@ public class SprintScheduler {
         .getAuthentication()
         .getPrincipal()
         .toString();
-    Message<SnapshotRequest> message = MessageBuilder.withPayload(SnapshotRequest.builder()
+
+    SnapshotRequest payload = SnapshotRequest.builder()
         .projectId(projectId)
         .sprintId(sprintId)
-        .build())
-        .setHeader(KafkaHeaders.TOPIC, "snapshotConsumer")
-        .setHeader("X-Auth-User", curUser)
         .build();
-    kafkaTemplate.send("snapshot", message);
+
+    ProducerRecord<String, Object> record = new ProducerRecord<>("snapshot", payload);
+    record.headers().add("X-Auth-User", curUser.getBytes(StandardCharsets.UTF_8));
+    kafkaTemplate.send(record);
   }
 }

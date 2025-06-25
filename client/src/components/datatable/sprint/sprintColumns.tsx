@@ -1,8 +1,9 @@
 import SprintColumnsAction from '@/components/datatable/sprint/sprintColumnsAction'
 import Icon from '@/components/Icon'
+import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
 import { useAppSelector } from '@/context/redux/hook'
-import { getStatusSprint } from '@/lib/sprint.helper'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 import { formatDate } from '@/lib/utils'
 import { SprintWorkspaceDataTable } from '@/types/sprint.type'
 import { ColumnDef } from '@tanstack/react-table'
@@ -13,7 +14,13 @@ const columns: ColumnDef<SprintColumns>[] = [
   {
     accessorKey: 'title',
     header: 'Title',
-    size: 100
+    size: 100,
+    cell: ({ row }) => {
+      const id: string = row.original.id
+      const title: string = row.getValue('title')
+
+      return <ToolTip trigger={<span>{title}</span>}>{id}</ToolTip>
+    }
   },
   {
     accessorKey: 'storyPoint',
@@ -28,18 +35,18 @@ const columns: ColumnDef<SprintColumns>[] = [
     accessorKey: '',
     header: 'Status',
     cell: ({ row }) => {
-      const start: Date = row.getValue('start')
-      const end: Date = row.getValue('end')
-      return (
-        <Badge
-          statusSprint={getStatusSprint({
-            start,
-            end
-          })}
-        >
-          {getStatusSprint({ start, end })}
-        </Badge>
-      )
+      const id: string = row.original.id
+      const start: Date = row.original.start
+      const end: Date = row.original.end
+      const {
+        util: { getStatusSprint }
+      } = useSprintCurrent()
+      const status = getStatusSprint({
+        id,
+        start,
+        end
+      })
+      return <Badge statusSprint={status}>{status}</Badge>
     }
   },
 
@@ -79,11 +86,17 @@ const columns: ColumnDef<SprintColumns>[] = [
     size: 10,
     cell: ({ row }) => {
       const sprintId: string = row.original.id
+      const start: Date = row.original.start
+      const end: Date = row.original.end
       const id = useAppSelector((state) => state.sprintSlice.current?.id)
-      console.log('id', id, sprintId, id === sprintId)
+
       return (
         <SprintColumnsAction
-          sprintId={sprintId}
+          sprint={{
+            id: sprintId,
+            start,
+            end
+          }}
           onlyView={id === sprintId ? false : true}
         />
       )
@@ -91,5 +104,5 @@ const columns: ColumnDef<SprintColumns>[] = [
   }
 ]
 
-export type { SprintColumns }
 export { columns }
+export type { SprintColumns }

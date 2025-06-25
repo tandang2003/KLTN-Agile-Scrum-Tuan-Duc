@@ -1,28 +1,40 @@
 import { useEffect, useState } from 'react'
 
-interface UseSimulatedClockOptions {
-  initialSimulatedTime: Date
+export interface UseSimulatedClockOptions {
+  initTime: Date
   timeSpeech: number
+  timeEnd?: Date
+  onReachedEnd?: (currentSimulatedTime: Date) => void
 }
 
 export function useSimulatedClock({
-  initialSimulatedTime,
-  timeSpeech
+  initTime,
+  timeSpeech,
+  timeEnd,
+  onReachedEnd
 }: UseSimulatedClockOptions) {
-  const [simulatedTime, setSimulatedTime] = useState(initialSimulatedTime)
+  const [simulatedTime, setSimulatedTime] = useState(initTime)
 
   useEffect(() => {
     const realStart = Date.now()
-    const simStart = initialSimulatedTime.getTime()
+    const simStart = initTime.getTime()
 
     const interval = setInterval(() => {
-      const realElapsedMs = Date.now() - realStart
-      const simulatedElapsedMs = realElapsedMs * timeSpeech
-      setSimulatedTime(new Date(simStart + simulatedElapsedMs))
-    }, 1000) // update every second
+      const realElapsedSec = (Date.now() - realStart) / 1000 // in seconds
+      const simulatedElapsedMs = realElapsedSec * timeSpeech * 1000 // convert to ms
+      const currentSimTime = new Date(simStart + simulatedElapsedMs)
+
+      if (timeEnd && currentSimTime >= timeEnd) {
+        setSimulatedTime(timeEnd)
+        clearInterval(interval)
+        onReachedEnd?.(timeEnd)
+      } else {
+        setSimulatedTime(currentSimTime)
+      }
+    }, 1000) // 100ms = smooth updates
 
     return () => clearInterval(interval)
-  }, [initialSimulatedTime, timeSpeech])
+  }, [initTime.getTime(), timeSpeech, timeEnd?.getTime()]) // use .getTime() to avoid identity traps
 
   return simulatedTime
 }

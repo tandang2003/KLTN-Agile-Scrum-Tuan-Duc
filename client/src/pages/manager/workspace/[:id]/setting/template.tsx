@@ -1,7 +1,6 @@
-import LoadingBoundary from '@/components/LoadingBoundary'
-import SprintTemplate, {
-  WorkspaceTemplateRef
-} from '@/components/sprint/template/SprintTemplate'
+import ListView from '@/components/ListView'
+import SprintTemplateCard from '@/components/sprint/template/SprintTemplateCard'
+
 import SprintTemplateDialog from '@/components/sprint/template/SprintTemplateDialog'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
@@ -10,10 +9,8 @@ import {
   closeDialogCreateSprint,
   openDialogCreateSprint
 } from '@/feature/sprint/sprint.slice'
-import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { PlusIcon } from 'lucide-react'
-import { useRef } from 'react'
 
 const TemplateTab = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
@@ -24,7 +21,6 @@ const TemplateTab = () => {
   const { isOpenDialogCreate: open } = useAppSelector(
     (state) => state.sprintSlice
   )
-  const workspaceRef = useRef<WorkspaceTemplateRef>(null)
   const dispatch = useAppDispatch()
 
   return (
@@ -43,17 +39,18 @@ const TemplateTab = () => {
         </Button>
       </div>
 
-      <LoadingBoundary<SprintModel[]>
+      <ListView
         data={data}
-        isLoading={isFetching}
-        fallback={
+        loading={isFetching}
+        className='flex flex-col gap-4'
+        emptyComponent={
           <div className='mt-4'>No sprint found, please create sprint</div>
         }
-      >
-        {(data) => {
-          return <SprintTemplate ref={workspaceRef} sprints={data} />
+        render={(item) => {
+          return <SprintTemplateCard key={item.id} id={item.id} data={item} />
         }}
-      </LoadingBoundary>
+      />
+
       <SprintTemplateDialog
         open={open}
         onOpen={() => dispatch(closeDialogCreateSprint())}

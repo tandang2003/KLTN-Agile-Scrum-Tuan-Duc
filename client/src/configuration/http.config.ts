@@ -91,8 +91,9 @@ appAxios.interceptors.response.use(
           error.response?.data.message ?? 'Server Error'
         // prevent infinite loop
         const originalRequest: any = err.config
-        console.log(messageBody)
+
         if (messageBody === 'Invalid credentials') {
+          toast.error('Invalid credentials. Please login again.')
           if (originalRequest._retry) {
             toast.error('Session expired. Please login again.')
             originalRequest._retry = false

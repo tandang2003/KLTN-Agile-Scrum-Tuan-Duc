@@ -17,8 +17,6 @@ export const useProjectTable = (workspaceId: Id) => {
     }
   })
 
-  console.log(data)
-
   const table = useReactTable({
     data: data?.items || [],
     columns: columns,

@@ -58,7 +58,7 @@ const SprintTemplateBaseForm = ({
       title: '',
       predict: addDays(new Date(), 4),
       storyPoint: 0,
-      start: new Date(),
+      start: addDays(new Date(), 2),
       end: addDays(new Date(), 7)
     }
   })
@@ -125,9 +125,7 @@ const SprintTemplateBaseForm = ({
                       type='number'
                       placeholder='1'
                       {...field}
-                      onChange={(event) =>
-                        form.setValue('storyPoint', event.target.valueAsNumber)
-                      }
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />

@@ -11,14 +11,18 @@ import {
   SheetTitle
 } from '@/components/ui/sheet'
 import { useGetResourcesQuery } from '@/feature/project/project.api'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 import { REPORT_DIR } from '@/lib/const'
 import resourceService from '@/services/resource.service'
+import { SprintOverview } from '@/types/sprint.type'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+type Sprint = SprintOverview
+
 type ReportSprintSheetProps = {
   projectId: string
-  sprintId: string
+  sprint: Sprint
   isOpen?: boolean
   disabled?: boolean
   onOpenChange?: (open: boolean) => void
@@ -26,20 +30,27 @@ type ReportSprintSheetProps = {
 
 const ReportSprintSheet = ({
   projectId,
-  sprintId,
+  sprint,
   isOpen,
-  disabled = false,
   onOpenChange
 }: ReportSprintSheetProps) => {
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const { data } = useGetResourcesQuery({
     projectId: projectId,
-    sprintId: sprintId
+    sprintId: sprint.id
   })
 
   const [daily1, setDaily1] = useState<Thumbnail | null>(null)
   const [daily2, setDaily2] = useState<Thumbnail | null>(null)
   const [backlog, setBacklog] = useState<Thumbnail | null>(null)
-
+  const status = getStatusSprint({
+    id: sprint.id,
+    start: sprint.start,
+    end: sprint.end
+  })
+  const disabled = status === 'COMPLETE'
   const handleSignatureFn = () => {
     return resourceService.getSignature({
       projectId: projectId,
@@ -58,7 +69,7 @@ const ReportSprintSheet = ({
       publicId: data.public_id,
       size: data.bytes,
       projectId: projectId,
-      sprintId: sprintId
+      sprintId: sprint.id
     })
 
     const thumbnail: Thumbnail = {
@@ -89,7 +100,7 @@ const ReportSprintSheet = ({
       publicId: data.public_id,
       size: data.bytes,
       projectId: projectId,
-      sprintId: sprintId
+      sprintId: sprint.id
     })
 
     const thumbnail: Thumbnail = {
@@ -166,6 +177,7 @@ const ReportSprintSheet = ({
       <SheetContent className='min-w-[50vw]'>
         <SheetHeader>
           <SheetTitle>Upload Report</SheetTitle>
+
           <SheetDescription>
             Upload sprint documents. Click close when done.
           </SheetDescription>
@@ -207,11 +219,19 @@ const ReportSprintSheet = ({
           </div>
         </div>
         <SheetFooter className='mt-3'>
-          <SheetClose asChild>
-            <Button className='cancel' variant='outline'>
-              Close
-            </Button>
-          </SheetClose>
+          <div className='flex w-full items-center justify-between'>
+            <p>
+              {status === 'COMPLETE' &&
+                'Sprint is complete, you cannot upload report.'}
+              {status === 'PENDING' &&
+                'Sprint is pending, you can upload report.'}
+            </p>
+            <SheetClose asChild>
+              <Button className='cancel' variant='outline'>
+                Close
+              </Button>
+            </SheetClose>
+          </div>
         </SheetFooter>
       </SheetContent>
     </Sheet>

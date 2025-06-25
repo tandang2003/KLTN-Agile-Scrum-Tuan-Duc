@@ -13,27 +13,27 @@ public class ClockSimulator {
   private static ZoneId asiaHoChiMinh = ZoneId.of("Asia/Ho_Chi_Minh");
 
   public ClockSimulator(long timeSpeech) {
-    realTime = getInstantFromLocalDateTime();
-    simulatedTime = getInstantFromLocalDateTime();
+    realTime = Instant.now();
+    simulatedTime = Instant.now();
     ClockSimulator.timeSpeech = timeSpeech;
   }
 
   public static void setTimeSpeech(long newSpeech) {
     // cập nhật thời gian ảo hiện tại trước
     simulatedTime = now();
-    realTime = getInstantFromLocalDateTime();
+    realTime = Instant.now();
     timeSpeech = newSpeech;
   }
 
   public static Instant now() {
-    long realElapsedMillis = Duration.between(realTime, getInstantFromLocalDateTime()).toSeconds();
+    long realElapsedMillis = Duration.between(realTime, Instant.now()).toSeconds();
     long simulatedElapsedMillis = realElapsedMillis * timeSpeech;
     return simulatedTime.plusSeconds(simulatedElapsedMillis);
   }
 
-  private static Instant getInstantFromLocalDateTime() {
-    return LocalDateTime.now(asiaHoChiMinh).toInstant(ZoneOffset.UTC);
-  }
+  // private static Instant getInstantFromLocalDateTime() {
+  // return LocalDateTime.now(asiaHoChiMinh).toInstant(ZoneOffset.UTC);
+  // }
 
   public static long getTimeSpeech() {
     return timeSpeech;

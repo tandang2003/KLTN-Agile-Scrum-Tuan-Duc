@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { useMoveIssueToBacklogMutation } from '@/feature/issue/issue.api'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import useSprintCurrent from '@/hooks/use-sprint-current'
@@ -19,13 +20,16 @@ type SprintCardInSprintProps = {
 }
 
 const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
-  const { id } = useSprintCurrent()
+  const { start, end, sprintId, id } = item
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const { action } = useOpenIssueUpdate()
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const handleMoveToBacklog = () => {
     moveToBacklog({
-      id: item.id,
-      sprintId: item.sprintId
+      id: id,
+      sprintId: sprintId
     })
       .unwrap()
       .then(() => {
@@ -39,6 +43,16 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
         })
       })
   }
+
+  const canMoveToBacklog =
+    start &&
+    end &&
+    getStatusSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    }) === 'PENDING'
+
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
       <ToolTip
@@ -58,14 +72,16 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem
-            onClick={() => {
-              action(item.id)
-            }}
-          >
-            Edit
-          </DropdownMenuItem>
-          {item.sprintId !== id && (
+          <RequiredAuth roles={['student']}>
+            <DropdownMenuItem
+              onClick={() => {
+                action(item.id)
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+          </RequiredAuth>
+          {canMoveToBacklog && (
             <DropdownMenuItem onClick={handleMoveToBacklog}>
               Move to backlog
             </DropdownMenuItem>
