@@ -1,6 +1,5 @@
 package com.kltn.server.model.collection.model;
 
-import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -97,7 +96,7 @@ public class LogTask extends ILog {
     private List<Attachment> attachment;
     private List<Comment> comments;
     private List<Relation<String>> relations;
-    private boolean open=true; // Default value for open
+    private boolean open = true; // Default value for open
 
     public LogTaskBuilder relations(List<Relation<String>> relations) {
       this.relations = relations;
@@ -114,6 +113,7 @@ public class LogTask extends ILog {
       this.sprintId = sprintId;
       return this;
     }
+
     public LogTaskBuilder open(boolean open) {
       this.open = open;
       return this;
@@ -375,5 +375,13 @@ public class LogTask extends ILog {
 
   public void setRelations(List<Relation<String>> relations) {
     this.relations = relations;
+  }
+
+  public boolean isOpen() {
+    return open;
+  }
+
+  public void setOpen(boolean open) {
+    this.open = open;
   }
 }

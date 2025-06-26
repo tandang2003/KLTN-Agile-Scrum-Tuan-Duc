@@ -1,6 +1,7 @@
 package com.kltn.server.model.collection;
 
 import com.kltn.server.model.collection.model.ILog;
+import com.kltn.server.model.collection.model.LogTask;
 import com.kltn.server.model.type.task.LogType;
 import jakarta.persistence.EntityListeners;
 import org.bson.types.ObjectId;
@@ -26,11 +27,13 @@ public class ChangeLog {
   private String entityTarget;
   @Field("properties_target")
   private String[] propertiesTargets;
+  //  private String idWorkspace;
+  private String projectId;
   //    entity id of the target entity
   @Field("id_ref")
   private String idRef;
   @Field("change")
-  private ILog change;
+  private LogTask change;
   @MongoId
   protected ObjectId id;
   @CreatedDate
@@ -60,6 +63,7 @@ public class ChangeLog {
     this.propertiesTargets = builder.propertiesTargets;
     this.idRef = builder.idRef;
     this.change = builder.change;
+    this.projectId = builder.projectId;
   }
 
   public static ChangeLogBuilder builder() {
@@ -68,21 +72,15 @@ public class ChangeLog {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof ChangeLog changeLog))
+    if (!(o instanceof ChangeLog changeLog)) {
       return false;
-    return deleted == changeLog.deleted && type == changeLog.type && Objects.equals(entityTarget,
-                                                                                    changeLog.entityTarget) && Objects.deepEquals(
-      propertiesTargets, changeLog.propertiesTargets) && Objects.equals(idRef, changeLog.idRef) && Objects.equals(
-      change, changeLog.change) && Objects.equals(id, changeLog.id) && Objects.equals(DTCreated,
-                                                                                      changeLog.DTCreated) && Objects.equals(
-      DTDeleted, changeLog.DTDeleted) && Objects.equals(createdBy, changeLog.createdBy) && Objects.equals(deletedBy,
-                                                                                                          changeLog.deletedBy);
+    }
+    return deleted == changeLog.deleted && type == changeLog.type && Objects.equals(entityTarget, changeLog.entityTarget) && Objects.deepEquals(propertiesTargets, changeLog.propertiesTargets) && Objects.equals(idRef, changeLog.idRef) && Objects.equals(change, changeLog.change) && Objects.equals(id, changeLog.id) && Objects.equals(DTCreated, changeLog.DTCreated) && Objects.equals(DTDeleted, changeLog.DTDeleted) && Objects.equals(createdBy, changeLog.createdBy) && Objects.equals(deletedBy, changeLog.deletedBy);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, entityTarget, Arrays.hashCode(propertiesTargets), idRef, change, id, DTCreated, DTDeleted,
-                        deleted, createdBy, deletedBy);
+    return Objects.hash(type, entityTarget, Arrays.hashCode(propertiesTargets), idRef, change, id, DTCreated, DTDeleted, deleted, createdBy, deletedBy);
   }
 
   public static class ChangeLogBuilder {
@@ -96,10 +94,16 @@ public class ChangeLog {
     private String entityTarget;
     private String[] propertiesTargets;
     private String idRef;
-    private ILog change;
+    private LogTask change;
+    private String projectId;
 
     public ChangeLogBuilder id(ObjectId id) {
       this.id = id;
+      return this;
+    }
+
+    public ChangeLogBuilder projectId(String projectId) {
+      this.projectId = projectId;
       return this;
     }
 
@@ -148,7 +152,7 @@ public class ChangeLog {
       return this;
     }
 
-    public ChangeLogBuilder change(ILog change) {
+    public ChangeLogBuilder change(LogTask change) {
       this.change = change;
       return this;
     }
@@ -190,11 +194,11 @@ public class ChangeLog {
     this.idRef = idRef;
   }
 
-  public ILog getChange() {
+  public LogTask getChange() {
     return change;
   }
 
-  public void setChange(ILog change) {
+  public void setChange(LogTask change) {
     this.change = change;
   }
 
@@ -245,4 +249,13 @@ public class ChangeLog {
   public void setDeletedBy(String deletedBy) {
     this.deletedBy = deletedBy;
   }
+
+  public String getProjectId() {
+    return projectId;
+  }
+
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
+
 }
