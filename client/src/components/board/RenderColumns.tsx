@@ -4,7 +4,6 @@ import Column from '@/components/board/Column'
 import { CardModelType, ColumnModelType } from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import { memo } from 'react'
-import useKanbanContext from '@/components/kanban/useKanbanContext'
 
 type RenderColumnProps = {
   id: Id
@@ -13,8 +12,6 @@ type RenderColumnProps = {
 }
 
 const RenderColumn = ({ id, column, cards }: RenderColumnProps) => {
-  const { disabled } = useKanbanContext()
-
   return (
     <SortableContext
       id={id}

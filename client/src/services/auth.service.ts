@@ -1,4 +1,4 @@
-import appAxios, { manualAxios } from '@/configuration/http.config'
+import { manualAxios } from '@/configuration/http.config'
 import httpService from '@/services/http.service'
 import tokenService from '@/services/token.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'

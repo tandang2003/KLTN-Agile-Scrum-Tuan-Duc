@@ -1,0 +1,67 @@
+services:
+  app-be:
+    container_name: app-be
+    build:
+      context: ../../server
+
+  app-fe:
+    container_name: app-fe
+    build:
+      context: ../../client
+
+  app-redis:
+    image: redis:latest
+    container_name: app-redis
+    # ports:
+    #   - "${REDIS_PORT}:6379"
+    env_file:
+      - ./env/db.env
+    volumes:
+      - ${REDIS_VOLUME}:/data
+
+  app-mongodb:
+    image: mongo:latest
+    container_name: app-mongodb
+    # ports:
+    #   - "${MONGO_PORT}:27017"
+    env_file:
+      - ./env/db.env
+    volumes:
+      - ${MONGO_VOLUME}:/data/db
+
+  app-mysql:
+    image: mysql:latest
+    container_name: app-mysql
+    # ports:
+    #   - "${MYSQL_PORT}:3306"
+    env_file:
+      - ./env/db.env
+    volumes:
+      - ${MYSQL_VOLUME}:/var/lib/mysql
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    env_file:
+      - ./env/kafka.env
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}"
+
+  kafka1:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_1_ID}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+    volumes:
+      - kafka_data1:/kafka/kafka-logs

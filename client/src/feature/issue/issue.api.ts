@@ -179,6 +179,19 @@ const issueApi = createApi({
       invalidatesTags: (_, error, id) => {
         return error ? [] : [{ type: 'Issues', id: id }]
       }
+    }),
+    deleteIssue: builder.mutation<undefined, Id>({
+      async queryFn(arg) {
+        try {
+          await issueService.deleteIssue(arg)
+          return { data: undefined }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, id) => {
+        return error ? [] : [{ type: 'Issues', id: id }]
+      }
     })
   })
 })
@@ -193,5 +206,6 @@ export const {
   useLazyGetListIssueQuery,
   useMoveIssueToSprintMutation,
   useMoveIssueToBacklogMutation,
-  useReopenIssueMutation
+  useReopenIssueMutation,
+  useDeleteIssueMutation
 } = issueApi

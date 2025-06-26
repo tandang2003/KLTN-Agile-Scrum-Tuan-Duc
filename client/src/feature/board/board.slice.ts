@@ -1,4 +1,4 @@
-import { FilterSprintBoard, Position } from '@/components/board/type'
+import { Position } from '@/components/board/type'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'

@@ -32,7 +32,7 @@ type BoardProps = {
   onMove?: (data: DataOnMoveType) => void
 }
 
-const Board = ({ data: board, onMove, disabled = false }: BoardProps) => {
+const Board = ({ data: board, onMove }: BoardProps) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10

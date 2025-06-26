@@ -5,7 +5,6 @@ import { useAppSelector } from '@/context/redux/hook'
 import { toBoardModel } from '@/lib/board.helper'
 import { IssueResponse } from '@/types/issue.type'
 import { cloneDeep } from 'lodash'
-import { CodeSquare } from 'lucide-react'
 import { ComponentProps, memo } from 'react'
 
 type OnMove = ComponentProps<typeof Board>['onMove']

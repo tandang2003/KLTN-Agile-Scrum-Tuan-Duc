@@ -15,7 +15,7 @@ const UserAvatar = ({}: UserAvatarProps) => {
     user.avatar ?? undefined
   )
 
-  const { isLoading, data } = useUploadFile({
+  const { data } = useUploadFile({
     file,
     callback: async (res) => {
       const { bytes, format, public_id } = res
