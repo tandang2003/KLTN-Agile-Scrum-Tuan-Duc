@@ -89,7 +89,7 @@ public class ProjectService {
     this.resourceMapper = resourceMapper;
   }
 
-  @SendKafkaEvent(topic = "project-created")
+//  @SendKafkaEvent(topic = "project-log")
   @Transactional
   public ApiResponse<ProjectResponse> createProject(ProjectCreationRequest creationRequest) {
     WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder()
@@ -140,12 +140,12 @@ public class ProjectService {
         .build();
     projectMongoService.save(projectMongo);
 
-    ChangeLogRequest log = changeLogMapper.projectToCreateLog(project, projectMongo);
+//    ChangeLogRequest log = changeLogMapper.projectToCreateLog(project, projectMongo);
 
     return ApiResponse.<ProjectResponse>builder()
         .message("Create project success")
         .data(projectMapper.toCreationResponse(savedProject, topics))
-        .logData(log)
+//        .logData(log)
         .build();
   }
 
