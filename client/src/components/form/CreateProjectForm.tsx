@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useCreateProjectMutation } from '@/feature/project/project.api'
 import { getTokenProjectThunk } from '@/feature/project/project.slice'
-import useAppId from '@/hooks/use-app-id'
 import {
   CreateProjectFormType,
   CreateProjectForm as CreateProjectFormSchema

@@ -72,6 +72,13 @@ const issueService = {
       undefined
     )
     return res.data.data
+  },
+  deleteIssue: async (issueId: Id): Promise<void> => {
+    const res = await httpService.delete<ResponseApi<void>>(
+      `/issue/${issueId}/reopen`,
+      undefined
+    )
+    return res.data.data
   }
 }
 export default issueService
