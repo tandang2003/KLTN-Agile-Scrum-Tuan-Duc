@@ -147,7 +147,7 @@ const UpdateAttachmentIssueUpload = ({}: UpdateAttachmentIssueUploadProps) => {
   const [files, setFiles] = useState<File[]>([])
 
   const onFileValidate = useCallback(
-    (file: File): string | null => {
+    (_file: File): string | null => {
       return null
     },
     [files]

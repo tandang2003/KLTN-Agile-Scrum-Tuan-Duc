@@ -63,7 +63,7 @@ export const ProviderCommentProvider = ({
       setIsReady(stompClient.connected)
     }
 
-    stompClient.onStompError = (frame) => {
+    stompClient.onStompError = (_frame) => {
       // console.error('Broker reported error: ' + frame.headers['message'])
       // console.error('Additional details: ' + frame.body)
     }

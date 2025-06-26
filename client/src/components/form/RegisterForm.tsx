@@ -6,20 +6,20 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { RegisterSchema, RegisterSchemaType } from '@/types/schema/auth.schema'
-import authService from '@/services/auth.service'
-import { HttpStatusCode } from 'axios'
-import { ValidationError } from '@/types/http.type'
+import { Input } from '@/components/ui/input'
 import { handleErrorApi } from '@/lib/form'
+import { cn } from '@/lib/utils'
+import authService from '@/services/auth.service'
+import { ValidationError } from '@/types/http.type'
+import { RegisterSchema, RegisterSchemaType } from '@/types/schema/auth.schema'
+import { HttpStatusCode } from 'axios'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { NavLink, redirect, useNavigate } from 'react-router-dom'
 
 const RegisterForm = ({
   className,

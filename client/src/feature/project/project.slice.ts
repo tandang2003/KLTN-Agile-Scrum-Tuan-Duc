@@ -39,7 +39,9 @@ const projectSlice = createSlice({
       state: ProjectState,
       action: PayloadAction<ProjectState>
     ) => {
-      state = action.payload
+      state.token = action.payload.token
+      state.projectIds = action.payload.projectIds
+      state.projectId = action.payload.projectId
     }
   },
   // reset state

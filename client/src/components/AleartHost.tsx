@@ -15,9 +15,7 @@ import { hideAlert } from '@/feature/trigger/trigger.slice'
 import { useEffect } from 'react'
 
 const AlertHost = () => {
-  const { message, type, visible } = useAppSelector(
-    (state) => state.triggerSlice.alert
-  )
+  const { visible } = useAppSelector((state) => state.triggerSlice.alert)
   const dispatch = useAppDispatch()
 
   useEffect(() => {

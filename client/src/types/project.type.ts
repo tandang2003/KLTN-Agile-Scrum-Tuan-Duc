@@ -11,7 +11,9 @@ const CreateProjectForm = z.object({
 type CreateProjectFormType = z.infer<typeof CreateProjectForm>
 type ProjectResponse = Pick<ProjectModel, 'id' | 'name'>
 type ProjectDetailResponse = ProjectModel & {
-  currentSprint: SprintResponse
+  currentSprint?: SprintResponse
+  previousSprint?: SprintResponse
+  nextSprint?: SprintResponse
 }
 type CreateProjectRequest = CreateProjectFormType & {
   workspaceId: Id

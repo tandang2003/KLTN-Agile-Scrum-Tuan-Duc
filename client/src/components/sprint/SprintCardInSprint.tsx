@@ -8,7 +8,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import { useMoveIssueToBacklogMutation } from '@/feature/issue/issue.api'
+import {
+  useDeleteIssueMutation,
+  useMoveIssueToBacklogMutation
+} from '@/feature/issue/issue.api'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { IssueResponse } from '@/types/issue.type'
@@ -26,6 +29,8 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
   } = useSprintCurrent()
   const { action } = useOpenIssueUpdate()
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
+  const [deleteIssue] = useDeleteIssueMutation()
+
   const handleMoveToBacklog = () => {
     moveToBacklog({
       id: id,
@@ -41,6 +46,17 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
         toast.error('Failed to move issue to backlog', {
           description: err.data?.message || 'An error occurred.'
         })
+      })
+  }
+
+  const handleDelete = () => {
+    deleteIssue(id)
+      .unwrap()
+      .then(() => {
+        toast.success('Issue deleted successfully')
+      })
+      .catch(() => {
+        toast.error('Failed to delete issue')
       })
   }
 
@@ -82,9 +98,14 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
             </DropdownMenuItem>
           </RequiredAuth>
           {canMoveToBacklog && (
-            <DropdownMenuItem onClick={handleMoveToBacklog}>
-              Move to backlog
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem onClick={handleMoveToBacklog}>
+                Move to backlog
+              </DropdownMenuItem>
+              <DropdownMenuItem className='cancel' onClick={handleDelete}>
+                Delete
+              </DropdownMenuItem>
+            </>
           )}
           {item.status === 'DONE' && (
             <DropdownMenuItem onClick={handleMoveToBacklog}>

@@ -8,9 +8,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { useAppSelector } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
-import useBoard from '@/hooks/use-board'
 import issueService from '@/services/issue.service'
 import { IssueResponse } from '@/types/issue.type'
 import {
@@ -25,7 +25,6 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
-import { useAppSelector } from '@/context/redux/hook'
 type UpdateRelationshipProps = {
   issueId: string
   initialData?: RelationshipResponse[]
