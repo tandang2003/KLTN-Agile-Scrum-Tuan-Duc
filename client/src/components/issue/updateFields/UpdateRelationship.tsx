@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select'
 import {
   useCreateRelationshipMutation,
+  useDeleteRelationshipMutation,
   useGetRelationshipQuery,
   useLazyGetIssueAvailableQuery
 } from '@/feature/relationship/relationship.api'
@@ -27,6 +28,14 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import Icon from '@/components/Icon'
+import { useAlertHost } from '@/components/AleartHost'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -41,7 +50,6 @@ const UpdateRelationship = ({
 }: UpdateRelationshipProps) => {
   const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>()
   const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
-  console.log(relationships)
   const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
   const [createIssue] = useCreateRelationshipMutation()
 
@@ -58,7 +66,7 @@ const UpdateRelationship = ({
       typeRelation: data.typeRelation
     })
       .unwrap()
-      .then((response) => {
+      .then(() => {
         toast.message('Create relationship success')
       })
   }
@@ -78,10 +86,11 @@ const UpdateRelationship = ({
       <span className='text-lg'>Linked issue</span>
       <LoadingBoundary<RelationshipResponse[]>
         loading='Loading relationships...'
+        fallback='No relationships found'
         data={relationships}
         isLoading={isLoading}
       >
-        {(data) => <RelationshipList items={data} />}
+        {(data) => <RelationshipList items={data} issueId={issueId} />}
       </LoadingBoundary>
 
       {open && (
@@ -153,10 +162,12 @@ const UpdateRelationship = ({
 }
 
 type RelationshipListProps = {
+  issueId: Id
   items?: Array<RelationshipResponse>
 }
 
-const RelationshipList = ({ items = [] }: RelationshipListProps) => {
+const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
+  console.log('items', items)
   const dataPreprocessing = useMemo<
     Record<IssueRelationShip, IssueResponse[]>
   >(() => {
@@ -187,7 +198,13 @@ const RelationshipList = ({ items = [] }: RelationshipListProps) => {
             </span>
             <div className='mt-2 flex flex-col gap-1'>
               {value.map((item) => {
-                return <RelationshipItem key={item.id} issueRelated={item} />
+                return (
+                  <RelationshipItem
+                    key={item.id}
+                    issueRelated={item}
+                    issueId={issueId}
+                  />
+                )
               })}
             </div>
           </div>
@@ -197,12 +214,43 @@ const RelationshipList = ({ items = [] }: RelationshipListProps) => {
   )
 }
 
-type RelationshipItemProps = Pick<RelationshipResponse, 'issueRelated'>
+type RelationshipItemProps = Pick<RelationshipResponse, 'issueRelated'> & {
+  issueId: Id
+}
 
-const RelationshipItem = ({ issueRelated }: RelationshipItemProps) => {
+const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
+  const [deleteRelationship] = useDeleteRelationshipMutation()
+  const { showDialog } = useAlertHost()
+  const handleDelete = () => {
+    showDialog({
+      title: 'Delete relationship',
+      message: `Are you sure you want to delete the relationship with ${issueRelated.name}?`,
+      onConfirm: async () => {
+        try {
+          await deleteRelationship({
+            issueId: issueId,
+            issueRelatedId: issueRelated.id
+          }).unwrap()
+          toast.message('Delete relationship success')
+        } catch {
+          toast.error('Delete relationship failed')
+        }
+      }
+    })
+  }
   return (
-    <div className='border-accent rounded-md border-2 px-4 py-2 shadow-md'>
-      {issueRelated.name}
+    <div className='border-accent flex justify-between rounded-md border-2 px-4 py-2 shadow-md'>
+      <span>{issueRelated.name}</span>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Icon icon={'ri:more-fill'} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end'>
+          <DropdownMenuItem className='cancel' onClick={handleDelete}>
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }

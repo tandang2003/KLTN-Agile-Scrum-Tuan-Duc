@@ -12,17 +12,17 @@ import { Client, CompatClient, Stomp } from '@stomp/stompjs'
 import { useAppSelector } from '@/context/redux/hook.ts'
 import { CommentResType } from '@/types/comment.type.ts'
 
-type ContextCommentType = {
+type CommentContextType = {
   isReady: boolean
   ws: Client
   comment?: CommentResType[]
   setComment?: (value: CommentResType[]) => void
 }
 
-const ContextComment = createContext<ContextCommentType | undefined>(undefined)
+const CommentContext = createContext<CommentContextType | undefined>(undefined)
 
-export const useContextComment = () => {
-  const context = useContext(ContextComment)
+export const useCommentContext = () => {
+  const context = useContext(CommentContext)
   if (!context) {
     throw new Error(
       'useContextComment must be used inside ProviderCommentProvider'
@@ -31,15 +31,15 @@ export const useContextComment = () => {
   return context
 }
 
-type ProviderCommentProviderProps = {
+type CommentProviderProps = {
   children?: ReactNode
   initValue?: CommentResType[]
 }
 
-export const ProviderCommentProvider = ({
+export const CommentProvider = ({
   children,
   initValue = []
-}: ProviderCommentProviderProps) => {
+}: CommentProviderProps) => {
   const accessToken = useAppSelector((state) => state.authSlice.accessToken)
   const [isReady, setIsReady] = useState<boolean>(false)
   const ws = useRef<CompatClient>(null)
@@ -82,7 +82,7 @@ export const ProviderCommentProvider = ({
     }
   }, [])
   return (
-    <ContextComment.Provider
+    <CommentContext.Provider
       value={{
         isReady: isReady,
         ws: ws.current!,
@@ -91,6 +91,6 @@ export const ProviderCommentProvider = ({
       }}
     >
       {children}
-    </ContextComment.Provider>
+    </CommentContext.Provider>
   )
 }

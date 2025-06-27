@@ -4,6 +4,7 @@ import { IssueRelationShip } from '@/types/model/relationship'
 import { Id } from '@/types/other.type'
 import {
   CreateRelationshipIssueRequest,
+  DeleteRelationshipIssueRequest,
   RelationshipResponse
 } from '@/types/relationship.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -93,6 +94,26 @@ const relationshipApi = createApi({
       invalidatesTags: () => {
         return [{ type: 'Relationships', id: 'LIST' }]
       }
+    }),
+    deleteRelationship: builder.mutation<void, DeleteRelationshipIssueRequest>({
+      async queryFn(arg) {
+        try {
+          await relationshipService.deleteRelationship(arg)
+          return { data: undefined }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, __) => {
+        return error
+          ? []
+          : [
+              {
+                type: 'Relationships' as const,
+                id: 'LIST'
+              }
+            ]
+      }
     })
   })
 })
@@ -100,5 +121,6 @@ export default relationshipApi
 export const {
   useGetRelationshipQuery,
   useLazyGetIssueAvailableQuery,
-  useCreateRelationshipMutation
+  useCreateRelationshipMutation,
+  useDeleteRelationshipMutation
 } = relationshipApi

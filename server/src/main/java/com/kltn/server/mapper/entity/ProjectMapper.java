@@ -39,10 +39,13 @@ public interface ProjectMapper {
             @Mapping(target = "createAt", source = "project.dtCreated"),
             @Mapping(target = "updateAt", source = "project.dtModified"),
             @Mapping(target = "topics", source = "topics", qualifiedByName = "toTopicResponse"),
-            @Mapping(target = "currentSprint", source = "sprint", qualifiedByName = "toResponse"),
+      @Mapping(target = "currentSprint", source = "project.currentSprint", qualifiedByName = "toResponse"),
+      @Mapping(target = "prevSprint", source = "project.prevSprint", qualifiedByName = "toResponse"),
+      @Mapping(target = "nextSprint", source = "project.nextSprint", qualifiedByName = "toResponse"),
+
 
     })
-    ProjectResponse toProjectResponseById(Project project, List<Topic> topics, Sprint sprint);
+    ProjectResponse toProjectResponseById(Project project, List<Topic> topics);
 
 
     @Mappings({

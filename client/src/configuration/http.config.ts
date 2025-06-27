@@ -86,13 +86,16 @@ appAxios.interceptors.response.use(
       }
 
       case HttpStatusCode.Unauthorized: {
-        const error = err as AxiosError<ResponseApiError>
+        const error = err as AxiosError<
+          ResponseApiError & {
+            error: string
+          }
+        >
         const messageBody: string =
-          error.response?.data.message ?? 'Server Error'
+          (error.response?.data.error as string) ?? 'Server Error'
         // prevent infinite loop
         const originalRequest: any = err.config
-
-        toast.message(originalRequest)
+        toast.message(messageBody)
         if (messageBody === 'Invalid credentials') {
           toast.error('Invalid credentials. Please login again.')
           if (originalRequest._retry) {

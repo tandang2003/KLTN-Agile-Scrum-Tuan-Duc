@@ -13,7 +13,6 @@ import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppSelector } from '@/context/redux/hook'
 import {
   IssueDetailResponse,
   UpdateIssueSchema,
@@ -29,7 +28,6 @@ type UpdateIssueFormProps = {
 const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
   const [isAddRelationship, setIsAddRelationship] = useState<boolean>(false)
   const [isAddSubTask, setIsAddSubTask] = useState<boolean>(false)
-  const sprintActive = useAppSelector((state) => state.sprintSlice.active)
   const form = useForm<UpdateIssueType>({
     resolver: zodResolver(UpdateIssueSchema),
     defaultValues: {
@@ -117,12 +115,10 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <Tabs defaultValue='comment' className='mt-3'>
               <TabsList>
                 <TabsTrigger value='comment'>Comment</TabsTrigger>
-                <TabsTrigger value='history'>History</TabsTrigger>
               </TabsList>
               <TabsContent value='comment'>
                 <SectionComment />
               </TabsContent>
-              <TabsContent value='history'>history</TabsContent>
             </Tabs>
           </div>
           <ScrollBar />
