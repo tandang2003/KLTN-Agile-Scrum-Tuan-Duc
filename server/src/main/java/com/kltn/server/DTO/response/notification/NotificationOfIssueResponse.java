@@ -1,11 +1,11 @@
 package com.kltn.server.DTO.response.notification;
 
-import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.DTO.response.base.CommentResponse;
 import com.kltn.server.DTO.response.base.SubTaskResponse;
 import com.kltn.server.DTO.response.base.TopicResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
+import com.kltn.server.DTO.response.user.UserResponse;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.List;
 public class NotificationOfIssueResponse {
   String sprintId;
   String name;
-  AuthenticationResponse.UserDetailDTO assignee;
-  AuthenticationResponse.UserDetailDTO reviewer;
+  UserResponse assignee;
+  UserResponse reviewer;
   String description;
   String status;
   String priority;
@@ -63,8 +63,8 @@ public class NotificationOfIssueResponse {
   public static class NotificationOfIssueResponseBuilder {
     String sprintId;
     String name;
-    AuthenticationResponse.UserDetailDTO assignee;
-    AuthenticationResponse.UserDetailDTO reviewer;
+    UserResponse assignee;
+    UserResponse reviewer;
     String description;
     String status;
     String priority;
@@ -91,12 +91,12 @@ public class NotificationOfIssueResponse {
       return this;
     }
 
-    public NotificationOfIssueResponseBuilder assignee(AuthenticationResponse.UserDetailDTO assignee) {
+    public NotificationOfIssueResponseBuilder assignee(UserResponse assignee) {
       this.assignee = assignee;
       return this;
     }
 
-    public NotificationOfIssueResponseBuilder reviewer(AuthenticationResponse.UserDetailDTO reviewer) {
+    public NotificationOfIssueResponseBuilder reviewer(UserResponse reviewer) {
       this.reviewer = reviewer;
       return this;
     }
@@ -197,19 +197,19 @@ public class NotificationOfIssueResponse {
     this.name = name;
   }
 
-  public AuthenticationResponse.UserDetailDTO getAssignee() {
+  public UserResponse getAssignee() {
     return assignee;
   }
 
-  public void setAssignee(AuthenticationResponse.UserDetailDTO assignee) {
+  public void setAssignee(UserResponse assignee) {
     this.assignee = assignee;
   }
 
-  public AuthenticationResponse.UserDetailDTO getReviewer() {
+  public UserResponse getReviewer() {
     return reviewer;
   }
 
-  public void setReviewer(AuthenticationResponse.UserDetailDTO reviewer) {
+  public void setReviewer(UserResponse reviewer) {
     this.reviewer = reviewer;
   }
 

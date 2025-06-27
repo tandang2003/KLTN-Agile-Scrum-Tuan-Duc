@@ -83,7 +83,7 @@ public class ProjectController {
   }
 
   @GetMapping("/{projectId}/notification")
-  public ResponseEntity<ApiResponse<ApiPaging<NotificationResponse>>> getNotification(@PathVariable String projectId, @RequestParam int page, @RequestParam int size) {
+  public ResponseEntity<ApiResponse<ApiPaging<NotificationResponse>>> getNotification(@PathVariable String projectId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
     var paging = this.projectMongoService.getNotification(projectId, page, size);
     return ResponseEntity.status(paging.getCode()).body(paging);
   }
