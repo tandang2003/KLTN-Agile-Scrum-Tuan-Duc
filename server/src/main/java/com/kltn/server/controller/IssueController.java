@@ -7,7 +7,7 @@ import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.service.entity.IssueService;
+import com.kltn.server.service.entity.iml.IssueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

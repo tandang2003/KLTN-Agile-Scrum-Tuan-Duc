@@ -31,7 +31,10 @@ public class Workspace extends BaseEntity {
   private List<Sprint> sprints;
   @Transient
   private Sprint currentSprint;
-
+  @Transient
+  private Sprint prevSprint;
+  @Transient
+  private Sprint nextSprint;
   private Workspace(WorkspaceEntityBuilder workspaceBuilder) {
     super(workspaceBuilder);
     this.name = workspaceBuilder.name;
@@ -235,5 +238,21 @@ public class Workspace extends BaseEntity {
 
   public void setSprintNum(int sprintNum) {
     this.sprintNum = sprintNum;
+  }
+
+  public Sprint getNextSprint() {
+    return nextSprint;
+  }
+
+  public void setNextSprint(Sprint nextSprint) {
+    this.nextSprint = nextSprint;
+  }
+
+  public Sprint getPrevSprint() {
+    return prevSprint;
+  }
+
+  public void setPrevSprint(Sprint prevSprint) {
+    this.prevSprint = prevSprint;
   }
 }
