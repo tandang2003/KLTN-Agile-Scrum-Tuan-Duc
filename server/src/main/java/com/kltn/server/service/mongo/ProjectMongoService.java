@@ -1,25 +1,26 @@
 package com.kltn.server.service.mongo;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.notification.NotificationResponse;
+import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.error.AppException;
+import com.kltn.server.error.Error;
 import com.kltn.server.mapper.document.NotificationMapper;
 import com.kltn.server.mapper.entity.IssueMapper;
 import com.kltn.server.mapper.entity.ResourceMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.collection.ChangeLog;
+import com.kltn.server.model.collection.Project;
+import com.kltn.server.model.entity.Issue;
+import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.document.ChangeLogRepository;
+import com.kltn.server.repository.document.ProjectMongoRepository;
+import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.service.entity.ResourceService;
-import com.kltn.server.service.entity.UserService;
-import com.kltn.server.service.entity.iml.IssueService;
 import org.bson.Document;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.kltn.server.error.AppException;
-import com.kltn.server.error.Error;
-import com.kltn.server.model.collection.Project;
-import com.kltn.server.repository.document.ProjectMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,9 +31,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,31 +39,29 @@ public class ProjectMongoService {
   private final NotificationMapper notificationMapper;
   private final UserMapper userMapper;
   private final UserRepository userRepository;
-  private final UserService userService;
   private final ResourceMapper resourceMapper;
   private final ResourceService resourceService;
-  private final IssueService issueService;
   private final IssueMapper issueMapper;
   private final IssueMongoService issueMongoService;
+  private final IssueRepository issueRepository;
   private ProjectMongoRepository projectMongoRepository;
   private MongoTemplate mongoTemplate;
   private ChangeLogRepository changeLogRepository;
 
 
   @Autowired
-  public ProjectMongoService(ChangeLogRepository changeLogRepository, ProjectMongoRepository projectMongoRepository, MongoTemplate mongoTemplate, NotificationMapper notificationMapper, UserMapper userMapper, UserRepository userRepository, UserService userService, ResourceMapper resourceMapper, ResourceService resourceService, IssueService issueService, IssueMapper issueMapper, IssueMongoService issueMongoService) {
+  public ProjectMongoService(ChangeLogRepository changeLogRepository, ProjectMongoRepository projectMongoRepository, MongoTemplate mongoTemplate, NotificationMapper notificationMapper, UserMapper userMapper, UserRepository userRepository, ResourceMapper resourceMapper, ResourceService resourceService, IssueMapper issueMapper, IssueMongoService issueMongoService, IssueRepository issueRepository) {
     this.projectMongoRepository = projectMongoRepository;
     this.mongoTemplate = mongoTemplate;
     this.notificationMapper = notificationMapper;
     this.changeLogRepository = changeLogRepository;
     this.userMapper = userMapper;
     this.userRepository = userRepository;
-    this.userService = userService;
     this.resourceMapper = resourceMapper;
     this.resourceService = resourceService;
-    this.issueService = issueService;
     this.issueMapper = issueMapper;
     this.issueMongoService = issueMongoService;
+    this.issueRepository = issueRepository;
   }
 
   public Project save(Project project) {
@@ -109,31 +105,37 @@ public class ProjectMongoService {
       if (r.propertiesTargets() != null) {
         switch (r.propertiesTargets()[0]) {
           case "assignee":
-            r.change()
-              .setAssignee(userMapper.toUserDetailDTO(userService.getUserByUniId(r.change().getAssignee().getId())));
+            User assignee = userRepository.findByUniId(r.change().getAssignee().id()).orElse(null);
+            UserResponse assigneeResponse;
+            if (assignee != null) assigneeResponse = userMapper.toUserResponse(assignee);
+            else assigneeResponse = null;
+            r.change().setAssignee(assigneeResponse);
             break;
           case "reviewer":
-            r.change()
-              .setReviewer(userMapper.toUserDetailDTO(userService.getUserByUniId(r.change().getAssignee().getId())));
+            User reviewer = userRepository.findByUniId(r.change().getReviewer().id()).orElse(null);
+            UserResponse reviewerResponse;
+            if (reviewer != null) reviewerResponse = userMapper.toUserResponse(reviewer);
+            else reviewerResponse = null;
+            r.change().setReviewer(reviewerResponse);
             break;
           case "attachments":
-            r.change().setAttachment(
-              r.change()
+            r.change()
+              .setAttachment(r.change()
                 .getAttachment()
                 .stream()
                 .map(resource -> resourceMapper.toResourceResponse(resourceService.getById(resource.id())))
-                .toList()
-            );
+                .toList());
             break;
           case "relations":
-            r.change().getRelations()
-              .forEach(relation ->
-                relation.setIssueRelated(
-                  issueMapper.toIssueResponse(
-                    issueService.getEntityById(relation.getIssueRelated().id()),
-                    issueMongoService.getById(relation.getIssueRelated().id()))))
+            r.change().getRelations().forEach(relation ->
+              {
+              Issue issue = issueRepository.findById(relation.getIssueRelated().id()).orElse(null);
+              var issueMongo = issueMongoService.getById(relation.getIssueRelated().id());
+              relation.setIssueRelated(issueMapper.toIssueResponse(issue,
+                issueMongo));
+              })
             ;
-            break;
+
         }
       }
     }
