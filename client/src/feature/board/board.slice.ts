@@ -42,11 +42,6 @@ const boardSlice = createSlice({
       state.sprints = action.payload
     }
   }
-  // extraReducers: (builder) => {
-  //   builder.addCase(getPositionThunk.fulfilled, (state, action) => {
-  //     state.position = action.payload
-  //   })
-  // }
 })
 const boardReducer = boardSlice.reducer
 export { boardReducer }

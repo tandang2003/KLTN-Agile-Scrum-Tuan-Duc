@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
+import LoadingBoundary from '@/components/LoadingBoundary'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -8,10 +9,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useAppSelector } from '@/context/redux/hook'
-import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import useAppId from '@/hooks/use-app-id'
-import issueService from '@/services/issue.service'
+import {
+  useCreateRelationshipMutation,
+  useGetRelationshipQuery,
+  useLazyGetIssueAvailableQuery
+} from '@/feature/relationship/relationship.api'
 import { IssueResponse } from '@/types/issue.type'
 import {
   IssueRelationLabels,
@@ -26,7 +28,7 @@ import {
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
 type UpdateRelationshipProps = {
-  issueId: string
+  issueId: Id
   initialData?: RelationshipResponse[]
   open?: boolean
   cancel?: () => void
@@ -34,52 +36,53 @@ type UpdateRelationshipProps = {
 
 const UpdateRelationship = ({
   issueId,
-  initialData = [],
   open,
   cancel
 }: UpdateRelationshipProps) => {
   const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>()
-  const [initData, setInitData] =
-    useState<Array<RelationshipResponse>>(initialData)
-  const { projectId } = useAppId()
-  const sprintId = useAppSelector((state) => state.sprintSlice.active?.id)
-
-  const { data: issues } = useGetListIssueQuery(
-    {
-      projectId: projectId as Id,
-      sprintId: sprintId as Id
-    },
-    {
-      skip: !projectId || !sprintId
-    }
-  )
+  const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
+  console.log(relationships)
+  const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
+  const [createIssue] = useCreateRelationshipMutation()
 
   const handleSubmit = async () => {
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)
     if (!dataParser.success) {
-      console.error(dataParser.error)
       toast.error('Invalid data')
       return
     }
     const data = dataParser.data
-    issueService
-      .createRelationship({
-        issueId: issueId,
-        issueRelatedId: data.issueRelatedId.toLowerCase(),
-        typeRelation: data.typeRelation
-      })
+    createIssue({
+      issueId: issueId,
+      issueRelatedId: data.issueRelatedId.toLowerCase(),
+      typeRelation: data.typeRelation
+    })
+      .unwrap()
       .then((response) => {
-        setInitData((prev) => {
-          return [...prev, response]
-        })
         toast.message('Create relationship success')
       })
   }
 
+  useEffect(() => {
+    if (!open) return
+    if (form?.typeRelation) {
+      trigger({
+        issueId: issueId,
+        type: form?.typeRelation as IssueRelationShip
+      })
+    }
+  }, [form?.typeRelation])
+
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
       <span className='text-lg'>Linked issue</span>
-      <RelationshipList items={initData} />
+      <LoadingBoundary<RelationshipResponse[]>
+        loading='Loading relationships...'
+        data={relationships}
+        isLoading={isLoading}
+      >
+        {(data) => <RelationshipList items={data} />}
+      </LoadingBoundary>
 
       {open && (
         <>

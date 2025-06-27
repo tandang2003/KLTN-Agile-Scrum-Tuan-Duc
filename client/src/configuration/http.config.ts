@@ -92,6 +92,7 @@ appAxios.interceptors.response.use(
         // prevent infinite loop
         const originalRequest: any = err.config
 
+        toast.message(originalRequest)
         if (messageBody === 'Invalid credentials') {
           toast.error('Invalid credentials. Please login again.')
           if (originalRequest._retry) {

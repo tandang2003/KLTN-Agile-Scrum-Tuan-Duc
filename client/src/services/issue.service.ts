@@ -9,10 +9,6 @@ import {
   UpdatePositionIssueRequest
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import {
-  CreateRelationshipIssueRequest,
-  RelationshipResponse
-} from '@/types/relationship.type'
 
 const issueService = {
   getIssues: async (projectId: Id, sprintId?: Id): Promise<IssueResponse[]> => {
@@ -57,15 +53,7 @@ const issueService = {
     >(`/issue/update-status`, req)
     return res.data.data
   },
-  createRelationship: async (
-    req: CreateRelationshipIssueRequest
-  ): Promise<RelationshipResponse> => {
-    const res = await httpService.post<
-      ResponseApi<RelationshipResponse>,
-      CreateRelationshipIssueRequest
-    >(`/issue/relation`, req)
-    return res.data.data
-  },
+
   reopenIssue: async (issueId: Id): Promise<boolean> => {
     const res = await httpService.put<ResponseApi<boolean>, void>(
       `/issue/${issueId}/reopen`,
@@ -75,7 +63,7 @@ const issueService = {
   },
   deleteIssue: async (issueId: Id): Promise<void> => {
     const res = await httpService.delete<ResponseApi<void>>(
-      `/issue/${issueId}/reopen`,
+      `/issue/${issueId}`,
       undefined
     )
     return res.data.data

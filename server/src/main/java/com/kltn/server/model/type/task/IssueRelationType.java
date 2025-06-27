@@ -15,7 +15,7 @@ public enum IssueRelationType {
   public static IssueRelationType fromValue(String value) {
     value = value.toUpperCase();
     for (IssueRelationType type : IssueRelationType.values()) {
-      if (type.value.equals(value)) {
+      if (type.name().equals(value)) {
         return type;
       }
     }
