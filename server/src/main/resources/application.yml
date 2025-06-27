@@ -90,6 +90,7 @@ app:
   whitelist:
     - auth
     - auth/register
+    - auth/refresh
     - /verify/invite-token
     - /v3/api-docs
     - /v3/api-docs/**

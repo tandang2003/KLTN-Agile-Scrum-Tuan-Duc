@@ -115,12 +115,10 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <Tabs defaultValue='comment' className='mt-3'>
               <TabsList>
                 <TabsTrigger value='comment'>Comment</TabsTrigger>
-                <TabsTrigger value='history'>History</TabsTrigger>
               </TabsList>
               <TabsContent value='comment'>
                 <SectionComment />
               </TabsContent>
-              <TabsContent value='history'>history</TabsContent>
             </Tabs>
           </div>
           <ScrollBar />
