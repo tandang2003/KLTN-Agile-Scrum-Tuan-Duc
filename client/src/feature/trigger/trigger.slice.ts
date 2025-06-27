@@ -2,9 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 type AlertType = 'success' | 'error' | 'info' | 'warning'
 
 interface AlertState {
+  title: string
   message: string
   type: AlertType
-  visible: boolean
 }
 
 type TriggerState = {
@@ -12,7 +12,9 @@ type TriggerState = {
   isCreateIssue: boolean
   isUpdateIssue: boolean
   isOpenDialogSkill: boolean
-  alert: AlertState
+  alert: AlertState & {
+    visible: boolean
+  }
 }
 
 const initialState: TriggerState = {
@@ -21,6 +23,7 @@ const initialState: TriggerState = {
   isUpdateIssue: false,
   isOpenDialogSkill: false,
   alert: {
+    title: '',
     message: '',
     type: 'info',
     visible: false
@@ -57,7 +60,7 @@ const triggerSlice = createSlice({
     },
     showAlert: (
       state,
-      action: PayloadAction<{ message: string; type: AlertType }>
+      action: PayloadAction<{ title: string; message: string; type: AlertType }>
     ) => {
       state.alert.message = action.payload.message
       state.alert.type = action.payload.type

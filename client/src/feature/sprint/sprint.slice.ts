@@ -23,7 +23,7 @@ const sprintSlice = createSlice({
   name: 'sprint',
   initialState: initialState,
   reducers: {
-    setSprintForm(
+    setSprintActive(
       state: SprintState,
       action: PayloadAction<Sprint | undefined>
     ) {
@@ -66,7 +66,7 @@ export type { Sprint as SprintCurrent }
 export const {
   openDialogCreateSprint,
   closeDialogCreateSprint,
-  setSprintForm,
+  setSprintActive,
   setSprintCurrent,
   openDialogUpdateSprint
 } = sprintSlice.actions

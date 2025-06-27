@@ -6,47 +6,80 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { hideAlert } from '@/feature/trigger/trigger.slice'
-import { useEffect } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 
-const AlertHost = () => {
-  const { visible } = useAppSelector((state) => state.triggerSlice.alert)
-  const dispatch = useAppDispatch()
+interface AlertState {
+  title?: string
+  message?: string
+  type?: AlertType
+  onConfirm?: () => Promise<void>
+}
 
-  useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(() => dispatch(hideAlert()), 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [visible, dispatch])
+type AlertType = 'success' | 'error' | 'info' | 'warning'
 
-  if (!visible) return null
+type AlertHostContextType = {
+  showDialog: (data: AlertState) => void
+  hideDialog: () => void
+}
+
+const AlertHostContext = createContext<AlertHostContextType | null>(null)
+
+const useAlertHost = () => {
+  const context = useContext(AlertHostContext)
+  if (!context) {
+    throw new Error('useAlertHost must be used within an AlertHostProvider')
+  }
+  return context
+}
+
+type AlertHostProps = {
+  children: React.ReactNode
+}
+
+const AlertHostProvider = ({ children }: AlertHostProps) => {
+  const [open, setOpen] = useState<boolean>(false)
+  const [dialogProps, setDialogProps] = useState<AlertState | null>(null)
+
+  const showDialog = useCallback((data: AlertState) => {
+    setOpen(true)
+    setDialogProps(data)
+  }, [])
+
+  const hideDialog = useCallback(() => {
+    setOpen(false)
+    setDialogProps(null)
+  }, [])
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant='outline'>Show Dialog</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <AlertHostContext.Provider value={{ showDialog, hideDialog }}>
+      {children}
+      <AlertDialog open={open} onOpenChange={() => hideDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{dialogProps?.title ?? ''}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {dialogProps?.message ?? ''}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                dialogProps?.onConfirm?.().finally(() => {
+                  hideDialog()
+                })
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </AlertHostContext.Provider>
   )
 }
 
-export default AlertHost
+export default AlertHostProvider
+export { useAlertHost }

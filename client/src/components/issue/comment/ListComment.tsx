@@ -1,4 +1,4 @@
-import { useContextComment } from '@/components/issue/comment/ContextComment'
+import { useCommentContext } from '@/components/issue/comment/ContextComment'
 import ItemComment from '@/components/issue/comment/ItemComment'
 import { useAppSelector } from '@/context/redux/hook'
 import { uuid } from '@/lib/utils'
@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 
 const ListComment = () => {
   const issueId = useAppSelector((state) => state.issueSlice.current?.id)
-  const { isReady, ws, setComment, comment } = useContextComment()
+  const { isReady, ws, setComment, comment } = useCommentContext()
   useEffect(() => {
     if (ws && isReady && ws.connected) {
       const subscriber = ws.subscribe(`/topic/room/${issueId}`, (value) => {

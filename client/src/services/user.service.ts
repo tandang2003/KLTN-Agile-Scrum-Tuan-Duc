@@ -21,11 +21,9 @@ const userService = {
     )
     return response.data
   },
-  getInfo: async (options?: object) => {
-    const response = await httpService.get<ResponseApi<UserInfoResponse>>(
-      '/user',
-      options
-    )
+  getInfo: async () => {
+    const response =
+      await httpService.get<ResponseApi<UserInfoResponse>>('/user')
     return response.data
   }
 }

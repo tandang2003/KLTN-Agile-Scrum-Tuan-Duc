@@ -5,6 +5,7 @@ import {
 import rootReducer from '@/context/redux/reducer'
 import issueApi from '@/feature/issue/issue.api'
 import projectApi from '@/feature/project/project.api'
+import relationshipApi from '@/feature/relationship/relationship.api'
 import skillApi from '@/feature/skill/skill.api'
 import sprintApi from '@/feature/sprint/sprint.api'
 import userApi from '@/feature/user/user.api'
@@ -36,6 +37,7 @@ export const store = configureStore({
       .concat(issueApi.middleware)
       .concat(skillApi.middleware)
       .concat(userApi.middleware)
+      .concat(relationshipApi.middleware)
 })
 
 setupListeners(store.dispatch)

@@ -11,17 +11,22 @@ const CreateRelationshipIssueSchema = z.object({
 })
 
 type RelationshipResponse = {
-  issue: IssueResponse
   issueRelated: IssueResponse
   typeRelation: string
 }
 type CreateRelationshipIssueRequest = CreateRelationshipIssueType & {
   issueId: Id
 }
+type DeleteRelationshipIssueRequest = {
+  issueId: Id
+  issueRelatedId: Id
+}
+
 type CreateRelationshipIssueType = z.infer<typeof CreateRelationshipIssueSchema>
 export type {
   CreateRelationshipIssueType,
   RelationshipResponse,
-  CreateRelationshipIssueRequest
+  CreateRelationshipIssueRequest,
+  DeleteRelationshipIssueRequest
 }
 export { CreateRelationshipIssueSchema }

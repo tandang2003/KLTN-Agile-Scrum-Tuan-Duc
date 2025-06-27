@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import { setSprintForm } from '@/feature/sprint/sprint.slice'
+import { setSprintActive } from '@/feature/sprint/sprint.slice'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import { cn } from '@/lib/utils'
@@ -44,7 +44,7 @@ const ListIssueInProductBacklog = () => {
             className='mt-2 w-full justify-start border-none'
             variant={'default'}
             onClick={() => {
-              dispatch(setSprintForm(undefined))
+              dispatch(setSprintActive(undefined))
               dispatch(enableCreateIssue())
             }}
           >

@@ -1,7 +1,7 @@
 import Editor from '@/components/Editor'
 import HtmlViewer from '@/components/HtmlViewer'
 import InlineEdit from '@/components/InlineEdit'
-import { useContextComment } from '@/components/issue/comment/ContextComment.tsx'
+import { useCommentContext } from '@/components/issue/comment/ContextComment.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useAppSelector } from '@/context/redux/hook.ts'
@@ -13,7 +13,7 @@ const EditorComment = () => {
   const issueId = useAppSelector(
     (state: RootState) => state.issueSlice.current?.id
   )
-  const { isReady, ws } = useContextComment()
+  const { isReady, ws } = useCommentContext()
   const [comment, setComment] = useState<string>('')
 
   const handlePushComment = (val: string) => {

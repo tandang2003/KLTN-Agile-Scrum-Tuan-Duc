@@ -1,4 +1,4 @@
-import { ProviderCommentProvider } from '@/components/issue/comment/ContextComment.tsx'
+import { CommentProvider } from '@/components/issue/comment/ContextComment.tsx'
 import EditorComment from '@/components/issue/comment/EditorComment'
 import ListComment from '@/components/issue/comment/ListComment'
 import { useAppSelector } from '@/context/redux/hook'
@@ -16,12 +16,12 @@ const SectionComment = () => {
       })
   }, [id])
   return (
-    <ProviderCommentProvider initValue={comment}>
+    <CommentProvider initValue={comment}>
       <section>
         <EditorComment />
         <ListComment />
       </section>
-    </ProviderCommentProvider>
+    </CommentProvider>
   )
 }
 

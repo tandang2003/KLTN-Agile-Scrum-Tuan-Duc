@@ -4,6 +4,7 @@ import issueApi from '@/feature/issue/issue.api'
 import { issueReducer } from '@/feature/issue/issue.slice'
 import projectApi from '@/feature/project/project.api'
 import { projectReducer } from '@/feature/project/project.slice'
+import relationshipApi from '@/feature/relationship/relationship.api'
 import skillApi from '@/feature/skill/skill.api'
 import { skillReducer } from '@/feature/skill/skill.slice'
 import sprintApi from '@/feature/sprint/sprint.api'
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   [issueApi.reducerPath]: issueApi.reducer,
   [skillApi.reducerPath]: skillApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [relationshipApi.reducerPath]: relationshipApi.reducer,
   authSlice: authReducer,
   workspaceSlice: workspaceReducer,
   projectSlice: projectReducer,
