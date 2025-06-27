@@ -24,9 +24,10 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
   public ChangeLogRequest taskToCreateLogRequest(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
     ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
     changeLogBuilder.type(LogType.CREATE)
-                    .idRef(task.getId())
-                    .entityTarget(EntityTarget.TASK.name())
-                    .change(logTaskMapper.entityToLogDomain(task, issueMongo))
+      .idRef(task.getId())
+      .entityTarget(EntityTarget.TASK.name())
+      .projectId(task.getProject().getId())
+      .change(logTaskMapper.entityToLogDomain(task, issueMongo))
 
     ;
     return changeLogBuilder.build();
@@ -36,9 +37,11 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
   public ChangeLogRequest projectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo) {
     ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
     changeLogBuilder.type(LogType.CREATE)
-                    .idRef(project.getId())
-                    .entityTarget(EntityTarget.PROJECT.name())
-                    .change(logProjectMapper.entityToLogDomain(project, projectMongo));
+      .idRef(project.getId())
+      .projectId(project.getId())
+      .entityTarget(EntityTarget.PROJECT.name())
+      .change(logProjectMapper.entityToLogDomain(project, projectMongo))
+    ;
     return changeLogBuilder.build();
   }
 
@@ -47,10 +50,13 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
                                        com.kltn.server.model.collection.Issue issueMongo) {
     ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
     changeLogBuilder.type(LogType.UPDATE)
-                    .idRef(task.getId())
-                    .entityTarget(EntityTarget.TASK.name())
-                    .propertiesTargets(properties)
-                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+      .idRef(task.getId())
+      .projectId(task.getProject().getId())
+
+      .entityTarget(EntityTarget.TASK.name())
+      .propertiesTargets(properties)
+      .change(logTaskMapper.entityToLogDomain(task, issueMongo))
+    ;
     return changeLogBuilder.build();
   }
 
@@ -58,20 +64,25 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
   public ChangeLogRequest taskToCreateRelation(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
     ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
     changeLogBuilder.type(LogType.CREATE)
-                    .idRef(task.getId())
-                    .entityTarget(EntityTarget.TASK.name())
-                    .propertiesTargets(new String []{"relations"})
-                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+      .idRef(task.getId())
+      .projectId(task.getProject().getId())
+      .entityTarget(EntityTarget.TASK.name())
+      .propertiesTargets(new String[]{"relations"})
+      .change(logTaskMapper.entityToLogDomain(task, issueMongo))
+    ;
     return changeLogBuilder.build();
   }
+
   @Override
   public ChangeLogRequest taskToRemoveRelation(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
     ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
     changeLogBuilder.type(LogType.DELETE)
-                    .idRef(task.getId())
-                    .entityTarget(EntityTarget.TASK.name())
-                    .propertiesTargets(new String []{"relations"})
-                    .change(logTaskMapper.entityToLogDomain(task, issueMongo));
+      .idRef(task.getId())
+      .entityTarget(EntityTarget.TASK.name())
+      .projectId(task.getProject().getId())
+      .propertiesTargets(new String[]{"relations"})
+      .change(logTaskMapper.entityToLogDomain(task, issueMongo))
+    ;
     return changeLogBuilder.build();
   }
 
