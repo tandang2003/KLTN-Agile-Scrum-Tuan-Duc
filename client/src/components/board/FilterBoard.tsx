@@ -28,7 +28,6 @@ const FilterBoard = ({}: FilterBoardProps) => {
             <Icon icon={'mynaui:filter-solid'} />
           </Button>
         </PopoverTrigger>
-        <div className='ml-auto'>asdasd</div>
       </div>
       <PopoverContent align='start' className='w-fit'>
         <Tabs defaultValue='sprint' className='flex h-full w-full gap-4'>

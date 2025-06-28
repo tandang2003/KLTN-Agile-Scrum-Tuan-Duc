@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon'
+import Notification from '@/components/notification/Notification'
 import DialogInviteStudentProject from '@/components/project/DialogInviteStudentProject'
 import {
   DropdownMenu,
@@ -23,27 +24,29 @@ const ProjectHeader = ({ data }: ProjectHeaderProps) => {
           <span className='text-sm'>{data.id}</span>
           <h2 className='h2'>{data.name}</h2>
         </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger className='ml-auto'>
-            <Icon className='text-white' icon={'lucide:more-horizontal'} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>
-              <Icon icon={'mdi:information'} />
-              Information
-            </DropdownMenuItem>
-            <RequiredAuth roles={['student']}>
-              <DropdownMenuItem
-                className='hover:!bg-yellow-400'
-                onClick={() => setIsOpen(true)}
-              >
-                <Icon icon={'fluent-mdl2:add-friend'} />
-                Invite
+        <div className='ml-auto flex items-center gap-4'>
+          <Notification />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className='hover-opacity'>
+              <Icon icon={'lucide:more-horizontal'} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem>
+                <Icon icon={'mdi:information'} />
+                Information
               </DropdownMenuItem>
-            </RequiredAuth>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <RequiredAuth roles={['student']}>
+                <DropdownMenuItem
+                  className='hover:!bg-yellow-400'
+                  onClick={() => setIsOpen(true)}
+                >
+                  <Icon icon={'fluent-mdl2:add-friend'} />
+                  Invite
+                </DropdownMenuItem>
+              </RequiredAuth>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <DialogInviteStudentProject open={open} onOpen={setIsOpen} />
     </>
