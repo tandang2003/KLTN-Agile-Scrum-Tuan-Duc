@@ -1,4 +1,4 @@
-package com.kltn.server.service.entity.iml;
+package com.kltn.server.service.entity;
 
 import com.kltn.server.DTO.request.base.AttachmentRequest;
 import com.kltn.server.DTO.request.entity.issue.*;
@@ -31,7 +31,6 @@ import com.kltn.server.model.type.task.IssueTag;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.relation.IssueRelationRepository;
 import com.kltn.server.repository.entity.relation.PersonalSkillRepository;
-import com.kltn.server.service.entity.*;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -600,6 +599,7 @@ public class IssueService {
       .build()
       ;
     relation = issueRelationRepository.save(relation);
+    issue.getAffectTo().add(relation);
     ChangeLogRequest changeLog = changeLogMapper.taskToCreateRelation(issue, issueMongoService.getById(issue.getId()));
     return ApiResponse.<IssueRelationResponse>builder()
       .code(HttpStatus.CREATED.value())
@@ -619,6 +619,7 @@ public class IssueService {
       .issueRelated(relatedIssue)
       .build()
       ;
+    issue.getAffectTo().remove(relation);
     ChangeLogRequest changeLog = changeLogMapper.taskToRemoveRelation(issue, issueMongoService.getById(issue.getId()));
     issueRelationRepository.delete(relation);
     return ApiResponse.<Void>builder()
