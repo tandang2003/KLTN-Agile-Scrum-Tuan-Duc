@@ -33,7 +33,6 @@ public class IssueLogConsumer {
       .build()
       ;
     projectLog = changeLogRepository.save(projectLog);
-    System.out.println(projectLog);
   }
   //
   // @KafkaListener(topics = "task-log", groupId = "task-log-1")
