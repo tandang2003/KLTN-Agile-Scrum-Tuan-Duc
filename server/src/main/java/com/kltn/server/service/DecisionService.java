@@ -10,7 +10,7 @@ import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.type.task.IssueStatus;
-import com.kltn.server.service.entity.iml.IssueService;
+import com.kltn.server.service.entity.IssueService;
 import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.entity.SprintService;
 import jakarta.transaction.Transactional;
