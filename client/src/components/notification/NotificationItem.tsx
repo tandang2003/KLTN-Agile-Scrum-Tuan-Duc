@@ -38,7 +38,7 @@ const NotificationItem = ({ data }: NotificationItemProps) => {
   })
   const { icon, message } = formatNotification(data)
   return (
-    <div className='flex items-start gap-2 rounded-md border bg-white p-4 shadow-sm'>
+    <div className='flex items-start gap-2 rounded-md border bg-white p-2 shadow-sm'>
       <div>{icon}</div>
       <div>
         <p className='text-sm text-gray-700'>{message}</p>
