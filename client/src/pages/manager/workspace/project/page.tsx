@@ -4,7 +4,7 @@ import ProjectHeader from '@/components/project/ProjetcHeader'
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
 import { useAppDispatch } from '@/context/redux/hook'
-import { setSprintIdFilter } from '@/feature/board/board.slice'
+import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
 import { toISODateString } from '@/lib/date.helper'
@@ -39,7 +39,14 @@ const ProjectPage = () => {
           end: toISODateString(data.currentSprint.end)
         })
       )
-      dispatch(setSprintIdFilter(data.currentSprint.id))
+
+      dispatch(
+        setSprintFilter({
+          id: data.currentSprint.id,
+          start: toISODateString(data.currentSprint.start),
+          end: toISODateString(data.currentSprint.end)
+        })
+      )
     }
   }, [data?.currentSprint, dispatch])
 

@@ -1,3 +1,4 @@
+import { useAlertHost } from '@/components/AleartHost'
 import Icon from '@/components/Icon'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
@@ -30,6 +31,7 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
   const { action } = useOpenIssueUpdate()
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const [deleteIssue] = useDeleteIssueMutation()
+  const { showAlert } = useAlertHost()
 
   const handleMoveToBacklog = () => {
     moveToBacklog({
@@ -50,14 +52,21 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
   }
 
   const handleDelete = () => {
-    deleteIssue(id)
-      .unwrap()
-      .then(() => {
-        toast.success('Issue deleted successfully')
-      })
-      .catch(() => {
-        toast.error('Failed to delete issue')
-      })
+    showAlert({
+      title: 'Delete Issue',
+      type: 'warning',
+      message: `Are you sure you want to delete issue ${item.name}? This action cannot be undone.`,
+      onConfirm: () => {
+        return deleteIssue(id)
+          .unwrap()
+          .then(() => {
+            toast.success('Issue deleted successfully')
+          })
+          .catch(() => {
+            toast.error('Failed to delete issue')
+          })
+      }
+    })
   }
 
   const canMoveToBacklog =

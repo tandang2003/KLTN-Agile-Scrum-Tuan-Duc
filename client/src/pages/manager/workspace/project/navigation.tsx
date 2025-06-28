@@ -18,7 +18,16 @@ const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        <RequiredAuth mode='hide' roles={['teacher']}>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className='data-[active=true]:active-tag'
+            data-active={pathname.includes('/backlog')}
+          >
+            <Link to={`/manager/workspace/project/${id}/backlog`}>Backlog</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <RequiredAuth mode='hide' roles={['student']}>
           <NavigationMenuItem>
             <NavigationMenuLink
               asChild
@@ -29,16 +38,6 @@ const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
             </NavigationMenuLink>
           </NavigationMenuItem>
         </RequiredAuth>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className='data-[active=true]:active-tag'
-            data-active={pathname.includes('/backlog')}
-          >
-            <Link to={`/manager/workspace/project/${id}/backlog`}>Backlog</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink

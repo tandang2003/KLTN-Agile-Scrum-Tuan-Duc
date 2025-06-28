@@ -19,10 +19,9 @@ import { toast } from 'sonner'
 
 const BoardPage = () => {
   const { projectId } = useParams<ProjectParams>()
-
-  const { sprintId } = useAppSelector((state) => state.boardSlice.filter)
-
-  const { data, isFetching, error } = useGetListIssueQuery(
+  const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
+  const sprintId = sprint?.id
+  const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
       sprintId: sprintId as Id
@@ -31,12 +30,6 @@ const BoardPage = () => {
       skip: !projectId || !sprintId
     }
   )
-
-  useEffect(() => {
-    if (error) {
-      toast.error('An error occurred while fetching issues')
-    }
-  }, [error])
 
   const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
 
@@ -52,12 +45,6 @@ const BoardPage = () => {
         })
     }
   }, [projectId, sprintId])
-
-  // useEffect(() => {
-  //   if (currentSprintId) {
-  //     dispatch(setSprintIdFilter(currentSprintId))
-  //   }
-  // }, [currentSprintId])
 
   const handleOnChangeAPI = useCallback(
     (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {

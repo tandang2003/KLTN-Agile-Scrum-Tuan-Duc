@@ -43,5 +43,6 @@ export default notificationApi
 
 export const {
   useGetProjectNotificationsQuery,
-  useClearNotificationsMutation
+  useClearNotificationsMutation,
+  useLazyGetProjectNotificationsQuery
 } = notificationApi

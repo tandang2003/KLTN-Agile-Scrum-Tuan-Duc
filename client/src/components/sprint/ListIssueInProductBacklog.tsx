@@ -23,7 +23,11 @@ const ListIssueInProductBacklog = () => {
       skip: !projectId
     }
   )
-  console.log('projectId', projectId)
+
+  const handleOpenCreateIssue = () => {
+    dispatch(setSprintActive(undefined))
+    dispatch(enableCreateIssue())
+  }
 
   return (
     <ListView<IssueResponse>
@@ -43,10 +47,7 @@ const ListIssueInProductBacklog = () => {
           <Button
             className='mt-2 w-full justify-start border-none'
             variant={'default'}
-            onClick={() => {
-              dispatch(setSprintActive(undefined))
-              dispatch(enableCreateIssue())
-            }}
+            onClick={handleOpenCreateIssue}
           >
             Create issue
           </Button>

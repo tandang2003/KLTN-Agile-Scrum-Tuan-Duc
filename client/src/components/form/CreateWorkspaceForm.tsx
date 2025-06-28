@@ -76,7 +76,7 @@ const CreateWorkspaceForm = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type='text' placeholder='2113xxxx' {...field} />
+                    <Input type='text' placeholder='Lập trình Web' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

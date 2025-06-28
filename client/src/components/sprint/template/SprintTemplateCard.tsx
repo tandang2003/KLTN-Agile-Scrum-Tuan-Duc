@@ -14,6 +14,7 @@ import {
   setSprintActive
 } from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode } from '@/lib/const'
+import { toISODateString } from '@/lib/date.helper'
 import { getStatusSprint } from '@/lib/sprint.helper'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
@@ -35,8 +36,8 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
     dispatch(
       setSprintActive({
         id: id,
-        start: new Date(start).toISOString(),
-        end: new Date(end).toISOString()
+        start: toISODateString(start),
+        end: toISODateString(end)
       })
     )
     dispatch(openDialogUpdateSprint())

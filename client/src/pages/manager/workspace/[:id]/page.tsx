@@ -69,10 +69,6 @@ const WorkspaceDetailPage = () => {
                 Add Student
               </DropdownMenuItem>
             </RequiredAuth>
-            <DropdownMenuItem className='hover:!bg-blue-400'>
-              <Icon icon={'mdi:information'} />
-              Information
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -167,7 +167,6 @@ type RelationshipListProps = {
 }
 
 const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
-  console.log('items', items)
   const dataPreprocessing = useMemo<
     Record<IssueRelationShip, IssueResponse[]>
   >(() => {

@@ -23,7 +23,7 @@ import {
   CreateSprintFormType
 } from '@/types/sprint.type'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addDays } from 'date-fns'
+import { addDays, isBefore, isWithinInterval } from 'date-fns'
 import { isNumber } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useForm, UseFormReturn } from 'react-hook-form'
@@ -67,6 +67,7 @@ const SprintTemplateBaseForm = ({
 
   const startDate = watch('start')
   const endDate = watch('end')
+  const predictDate = watch('predict')
 
   useEffect(() => {
     if (durationValue.active !== 'custom') {
@@ -74,8 +75,16 @@ const SprintTemplateBaseForm = ({
       form.setValue('end', end)
     }
     // Reset end date if it is before start date
-    if (endDate && endDate < startDate) {
+    if (isBefore(endDate, startDate)) {
       form.setValue('end', addDays(startDate, 7))
+    }
+    if (
+      !isWithinInterval(predictDate, {
+        start: startDate,
+        end: endDate
+      })
+    ) {
+      form.setValue('predict', startDate)
     }
   }, [durationValue, startDate])
 
@@ -173,7 +182,7 @@ const SprintTemplateBaseForm = ({
                 control={form.control}
                 name='start'
                 render={({ field }) => (
-                  <FormItem className=''>
+                  <FormItem className='flex-1'>
                     <FormLabel>Time start</FormLabel>
                     <DatePickerWithPresets
                       date={field.value}
@@ -194,22 +203,14 @@ const SprintTemplateBaseForm = ({
                 control={form.control}
                 name='end'
                 render={({ field }) => (
-                  <FormItem className=''>
+                  <FormItem className='flex-1'>
                     <FormLabel>Time end</FormLabel>
                     <DatePickerWithPresets
                       disabled={durationValue.active !== 'custom'}
+                      min={form.getValues('start')}
                       date={field.value}
                       setDate={(date) => {
-                        if (durationValue.active !== 'custom') {
-                          const start = form.getValues('start')
-                          date = addDays(
-                            start,
-                            Number(durationValue.active) * 7
-                          )
-                        } else {
-                          date = field.value
-                        }
-                        field.onChange(new Date(date))
+                        if (date) field.onChange(new Date(date))
                       }}
                     />
                     <div className='h-[20px]'>

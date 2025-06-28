@@ -1,7 +1,10 @@
 import { useAppDispatch } from '@/context/redux/hook'
-import { setSprintIdFilter } from '@/feature/board/board.slice'
+import { setSprintFilter } from '@/feature/board/board.slice'
 import { getTokenProjectThunk } from '@/feature/project/project.slice'
-import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
+import {
+  setSprintActive,
+  setSprintCurrent
+} from '@/feature/sprint/sprint.slice'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
 import { toISODateString } from '@/lib/date.helper'
@@ -35,7 +38,13 @@ const WorkspaceDetailLayout = () => {
           end: toISODateString(data.currentSprint.end)
         })
       )
-      dispatch(setSprintIdFilter(data.currentSprint.id))
+      dispatch(
+        setSprintFilter({
+          id: data.currentSprint.id,
+          start: toISODateString(data.currentSprint.start),
+          end: toISODateString(data.currentSprint.end)
+        })
+      )
     }
   }, [data?.currentSprint, dispatch])
 
