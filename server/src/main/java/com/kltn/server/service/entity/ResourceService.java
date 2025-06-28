@@ -20,7 +20,6 @@ import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.ResourceRepository;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
-import com.kltn.server.service.entity.iml.IssueService;
 import com.kltn.server.service.file.FileService;
 import com.kltn.server.service.file.FileSignature;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package com.kltn.server.model.collection;
 
-import com.kltn.server.model.collection.model.ILog;
 import com.kltn.server.model.collection.model.LogTask;
 import com.kltn.server.model.type.task.LogType;
 import jakarta.persistence.EntityListeners;
@@ -51,6 +50,8 @@ public class ChangeLog {
   @Field(name = "deleted_by")
   protected String deletedBy;
 
+  public ChangeLog() {}
+
   protected ChangeLog(ChangeLogBuilder builder) {
     this.id = builder.id;
     this.DTCreated = builder.DTCreated;
@@ -82,14 +83,13 @@ public class ChangeLog {
   public int hashCode() {
     return Objects.hash(type, entityTarget, Arrays.hashCode(propertiesTargets), idRef, change, id, DTCreated, DTDeleted, deleted, createdBy, deletedBy);
   }
-
   public static class ChangeLogBuilder {
-    protected ObjectId id;
-    protected Instant DTCreated;
-    protected Instant DTDeleted;
-    protected boolean deleted;
-    protected String createdBy;
-    protected String deletedBy;
+    private ObjectId id;
+    private Instant DTCreated;
+    private Instant DTDeleted;
+    private boolean deleted;
+    private String createdBy;
+    private String deletedBy;
     private LogType type;
     private String entityTarget;
     private String[] propertiesTargets;
@@ -99,11 +99,6 @@ public class ChangeLog {
 
     public ChangeLogBuilder id(ObjectId id) {
       this.id = id;
-      return this;
-    }
-
-    public ChangeLogBuilder projectId(String projectId) {
-      this.projectId = projectId;
       return this;
     }
 
@@ -157,6 +152,11 @@ public class ChangeLog {
       return this;
     }
 
+    public ChangeLogBuilder projectId(String projectId) {
+      this.projectId = projectId;
+      return this;
+    }
+
     public ChangeLog build() {
       return new ChangeLog(this);
     }
@@ -184,6 +184,14 @@ public class ChangeLog {
 
   public void setPropertiesTargets(String[] propertiesTargets) {
     this.propertiesTargets = propertiesTargets;
+  }
+
+  public String getProjectId() {
+    return projectId;
+  }
+
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
   }
 
   public String getIdRef() {
@@ -249,13 +257,4 @@ public class ChangeLog {
   public void setDeletedBy(String deletedBy) {
     this.deletedBy = deletedBy;
   }
-
-  public String getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(String projectId) {
-    this.projectId = projectId;
-  }
-
 }
