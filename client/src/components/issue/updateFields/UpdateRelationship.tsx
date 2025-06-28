@@ -220,10 +220,11 @@ type RelationshipItemProps = Pick<RelationshipResponse, 'issueRelated'> & {
 
 const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
   const [deleteRelationship] = useDeleteRelationshipMutation()
-  const { showDialog } = useAlertHost()
+  const { showAlert } = useAlertHost()
   const handleDelete = () => {
-    showDialog({
+    showAlert({
       title: 'Delete relationship',
+      type: 'warning',
       message: `Are you sure you want to delete the relationship with ${issueRelated.name}?`,
       onConfirm: async () => {
         try {

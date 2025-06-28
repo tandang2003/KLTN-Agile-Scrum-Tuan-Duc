@@ -173,7 +173,7 @@
 }
 
 @utility hover-opacity {
-  @apply hover:cursor-pointer hover:opacity-65;
+  @apply hover:cursor-pointer hover:bg-none hover:opacity-65;
 }
 
 .container {

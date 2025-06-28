@@ -1,8 +1,8 @@
 import InlineEdit from '@/components/InlineEdit'
 import { FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useUpdateIssueMutation } from '@/feature/issue/issue.api'
 import { useAutoUpdateField } from '@/hooks/use-update'
-import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { useFormContext } from 'react-hook-form'
 type UpdateNameIssueProps = {}
@@ -10,11 +10,12 @@ type UpdateNameIssueProps = {}
 const UpdateNameIssue = ({}: UpdateNameIssueProps) => {
   const form = useFormContext<UpdateIssueType>()
   const { control, setValue, getValues } = form
+  const [update] = useUpdateIssueMutation()
   useAutoUpdateField({
     form: form,
     field: 'name',
     callApi: (field, value) => {
-      return issueService.updateIssue({
+      return update({
         id: getValues('id'),
         fieldChanging: field,
         [field]: value

@@ -11,8 +11,12 @@ import ManagerLayout from '@/pages/manager/layout'
 import ManagerPage from '@/pages/manager/page'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
+import WorkspaceProjectPage from '@/pages/manager/workspace/[:id]/project/page'
 import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
 import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
+import WorkspaceStudentPage from '@/pages/manager/workspace/[:id]/student/page'
+import SummaryTab from '@/pages/manager/workspace/[:id]/summary/page'
+import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/template/page'
 import WorkspacePage from '@/pages/manager/workspace/page'
 import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import BoardPage from '@/pages/manager/workspace/project/board/page'
@@ -75,11 +79,19 @@ const AppRoutes = () => {
               <Route index element={<WorkspacePage />} />
               {/* Workspace detail */}
               <Route path=':workspaceId' element={<WorkspaceDetailLayout />}>
-                {/* http://localhost:3000/manager/workspace/1 */}
-                <Route index element={<WorkspaceDetailPage />} />
-                <Route path='setting' element={<SettingLayout />}>
-                  {/* http://localhost:3000/manager/workspace/1/setting */}
-                  <Route index element={<WorkspaceSettingPage />} />
+                <Route element={<WorkspaceDetailPage />}>
+                  <Route index element={<Navigate to='summary' replace />} />
+                  <Route path='summary' element={<SummaryTab />} />
+                  <Route path='project' element={<WorkspaceProjectPage />} />
+                  <Route path='student' element={<WorkspaceStudentPage />} />
+                  <Route
+                    path='template'
+                    element={<WorkspaceSprintTemplatePage />}
+                  />
+
+                  <Route path='setting' element={<SettingLayout />}>
+                    <Route index element={<WorkspaceSettingPage />} />
+                  </Route>
                 </Route>
               </Route>
               {/* http://localhost:3000/manager/workspace/project/1 */}
@@ -92,6 +104,7 @@ const AppRoutes = () => {
                         element={<Navigate to='backlog' replace />}
                       />
                       {/* http://localhost:3000/manager/workspace/project/1/board */}
+
                       <Route path='board' index element={<BoardPage />} />
                       <Route path='backlog' element={<BacklogPage />} />
                       <Route path='report' element={<ReportPage />} />
