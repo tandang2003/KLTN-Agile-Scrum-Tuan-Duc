@@ -12,7 +12,7 @@ import {
 import { Id } from '@/types/other.type'
 import { PlusIcon } from 'lucide-react'
 
-const TemplateTab = () => {
+const WorkspaceSprintTemplatePage = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
@@ -59,4 +59,4 @@ const TemplateTab = () => {
   )
 }
 
-export default TemplateTab
+export default WorkspaceSprintTemplatePage

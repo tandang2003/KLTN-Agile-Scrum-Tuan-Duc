@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/navigation-menu'
 import { Link, useLocation } from 'react-router-dom'
 import { Id } from '@/types/other.type'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
 
 type ProjectNavigationProps = {
   id: Id
@@ -17,15 +18,17 @@ const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            data-active={pathname.includes('/board')}
-            className='data-[active=true]:active-tag'
-          >
-            <Link to={`/manager/workspace/project/${id}/board`}>Board</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        <RequiredAuth mode='hide' roles={['teacher']}>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              asChild
+              data-active={pathname.includes('/board')}
+              className='data-[active=true]:active-tag'
+            >
+              <Link to={`/manager/workspace/project/${id}/board`}>Board</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </RequiredAuth>
 
         <NavigationMenuItem>
           <NavigationMenuLink

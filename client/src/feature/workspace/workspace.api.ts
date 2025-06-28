@@ -26,7 +26,6 @@ const workspaceApi = createApi({
             await workspaceService.getListWorkSpace(args)
           return { data: data }
         } catch (error) {
-          console.log('error workspace api ', error)
           return { error }
         }
       },
