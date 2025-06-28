@@ -1,43 +1,41 @@
 import Icon from '@/components/Icon'
-import ListViewPagination from '@/components/ListViewPagination'
+import InfiniteScrollList from '@/components/InfiniteScrollList'
 import NotificationItem from '@/components/notification/NotificationItem'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   useClearNotificationsMutation,
-  useGetProjectNotificationsQuery
+  useLazyGetProjectNotificationsQuery
 } from '@/feature/notification/notification.api'
 import useAppId from '@/hooks/use-app-id'
-import {
-  NotificationResponse,
-  ProjectNotificationRequest
-} from '@/types/notification.type'
+import { NotificationResponse } from '@/types/notification.type'
 import { Id } from '@/types/other.type'
-import { useState } from 'react'
 
 type NotificationListProps = {}
 
 const NotificationList = ({}: NotificationListProps) => {
   const { projectId } = useAppId()
-  const [page, setPage] = useState<ProjectNotificationRequest>({
-    page: 0,
-    size: 20
-  })
-  const [clear] = useClearNotificationsMutation()
 
-  const { data: items, isFetching } = useGetProjectNotificationsQuery(
-    {
-      projectId: projectId as Id,
-      req: {
-        page: page.page,
-        size: page.size
-      }
-    },
-    {
-      skip: !projectId
-    }
-  )
+  const [clear] = useClearNotificationsMutation()
+  const [trigger] = useLazyGetProjectNotificationsQuery()
 
   const handleClearNotification = async () => {
     await clear()
+  }
+
+  const loadFunc = async (
+    page: number
+  ): Promise<{ data: NotificationResponse[]; more: boolean }> => {
+    const result = await trigger({
+      projectId: projectId as Id,
+      req: {
+        page: page - 1,
+        size: 4
+      }
+    }).unwrap()
+    return {
+      data: result.items,
+      more: result.currentPage < result.totalPages
+    }
   }
 
   return (
@@ -51,24 +49,19 @@ const NotificationList = ({}: NotificationListProps) => {
           onClick={handleClearNotification}
         />
       </div>
-      <ListViewPagination<NotificationResponse>
-        page={items}
-        onPageChange={(page) => {
-          setPage((prev) => ({
-            ...prev,
-            page: page
-          }))
-        }}
-        view={{
-          loading: isFetching,
-          emptyComponent: (
-            <span className='text-gray-500'>No notifications found</span>
-          ),
-          render: (item) => {
+      <ScrollArea className='h-[20vh]'>
+        <InfiniteScrollList<NotificationResponse>
+          loadFunc={loadFunc}
+          className='flex flex-col gap-2'
+          render={(item) => {
             return <NotificationItem data={item} />
+          }}
+          loading={<div style={{ color: 'red' }}>Loading...</div>}
+          fallback={
+            <span className='text-gray-500'>No notifications found</span>
           }
-        }}
-      />
+        />
+      </ScrollArea>
     </>
   )
 }

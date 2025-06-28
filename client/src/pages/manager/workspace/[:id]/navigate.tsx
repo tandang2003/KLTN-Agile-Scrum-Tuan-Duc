@@ -28,15 +28,17 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className='data-[active=true]:active-tag'
-            data-active={pathname.includes('/project')}
-          >
-            <Link to={`/manager/workspace/${id}/project`}>Project</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        <RequiredAuth roles={['teacher']}>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              asChild
+              className='data-[active=true]:active-tag'
+              data-active={pathname.includes('/project')}
+            >
+              <Link to={`/manager/workspace/${id}/project`}>Project</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </RequiredAuth>
 
         <NavigationMenuItem>
           <NavigationMenuLink

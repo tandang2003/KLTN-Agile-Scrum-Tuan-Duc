@@ -91,7 +91,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           })
         }
       })
-      .catch((_) => toast.error('Create issue failed'))
+      .catch(() => toast.error('Create issue failed'))
       .finally(() => {
         onSubmit?.()
       })
@@ -108,7 +108,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input type='text' placeholder='2113xxxx' {...field} />
+                    <Input type='text' placeholder='Solve Problem' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -123,6 +123,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
 
                   <FormControl>
                     <Editor
+                      className='h-full'
                       {...field}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
@@ -133,6 +134,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
             <CreateSubTaskForm />
           </div>
           <div className='basis-[450px] [&>*:not(:first-child)]:mt-3'>
+            <SelectSprint />
             <div className='flex gap-3'>
               <CreateDateIssueForm />
             </div>
@@ -219,7 +221,6 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
                 data={issueTagList}
               />
             </div>
-            <SelectSprint label='Sprint' />
 
             <CreateTopicForm />
           </div>

@@ -62,21 +62,6 @@ const tokenService = {
     setAuthorization(token)
     return token
   },
-  setFilterSprintBoard: (filter: FilterSprintBoard) => {
-    sessionStorage.setItem(
-      StorageItem.FilterSprintBoard,
-      JSON.stringify(filter)
-    )
-  },
-  getFilterSprintBoard: (): FilterSprintBoard | null => {
-    const session = sessionStorage.getItem(StorageItem.FilterSprintBoard)
-    if (!session) return null
-    try {
-      return JSON.parse(session)
-    } catch (_) {
-      return null
-    }
-  },
   clear: () => {
     sessionStorage.clear()
   }

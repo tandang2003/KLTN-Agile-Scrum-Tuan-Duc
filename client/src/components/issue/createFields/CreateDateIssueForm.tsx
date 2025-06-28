@@ -6,24 +6,27 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { CreateIssueType } from '@/types/issue.type'
+import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 const CreateDateIssueForm = () => {
-  const { control, getValues } = useFormContext<CreateIssueType>()
-  const sprintCurrent = getValues('sprint')
+  const { control, watch } = useFormContext<CreateIssueType>()
+
+  const sprint = watch('sprint')
+  useEffect(() => {
+    console.log('sprint', sprint)
+  }, [sprint])
   return (
     <>
       <FormField
         control={control}
         name='date.from'
         render={({ field }) => (
-          <FormItem className=''>
+          <FormItem className='flex-1'>
             <FormLabel>Time start</FormLabel>
             <DatePickerWithPresets
-              min={
-                sprintCurrent?.start ? new Date(sprintCurrent.start) : undefined
-              }
-              max={sprintCurrent?.end ? new Date(sprintCurrent.end) : undefined}
+              min={sprint?.start ? new Date(sprint.start) : undefined}
+              max={sprint?.end ? new Date(sprint.end) : undefined}
               date={field.value}
               setDate={(date) => {
                 if (date) {
@@ -43,18 +46,12 @@ const CreateDateIssueForm = () => {
         name='date.to'
         render={({ field }) => {
           return (
-            <FormItem className=''>
+            <FormItem className='flex-1'>
               <FormLabel>Time end</FormLabel>
               <DatePickerWithPresets
                 date={field.value}
-                min={
-                  sprintCurrent?.start
-                    ? new Date(sprintCurrent.start)
-                    : undefined
-                }
-                max={
-                  sprintCurrent?.end ? new Date(sprintCurrent.end) : undefined
-                }
+                min={sprint?.start ? new Date(sprint.start) : undefined}
+                max={sprint?.end ? new Date(sprint.end) : undefined}
                 setDate={(date) => {
                   if (date) {
                     field.onChange(date)

@@ -1,11 +1,15 @@
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import { FormField, FormItem, FormMessage } from '@/components/ui/form'
+import useSprintActive from '@/hooks/use-sprint-active'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { useFormContext } from 'react-hook-form'
 
 const UpdateDateIssue = () => {
+  const { sprint } = useSprintActive()
+  console.log('sprint active', sprint)
+  if (!sprint) return null
   const form = useFormContext<UpdateIssueType>()
 
   const { control, getValues } = form
@@ -50,6 +54,8 @@ const UpdateDateIssue = () => {
             <FormItem>
               <DatePickerWithPresets
                 date={field.value}
+                min={sprint.start}
+                max={sprint.end}
                 onDayBlur={(date) => {
                   if (date) {
                     field.onChange(date)
@@ -70,6 +76,8 @@ const UpdateDateIssue = () => {
             <FormItem className='mt-2'>
               <DatePickerWithPresets
                 date={field.value}
+                min={sprint.start}
+                max={sprint.end}
                 onDayBlur={(date) => {
                   if (date) {
                     field.onChange(date)

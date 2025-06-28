@@ -1,8 +1,8 @@
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
-import { setSprintIdFilter } from '@/feature/board/board.slice'
-import { setSprintActive } from '@/feature/sprint/sprint.slice'
+import { setSprintFilter } from '@/feature/board/board.slice'
+import { toISODateString } from '@/lib/date.helper'
 import { getStatusSprint } from '@/lib/sprint.helper'
 import { SprintModel } from '@/types/model/sprint.model'
 
@@ -11,16 +11,15 @@ type FilterBoardTabContentProps = {
 }
 
 const FilterBoardTabContent = ({ items }: FilterBoardTabContentProps) => {
-  const { sprintId } = useAppSelector((state) => state.boardSlice.filter)
+  const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
   const dispatch = useAppDispatch()
 
   const handleSelectSprintFilter = (sprint: SprintModel) => {
-    dispatch(setSprintIdFilter(sprint.id))
     dispatch(
-      setSprintActive({
+      setSprintFilter({
         id: sprint.id,
-        start: new Date(sprint.start).toISOString(),
-        end: new Date(sprint.end).toISOString()
+        start: toISODateString(sprint.start),
+        end: toISODateString(sprint.end)
       })
     )
   }
@@ -37,7 +36,7 @@ const FilterBoardTabContent = ({ items }: FilterBoardTabContentProps) => {
             }}
           >
             <div className='border-accent grid size-[20px] place-items-center rounded-xs border-2 bg-white shadow'>
-              {item.id === sprintId && (
+              {item.id === sprint?.id && (
                 <Icon icon={'octicon:check-16'} size={15} />
               )}
             </div>

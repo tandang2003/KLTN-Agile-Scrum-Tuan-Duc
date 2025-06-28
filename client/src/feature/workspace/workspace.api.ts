@@ -4,6 +4,7 @@ import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
+  InviteStudentWorkspaceReqType,
   ListProjectWorkspaceReq,
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
@@ -17,7 +18,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 const workspaceApi = createApi({
   reducerPath: 'workspaceApi',
   baseQuery: () => ({ data: {} }),
-  tagTypes: ['Workspaces'],
+  tagTypes: ['Workspaces', 'WorkspaceStudents'],
   endpoints: (builder) => ({
     getListWorkspace: builder.query<Page<WorkspaceResponse>, ListWorkspaceReq>({
       async queryFn(args) {
@@ -126,7 +127,35 @@ const workspaceApi = createApi({
         } catch (error) {
           return { error }
         }
-      }
+      },
+      providesTags: (_, __, { id }) => [
+        {
+          type: 'WorkspaceStudents' as const,
+          id: id
+        }
+      ]
+    }),
+    inviteStudentWorkspace: builder.mutation<
+      undefined,
+      InviteStudentWorkspaceReqType
+    >({
+      async queryFn(args) {
+        try {
+          await workspaceService.inviteStudentToWorkspace(args)
+          return { data: undefined }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, { workspaceId }) =>
+        error
+          ? []
+          : [
+              {
+                type: 'WorkspaceStudents' as const,
+                id: workspaceId
+              }
+            ]
     }),
     getListProjectWorkspace: builder.query<
       Page<ProjectWorkspaceDataTable>,
@@ -165,5 +194,6 @@ export const {
   useGetWorkspaceQuery,
   useGetListStudentWorkspaceQuery,
   useUpdateWorkspaceMutation,
-  useGetListProjectWorkspaceQuery
+  useGetListProjectWorkspaceQuery,
+  useInviteStudentWorkspaceMutation
 } = workspaceApi

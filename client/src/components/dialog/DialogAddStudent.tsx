@@ -15,11 +15,12 @@ import {
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/context/redux/hook'
-import workspaceApi from '@/feature/workspace/workspace.api'
+import workspaceApi, {
+  useInviteStudentWorkspaceMutation
+} from '@/feature/workspace/workspace.api'
 import { HttpStatusCode } from '@/lib/const'
 import { cn } from '@/lib/utils'
 import userService from '@/services/user.service'
-import workspaceService from '@/services/workspace.service'
 import { Id } from '@/types/other.type'
 import axios from 'axios'
 import { useState } from 'react'
@@ -37,6 +38,7 @@ const DialogAddStudent = ({
   const uniId = useAppSelector((state) => state.authSlice.user?.uniId)
   const [input, setInput] = useState<string>('')
   const [ids, setIds] = useState<string[]>([])
+  const [inviteStudent] = useInviteStudentWorkspaceMutation()
 
   const handleAddId = async () => {
     if (!input) return
@@ -79,12 +81,11 @@ const DialogAddStudent = ({
 
   const handleInvite = async () => {
     try {
-      await workspaceService.inviteStudentToWorkspace({
+      await inviteStudent({
         workspaceId,
         studentIds: ids
-      })
+      }).unwrap()
       onOpen(!open)
-      workspaceApi.util.invalidateTags([{ type: 'Workspaces', id: 'LIST' }])
       toast.success(`Invite student ${ids.join(', ')} success`)
     } catch (error) {
       if (axios.isAxiosError(error)) {

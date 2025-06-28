@@ -71,7 +71,7 @@ const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type='text' placeholder='2113xxxx' {...field} />
+                    <Input type='text' placeholder='Nhóm 1' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
