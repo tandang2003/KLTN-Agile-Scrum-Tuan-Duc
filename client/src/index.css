@@ -160,6 +160,22 @@
 @utility animate-accordion-up {
   animation: accordion-up 0.2s ease-out;
 }
+
+@utility active-bg {
+  @apply bg-linear-to-r from-cyan-500 to-blue-500;
+}
+
+@utility active-tag {
+  @apply active-bg font-bold text-white!;
+}
+@utility cancel {
+  @apply bg-red-400! text-white! hover:cursor-pointer hover:bg-red-600!;
+}
+
+@utility hover-opacity {
+  @apply hover:cursor-pointer hover:bg-none hover:opacity-65;
+}
+
 .container {
   @apply mx-auto max-w-[1440px];
 }
@@ -167,6 +183,7 @@
 .container-sidebar {
   @apply px-4;
 }
+
 .h1 {
   @apply text-4xl leading-[1.67] font-bold;
 }

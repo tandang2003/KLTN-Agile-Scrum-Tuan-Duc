@@ -1,9 +1,11 @@
 import { RootState } from '@/context/redux/store'
 import { logoutThunk } from '@/feature/auth/auth.slice'
+import { setSprintFilter } from '@/feature/board/board.slice'
 import {
   getTokenProjectThunk,
   setProjectState
 } from '@/feature/project/project.slice'
+import { setSprintActive } from '@/feature/sprint/sprint.slice'
 import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
 import tokenService from '@/services/token.service'
 import { Middleware } from '@reduxjs/toolkit'
@@ -15,32 +17,41 @@ const localStorageMiddleware: Middleware<{}, RootState> =
       tokenService.setWorkspaceLatest(payload)
     }
     if (getTokenProjectThunk.fulfilled.match(action)) {
-      const { ids, token } = action.payload
+      const {
+        projectId: project_id,
+        projectIds: project_ids,
+        token
+      } = action.payload
       tokenService.setTokenProjectSession({
         token,
-        ids
+        projectId: project_id,
+        projectIds: project_ids
       })
     }
 
     if (setProjectState.match(action)) {
-      const token = (store.getState() as RootState).projectSlice.token || ''
-      const ids =
-        (store.getState() as RootState).projectSlice.projectIdsAllowed || ''
-      tokenService.setTokenProjectSession({
-        token,
-        ids
-      })
+      const { projectId, projectIds, token } = (store.getState() as RootState)
+        .projectSlice
+
+      if (token)
+        tokenService.setTokenProjectSession({
+          token,
+          projectId,
+          projectIds
+        })
     }
+
     return next(action)
   }
 
 const persistAuthorizationMiddleware: Middleware<{}, RootState> =
-  (store) => (next) => (action) => {
+  (_) => (next) => (action) => {
     if (getTokenProjectThunk.fulfilled.match(action)) {
-      const { token, ids } = action.payload
+      const { token, projectId, projectIds } = action.payload
       tokenService.setTokenProjectSession({
-        ids,
-        token
+        token,
+        projectId,
+        projectIds
       })
     }
 
@@ -52,4 +63,19 @@ const persistAuthorizationMiddleware: Middleware<{}, RootState> =
     }
     return next(action)
   }
-export { localStorageMiddleware, persistAuthorizationMiddleware }
+
+const sprintActiveMiddleware: Middleware<{}, RootState> =
+  (store) => (next) => (action) => {
+    if (setSprintFilter.match(action)) {
+      const payload = action.payload
+      store.dispatch(setSprintActive(payload))
+    }
+
+    return next(action)
+  }
+
+export {
+  localStorageMiddleware,
+  persistAuthorizationMiddleware,
+  sprintActiveMiddleware
+}

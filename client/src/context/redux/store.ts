@@ -1,11 +1,16 @@
 import {
   localStorageMiddleware,
-  persistAuthorizationMiddleware
+  persistAuthorizationMiddleware,
+  sprintActiveMiddleware
 } from '@/context/redux/middleware'
 import rootReducer from '@/context/redux/reducer'
-import boardApi from '@/feature/board/board.api'
+import issueApi from '@/feature/issue/issue.api'
+import notificationApi from '@/feature/notification/notification.api'
 import projectApi from '@/feature/project/project.api'
+import relationshipApi from '@/feature/relationship/relationship.api'
+import skillApi from '@/feature/skill/skill.api'
 import sprintApi from '@/feature/sprint/sprint.api'
+import userApi from '@/feature/user/user.api'
 import workspaceApi from '@/feature/workspace/workspace.api'
 import tokenService from '@/services/token.service'
 import { configureStore } from '@reduxjs/toolkit'
@@ -20,17 +25,23 @@ export const store = configureStore({
     },
     projectSlice: {
       token: tokenService.getTokenProjectSession()?.token || undefined,
-      projectIdsAllowed: tokenService.getTokenProjectSession()?.ids || []
+      projectIds: tokenService.getTokenProjectSession()?.projectIds || [],
+      projectId: tokenService.getTokenProjectSession()?.projectId
     }
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(localStorageMiddleware)
       .concat(persistAuthorizationMiddleware)
-      .concat(boardApi.middleware)
+      .concat(sprintActiveMiddleware)
       .concat(workspaceApi.middleware)
       .concat(projectApi.middleware)
       .concat(sprintApi.middleware)
+      .concat(issueApi.middleware)
+      .concat(skillApi.middleware)
+      .concat(userApi.middleware)
+      .concat(relationshipApi.middleware)
+      .concat(notificationApi.middleware)
 })
 
 setupListeners(store.dispatch)

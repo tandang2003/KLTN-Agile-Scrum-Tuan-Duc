@@ -2,7 +2,6 @@ package com.kltn.server.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.config.security.exception.MyAuthenticationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

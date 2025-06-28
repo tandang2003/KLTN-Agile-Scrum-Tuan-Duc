@@ -1,22 +1,31 @@
-.PHONY: kafka db kafka-down db-down
+.PHONY: up down server client
 
-# File paths
-KAFKA_FILE=./docker/db-docker-compose.yml
-KAFKA_ENV=./docker/db.env
+up:
+	( \
+		cd ~ && \
+		make kafka_up && \
+		make mysql_up && \
+		make redis_up && \
+		make mongo_up \
+	)
 
-DB_FILE=./docker/kafka-docker-compose.yml
-DB_ENV=./docker/kafka.env
+down:
+	( \
+		cd ~ && \
+		make kafka_stop && \
+		make mysql_stop && \
+		make redis_stop && \
+		make mongo_stop \
+	)
 
-# Start commands
-kafka:
-	bash docker/scripts/up.sh $(KAFKA_FILE) $(KAFKA_ENV)
+server:
+	(\
+		cd ./server && \
+		./gradlew bootRun \
+	)
 
-db:
-	bash docker/scripts/up.sh $(DB_FILE) $(DB_ENV)
-
-# Stop commands
-kafka-down:
-	bash docker/scripts/down.sh $(KAFKA_FILE) $(KAFKA_ENV)
-
-db-down:
-	bash docker/scripts/down.sh $(DB_FILE) $(DB_ENV)
+client :
+	(\
+		cd ./client && \
+		npm run dev \
+	)

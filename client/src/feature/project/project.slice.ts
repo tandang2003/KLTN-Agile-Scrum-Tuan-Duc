@@ -6,11 +6,10 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type ProjectState = {
   token?: Id
-  projectIdsAllowed: Id[]
+  projectIds?: Id[]
+  projectId?: Id
 }
-const initialState: ProjectState = {
-  projectIdsAllowed: []
-}
+const initialState: ProjectState = {}
 
 const getTokenProjectThunk = createAsyncThunk<TokenProject, Id>(
   'workspace/token',
@@ -19,9 +18,8 @@ const getTokenProjectThunk = createAsyncThunk<TokenProject, Id>(
       const data = (await tokenService.getTokenProject(workspaceId)).data
       return {
         token: data.project_authorization_token,
-        ids: [...(data.project_ids || []), data.project_id].filter(
-          (id): id is string => typeof id === 'string' && id.trim() != ''
-        ),
+        projectIds: data.project_ids,
+        projectId: data.project_id,
         workspaceId: workspaceId
       }
     } catch (_) {
@@ -34,11 +32,16 @@ const projectSlice = createSlice({
   name: 'project',
   initialState: initialState,
   reducers: {
+    setProjectCurrent: (state: ProjectState, action: PayloadAction<Id>) => {
+      state.projectId = action.payload
+    },
     setProjectState: (
       state: ProjectState,
       action: PayloadAction<ProjectState>
     ) => {
-      state = action.payload
+      state.token = action.payload.token
+      state.projectIds = action.payload.projectIds
+      state.projectId = action.payload.projectId
     }
   },
   // reset state
@@ -47,7 +50,8 @@ const projectSlice = createSlice({
       getTokenProjectThunk.fulfilled,
       (state: ProjectState, action: PayloadAction<TokenProject>) => {
         state.token = action.payload.token
-        state.projectIdsAllowed = action.payload.ids
+        state.projectIds = action.payload.projectIds
+        state.projectId = action.payload.projectId
       }
     )
     builder.addMatcher(
@@ -61,5 +65,5 @@ const projectSlice = createSlice({
 
 const projectReducer = projectSlice.reducer
 export { getTokenProjectThunk, projectReducer }
-export const { setProjectState } = projectSlice.actions
+export const { setProjectState, setProjectCurrent } = projectSlice.actions
 export default projectSlice

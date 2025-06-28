@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useGetListWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
-import { WorkspaceCardResponse } from '@/types/workspace.type'
+import { WorkspaceResponse } from '@/types/workspace.type'
 
 const WorkspacePage = () => {
   const { data, isFetching } = useGetListWorkspaceQuery({
@@ -36,12 +36,18 @@ const WorkspacePage = () => {
           </Button>
         </RequiredAuth>
       </div>
-      <ListView<WorkspaceCardResponse>
+      <ListView<WorkspaceResponse>
         data={data?.items}
         loading={isFetching}
         loadingItems={{
           items: 10
         }}
+        emptyComponent={
+          <div className='flex flex-col items-center justify-center bg-gray-100 py-5'>
+            <Icon icon={'lucide:folder-x'} className='mb-4 text-4xl' />
+            <p className='text-muted-foreground'>No workspaces found</p>
+          </div>
+        }
         display='grid'
         className='grid-cols-3 gap-10'
         render={(item) => (

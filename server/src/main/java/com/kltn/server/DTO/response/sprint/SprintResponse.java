@@ -1,6 +1,7 @@
 package com.kltn.server.DTO.response.sprint;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kltn.server.model.collection.model.Topic;
 
 import java.time.Instant;
@@ -11,8 +12,7 @@ import java.util.Map;
 public record SprintResponse(String id,
                              String title,
                              Map<String, String> process,
-                             int position,
-                             int miniumStoryPoint,
+                             int storyPoint,
                              Instant predict,
                              Instant start,
                              Instant end,
@@ -23,8 +23,7 @@ public record SprintResponse(String id,
         private String id;
         private Map<String, String> process;
         private String title;
-        private int miniumStoryPoint;
-        private int position;
+        private int storyPoint;
         private Instant predict;
         private Instant dtStart;
         private Instant dtEnd;
@@ -41,8 +40,8 @@ public record SprintResponse(String id,
             return this;
         }
 
-        public SprintResponseBuilder miniumStoryPoint(int miniumStoryPoint) {
-            this.miniumStoryPoint = miniumStoryPoint;
+        public SprintResponseBuilder storyPoint(int storyPoint) {
+            this.storyPoint = storyPoint;
             return this;
         }
 
@@ -75,13 +74,11 @@ public record SprintResponse(String id,
             this.preview = preview;
             return this;
         }
-        public SprintResponseBuilder position(int position) {
-            this.position = position;
-            return this;
-        }
+
 
         public SprintResponse build() {
-            return new SprintResponse(id, title, process, position, miniumStoryPoint, predict, dtStart, dtEnd, planning, preview);
+            return new SprintResponse(id, title, process, storyPoint, predict, dtStart, dtEnd, planning,
+                    preview);
         }
     }
 

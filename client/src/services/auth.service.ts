@@ -1,11 +1,8 @@
-import { go } from '@/configuration/component.config'
-import envConfig from '@/configuration/env.config'
-import { HOME_PATH } from '@/lib/const'
+import { manualAxios } from '@/configuration/http.config'
 import httpService from '@/services/http.service'
 import tokenService from '@/services/token.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
 import { ResponseApi } from '@/types/http.type'
-import { UserInfoResponse } from '@/types/user.type'
 
 const authService = {
   // Handle Error in view
@@ -27,27 +24,18 @@ const authService = {
     await httpService.post<ResponseApi<void>, LogoutReq>('auth/logout', req)
   },
   refresh: async (): Promise<ResponseApi<LoginRes>> => {
-    const response = await fetch(`${envConfig.BACKEND_URL}/auth/refresh`, {
-      method: 'POST'
-    })
+    try {
+      const response =
+        await manualAxios.post<ResponseApi<LoginRes>>(`/auth/refresh`)
 
-    if (!response.ok) {
+      const body: ResponseApi<LoginRes> = response.data
+      const { access_token } = body.data
+      tokenService.setTokenLocal(access_token)
+      return body
+    } catch (e) {
       tokenService.removeTokenLocal()
-      go(HOME_PATH)
       throw new Error('UnAuthorization')
     }
-
-    const body: ResponseApi<LoginRes> = await response.json()
-    const { access_token } = body.data
-    tokenService.setTokenLocal(access_token)
-    return body
-  },
-  getInfo: async (options?: object) => {
-    const response = await httpService.get<ResponseApi<UserInfoResponse>>(
-      '/user',
-      options
-    )
-    return response.data
   }
 }
 

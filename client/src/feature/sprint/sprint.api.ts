@@ -1,8 +1,12 @@
-import issueService from '@/services/issue.service'
+import { normalizeError } from '@/lib/http.helper'
+import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import sprintService from '@/services/sprint.service'
-import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { CreateSprintRequest, SprintResponse } from '@/types/sprint.type'
+import {
+  CreateSprintRequest,
+  SprintResponse,
+  UpdateSprintRequest
+} from '@/types/sprint.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 const sprintApi = createApi({
@@ -14,7 +18,7 @@ const sprintApi = createApi({
       async queryFn(arg) {
         try {
           const data = await sprintService.getSprints(arg)
-          return { data: data }
+          return { data: sortSprintsByDateStart(data) }
         } catch (error) {
           return { error }
         }
@@ -55,15 +59,34 @@ const sprintApi = createApi({
         return [{ type: 'Sprints', id: 'LIST' }]
       }
     }),
-    getListIssue: builder.query<IssueResponse[], Id>({
+    updateSprint: builder.mutation<SprintResponse, UpdateSprintRequest>({
       async queryFn(arg) {
         try {
-          const data = await issueService.getIssues(arg)
+          const data = await sprintService.updateSprint(arg)
+          return { data: data }
+        } catch (error) {
+          return {
+            error: normalizeError(error)
+          }
+        }
+      },
+      invalidatesTags: (_, __, { id }) => {
+        return [{ type: 'Sprints', id: id }]
+      }
+    }),
+    deleteSprint: builder.mutation<void, Id>({
+      async queryFn(arg) {
+        try {
+          const data = await sprintService.deleteSprint(arg)
           return { data: data }
         } catch (error) {
           return { error }
         }
-      }
+      },
+      invalidatesTags: (_, __, id) => [
+        { type: 'Sprints', id },
+        { type: 'Sprints', id: 'LIST' }
+      ]
     })
   })
 })
@@ -71,7 +94,8 @@ const sprintApi = createApi({
 export default sprintApi
 
 export const {
-  useCreateSprintMutation,
   useGetListSprintQuery,
-  useGetListIssueQuery
+  useCreateSprintMutation,
+  useUpdateSprintMutation,
+  useDeleteSprintMutation
 } = sprintApi

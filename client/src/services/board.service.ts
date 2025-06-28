@@ -1,55 +1,112 @@
-import { issueData } from '@/assets/issue.data'
-import { BoardModelType, ColumnModelType } from '@/types/card.type'
-import { issueStatusList, statusOrder } from '@/types/model/typeOf'
+import {
+  NewPositionReq,
+  Position,
+  PositionReq,
+  PositionSprint
+} from '@/components/board/type'
+import { DEFAULT_POSITION } from '@/lib/board.helper'
+import httpService from '@/services/http.service'
+import { ResponseApi } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 
 const boardService = {
-  getData: (projectId: Id): Promise<BoardModelType> => {
-    return new Promise((resolve) => {
-      const columns: Record<Id, ColumnModelType> = issueData.reduce(
-        (acc, data) => {
-          if (!acc[data.status]) {
-            acc[data.status] = {
-              name: data.status,
-              cardIds: []
-            }
-          }
+  getPosition: async (projectId: Id): Promise<PositionSprint | null> => {
+    const response = await httpService.get<PositionSprint | null>(
+      `/project/${projectId}/position`
+    )
+    return response.data
+  },
 
-          acc[data.status].cardIds.push(data.id)
-          return acc
-        },
-        {} as Record<Id, ColumnModelType>
-      )
-
-      for (const status of issueStatusList) {
-        if (!columns[status]) {
-          columns[status] = {
-            name: status,
-            cardIds: []
-          }
+  getPositionBySprint: async ({
+    projectId,
+    sprintId
+  }: Omit<PositionReq, 'position'>): Promise<Position> => {
+    const response = await httpService.get<PositionSprint>(
+      `/project/${projectId}/position`
+    )
+    const data = response.data
+    const dataSprint = data?.[sprintId] || null
+    if (!dataSprint) {
+      await httpService.put<void, PositionSprint>(
+        `/project/${projectId}/position`,
+        {
+          ...data,
+          [sprintId]: DEFAULT_POSITION
         }
-      }
-
-      const sortedColumns = statusOrder.reduce(
-        (acc, key) => {
-          acc[key] = columns[key]
-          return acc
-        },
-        {} as Record<Id, ColumnModelType>
       )
+      return DEFAULT_POSITION
+    }
+    return dataSprint
+  },
 
-      const data: BoardModelType = {
-        columns: sortedColumns,
-        cards: issueData.map((item) => ({
-          id: item.id,
-          name: item.title,
-          point: item.storyPoint
-        }))
+  saveNewPositionSprint: async (
+    req: Omit<NewPositionReq, 'issueId' | 'status'>
+  ) => {
+    const { projectId, sprintId } = req
+
+    const responseSprint = await httpService.get<PositionSprint | null>(
+      `/project/${projectId}/position`
+    )
+
+    const positionSprint: PositionSprint = responseSprint.data || {}
+    const position: Position = DEFAULT_POSITION
+
+    const positionSprintUpdated: PositionSprint = {
+      ...positionSprint,
+      [sprintId]: position
+    }
+
+    const response = await httpService.put<ResponseApi<void>, PositionSprint>(
+      `/project/${projectId}/position`,
+      positionSprintUpdated
+    )
+    return response.data.data
+  },
+  saveNewPosition: async (req: NewPositionReq) => {
+    const { projectId, sprintId, issueId, status } = req
+    const responseSprint = await httpService.get<PositionSprint | null>(
+      `/project/${projectId}/position`
+    )
+
+    const positionSprint: PositionSprint = responseSprint.data || {}
+    const position: Position = positionSprint[sprintId] || DEFAULT_POSITION
+
+    const positionUpdated: Position = {
+      ...position,
+      [status]: [...(position[status] || []), issueId]
+    }
+
+    const positionSprintUpdated: PositionSprint = {
+      ...positionSprint,
+      [sprintId]: {
+        ...positionUpdated
       }
-      setTimeout(() => {
-        resolve(data)
-      }, 1000)
-    })
+    }
+
+    const response = await httpService.put<ResponseApi<void>, PositionSprint>(
+      `/project/${projectId}/position`,
+      positionSprintUpdated
+    )
+    return response.data.data
+  },
+  savePosition: async (req: PositionReq) => {
+    const { projectId, sprintId, position } = req
+    const responseSprint = await httpService.get<PositionSprint | null>(
+      `/project/${projectId}/position`
+    )
+
+    const positionSprint: PositionSprint = responseSprint.data || {}
+
+    const positionUpdated: PositionSprint = {
+      ...positionSprint,
+      [sprintId]: position
+    }
+
+    const response = await httpService.put<ResponseApi<void>, PositionSprint>(
+      `/project/${projectId}/position`,
+      positionUpdated
+    )
+    return response.data.data
   }
 }
 

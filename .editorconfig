@@ -1,0 +1,7 @@
+[*]
+indent_size = 2
+indent_style = space
+# ij_java_keep_simple_blocks_in_one_line = false
+# ij_java_keep_simple_methods_in_one_line = false
+# ij_java_keep_multiple_expressions_in_one_line = false
+# right_margin = 80

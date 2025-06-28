@@ -34,6 +34,8 @@ const CreateWorkspaceForm = () => {
   const form = useForm<CreateWorkspaceSchemaType>({
     resolver: zodResolver(CreateWorkspaceSchema),
     defaultValues: {
+      name: '',
+      description: '',
       date: {
         from: new Date(),
         to: addDays(new Date(), 20)
@@ -74,7 +76,7 @@ const CreateWorkspaceForm = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type='text' placeholder='2113xxxx' {...field} />
+                    <Input type='text' placeholder='Lập trình Web' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,51 +102,6 @@ const CreateWorkspaceForm = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name='sprintNum'
-                render={({ field }) => (
-                  <FormItem className='mt-4'>
-                    <FormLabel>Number Sprint</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='number'
-                        {...field}
-                        onChange={(event) =>
-                          form.setValue('sprintNum', event.target.valueAsNumber)
-                        }
-                      />
-                    </FormControl>
-                    <div className='h-[20px]'>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='timePerSprint'
-                render={({ field }) => (
-                  <FormItem className='mt-4'>
-                    <FormLabel>Time per sprint</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='number'
-                        {...field}
-                        onChange={(event) =>
-                          form.setValue(
-                            'timePerSprint',
-                            event.target.valueAsNumber
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <div className='h-[20px]'>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
             </div>
 
             <FormField
@@ -156,7 +113,6 @@ const CreateWorkspaceForm = () => {
 
                   <FormControl>
                     <Editor
-                      markdown=''
                       {...field}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />

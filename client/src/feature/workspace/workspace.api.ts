@@ -4,13 +4,13 @@ import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import {
   CreateWorkspaceReqType,
+  InviteStudentWorkspaceReqType,
   ListProjectWorkspaceReq,
   ListStudentWorkspaceReq,
   ListWorkspaceReq,
   ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
-  WorkspaceCardResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -18,19 +18,15 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 const workspaceApi = createApi({
   reducerPath: 'workspaceApi',
   baseQuery: () => ({ data: {} }),
-  tagTypes: ['Workspaces'],
+  tagTypes: ['Workspaces', 'WorkspaceStudents'],
   endpoints: (builder) => ({
-    getListWorkspace: builder.query<
-      Page<WorkspaceCardResponse>,
-      ListWorkspaceReq
-    >({
+    getListWorkspace: builder.query<Page<WorkspaceResponse>, ListWorkspaceReq>({
       async queryFn(args) {
         try {
-          const data: Page<WorkspaceCardResponse> =
+          const data: Page<WorkspaceResponse> =
             await workspaceService.getListWorkSpace(args)
           return { data: data }
         } catch (error) {
-          console.log('error workspace api ', error)
           return { error }
         }
       },
@@ -131,7 +127,35 @@ const workspaceApi = createApi({
         } catch (error) {
           return { error }
         }
-      }
+      },
+      providesTags: (_, __, { id }) => [
+        {
+          type: 'WorkspaceStudents' as const,
+          id: id
+        }
+      ]
+    }),
+    inviteStudentWorkspace: builder.mutation<
+      undefined,
+      InviteStudentWorkspaceReqType
+    >({
+      async queryFn(args) {
+        try {
+          await workspaceService.inviteStudentToWorkspace(args)
+          return { data: undefined }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, { workspaceId }) =>
+        error
+          ? []
+          : [
+              {
+                type: 'WorkspaceStudents' as const,
+                id: workspaceId
+              }
+            ]
     }),
     getListProjectWorkspace: builder.query<
       Page<ProjectWorkspaceDataTable>,
@@ -140,7 +164,6 @@ const workspaceApi = createApi({
       async queryFn(args) {
         try {
           const data = await workspaceService.getListProject(args)
-          console.log(data)
           return { data: data }
         } catch (error) {
           return { error }
@@ -154,7 +177,6 @@ const workspaceApi = createApi({
       async queryFn(args) {
         try {
           const data = await workspaceService.getListProject(args)
-          console.log(data)
           return { data: data }
         } catch (error) {
           return { error }
@@ -172,5 +194,6 @@ export const {
   useGetWorkspaceQuery,
   useGetListStudentWorkspaceQuery,
   useUpdateWorkspaceMutation,
-  useGetListProjectWorkspaceQuery
+  useGetListProjectWorkspaceQuery,
+  useInviteStudentWorkspaceMutation
 } = workspaceApi

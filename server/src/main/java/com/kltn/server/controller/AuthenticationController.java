@@ -1,6 +1,7 @@
 package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
+import com.kltn.server.DTO.request.entity.auth.TeacherRegisterRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.error.AppException;
@@ -72,6 +73,13 @@ public class AuthenticationController {
                                 .data(response)
                                 .build()
                 );
-
     }
+
+
+  @PostMapping("/teacher/register")
+  public ResponseEntity<ApiResponse<Boolean>> registerTeacher(@Valid @RequestBody TeacherRegisterRequest registerRequest) {
+    authenticationService.register(registerRequest);
+    return ResponseEntity.ok().body(ApiResponse.<Boolean>builder().build());
+  }
+
 }

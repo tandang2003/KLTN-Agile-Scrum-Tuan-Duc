@@ -9,8 +9,9 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useAppSelector } from '@/context/redux/hook'
+import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useCreateProjectMutation } from '@/feature/project/project.api'
+import { getTokenProjectThunk } from '@/feature/project/project.slice'
 import {
   CreateProjectFormType,
   CreateProjectForm as CreateProjectFormSchema
@@ -20,8 +21,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-const CreateProjectForm = () => {
+type CreateProjectFormProps = {
+  setOpenDialog?: (open: boolean) => void
+}
+
+const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
   const [createProject] = useCreateProjectMutation()
+  const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.authSlice.user?.id)
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const form = useForm<CreateProjectFormType>({
@@ -42,9 +48,11 @@ const CreateProjectForm = () => {
       })
         .unwrap()
         .then((response) => {
+          dispatch(getTokenProjectThunk(workspaceId))
           toast.success(`Create project successful`, {
             description: `Project #${response.id} - ${response.name}`
           })
+          setOpenDialog?.(false)
         })
         .catch(() => {
           toast.error('Create project failed')
@@ -63,7 +71,7 @@ const CreateProjectForm = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type='text' placeholder='2113xxxx' {...field} />
+                    <Input type='text' placeholder='Nhóm 1' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -78,8 +86,8 @@ const CreateProjectForm = () => {
 
                   <FormControl>
                     <Editor
-                      markdown=''
                       {...field}
+                      value={field.value}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
                   </FormControl>

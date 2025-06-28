@@ -1,5 +1,6 @@
 import LogoutButton from '@/components/LogoutButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -37,14 +38,14 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
           {...props}
         >
           <Avatar className='h-8 w-8 rounded-lg'>
-            <AvatarImage alt={user?.name ?? ''} />
+            <AvatarImage src={user.avatar} alt={user.name} />
             <AvatarFallback className='rounded-lg bg-gray-300'>
               {user.name.charAt(0) ?? ''}
             </AvatarFallback>
           </Avatar>
           <div className='grid flex-1 text-left text-sm leading-tight'>
-            <span className='truncate font-medium'>{user?.name ?? ''}</span>
-            <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
+            <span className='truncate font-medium'>{user.name ?? ''}</span>
+            <span className='truncate text-xs'>#{user.uniId ?? ''}</span>
           </div>
           <ChevronsUpDown className='ml-auto size-4' />
         </Button>
@@ -58,13 +59,18 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
         <DropdownMenuLabel className='p-0 font-normal'>
           <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
             <Avatar className='h-8 w-8 rounded-lg'>
-              <AvatarImage alt={user?.name ?? ''} />
-              <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className='rounded-lg'>
+                {user.name.charAt(0) ?? ''}
+              </AvatarFallback>
             </Avatar>
             <div className='grid flex-1 text-left text-sm leading-tight'>
               <span className='truncate font-medium'>{user?.name ?? ''}</span>
               <span className='truncate text-xs'>#{user?.uniId ?? ''}</span>
             </div>
+          </div>
+          <div className='px-2'>
+            <Badge className='w-full'>{user.role}</Badge>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -75,9 +81,11 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <BadgeCheck />
-            Account
+          <DropdownMenuItem asChild>
+            <NavLink to={'/user'} className='w-full'>
+              <BadgeCheck />
+              Account
+            </NavLink>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard />

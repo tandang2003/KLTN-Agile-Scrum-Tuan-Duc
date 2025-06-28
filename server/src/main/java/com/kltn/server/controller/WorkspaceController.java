@@ -52,10 +52,11 @@ public class WorkspaceController {
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<ApiPaging<WorkspaceResponse>>> listWorkspaces(@RequestParam(defaultValue = "0") int page,
                                                                                     @RequestParam(defaultValue = "10") int size) {
+      var responseData= workspaceService.getWorkspaceByOwnerIdPaging(page, size);
         return ResponseEntity.ok().body(
                 ApiResponse.<ApiPaging<WorkspaceResponse>>builder()
                         .message("get list workspaces success")
-                        .data(workspaceService.getWorkspaceByOwnerIdPaging(page, size))
+                        .data(responseData)
                         .build());
     }
 

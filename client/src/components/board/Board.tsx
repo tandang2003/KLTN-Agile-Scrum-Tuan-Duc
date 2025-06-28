@@ -1,13 +1,16 @@
-import { board } from '@/assets/card.data'
-import Card from '@/components/board/Card'
-import Column from '@/components/board/Column'
-import ClickOutsideProvider from '@/context/click/ClickOutsideProvider'
-import { BoardModelType, ColumnModelType } from '@/types/card.type'
+import RenderColumns from '@/components/board/RenderColumns'
+import { DataOnMoveType } from '@/components/board/type'
+import KanbanCard from '@/components/kanban/KanbanCard'
+import KanbanProvider from '@/components/kanban/KanbanProvider'
+import {
+  BoardModelType,
+  CardModelType,
+  ColumnModelType
+} from '@/types/card.type'
 import { Id } from '@/types/other.type'
 import {
   closestCorners,
   defaultDropAnimationSideEffects,
-  DndContext,
   DragEndEvent,
   DragOverEvent,
   DragOverlay,
@@ -18,21 +21,15 @@ import {
   useSensors
 } from '@dnd-kit/core'
 
-import { arrayMove, SortableContext } from '@dnd-kit/sortable'
+import { arrayMove } from '@dnd-kit/sortable'
 
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type BoardProps = {
   data: BoardModelType
-  onMove?: ({
-    active,
-    columnTo,
-    indexTo
-  }: {
-    active: Id
-    columnTo: Id
-    indexTo: Id
-  }) => void
+  disabled?: boolean
+  // onMove?: (active: Active, over: Over) => void
+  onMove?: (data: DataOnMoveType) => void
 }
 
 const Board = ({ data: board, onMove }: BoardProps) => {
@@ -45,8 +42,9 @@ const Board = ({ data: board, onMove }: BoardProps) => {
 
   const [data, setData] = useState<BoardModelType>(board)
 
+  // Active
   const activeItemRef = useRef<Id | null>(null)
-  const activeNewIndex = useRef<Id | null>(null)
+  const activeNewIndex = useRef<number | null>(null)
   const activeNewColumn = useRef<Id | null>(null)
 
   const activeDragTypeRef = useRef<null | 'card'>(null)
@@ -56,6 +54,25 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       styles: { active: { opacity: '0.5' } }
     })
   }
+
+  // const prevColumnsRef = useRef(data.columns)
+
+  // useEffect(() => {
+  //   for (const [columnId, column] of Object.entries(data.columns)) {
+  //     const prev = prevColumnsRef.current[columnId]?.cardIds || []
+  //     const curr = column.cardIds
+
+  //     const hasChanged =
+  //       prev.length !== curr.length || prev.some((id, idx) => id !== curr[idx])
+
+  //     // if (hasChanged) {
+  //     //   console.log(`Column ${columnId} changed`, curr)
+  //     //   // Do something with the update
+  //     // }
+  //   }
+
+  //   prevColumnsRef.current = data.columns
+  // }, [data.columns])
 
   const activeItemData = useMemo(() => {
     if (!activeItemRef.current) return undefined
@@ -193,9 +210,9 @@ const Board = ({ data: board, onMove }: BoardProps) => {
         if (activeIndex !== overIndex) {
           console.log('Drag card between 2 column')
           const orderedColumns = Object.keys(data.columns)
-          const newOrder = arrayMove(orderedColumns, activeIndex, overIndex)
+          // const newOrder = arrayMove(orderedColumns, activeIndex, overIndex)
           const newColumns: Record<Id, ColumnModelType> = {}
-          for (const key of newOrder) {
+          for (const key of orderedColumns) {
             const items = data.columns[key]
             if (items) {
               newColumns[key] = items
@@ -248,16 +265,8 @@ const Board = ({ data: board, onMove }: BoardProps) => {
           }
         }
       }
-      console.log({
-        active: activeItemRef.current,
-        columnTo: activeNewColumn.current,
-        indexTo: activeNewIndex.current
-      })
-      if (
-        activeItemRef.current &&
-        activeNewColumn.current &&
-        activeNewIndex.current
-      ) {
+
+      if (activeItemRef.current) {
         onMove?.({
           active: activeItemRef.current,
           columnTo: activeNewColumn.current,
@@ -279,13 +288,13 @@ const Board = ({ data: board, onMove }: BoardProps) => {
     activeNewIndex.current = null
     activeNewColumn.current = null
   }
-  // useEffect(() => {
-  //   console.log(data.columns)
-  // }, [data])
 
-  // console.log(activeDragTypeRef.current === 'card', activeItemData)
+  useEffect(() => {
+    setData(board)
+  }, [board])
+
   return (
-    <DndContext
+    <KanbanProvider
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
@@ -294,26 +303,24 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       onDragCancel={handleDragCancel}
     >
       <div className='flex bg-transparent'>
-        {Object.entries(data.columns).map(([keyColumn, valueColumn]) => (
-          <SortableContext key={keyColumn} items={valueColumn.cardIds ?? []}>
-            <div className='relative z-20 shrink-0 basis-[350px] border'>
-              <Column
-                id={keyColumn}
-                name={valueColumn.name}
-                items={valueColumn.cardIds
-                  .map((cardId) =>
-                    data.cards.find((card) => card.id === cardId)
-                  )
-                  .filter((item) => item !== undefined)}
-                key={keyColumn}
-              />
-            </div>
-          </SortableContext>
-        ))}
+        {Object.entries(data.columns).map(([columnId, column]) => {
+          const cardsInColumn = column.cardIds
+            .map((cardId) => data.cards.find((card) => card?.id === cardId))
+            .filter((card): card is CardModelType => !!card)
+
+          return (
+            <RenderColumns
+              key={columnId}
+              id={columnId}
+              column={column}
+              cards={cardsInColumn}
+            />
+          )
+        })}
       </div>
       <DragOverlay dropAnimation={dropAnimation}>
         {activeDragTypeRef.current === 'card' && activeItemData && (
-          <Card
+          <KanbanCard
             data={{
               ...activeItemData
             }}
@@ -321,7 +328,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
           />
         )}
       </DragOverlay>
-    </DndContext>
+    </KanbanProvider>
   )
 }
 

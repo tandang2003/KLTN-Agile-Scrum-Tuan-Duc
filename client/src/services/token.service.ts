@@ -1,3 +1,4 @@
+import { FilterSprintBoard } from '@/components/board/type'
 import {
   setAuthorization,
   setProjectAuthorization
@@ -46,7 +47,6 @@ const tokenService = {
   getWorkspaceLatest: (): Id | null => {
     return sessionStorage.getItem(StorageItem.ProjectIdLatest)
   },
-
   setTokenLocal: (token: string) => {
     sessionStorage.setItem(StorageItem.AccessToken, token)
     setAuthorization(token)

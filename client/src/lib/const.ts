@@ -1,3 +1,5 @@
+import { IssueStatus } from '@/types/model/typeOf'
+
 export enum HttpStatusCode {
   Continue = 100,
   SwitchingProtocols = 101,
@@ -67,7 +69,13 @@ export enum HttpStatusCode {
 export enum StorageItem {
   AccessToken = 'accessToken',
   ProjectIdLatest = 'projectIdLatest',
-  ProjectToken = 'projectToken'
+  ProjectToken = 'projectToken',
+  FilterSprintBoard = 'filterSprintBoard',
+  Simulator = 'simulator'
 }
 export const HOME_PATH = '/'
 export const LOGIN_PATH = '/auth/login'
+export const WEIGHT_POSITION = 1000
+export const MAX_SIZE = 2 * 1024 * 1024 // 2MB
+export const REPORT_DIR = '_report'
+export const DEFAULT_STATUS: IssueStatus = 'TODO'

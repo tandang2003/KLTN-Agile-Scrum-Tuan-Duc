@@ -1,10 +1,10 @@
-import { addDays, format } from 'date-fns'
+import { addDays, format, isAfter, isBefore, isWithinInterval } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { DateRange } from 'react-day-picker'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Calendar, CalendarProps } from '@/components/ui/calendar'
 import {
   Popover,
   PopoverContent,
@@ -15,16 +15,18 @@ import { cn } from '@/lib/utils'
 type DatePickerWithRangeProps = {
   date?: DateRange
   setDate?: (date: DateRange | undefined) => void
+  onOpen?: (open: boolean) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
 export function DatePickerWithRange({
   date,
   setDate,
+  onOpen,
   className
 }: DatePickerWithRangeProps) {
   return (
     <div className={cn('grid gap-2', className)}>
-      <Popover>
+      <Popover onOpenChange={onOpen}>
         <PopoverTrigger asChild>
           <Button
             id='date'
@@ -77,21 +79,42 @@ type DatePickerWithPresetsProps = {
   setDate?: (date: Date | undefined) => void
   className?: string
   disabled?: boolean
-}
+  min?: Date
+  max?: Date
+} & Pick<CalendarProps, 'onDayBlur'>
 
 export function DatePickerWithPresets({
   date,
   setDate,
   className,
-  disabled = false
+  disabled = false,
+  max,
+  min,
+  onDayBlur
 }: DatePickerWithPresetsProps) {
+  const isDisable = (date: Date) => {
+    if (min && max) {
+      return !isWithinInterval(date, {
+        start: min,
+        end: max
+      })
+    }
+    if (max) {
+      return isAfter(date, max)
+    }
+    if (min) {
+      return isBefore(date, min)
+    }
+    return false
+  }
+
   return (
     <Popover>
       <PopoverTrigger disabled={disabled} className={cn(className)} asChild>
         <Button
           variant={'outline'}
           className={cn(
-            'w-[240px] justify-start text-left font-normal',
+            'justify-start text-left font-normal',
             !date && 'text-muted-foreground'
           )}
         >
@@ -119,7 +142,13 @@ export function DatePickerWithPresets({
           </SelectContent>
         </Select>
         <div className='rounded-md border'>
-          <Calendar mode='single' selected={date} onSelect={setDate} />
+          <Calendar
+            mode='single'
+            selected={date}
+            onSelect={setDate}
+            disabled={(date) => isDisable(date)}
+            onDayBlur={onDayBlur}
+          />
         </div>
       </PopoverContent>
     </Popover>

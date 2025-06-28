@@ -1,0 +1,11 @@
+#! pip install -r requirements.txt
+fastapi
+uvicorn[standard]
+sqlalchemy
+pymysql
+pydantic
+python-dotenv
+joblib
+scikit-learn
+pydantic-settings
+motor

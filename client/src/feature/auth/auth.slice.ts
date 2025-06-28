@@ -1,7 +1,8 @@
 import workspaceApi from '@/feature/workspace/workspace.api'
 import authService from '@/services/auth.service'
 import tokenService from '@/services/token.service'
-import { LoginReq, LoginRes, LogoutReq, RoleType } from '@/types/auth.type'
+import userService from '@/services/user.service'
+import { LoginReq, LogoutReq, RoleType } from '@/types/auth.type'
 import { FieldError } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import { UserInfoResponse } from '@/types/user.type'
@@ -28,19 +29,21 @@ type UserAuthType = {
   name: string
   uniId: string
   role: RoleType
+  avatar?: string
 }
 
 const initialState: AuthState = {
   loading: false
 }
 
-const loginThunk = createAsyncThunk<LoginRes, LoginReq>(
+const loginThunk = createAsyncThunk<UserInfoResponse, LoginReq>(
   'auth/login',
   async (req, { rejectWithValue }) => {
     try {
       const data = await authService.login(req)
       tokenService.setTokenLocal(data.data.access_token)
-      return data.data
+      const info = await userService.getInfo()
+      return info.data
     } catch (_) {
       return rejectWithValue('Email or password not right')
     }
@@ -51,7 +54,7 @@ const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
   'auth/user',
   async (_, { rejectWithValue, signal }) => {
     try {
-      const data = await authService.getInfo(signal)
+      const data = await userService.getInfo(signal)
       return data.data
     } catch (_) {
       tokenService.removeTokenLocal()
@@ -90,9 +93,15 @@ const authSlice = createSlice({
     })
     builder.addCase(
       loginThunk.fulfilled,
-      (state: AuthState, action: PayloadAction<LoginRes>) => {
-        const { user } = action.payload
-        state.user = user
+      (state: AuthState, action: PayloadAction<UserInfoResponse>) => {
+        const user = action.payload
+        state.user = {
+          id: user.id,
+          name: user.name,
+          uniId: user.uniId,
+          role: user.role,
+          avatar: user.avatar?.url
+        }
         state.isAuth = true
       }
     )
@@ -107,7 +116,14 @@ const authSlice = createSlice({
     builder.addCase(
       restoreUserThunk.fulfilled,
       (state: AuthState, action: PayloadAction<UserInfoResponse>) => {
-        state.user = action.payload
+        const user = action.payload
+        state.user = {
+          id: user.id,
+          name: user.name,
+          uniId: user.uniId,
+          role: user.role,
+          avatar: user.avatar?.url
+        }
         state.isAuth = true
       }
     )

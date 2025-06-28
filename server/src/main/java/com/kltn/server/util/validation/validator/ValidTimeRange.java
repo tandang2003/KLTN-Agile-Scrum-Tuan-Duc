@@ -1,5 +1,6 @@
 package com.kltn.server.util.validation.validator;
 
+import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.util.constant.DateConstraint;
@@ -31,7 +32,7 @@ public class ValidTimeRange implements ConstraintValidator<ValidTimeRangeValidat
             mainField.setAccessible(true);
             Instant mainTime = (Instant) mainField.get(obj);
             if (this.constraint == DateConstraint.AFTER_NOW) {
-                flag = mainTime.isAfter(Instant.now());
+                flag = mainTime.isAfter(ClockSimulator.now());
                 if (!flag) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate(String.format("%s field must be after now", this.mainField)).addPropertyNode(this.mainField).addConstraintViolation();

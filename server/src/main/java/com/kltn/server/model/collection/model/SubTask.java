@@ -80,7 +80,16 @@ public class SubTask {
         this.order = order;
     }
 
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
+
 }

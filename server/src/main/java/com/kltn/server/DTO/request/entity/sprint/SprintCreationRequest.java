@@ -14,69 +14,65 @@ import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 @ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
 public record SprintCreationRequest(@NotEmpty String workspaceId,
                                     String title,
-                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME)
-                                    Instant start,
-                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME)
-                                    Instant end,
-                                    int minimumStoryPoint,
-                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME)
-                                    Instant predict
-        , int position
-) {
+                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant start,
+                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant end,
+                                    int storyPoint,
+                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant predict,
+                                    int position) {
 
 
-    public static class SprintCreationRequestBuilder {
-        private String workspaceId;
-        private String title;
-        private Instant dtStart;
-        private Instant dtEnd;
-        private Instant predict;
-        private int miniumStoryPoint;
-        private int position;
+  public static class SprintCreationRequestBuilder {
+    private String workspaceId;
+    private String title;
+    private Instant dtStart;
+    private Instant dtEnd;
+    private Instant predict;
+    private int storyPoint;
+    private int position;
 
-        public SprintCreationRequestBuilder workspaceId(String workspaceId) {
-            this.workspaceId = workspaceId;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder minimumStoryPoint(int miniumStoryPoint) {
-            this.miniumStoryPoint = miniumStoryPoint;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder predict(Instant predict) {
-            this.predict = predict;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder dtStart(Instant dtStart) {
-            this.dtStart = dtStart;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder dtEnd(Instant dtEnd) {
-            this.dtEnd = dtEnd;
-            return this;
-        }
-
-        public SprintCreationRequestBuilder position(int position) {
-            this.position = position;
-            return this;
-        }
-
-        public SprintCreationRequest build() {
-            return new SprintCreationRequest(workspaceId, title, dtStart, dtEnd, miniumStoryPoint, predict, position);
-        }
-
+    public SprintCreationRequestBuilder workspaceId(String workspaceId) {
+      this.workspaceId = workspaceId;
+      return this;
     }
 
-    public static SprintCreationRequestBuilder builder() {
-        return new SprintCreationRequestBuilder();
+    public SprintCreationRequestBuilder title(String title) {
+      this.title = title;
+      return this;
     }
+
+    public SprintCreationRequestBuilder storyPoint(int storyPoint) {
+      this.storyPoint = storyPoint;
+      return this;
+    }
+
+    public SprintCreationRequestBuilder predict(Instant predict) {
+      this.predict = predict;
+      return this;
+    }
+
+    public SprintCreationRequestBuilder dtStart(Instant dtStart) {
+      this.dtStart = dtStart;
+      return this;
+    }
+
+    public SprintCreationRequestBuilder dtEnd(Instant dtEnd) {
+      this.dtEnd = dtEnd;
+      return this;
+    }
+
+    public SprintCreationRequestBuilder position(int position) {
+      this.position = position;
+      return this;
+    }
+
+    public SprintCreationRequest build() {
+      return new SprintCreationRequest(workspaceId, title, dtStart, dtEnd, storyPoint, predict, position);
+    }
+
+  }
+
+  public static SprintCreationRequestBuilder builder() {
+    return new SprintCreationRequestBuilder();
+  }
 
 }

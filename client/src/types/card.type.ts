@@ -9,17 +9,18 @@ type ColumnModelType = {
 type CardModelType = {
   id: Id
   name: string
-  point: number
-  thumbnail?: string
   numComment?: number
   numAttach?: number
   numAssigner?: number
   // assigners?: Assigner[]
   // tags?: { name: string; color: TagColorKey }[]
+  status: IssueStatus
 }
 
+type ColumnsType = Record<Id, ColumnModelType>
+
 type BoardModelType = {
-  columns: Record<Id, ColumnModelType>
+  columns: ColumnsType
   cards: CardModelType[]
 }
 
@@ -39,5 +40,6 @@ export type {
   ColumnModelType,
   BoardModelType,
   Assigner,
-  CreateCardReqType
+  CreateCardReqType,
+  ColumnsType
 }

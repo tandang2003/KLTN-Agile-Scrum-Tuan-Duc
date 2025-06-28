@@ -1,29 +1,23 @@
+import { dateRange } from '@/types/common.type'
 import { PageRequest } from '@/types/http.type'
 import { ProjectModel } from '@/types/model/project.model'
 import { UserModel } from '@/types/model/user.model'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
+import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
 
 const CreateWorkspaceSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  sprintNum: z.number().positive(),
-  timePerSprint: z.number().positive(),
-  date: z
-    .object({
-      from: z.date(),
-      to: z.date()
-    })
-    .refine((data) => data.from <= data.to, {
-      message: 'Date end need after date start',
-      path: ['to']
-    })
+  date: dateRange.refine((data) => data.from <= data.to, {
+    message: 'Date end need after date start',
+    path: ['to']
+  })
 })
 
 const UpdateWorkspaceSchema = z.object({
   description: z.string().optional(),
-  sprintNum: z.number().positive(),
   date: z
     .object({
       from: z.date(),
@@ -48,7 +42,7 @@ type UpdateWorkspaceReqType = Omit<UpdateWorkspaceSchemaType, 'date'> & {
   end: Date
 }
 
-type WorkspaceResponse = Pick<
+type WorkspaceDetailResponse = Pick<
   WorkSpaceModel,
   | 'id'
   | 'name'
@@ -57,14 +51,20 @@ type WorkspaceResponse = Pick<
   | 'end'
   | 'timePerSprint'
   | 'sprintNum'
->
+> & {
+  currentSprint: SprintResponse
+}
 
-type WorkspaceCardResponse = {
+type WorkspaceResponse = {
   id: Id
   name: string
   owner: {
     name: string
   }
+  description: string
+  currentSprint: SprintResponse
+  start: Date
+  end: Date
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
@@ -97,8 +97,8 @@ type InviteStudentWorkspaceReqType = {
 export type {
   CreateWorkspaceReqType,
   CreateWorkspaceSchemaType,
+  WorkspaceDetailResponse,
   WorkspaceResponse,
-  WorkspaceCardResponse,
   WorkspaceSideBar,
   ListWorkspaceReq,
   ListStudentWorkspaceReq,

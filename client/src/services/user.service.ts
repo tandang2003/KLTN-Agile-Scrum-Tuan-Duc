@@ -2,7 +2,7 @@ import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
 import { Id } from '@/types/other.type'
-import { UserResponse } from '@/types/user.type'
+import { UserInfoResponse, UserResponse } from '@/types/user.type'
 
 const userService = {
   getWorkspaces: async (options?: object) => {
@@ -19,6 +19,11 @@ const userService = {
     const response = await httpService.get<ResponseApi<void>>(
       `/user/check?${queryString}`
     )
+    return response.data
+  },
+  getInfo: async () => {
+    const response =
+      await httpService.get<ResponseApi<UserInfoResponse>>('/user')
     return response.data
   }
 }

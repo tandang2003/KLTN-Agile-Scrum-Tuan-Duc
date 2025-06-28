@@ -20,9 +20,9 @@ public record IssueResponse(String id,
                             IssueStatus status,
                             IssuePriority priority,
                             IssueTag tag,
-                            int position,
+                            String position,
                             List<TopicResponse> topics,
-                            List<SubTaskResponse> subTasks,
+                            List<SubTaskResponse> subtasks,
                             List<AttachmentResponse> attachments,
                             String description,
                             AuthenticationResponse.UserDetailDTO assignee,
@@ -42,9 +42,9 @@ public record IssueResponse(String id,
         private IssueStatus status;
         private IssuePriority priority;
         private IssueTag tag;
-        private int position;
+        private String position;
         private List<TopicResponse> topics;
-        private List<SubTaskResponse> subTasks;
+        private List<SubTaskResponse> subtasks;
         private List<AttachmentResponse> attachments;
         private String description;
         private AuthenticationResponse.UserDetailDTO assignee;
@@ -53,7 +53,7 @@ public record IssueResponse(String id,
         private Instant end;
 
         public IssueResponse build() {
-            return new IssueResponse(id,name, projectId, sprintId, status, priority, tag, position, topics, subTasks, attachments, description, assignee, reviewer, start, end);
+            return new IssueResponse(id,name, projectId, sprintId, status, priority, tag, position, topics, subtasks, attachments, description, assignee, reviewer, start, end);
         }
 
         public IssueResponseBuilder id(String id) {
@@ -90,7 +90,7 @@ public record IssueResponse(String id,
             return this;
         }
 
-        public IssueResponseBuilder position(int position) {
+        public IssueResponseBuilder position(String position) {
             this.position = position;
             return this;
         }
@@ -100,8 +100,8 @@ public record IssueResponse(String id,
             return this;
         }
 
-        public IssueResponseBuilder subTasks(List<SubTaskResponse> subTasks) {
-            this.subTasks = subTasks;
+        public IssueResponseBuilder subtasks(List<SubTaskResponse> subtasks) {
+            this.subtasks = subtasks;
             return this;
         }
 
