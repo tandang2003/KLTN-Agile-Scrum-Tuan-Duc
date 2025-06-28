@@ -1,10 +1,10 @@
 import Editor from '@/components/Editor'
 import SelectEnum from '@/components/issue/SelectEnum'
 import SelectMember from '@/components/issue/SelectMember'
-import SelectSprint from '@/components/issue/createFields/SelectSprint'
 import CreateDateIssueForm from '@/components/issue/createFields/CreateDateIssueForm'
 import CreateSubTaskForm from '@/components/issue/createFields/CreateSubTaskForm'
 import CreateTopicForm from '@/components/issue/createFields/CreateTopicForm'
+import SelectSprint from '@/components/issue/createFields/SelectSprint'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,15 +15,10 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
+import { DEFAULT_STATUS } from '@/lib/const'
+import boardService from '@/services/board.service'
 import {
   CreateIssueRequest,
   CreateIssueSchema,
@@ -31,11 +26,9 @@ import {
 } from '@/types/issue.type'
 import { issuePriorityList, issueTagList } from '@/types/model/typeOf'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { useEffect } from 'react'
-import boardService from '@/services/board.service'
-import { DEFAULT_STATUS } from '@/lib/const'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
@@ -139,75 +132,6 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               <CreateDateIssueForm />
             </div>
             <div className='grid grid-cols-2 grid-rows-2 gap-3'>
-              <FormField
-                control={form.control}
-                name='priority'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Priority</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className='w-full'>
-                          <SelectValue placeholder='Select a priority' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {issuePriorityList.map((item, index) => {
-                          return (
-                            <SelectItem key={index} value={item}>
-                              {item}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='tag'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tag</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className='w-full'>
-                          <SelectValue placeholder='Select a tag' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {issueTagList.map((item, index) => {
-                          return (
-                            <SelectItem key={index} value={item}>
-                              {item}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <SelectMember
-                control={form.control}
-                name='assigneeId'
-                label='Assignee'
-              />
-              <SelectMember
-                control={form.control}
-                name='reviewerId'
-                label='Reviewer'
-              />
               <SelectEnum
                 control={form.control}
                 name='priority'
@@ -219,6 +143,16 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
                 name='tag'
                 label='Tag'
                 data={issueTagList}
+              />
+              <SelectMember
+                control={form.control}
+                name='assigneeId'
+                label='Assignee'
+              />
+              <SelectMember
+                control={form.control}
+                name='reviewerId'
+                label='Reviewer'
               />
             </div>
 
