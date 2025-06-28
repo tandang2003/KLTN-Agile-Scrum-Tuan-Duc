@@ -8,6 +8,7 @@ import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { setSprintActive } from '@/feature/sprint/sprint.slice'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
+import { toISODateString } from '@/lib/date.helper'
 import { cn } from '@/lib/utils'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
@@ -33,6 +34,18 @@ const ListIssueInSprint = ({
       skip: !sprintId || !projectId
     }
   )
+
+  const handleOpenCreateIssue = () => {
+    dispatch(enableCreateIssue())
+    dispatch(
+      setSprintActive({
+        id: sprintId,
+        start: toISODateString(start),
+        end: toISODateString(end)
+      })
+    )
+  }
+
   return (
     <ListView<IssueResponse>
       data={data}
@@ -52,16 +65,7 @@ const ListIssueInSprint = ({
           <Button
             className='mt-2 w-full justify-start border-none'
             variant={'default'}
-            onClick={() => {
-              dispatch(enableCreateIssue())
-              dispatch(
-                setSprintActive({
-                  id: sprintId,
-                  start: new Date(start).toISOString(),
-                  end: new Date(end).toISOString()
-                })
-              )
-            }}
+            onClick={handleOpenCreateIssue}
           >
             Create issue
           </Button>

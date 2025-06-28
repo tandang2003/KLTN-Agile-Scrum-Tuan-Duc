@@ -1,4 +1,4 @@
-import { addDays, format } from 'date-fns'
+import { addDays, format, isAfter, isBefore, isWithinInterval } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { DateRange } from 'react-day-picker'
@@ -94,13 +94,16 @@ export function DatePickerWithPresets({
 }: DatePickerWithPresetsProps) {
   const isDisable = (date: Date) => {
     if (min && max) {
-      return date > new Date(max) || date < new Date(min)
+      return !isWithinInterval(date, {
+        start: min,
+        end: max
+      })
     }
     if (max) {
-      return date > new Date(max)
+      return isAfter(date, max)
     }
     if (min) {
-      return date < new Date(min)
+      return isBefore(date, min)
     }
     return false
   }

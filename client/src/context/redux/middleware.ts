@@ -1,9 +1,11 @@
 import { RootState } from '@/context/redux/store'
 import { logoutThunk } from '@/feature/auth/auth.slice'
+import { setSprintFilter } from '@/feature/board/board.slice'
 import {
   getTokenProjectThunk,
   setProjectState
 } from '@/feature/project/project.slice'
+import { setSprintActive } from '@/feature/sprint/sprint.slice'
 import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
 import tokenService from '@/services/token.service'
 import { Middleware } from '@reduxjs/toolkit'
@@ -62,4 +64,18 @@ const persistAuthorizationMiddleware: Middleware<{}, RootState> =
     return next(action)
   }
 
-export { localStorageMiddleware, persistAuthorizationMiddleware }
+const sprintActiveMiddleware: Middleware<{}, RootState> =
+  (store) => (next) => (action) => {
+    if (setSprintFilter.match(action)) {
+      const payload = action.payload
+      store.dispatch(setSprintActive(payload))
+    }
+
+    return next(action)
+  }
+
+export {
+  localStorageMiddleware,
+  persistAuthorizationMiddleware,
+  sprintActiveMiddleware
+}

@@ -130,7 +130,7 @@ export const UpdateAttachmentIssue = ({
       }}
     >
       <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-        <span className='text-lg'>Sub Task</span>
+        <span className='text-lg'>Attachments</span>
         <UpdateAttachmentIssueUpload />
         <ListAttachmentIssue />
       </div>

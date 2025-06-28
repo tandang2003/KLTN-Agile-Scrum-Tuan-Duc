@@ -47,6 +47,7 @@ const UpdateDescriptionIssue = ({}: UpdateDescriptionIssueProps) => {
             }}
             renderEditor={({ value, onChange, onBlur, ref }) => (
               <Editor
+                className='h-full'
                 value={value}
                 ref={ref}
                 onChange={(_, __, ___, editor) => onChange(editor.getHTML())}

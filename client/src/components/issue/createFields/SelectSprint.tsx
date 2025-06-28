@@ -17,12 +17,11 @@ import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
 import { CreateIssueType } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
+import { isBefore } from 'date-fns'
 import { useFormContext } from 'react-hook-form'
-type SelectSprintProps = {
-  label?: string
-}
+type SelectSprintProps = {}
 
-const SelectSprint = ({ label }: SelectSprintProps) => {
+const SelectSprint = ({}: SelectSprintProps) => {
   const { workspaceId } = useAppId()
   const form = useFormContext<CreateIssueType>()
   const { control, setValue } = form
@@ -32,28 +31,33 @@ const SelectSprint = ({ label }: SelectSprintProps) => {
   const { data: workspace } = useGetWorkspaceQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+
+  const handleSelectSprint = (value: Id) => {
+    if (!value) {
+      setValue('sprint', undefined)
+      return
+    }
+    const start = data?.find((item) => item.id === value)?.start
+    const end = data?.find((item) => item.id === value)?.end
+    const sprint = {
+      id: value,
+      start: start,
+      end: end
+    }
+    setValue('sprint', sprint)
+  }
+
   return (
     <FormField
       control={control}
       name='sprintId'
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>Sprint</FormLabel>
           <Select
             onValueChange={(value) => {
               field.onChange(value)
-              if (!value) {
-                setValue('sprint', undefined)
-                return
-              }
-              const start = data?.find((item) => item.id === value)?.start
-              const end = data?.find((item) => item.id === value)?.end
-              const sprint = {
-                id: value,
-                start: start,
-                end: end
-              }
-              setValue('sprint', sprint)
+              handleSelectSprint(value)
             }}
             defaultValue={field.value}
           >
@@ -66,7 +70,7 @@ const SelectSprint = ({ label }: SelectSprintProps) => {
               <SelectItem value={null!}>Not assign</SelectItem>
               {data?.map((item, index) => {
                 const isDisabled = workspace?.currentSprint
-                  ? item.start < workspace.currentSprint.start
+                  ? isBefore(item.start, workspace.currentSprint.start)
                   : false
                 return (
                   <SelectItem

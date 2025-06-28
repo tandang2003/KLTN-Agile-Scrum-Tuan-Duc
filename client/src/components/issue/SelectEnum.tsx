@@ -42,7 +42,7 @@ const SelectEnum = <
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label || name}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>
                 <SelectValue placeholder='Select a value' />

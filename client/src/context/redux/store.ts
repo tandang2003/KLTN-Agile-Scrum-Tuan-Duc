@@ -1,6 +1,7 @@
 import {
   localStorageMiddleware,
-  persistAuthorizationMiddleware
+  persistAuthorizationMiddleware,
+  sprintActiveMiddleware
 } from '@/context/redux/middleware'
 import rootReducer from '@/context/redux/reducer'
 import issueApi from '@/feature/issue/issue.api'
@@ -32,6 +33,7 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(localStorageMiddleware)
       .concat(persistAuthorizationMiddleware)
+      .concat(sprintActiveMiddleware)
       .concat(workspaceApi.middleware)
       .concat(projectApi.middleware)
       .concat(sprintApi.middleware)

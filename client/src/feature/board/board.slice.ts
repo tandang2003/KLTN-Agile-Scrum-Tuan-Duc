@@ -4,16 +4,17 @@ import { Id } from '@/types/other.type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type Sprint = {
-  id?: Id
+  id: Id
+  start: string
+  end: string
 }
 
 type BoardState = {
   isLoading: boolean
   filter: Partial<{
-    sprintId?: Id
+    sprint: Sprint
   }>
   items?: IssueResponse[]
-  sprints?: Sprint[]
   position?: Position
 }
 const initialState: BoardState = {
@@ -25,25 +26,15 @@ const boardSlice = createSlice({
   name: 'boardSlice',
   initialState: initialState,
   reducers: {
-    setSprintIdFilter(
+    setSprintFilter(
       state: BoardState,
-      action: PayloadAction<Id | undefined>
+      action: PayloadAction<Sprint | undefined>
     ) {
-      state.filter.sprintId = action.payload
-    },
-    saveIssues: (
-      state: BoardState,
-      action: PayloadAction<IssueResponse[] | undefined>
-    ) => {
-      state.items = action.payload
-      state.isLoading = false
-    },
-    saveSprint: (state: BoardState, action: PayloadAction<Sprint[]>) => {
-      state.sprints = action.payload
+      state.filter.sprint = action.payload
     }
   }
 })
 const boardReducer = boardSlice.reducer
 export { boardReducer }
-export const { saveIssues, setSprintIdFilter } = boardSlice.actions
+export const { setSprintFilter } = boardSlice.actions
 export default boardSlice
