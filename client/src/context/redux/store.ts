@@ -4,6 +4,7 @@ import {
 } from '@/context/redux/middleware'
 import rootReducer from '@/context/redux/reducer'
 import issueApi from '@/feature/issue/issue.api'
+import notificationApi from '@/feature/notification/notification.api'
 import projectApi from '@/feature/project/project.api'
 import relationshipApi from '@/feature/relationship/relationship.api'
 import skillApi from '@/feature/skill/skill.api'
@@ -38,6 +39,7 @@ export const store = configureStore({
       .concat(skillApi.middleware)
       .concat(userApi.middleware)
       .concat(relationshipApi.middleware)
+      .concat(notificationApi.middleware)
 })
 
 setupListeners(store.dispatch)

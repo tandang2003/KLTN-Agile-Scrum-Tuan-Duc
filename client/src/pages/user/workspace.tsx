@@ -26,7 +26,7 @@ const UserWorkspace = () => {
       </span>
       <div>
         <ListViewPagination<WorkspaceResponse>
-          minHeight='300px'
+          minHeight='100px'
           view={{
             className: 'bg-gray-100 p-2',
             loading: isFetching,
