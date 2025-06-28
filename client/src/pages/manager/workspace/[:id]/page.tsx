@@ -1,6 +1,4 @@
 import Icon from '@/components/Icon'
-import { ProjectDataTable } from '@/components/datatable/project/ProjectDataTable'
-import { StudentDataTable } from '@/components/datatable/student/StudentDataTable'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
 import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
 import { Button } from '@/components/ui/button'
@@ -12,19 +10,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import { useAppSelector } from '@/context/redux/hook'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import useAppId from '@/hooks/use-app-id'
 import { formatDate } from '@/lib/utils'
+import WorkspaceNavigate from '@/pages/manager/workspace/[:id]/navigate'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 
 const WorkspaceDetailPage = () => {
-  const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
-  const { user } = useAppSelector((state) => state.authSlice)
-  const { projectId } = useAppSelector((state) => state.projectSlice)
+  const { workspaceId, projectId } = useAppId()
 
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId
@@ -77,54 +73,32 @@ const WorkspaceDetailPage = () => {
               <Icon icon={'mdi:information'} />
               Information
             </DropdownMenuItem>
-            <RequiredAuth roles={['teacher']}>
-              <DropdownMenuItem className='hover:!bg-yellow-400' asChild>
-                <NavLink to={`${location.pathname}/setting`}>
-                  <Icon icon={'solar:pen-bold'} />
-                  Change
-                </NavLink>
-              </DropdownMenuItem>
-            </RequiredAuth>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <Tabs defaultValue={user?.role === 'teacher' ? 'project' : 'student'}>
-        <div className='flex items-center justify-between'>
-          <TabsList>
-            <RequiredAuth mode='hide' roles={['teacher']}>
-              <TabsTrigger value='project'>Project</TabsTrigger>
-            </RequiredAuth>
-            <TabsTrigger value='student'>Student</TabsTrigger>
-          </TabsList>
 
-          <RequiredAuth mode='hide' roles={['student']}>
-            {projectId ? (
-              <Button variant='default' size='sm' asChild>
-                <NavLink to={`/manager/workspace/project/${projectId}`}>
-                  Your Project
-                </NavLink>
-              </Button>
-            ) : (
-              <Button
-                variant='default'
-                size='sm'
-                onClick={() => setOpenDialogCreateProject(true)}
-              >
-                <PlusIcon />
-                New Group
-              </Button>
-            )}
-          </RequiredAuth>
-        </div>
-        <RequiredAuth mode='hide' roles={['teacher']}>
-          <TabsContent value='project'>
-            <ProjectDataTable workspaceId={workspaceId} />
-          </TabsContent>
+      <div className='mb-3 flex items-center justify-between'>
+        <WorkspaceNavigate id={workspaceId} />
+        <RequiredAuth mode='hide' roles={['student']}>
+          {projectId ? (
+            <Button variant='default' size='sm' asChild>
+              <NavLink to={`/manager/workspace/project/${projectId}`}>
+                Your Project
+              </NavLink>
+            </Button>
+          ) : (
+            <Button
+              variant='default'
+              size='sm'
+              onClick={() => setOpenDialogCreateProject(true)}
+            >
+              <PlusIcon />
+              New Group
+            </Button>
+          )}
         </RequiredAuth>
-        <TabsContent value='student'>
-          <StudentDataTable workspaceId={workspaceId} />
-        </TabsContent>
-      </Tabs>
+      </div>
+      <Outlet />
       <DialogAddStudent
         open={openDialogAddStudent}
         onOpen={setOpenDialogAddStudent}

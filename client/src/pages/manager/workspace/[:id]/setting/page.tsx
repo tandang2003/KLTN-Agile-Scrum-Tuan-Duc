@@ -1,30 +1,26 @@
 import Icon from '@/components/Icon'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
+import {
+  Tabs,
+  TabsContent,
+  TabsLinkTrigger,
+  TabsList,
+  TabsTrigger
+} from '@/components/ui/tabs'
+import { useAppSelector } from '@/context/redux/hook'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
-import SummaryTab from '@/pages/manager/workspace/[:id]/setting/summary'
-import TemplateTab from '@/pages/manager/workspace/[:id]/setting/template'
+import SummaryTab from '@/pages/manager/workspace/[:id]/summary/page'
+import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/template/page'
 import { Id } from '@/types/other.type'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const WorkspaceSettingPage = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
+  const location = useLocation()
   const navigate = useNavigate()
-
-  const { data, isFetching, isSuccess } = useGetWorkspaceQuery(
-    workspaceId as Id,
-    {
-      skip: !workspaceId
-    }
-  )
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-    if (!isFetching && !isSuccess) {
-      navigate('/404')
-    }
-  }, [navigate, workspaceId, isSuccess, isFetching, dispatch])
+  const { data, isFetching } = useGetWorkspaceQuery(workspaceId as Id, {
+    skip: !workspaceId,
+    refetchOnMountOrArgChange: true
+  })
 
   return (
     <div>
@@ -38,8 +34,10 @@ const WorkspaceSettingPage = () => {
       <Tabs defaultValue={'template'}>
         <div className='flex items-center justify-between'>
           <TabsList>
-            <TabsTrigger value='summary'>Summary</TabsTrigger>
-            <TabsTrigger value='template'>Template</TabsTrigger>
+            <TabsLinkTrigger href={`${location}/summary`}>
+              Summary
+            </TabsLinkTrigger>
+            <TabsLinkTrigger href='/template'>Template</TabsLinkTrigger>
           </TabsList>
         </div>
 
@@ -48,7 +46,7 @@ const WorkspaceSettingPage = () => {
         </TabsContent>
 
         <TabsContent value='template'>
-          <TemplateTab />
+          <WorkspaceSprintTemplatePage />
         </TabsContent>
       </Tabs>
     </div>

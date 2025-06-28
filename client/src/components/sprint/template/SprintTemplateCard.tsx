@@ -1,3 +1,4 @@
+import { useAlertHost } from '@/components/AleartHost'
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -27,6 +28,7 @@ type SprintTemplateCardProps = {
 const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
   const [deleteSprint] = useDeleteSprintMutation()
   const dispatch = useAppDispatch()
+  const { showAlert } = useAlertHost()
 
   const handleUpdate = () => {
     const { id, start, end } = data
@@ -41,16 +43,23 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
   }
 
   const handleDelete = () => {
-    deleteSprint(data.id)
-      .unwrap()
-      .then(() => {
-        toast.success('Sprint deleted successfully')
-      })
-      .catch((error) => {
-        if (error.status === HttpStatusCode.Conflict) {
-          toast.error('Sprint is ended, cannot delete')
-        }
-      })
+    showAlert({
+      title: 'Delete sprint',
+      type: 'warning',
+      message: `Are you sure you want to delete sprint "${data.title}"? This action cannot be undone.`,
+      onConfirm: async () => {
+        return deleteSprint(data.id)
+          .unwrap()
+          .then(() => {
+            toast.success('Sprint deleted successfully')
+          })
+          .catch((error) => {
+            if (error.status === HttpStatusCode.Conflict) {
+              toast.error('Sprint is ended, cannot delete')
+            }
+          })
+      }
+    })
   }
 
   return (

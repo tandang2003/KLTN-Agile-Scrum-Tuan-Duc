@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { cn } from '@/lib/utils'
 import { createContext, useCallback, useContext, useState } from 'react'
 
 interface AlertState {
@@ -15,13 +16,14 @@ interface AlertState {
   message?: string
   type?: AlertType
   onConfirm?: () => Promise<void>
+  onCancel?: () => void
 }
 
 type AlertType = 'success' | 'error' | 'info' | 'warning'
 
 type AlertHostContextType = {
-  showDialog: (data: AlertState) => void
-  hideDialog: () => void
+  showAlert: (data: AlertState) => void
+  hideAlert: () => void
 }
 
 const AlertHostContext = createContext<AlertHostContextType | null>(null)
@@ -42,20 +44,19 @@ const AlertHostProvider = ({ children }: AlertHostProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [dialogProps, setDialogProps] = useState<AlertState | null>(null)
 
-  const showDialog = useCallback((data: AlertState) => {
+  const showAlert = useCallback((data: AlertState) => {
     setOpen(true)
     setDialogProps(data)
   }, [])
 
-  const hideDialog = useCallback(() => {
+  const hideAlert = useCallback(() => {
     setOpen(false)
     setDialogProps(null)
   }, [])
-
   return (
-    <AlertHostContext.Provider value={{ showDialog, hideDialog }}>
+    <AlertHostContext.Provider value={{ showAlert, hideAlert }}>
       {children}
-      <AlertDialog open={open} onOpenChange={() => hideDialog()}>
+      <AlertDialog open={open} onOpenChange={() => hideAlert()}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{dialogProps?.title ?? ''}</AlertDialogTitle>
@@ -64,11 +65,25 @@ const AlertHostProvider = ({ children }: AlertHostProps) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel
+              onClick={() => {
+                dialogProps?.onCancel?.()
+                hideAlert()
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
+              className={cn(
+                dialogProps?.type === 'success' && 'bg-green-500 text-white',
+                dialogProps?.type === 'error' && 'bg-red-500 text-white',
+                dialogProps?.type === 'info' && 'bg-blue-500 text-white',
+                dialogProps?.type === 'warning' &&
+                  'hover-opacity bg-yellow-500 text-white'
+              )}
               onClick={() => {
                 dialogProps?.onConfirm?.().finally(() => {
-                  hideDialog()
+                  hideAlert()
                 })
               }}
             >
