@@ -29,12 +29,16 @@ public class Workspace extends BaseEntity {
   private List<WorkspacesUsersProjects> workspacesUserProjects;
   @OneToMany(mappedBy = "workspace")
   private List<Sprint> sprints;
+  @ManyToOne
+  @JoinColumn(name = "course_id")
+  private Course course;
   @Transient
   private Sprint currentSprint;
   @Transient
   private Sprint prevSprint;
   @Transient
   private Sprint nextSprint;
+
   private Workspace(WorkspaceEntityBuilder workspaceBuilder) {
     super(workspaceBuilder);
     this.name = workspaceBuilder.name;
@@ -207,16 +211,16 @@ public class Workspace extends BaseEntity {
   @Transient
   public Set<User> getMembers() {
     return workspacesUserProjects.stream()
-                                 .map(WorkspacesUsersProjects::getUser)
-                                 .collect(java.util.stream.Collectors.toSet());
+      .map(WorkspacesUsersProjects::getUser)
+      .collect(java.util.stream.Collectors.toSet());
   }
 
   @Transient
   public Set<Project> getProjects() {
     return workspacesUserProjects.stream()
-                                 .map(WorkspacesUsersProjects::getProject)
-                                 .filter(Objects::nonNull)
-                                 .collect(Collectors.toSet());
+      .map(WorkspacesUsersProjects::getProject)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toSet());
   }
 
   public List<Sprint> getSprints() {
@@ -254,5 +258,13 @@ public class Workspace extends BaseEntity {
 
   public void setPrevSprint(Sprint prevSprint) {
     this.prevSprint = prevSprint;
+  }
+
+  public Course getCourse() {
+    return course;
+  }
+
+  public void setCourse(Course course) {
+    this.course = course;
   }
 }
