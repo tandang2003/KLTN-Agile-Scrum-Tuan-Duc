@@ -14,7 +14,7 @@ import { useUpdateWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import {
   UpdateWorkspaceSchema,
   UpdateWorkspaceSchemaType,
-  WorkspaceResponse
+  WorkspaceDetailResponse
 } from '@/types/workspace.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
@@ -23,7 +23,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 type UpdateWorkspaceForm = {
-  data: WorkspaceResponse
+  data: WorkspaceDetailResponse
 }
 
 const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {

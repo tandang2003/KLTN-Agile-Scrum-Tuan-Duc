@@ -106,6 +106,7 @@ appAxios.interceptors.response.use(
           originalRequest._retry = true
 
           try {
+            toast.info('Refreshing token...')
             const response = await authService.refresh()
 
             const newToken = response.data.access_token

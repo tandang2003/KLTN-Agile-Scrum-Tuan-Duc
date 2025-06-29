@@ -40,20 +40,7 @@ const WorkspaceDetailPage = () => {
         <h1 className='h1 pb-2'>
           Workspace: <strong>{data.name}</strong>
         </h1>
-        <ul className='flex items-center gap-2'>
-          <span>Start</span>
-          <span className='rounded-xl bg-green-500 px-4 py-2'>
-            {formatDate(data.start)}
-          </span>
-          <span>Current </span>
-          <span className='rounded-xl bg-amber-500 px-4 py-2'>
-            {formatDate(new Date())}
-          </span>
-          <span>End </span>
-          <span className='rounded-xl bg-red-500 px-4 py-2'>
-            {formatDate(data.end)}
-          </span>
-        </ul>
+
         <DropdownMenu>
           <DropdownMenuTrigger className='absolute top-5 right-5'>
             <Icon icon={'lucide:more-horizontal'} />

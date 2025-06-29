@@ -178,7 +178,7 @@ const SubTaskItem = ({ id, name, index, remove }: SubTaskItemProps) => {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className='flex items-center justify-between rounded-md border-2 px-4 py-2 shadow-sm'
+      className='flex items-center justify-between rounded-md border-2 p-2 shadow-sm ring-2'
     >
       <Button
         type='button'
@@ -195,8 +195,8 @@ const SubTaskItem = ({ id, name, index, remove }: SubTaskItemProps) => {
         <DropdownMenuTrigger>
           <Icon icon={'ri:more-fill'} />
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => remove(index)}>
+        <DropdownMenuContent align='end'>
+          <DropdownMenuItem className='cancel' onClick={() => remove(index)}>
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -221,7 +221,7 @@ const SubTaskItemForm = forwardRef<HTMLInputElement, CreateSubTaskProps>(
         </FormItem>
 
         <div className='flex items-center gap-3'>
-          <Button type='button' onClick={handleAppend}>
+          <Button type='button' onClick={handleAppend} className='success'>
             Add
           </Button>
           <Button type='button' onClick={() => cancel()} className='cancel'>

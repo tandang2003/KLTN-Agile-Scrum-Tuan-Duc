@@ -48,10 +48,16 @@ const UpdateRelationship = ({
   open,
   cancel
 }: UpdateRelationshipProps) => {
-  const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>()
+  const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>({
+    typeRelation: 'BLOCKS'
+  })
   const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
   const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
   const [createIssue] = useCreateRelationshipMutation()
+
+  useEffect(() => {
+    handleSubmit()
+  }, [])
 
   const handleSubmit = async () => {
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)

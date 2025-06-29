@@ -301,7 +301,7 @@ const ListAttachmentIssue = ({}: ListAttachmentIssueProps) => {
         return (
           <div
             key={item.id}
-            className='flex items-center gap-4 rounded-md bg-white p-2 shadow-md'
+            className='flex items-start gap-4 rounded-md bg-white p-2 shadow-md'
           >
             <AttachmentPreview
               id={item.id}
@@ -309,10 +309,7 @@ const ListAttachmentIssue = ({}: ListAttachmentIssueProps) => {
               filename={item.filename}
               url={item.url}
             />
-            <span className='flex flex-col gap-1'>
-              <span>{item.filename}</span>
-              <span>{item.extension}</span>
-            </span>
+            <span>{item.filename}</span>
             <AttachmentDropdownMenu id={item.id} />
           </div>
         )
@@ -339,7 +336,7 @@ const AttachmentDropdownMenu = ({ id }: AttachmentDropdownMenuProps) => {
             toast.promise(onDelete(id), {
               loading: 'Deleting file...',
               success: 'File deleted successfully',
-              error: 'Failed to delete file'
+              error: 'File is deleted or not exist'
             })
           }}
         >

@@ -1,5 +1,5 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
-import ProjectHeader from '@/components/project/ProjetcHeader'
+import ProjectHeader from '@/components/project/ProjectHeader'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
