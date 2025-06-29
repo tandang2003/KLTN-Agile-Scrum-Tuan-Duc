@@ -611,22 +611,30 @@ public class IssueService {
 
   @SendKafkaEvent(topic = "task-log")
   public ApiResponse<Void> deleteRelation(IssueRemoveRelationRequest request) {
-    Issue issue = getEntityById(request.getIssueId());
-    Issue relatedIssue = getEntityById(request.getIssueRelatedId());
-    IssueRelation relation = IssueRelation.builder()
-      .id(IssueRelationId.builder().issueId(issue.getId()).issueRelatedId(relatedIssue.getId()).build())
-      .issue(issue)
-      .issueRelated(relatedIssue)
+    IssueRelationId relationId = IssueRelationId.builder()
+      .issueId(request.getIssueId())
+      .issueRelatedId(request.getIssueRelatedId())
       .build()
       ;
-    issue.getAffectTo().remove(relation);
+
+    IssueRelation relation = issueRelationRepository.findById(relationId)
+      .orElseThrow(() -> AppException.builder()
+        .error(Error.NOT_FOUND)
+        .message("Issue relation doesn't found")
+        .build());
+    Issue issue = getEntityById(request.getIssueId());
+    boolean removed = issue.getAffectTo().remove(relation);
+
+    issueRelationRepository.delete(relation); // still call delete directly
+//    issueRelationRepository.flush(); // force DB sync for debug
+
     ChangeLogRequest changeLog = changeLogMapper.taskToRemoveRelation(issue, issueMongoService.getById(issue.getId()));
-    issueRelationRepository.delete(relation);
     return ApiResponse.<Void>builder()
       .code(HttpStatus.OK.value())
       .message("Remove relation successfully")
       .logData(changeLog)
       .build();
+
   }
 
   public ApiResponse<List<IssueRelationResponse>> getRelations(String id) {

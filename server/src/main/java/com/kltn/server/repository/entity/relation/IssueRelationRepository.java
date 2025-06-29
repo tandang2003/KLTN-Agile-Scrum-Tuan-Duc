@@ -5,8 +5,9 @@ import com.kltn.server.model.entity.embeddedKey.IssueRelationId;
 import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.type.task.IssueRelationType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface IssueRelationRepository extends JpaRepository<IssueRelation, IssueRelationId> {
 
 
