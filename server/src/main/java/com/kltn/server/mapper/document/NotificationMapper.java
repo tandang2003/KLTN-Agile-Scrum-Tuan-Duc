@@ -22,6 +22,8 @@ import java.util.List;
   UserMapper.class,
   TopicMapper.class,
   SubTaskMapper.class,
+//  Relation
+//  ,
   ResourceMapper.class})
 public interface NotificationMapper {
 
@@ -43,12 +45,20 @@ public interface NotificationMapper {
     @Mapping(source = "subTask", target = "subTask", qualifiedByName = "toResponse"),
     @Mapping(source = "attachment", target = "attachment", qualifiedByName = "toListAttachmentResponse"),
     @Mapping(source = "comments", target = "comments", qualifiedByName = "toListResponse"),
-//    @Mapping(source = "relations", target = "relations"),
+    @Mapping(source = "relations", target = "relations", qualifiedByName = "toListResponse"),
     @Mapping(source = "open", target = "open")
   })
   @BeanMapping(ignoreByDefault = true)
   @Named("toResponse")
   NotificationOfIssueResponse toResponse(LogTask logTask);
+
+//  @Mappings({
+//    @Mapping(source = "related",target = "issueRelated.id"),
+//    @Mapping(source = "relationType",target = "typeRelation"),
+//  })
+//  @BeanMapping(ignoreByDefault = true)
+//  @Named("toResponse")
+//  IssueRelationResponse toRelationResponse(Relation<String> relation);
 
   @Mappings({
     @Mapping(target = "issueRelated.id", source = "related"),
