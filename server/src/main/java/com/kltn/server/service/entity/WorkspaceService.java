@@ -13,22 +13,29 @@ import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppListArgumentNotValidException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
+import com.kltn.server.mapper.entity.CourseMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.mapper.entity.WorkspaceMapper;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.*;
+import com.kltn.server.model.entity.embeddedKey.UserCourseRelationId;
 import com.kltn.server.model.entity.embeddedKey.WorkspacesUsersId;
+import com.kltn.server.model.entity.relationship.CourseRelation;
+import com.kltn.server.model.entity.relationship.UserCourseRelation;
 import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
 import com.kltn.server.repository.document.ProjectMongoRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.WorkspaceRepository;
+import com.kltn.server.repository.entity.relation.UserCourseRepository;
 import com.kltn.server.repository.entity.relation.WorkspacesUsersProjectsRepository;
+import com.kltn.server.service.entity.relation.UserCourseService;
 import com.kltn.server.service.entity.relation.WorkspacesUsersProjectsService;
 import com.kltn.server.util.RoleType;
 import com.kltn.server.util.token.TokenUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,7 +49,12 @@ import java.util.*;
 @Service
 
 public class WorkspaceService {
-  private UserRepository userRepository;
+  private final UserService userService;
+  private final UserCourseRelationRepository userCourseRelationRepository;
+  private final CourseMapper courseMapper;
+  private final UserCourseService userCourseService;
+  private final CourseService courseService;
+  //  private UserRepository userRepository;
   private WorkspaceRepository workspaceRepository;
   private WorkspaceMapper workspaceMapper;
   private UserMapper userMapper;
@@ -54,10 +66,18 @@ public class WorkspaceService {
   private TokenUtils tokenUtils;
 
   @Autowired
-  public WorkspaceService(TokenUtils tokenUtils, RoleService roleService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMapper projectMapper, ProjectMongoRepository projectMongoRepository, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, UserRepository userRepository, UserMapper userMapper, WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper) {
+  public WorkspaceService(TokenUtils tokenUtils, RoleService roleService,
+                          WorkspacesUsersProjectsService workspacesUsersProjectsService,
+                          ProjectMapper projectMapper, ProjectMongoRepository projectMongoRepository,
+                          WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
+//                          UserRepository userRepository,
+                          UserMapper userMapper,
+                          WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper,
+                          @Lazy
+                          UserService userService, UserCourseRelationRepository userCourseRelationRepository, CourseMapper courseMapper, UserCourseService userCourseService, CourseService courseService) {
     this.tokenUtils = tokenUtils;
     this.roleService = roleService;
-    this.userRepository = userRepository;
+//    this.userRepository = userRepository;
     this.workspaceRepository = workspaceRepository;
     this.workspaceMapper = workspaceMapper;
     this.userMapper = userMapper;
@@ -65,15 +85,20 @@ public class WorkspaceService {
     this.projectMapper = projectMapper;
     this.projectMongoRepository = projectMongoRepository;
     this.workspacesUsersProjectsService = workspacesUsersProjectsService;
+    this.userService = userService;
+    this.userCourseRelationRepository = userCourseRelationRepository;
+    this.courseMapper = courseMapper;
+    this.userCourseService = userCourseService;
+    this.courseService = courseService;
   }
 
   @Transactional
   public WorkspaceResponse createWorkspace(WorkspaceCreationRequest workspaceCreationRequest) {
-    User user = userRepository.findByUniId((String) SecurityContextHolder.getContext()
-      .getAuthentication()
-      .getPrincipal()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+    User user = userService.getCurrentUser();
     Workspace workspace = workspaceMapper.toWorkspace(workspaceCreationRequest);
+    Course course = courseService.getCourse(workspaceCreationRequest.courseId());
     workspace.setOwner(user);
+    workspace.setCourse(course);
     try {
       workspace = workspaceRepository.save(workspace);
     } catch (Exception e) {
@@ -89,9 +114,7 @@ public class WorkspaceService {
   }
 
   public ApiPaging<WorkspaceResponse> getWorkspaceByOwnerIdPaging(int page, int size) {
-    User user = userRepository.findByUniId((String) SecurityContextHolder.getContext()
-      .getAuthentication()
-      .getPrincipal()).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+    User user = userService.getCurrentUser();
     Page<Workspace> workspaces;
     if (user.getRole().getName().equals("teacher")) {
       workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_JPA));
@@ -121,6 +144,11 @@ public class WorkspaceService {
       throw AppMethodArgumentNotValidException.builder().error(errors).build();
     }
     workspace = workspaceMapper.updateWorkspace(workspace, workspaceUpdationRequest);
+    if (!Objects.equals(workspace.getCourse()
+      .getId(), workspaceUpdationRequest.courseId()) || !Objects.equals(workspace.getCourse()
+      .getCourseId(), workspaceUpdationRequest.courseId())) {
+      workspace.setCourse(courseService.getCourse(workspaceUpdationRequest.courseId()));
+    }
     workspace = workspaceRepository.save(workspace);
     setStatusSprint(workspace);
     return workspaceMapper.toWorkspaceResponseById(workspace);
@@ -159,7 +187,7 @@ public class WorkspaceService {
     List<String> emails = new ArrayList<>();
     List<String> uniIdsList = Arrays.stream(uniIds).toList();
     for (String uniId : uniIds) {
-      User user = userRepository.findByUniId(uniId).get();
+      User user = userService.getUserByUniId(uniId);
       if (!workspace.getMembers().contains(user)) {
         try {
           workspacesUsersProjectsRepository.save(WorkspacesUsersProjects.builder()
@@ -183,9 +211,8 @@ public class WorkspaceService {
   }
 
   public ApiResponse<ApiPaging<ProjectResponse>> getListPagingProject(String workspaceId, int page, int size) {
-    String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    User user = userRepository.findByUniId(userId)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+    User user = userService.getCurrentUser();
+
 
     if (user.getWorkspaces().stream().noneMatch(workspace -> workspace.getId().equals(workspaceId))) {
       throw AppException.builder().error(Error.NOT_FOUND_WORKSPACE).build();
@@ -213,9 +240,7 @@ public class WorkspaceService {
   }
 
   public ApiResponse<WorkspaceAuthorizationResponse> getUserInfoInWorkspace(String workspaceId) {
-    String uniUserId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    User user = userRepository.findByUniId(uniUserId)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+    User user = userService.getCurrentUser();
     Collection<GrantedAuthority> authorities = new ArrayList<>();
     WorkspaceAuthorizationResponse workspaceAuthorizationResponse = WorkspaceAuthorizationResponse.builder().build();
 
@@ -246,9 +271,26 @@ public class WorkspaceService {
   }
 
   public WorkspaceResponse getWorkspaceResponseById(String workspaceId) {
-    Workspace workspace = (getWorkspaceById(workspaceId));
+    Workspace workspace = getWorkspaceById(workspaceId);
     setStatusSprint(workspace);
-    return workspaceMapper.toWorkspaceResponseById(workspace);
+    Course course = workspace.getCourse();
+    List<Course> prerequisite = course.getDependentCourses()
+      .stream()
+      .map(CourseRelation::getPrerequisiteCourse)
+      .toList()
+      ;
+    User user = userService.getCurrentUser();
+    List<UserCourseRelation> userCourseRelations = new ArrayList<>();
+    for (Course prerequisiteCourse : prerequisite) {
+      UserCourseRelation userCourseRelation = userCourseService.findUserCourseRelationById(UserCourseRelationId.builder()
+        .userId(user.getId())
+        .courseId(prerequisiteCourse.getId())
+        .build());
+      userCourseRelations.add(userCourseRelation);
+    }
+
+
+    return workspaceMapper.toWorkspaceResponseById(workspace, courseMapper.toListUserCourseResponse(userCourseRelations));
   }
 
   private void setStatusSprint(Workspace workspace) {

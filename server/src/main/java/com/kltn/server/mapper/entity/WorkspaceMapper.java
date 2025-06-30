@@ -2,6 +2,8 @@ package com.kltn.server.mapper.entity;
 
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceCreationRequest;
 import com.kltn.server.DTO.request.entity.workspace.WorkspaceUpdateRequest;
+import com.kltn.server.DTO.response.course.CourseResponse;
+import com.kltn.server.DTO.response.course.UserCourseResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
 import com.kltn.server.model.entity.Project;
@@ -10,7 +12,12 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE, uses = {SprintMapper.class})
+@Mapper(componentModel = "spring",
+  unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE,
+  unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
+  uses = {
+    SprintMapper.class,
+    CourseMapper.class})
 public interface WorkspaceMapper {
 
   @Mappings({
@@ -57,9 +64,30 @@ public interface WorkspaceMapper {
     @Mapping(target = "nextSprint", source = "nextSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "start", source = "start"),
     @Mapping(target = "end", source = "end"),
-    @Mapping(target = "createdAt", source = "dtCreated"),})
+    @Mapping(target = "createdAt", source = "dtCreated"),
+    @Mapping(target = "course", source = "course", qualifiedByName = "toResponse"),
+  })
   @BeanMapping(ignoreByDefault = true)
   WorkspaceResponse toWorkspaceResponseById(Workspace workspace);
+
+
+  @Mappings({
+    @Mapping(target = "id", source = "workspace.id"),
+    @Mapping(target = "name", source = "workspace.name"),
+    @Mapping(target = "description", source = "workspace.description"),
+    @Mapping(target = "sprintNum", source = "workspace.sprintNum"),
+    @Mapping(target = "currentSprint", source = "workspace.currentSprint", qualifiedByName = "toResponse"),
+    @Mapping(target = "prevSprint", source = "workspace.prevSprint", qualifiedByName = "toResponse"),
+    @Mapping(target = "nextSprint", source = "workspace.nextSprint", qualifiedByName = "toResponse"),
+    @Mapping(target = "start", source = "workspace.start"),
+    @Mapping(target = "end", source = "workspace.end"),
+    @Mapping(target = "createdAt", source = "workspace.dtCreated"),
+    @Mapping(target = "course", source = "workspace.course", qualifiedByName = "toResponse"),
+    @Mapping(target = "prerequisiteCourse", source = "userCourses"),
+
+  })
+  @BeanMapping(ignoreByDefault = true)
+  WorkspaceResponse toWorkspaceResponseById(Workspace workspace, List<UserCourseResponse> userCourses);
 
   @Mappings({
     @Mapping(target = "id", source = "id"),

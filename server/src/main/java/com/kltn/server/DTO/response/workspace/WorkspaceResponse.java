@@ -1,9 +1,13 @@
 package com.kltn.server.DTO.response.workspace;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kltn.server.DTO.response.course.CourseResponse;
+import com.kltn.server.DTO.response.course.UserCourseResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.model.entity.Course;
 import com.kltn.server.repository.entity.SprintRepository;
 
 import java.time.Instant;
@@ -25,25 +29,31 @@ public record WorkspaceResponse(
   Instant start,
   Instant end,
   List<ProjectResponse> projects,
-  Instant createdAt
+  Instant createdAt,
+  CourseResponse course,
+  @JsonProperty("prerequisite course")
+  List<UserCourseResponse> prerequisiteCourse
+
 ) {
   public static WorkspaceResponseBuilder builder() {
     return new WorkspaceResponseBuilder();
   }
 
   public static class WorkspaceResponseBuilder {
-    String                id;
-    String                name;
-    String                description;
-    int                   sprintNum;
-    SprintResponse        prevSprint;
-    SprintResponse        currentSprint;
-    SprintResponse        nextSprint;
-    Instant               start;
-    Instant               end;
-    UserResponse          owner;
+    String id;
+    String name;
+    String description;
+    int sprintNum;
+    SprintResponse prevSprint;
+    SprintResponse currentSprint;
+    SprintResponse nextSprint;
+    Instant start;
+    Instant end;
+    UserResponse owner;
     List<ProjectResponse> projects;
-    Instant               createdAt;
+    Instant createdAt;
+    CourseResponse course;
+    List<UserCourseResponse> prerequisiteCourse;
 
     public WorkspaceResponseBuilder id(String id) {
       this.id = id;
@@ -106,10 +116,20 @@ public record WorkspaceResponse(
       return this;
     }
 
+    public WorkspaceResponseBuilder course(CourseResponse course) {
+      this.course = course;
+      return this;
+    }
+
+    public WorkspaceResponseBuilder prerequisiteCourse(List<UserCourseResponse> prerequisiteCourse) {
+      this.prerequisiteCourse = prerequisiteCourse;
+      return this;
+    }
+
     public WorkspaceResponse build() {
       return new WorkspaceResponse(
         id, name, description, sprintNum, prevSprint, currentSprint, nextSprint, owner, start, end, projects,
-        createdAt
+        createdAt, course, prerequisiteCourse
       );
     }
   }
