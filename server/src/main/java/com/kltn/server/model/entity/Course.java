@@ -2,6 +2,7 @@ package com.kltn.server.model.entity;
 
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.entity.relationship.CourseRelation;
+import com.kltn.server.model.entity.relationship.UserCourseRelation;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -18,6 +19,8 @@ public class Course extends BaseEntity {
   private List<CourseRelation> prerequisiteCourses;
   @OneToMany(mappedBy = "course")
   private List<Workspace> workspaces;
+  @OneToMany(mappedBy = "course")
+  private List<UserCourseRelation> users;
 
   public Course() {
   }
