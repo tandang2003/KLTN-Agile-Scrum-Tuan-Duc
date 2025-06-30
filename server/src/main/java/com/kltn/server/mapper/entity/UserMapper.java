@@ -3,6 +3,7 @@ package com.kltn.server.mapper.entity;
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
 import com.kltn.server.DTO.request.entity.auth.TeacherRegisterRequest;
 import com.kltn.server.DTO.response.auth.AuthenticationResponse;
+import com.kltn.server.DTO.response.course.UserCourseResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.DTO.response.user.UserResponseAll;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
@@ -13,9 +14,13 @@ import jakarta.validation.Valid;
 import org.mapstruct.*;
 import org.mapstruct.Named;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE, uses = {
   WorkspaceMapper.class,
-  ResourceMapper.class})
+  ResourceMapper.class,
+  CourseMapper.class,
+})
 public interface UserMapper {
   User toUser(RegisterRequest registerRequest);
 
@@ -44,6 +49,18 @@ public interface UserMapper {
   @BeanMapping(ignoreByDefault = true)
   UserResponse toUserResponse(User user);
 
+  @Mappings({
+    @Mapping(target = "id", source = "id"),
+    @Mapping(target = "name", source = "name"),
+    @Mapping(target = "email", source = "email"),
+    @Mapping(target = "uniId", source = "uniId"),
+    @Mapping(target = "className", source = "className"),
+    @Mapping(target = "role", source = "role.name"),
+    @Mapping(target = "avatar", source = "avatar", qualifiedByName = "toResourceResponse"),
+    @Mapping(target = "userCourseResponses", source = "courses",qualifiedByName = "toListUserCourseResponse")
+  })
+  @BeanMapping(ignoreByDefault = true)
+  UserResponse toUserDetailResponse(User user);
 
   //FIX
   @Mappings({
