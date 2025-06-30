@@ -9,14 +9,12 @@ import { useGetSkillsQuery } from '@/feature/skill/skill.api'
 import { enableDialogSkill } from '@/feature/trigger/trigger.slice'
 import { SkillResponse } from '@/types/skill.type'
 
-const UserSkill = () => {
+const UserSkillPage = () => {
   const { data, isFetching } = useGetSkillsQuery()
   const dispatch = useAppDispatch()
   return (
     <>
-      <span className='h3 mb-2 flex items-center gap-2'>
-        <Icon icon={'garden:knowledge-base-26'} size={45} />
-        <h2>Skills</h2>
+      <span className='h3 mx-3 mt-2 flex items-center gap-2'>
         <Button
           className='ml-auto'
           onClick={() => dispatch(enableDialogSkill())}
@@ -24,12 +22,12 @@ const UserSkill = () => {
           <Icon icon='lucide:plus' />
         </Button>
       </span>
-      <ScrollArea className='mt-4 h-[200px]'>
+      <ScrollArea className='my-2 h-[50px]'>
         <ListView<SkillResponse>
           data={data}
-          className='mr-3 gap-2'
+          className='mx-3 gap-2'
           loading={isFetching}
-          emptyComponent={<div>Not has any skills</div>}
+          emptyComponent={<div className='mx-3'>Bạn chưa có kỹ năng nào</div>}
           render={(item, index) => <ItemSkill key={index} data={item} />}
         />
         <ScrollArea />
@@ -39,4 +37,4 @@ const UserSkill = () => {
   )
 }
 
-export default UserSkill
+export default UserSkillPage

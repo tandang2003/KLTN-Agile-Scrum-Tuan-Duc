@@ -1,11 +1,11 @@
 import { Badge } from '@/components/ui/badge'
 import UserAvatar from '@/pages/user/avatar'
-import UserSkill from '@/pages/user/skill'
+import UserNavigate from '@/pages/user/navigate'
 import UserWorkspace from '@/pages/user/workspace'
 import { UserLayoutContextType } from '@/types/route.type'
 
 import { ReactNode } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { Outlet, useOutletContext } from 'react-router-dom'
 
 const UserPage = () => {
   return (
@@ -22,8 +22,11 @@ const UserPage = () => {
           <UserWorkspace />
         </div>
       </div>
-      <div className='mt-10 border-2 p-2 shadow-md'>
-        <UserSkill />
+      <div className='mt-10 p-2'>
+        <UserNavigate />
+        <div className='mt-2 rounded-md border-2 shadow-md'>
+          <Outlet />
+        </div>
       </div>
     </section>
   )

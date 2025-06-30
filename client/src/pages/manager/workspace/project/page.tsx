@@ -1,5 +1,6 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
+import { Button } from '@/components/ui/button'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
@@ -62,8 +63,9 @@ const ProjectPage = () => {
           <>
             <ProjectHeader data={data} />
 
-            <div className='pt-2 pb-4'>
+            <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
+              <Button>Predict</Button>
             </div>
             <Outlet
               context={{

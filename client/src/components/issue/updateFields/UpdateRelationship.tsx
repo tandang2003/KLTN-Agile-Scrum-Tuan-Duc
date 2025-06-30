@@ -62,7 +62,6 @@ const UpdateRelationship = ({
   const handleSubmit = async () => {
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)
     if (!dataParser.success) {
-      toast.error('Invalid data')
       return
     }
     const data = dataParser.data
