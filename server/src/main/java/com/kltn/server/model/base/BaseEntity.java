@@ -1,6 +1,7 @@
 package com.kltn.server.model.base;
 
 import jakarta.persistence.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -23,8 +24,8 @@ public abstract class BaseEntity {
     protected Instant dtModified;
     @Column(name = "dt_deleted")
     protected Instant dtDeleted;
-    @Column(name = "is_deleted")
-    protected boolean deleted;
+    @Column(name = "is_deleted", columnDefinition = "bit default 1")
+    protected boolean deleted ;
     @CreatedBy
     @Column(name = "create_by")
     protected String createdBy;
