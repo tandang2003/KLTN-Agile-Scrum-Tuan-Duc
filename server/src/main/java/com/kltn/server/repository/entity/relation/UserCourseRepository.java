@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserCourseRepository extends JpaRepository<UserCourseRelation, UserCourseRelationId> {
+
 }

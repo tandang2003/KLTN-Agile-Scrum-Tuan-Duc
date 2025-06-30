@@ -1,6 +1,7 @@
 package com.kltn.server.controller;
 
 import com.kltn.server.DTO.request.entity.course.UserCourseRequest;
+import com.kltn.server.DTO.request.entity.course.UserCourseUpdateRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.course.CourseResponse;
 import com.kltn.server.DTO.response.course.UserCourseResponse;
@@ -28,11 +29,13 @@ public class CourseController {
     var response = courseService.getAllCourse();
     return ResponseEntity.status(response.getCode()).body(response);
   }
+
   @GetMapping("{id}")
   public ResponseEntity<ApiResponse<CourseResponse>> getCourse(@PathVariable String id) {
     var response = courseService.getCourseResponse(id);
     return ResponseEntity.status(response.getCode()).body(response);
   }
+
   @GetMapping("{id}/dependent")
   public ResponseEntity<ApiResponse<List<CourseResponse>>> getDependentCourse(@PathVariable String id) {
     var response = courseService.getDependentCourse(id);
@@ -57,7 +60,19 @@ public class CourseController {
     @Valid @RequestBody UserCourseRequest userCourse) {
     var response = courseService.addCourseForUser(userCourse.getCoursePoints());
     return ResponseEntity.status(response.getCode()).body(response);
-
   }
 
+  @PutMapping
+  public ResponseEntity<ApiResponse<UserCourseResponse>> updatePoint(
+    @Valid @RequestBody UserCourseUpdateRequest userCourse) {
+    var response = courseService.updatePoint(userCourse);
+    return ResponseEntity.status(response.getCode()).body(response);
+  }
+
+  @DeleteMapping
+  public ResponseEntity<ApiResponse<Boolean>> deleteUserCourse(
+    @RequestParam String userId, @RequestParam String courseId) {
+    var response = courseService.deleteUserCourse(userId, courseId);
+    return ResponseEntity.status(response.getCode()).body(response);
+  }
 }
