@@ -18,7 +18,10 @@ public record WorkspaceCreationRequest(
     // @Min(1) int sprintNum,
     // @Min(1) int timePerSprint,
     @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant start,
-    @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant end) {
+    @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant end,
+    @NotEmpty String courseId
+
+    ) {
   @Override
   public String name() {
     return name;

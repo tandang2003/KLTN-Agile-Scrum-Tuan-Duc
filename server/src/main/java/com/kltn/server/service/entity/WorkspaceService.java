@@ -53,6 +53,7 @@ public class WorkspaceService {
   private final UserCourseRelationRepository userCourseRelationRepository;
   private final CourseMapper courseMapper;
   private final UserCourseService userCourseService;
+  private final CourseService courseService;
   //  private UserRepository userRepository;
   private WorkspaceRepository workspaceRepository;
   private WorkspaceMapper workspaceMapper;
@@ -73,7 +74,7 @@ public class WorkspaceService {
                           UserMapper userMapper,
                           WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper,
                           @Lazy
-                          UserService userService, UserCourseRelationRepository userCourseRelationRepository, CourseMapper courseMapper, UserCourseService userCourseService) {
+                          UserService userService, UserCourseRelationRepository userCourseRelationRepository, CourseMapper courseMapper, UserCourseService userCourseService, CourseService courseService) {
     this.tokenUtils = tokenUtils;
     this.roleService = roleService;
 //    this.userRepository = userRepository;
@@ -88,13 +89,16 @@ public class WorkspaceService {
     this.userCourseRelationRepository = userCourseRelationRepository;
     this.courseMapper = courseMapper;
     this.userCourseService = userCourseService;
+    this.courseService = courseService;
   }
 
   @Transactional
   public WorkspaceResponse createWorkspace(WorkspaceCreationRequest workspaceCreationRequest) {
     User user = userService.getCurrentUser();
     Workspace workspace = workspaceMapper.toWorkspace(workspaceCreationRequest);
+    Course course = courseService.getCourse(workspaceCreationRequest.courseId());
     workspace.setOwner(user);
+    workspace.setCourse(course);
     try {
       workspace = workspaceRepository.save(workspace);
     } catch (Exception e) {
@@ -140,6 +144,11 @@ public class WorkspaceService {
       throw AppMethodArgumentNotValidException.builder().error(errors).build();
     }
     workspace = workspaceMapper.updateWorkspace(workspace, workspaceUpdationRequest);
+    if (!Objects.equals(workspace.getCourse()
+      .getId(), workspaceUpdationRequest.courseId()) || !Objects.equals(workspace.getCourse()
+      .getCourseId(), workspaceUpdationRequest.courseId())) {
+      workspace.setCourse(courseService.getCourse(workspaceUpdationRequest.courseId()));
+    }
     workspace = workspaceRepository.save(workspace);
     setStatusSprint(workspace);
     return workspaceMapper.toWorkspaceResponseById(workspace);
