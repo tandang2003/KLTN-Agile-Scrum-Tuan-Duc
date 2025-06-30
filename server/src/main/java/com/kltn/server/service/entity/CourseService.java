@@ -36,7 +36,10 @@ public class CourseService {
   @Autowired
   public CourseService(CourseRepository courseRepository, CourseMapper courseMapper,
                        @Lazy
-                       UserService userService, UserCourseRelationRepository userCourseRelationRepository, UserCourseService userCourseService) {
+                       UserService userService,
+                       UserCourseRelationRepository userCourseRelationRepository,
+                       @Lazy
+                       UserCourseService userCourseService) {
     this.courseRepository = courseRepository;
     this.courseMapper = courseMapper;
     this.userService = userService;
@@ -161,7 +164,7 @@ public class CourseService {
 
   public ApiResponse<Boolean> deleteUserCourse(String userId, String courseId) {
     boolean flag=userCourseService.delete(userId,courseId);
-       return ApiResponse.<UserCourseResponse>builder()
+       return ApiResponse.<Boolean>builder()
       .code(200)
       .data(flag)
       .build();
