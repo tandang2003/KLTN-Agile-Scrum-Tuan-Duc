@@ -3,6 +3,7 @@
   import com.kltn.server.error.AppException;
   import com.kltn.server.error.Error;
   import com.kltn.server.model.base.BaseEntity;
+  import com.kltn.server.model.entity.relationship.UserCourseRelation;
   import com.kltn.server.model.entity.relationship.WorkspacesUsersProjects;
   import jakarta.persistence.*;
   import org.springframework.security.core.GrantedAuthority;
@@ -44,6 +45,8 @@
       private Set<Issue> reviewedIssues;
       @Transient
       private boolean alive;
+      @OneToMany(mappedBy = "user")
+      private List<UserCourseRelation> courses;
 
       public User() {
           super();
@@ -67,6 +70,8 @@
           this.assignedIssues = builder.assignedIssues;
           this.reviewedIssues = builder.reviewedIssues;
           this.workspaces = builder.workspaces;
+          this.courses=builder.courses;
+
       }
 
       public static class UserEntityBuilder extends BaseEntityBuilder<User, UserEntityBuilder> {
@@ -83,6 +88,7 @@
           // One user can review multiple tasks
           private Set<Issue> reviewedIssues;
           private List<Workspace> workspacesJoined;
+          private List<UserCourseRelation> courses;
 
           private UserEntityBuilder() {
               super();
@@ -157,6 +163,11 @@
           public UserEntityBuilder workspaces(List<Workspace> workspaces) {
               this.workspaces = workspaces;
               return this;
+          }
+
+          public UserEntityBuilder courses(List<UserCourseRelation> courses) {
+            this.courses = courses;
+            return this;
           }
       }
 
@@ -293,6 +304,14 @@
 
     public void setAvatar(Resource avatar) {
       this.avatar = avatar;
+    }
+
+    public List<UserCourseRelation> getCourses() {
+      return courses;
+    }
+
+    public void setCourses(List<UserCourseRelation> courses) {
+      this.courses = courses;
     }
   }
 
