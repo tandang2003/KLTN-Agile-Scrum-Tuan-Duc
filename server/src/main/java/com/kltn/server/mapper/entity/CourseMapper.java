@@ -29,7 +29,7 @@ public interface CourseMapper {
   @BeanMapping(ignoreByDefault = true)
   @Named("toResponse")
   UserCourseResponse toUserCourseResponse(UserCourseRelation userCourse);
-
+@Named("toListUserCourseResponse")
   @IterableMapping(qualifiedByName = "toResponse")
   List<UserCourseResponse> toListUserCourseResponse(List<UserCourseRelation> userCourse);
 

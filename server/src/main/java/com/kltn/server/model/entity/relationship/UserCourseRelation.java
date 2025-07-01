@@ -18,7 +18,7 @@ public class UserCourseRelation {
   @JoinColumn(name = "course_id")
   private Course course;
 
-  private double point;
+  private double point = -1;
 
   public UserCourseRelation() {
   }
@@ -38,7 +38,7 @@ public class UserCourseRelation {
     private UserCourseRelationId id;
     private User user;
     private Course course;
-    private double point;
+    private double point = -1;
 
     public UserCourseRelationBuilder id(UserCourseRelationId id) {
       this.id = id;
