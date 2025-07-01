@@ -1,7 +1,9 @@
 package com.kltn.server.DTO.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kltn.server.DTO.response.ApiPaging;
+import com.kltn.server.DTO.response.course.UserCourseResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.DTO.response.workspace.WorkspaceResponse;
@@ -24,10 +26,13 @@ public record UserResponse(String id,
                            Set<Issue> reviewedTasks,
                            Boolean alive,
                            List<WorkspaceResponse> workspaces,
-                           ResourceResponse avatar) {
+                           ResourceResponse avatar,
+                           @JsonProperty("courses")
+                           List <UserCourseResponse> userCourseResponses
+) {
   public UserResponse(UserResponseBuilder b) {
     this(b.getId(), b.name, b.email, b.uniId, b.uniPassword, b.className, b.role, b.projects, b.assignedTasks,
-         b.reviewedTasks, b.alive, b.workspaces, b.avatar);
+         b.reviewedTasks, b.alive, b.workspaces, b.avatar, b.userCourseResponses);
   }
 
   public static UserResponseBuilder builder() {
@@ -47,6 +52,12 @@ public record UserResponse(String id,
     private Boolean alive;
     private List<WorkspaceResponse> workspaces;
     private ResourceResponse avatar;
+    private List <UserCourseResponse> userCourseResponses;
+
+    public UserResponseBuilder userCourseResponses(List<UserCourseResponse> userCourseResponses) {
+      this.userCourseResponses = userCourseResponses;
+      return this;
+    }
 
     public UserResponseBuilder avatar(ResourceResponse avatar) {
       this.avatar = avatar;

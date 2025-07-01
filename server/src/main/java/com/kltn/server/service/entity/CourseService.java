@@ -1,5 +1,6 @@
 package com.kltn.server.service.entity;
 
+import com.kltn.server.DTO.request.entity.course.UserCourseUpdateRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.course.CourseResponse;
 import com.kltn.server.DTO.response.course.UserCourseResponse;
@@ -12,6 +13,8 @@ import com.kltn.server.model.entity.embeddedKey.UserCourseRelationId;
 import com.kltn.server.model.entity.relationship.CourseRelation;
 import com.kltn.server.model.entity.relationship.UserCourseRelation;
 import com.kltn.server.repository.entity.CourseRepository;
+import com.kltn.server.service.entity.relation.UserCourseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -28,14 +31,20 @@ public class CourseService {
   private final CourseMapper courseMapper;
   private final UserService userService;
   private final UserCourseRelationRepository userCourseRelationRepository;
+  private final UserCourseService userCourseService;
 
   @Autowired
   public CourseService(CourseRepository courseRepository, CourseMapper courseMapper,
-                       @Lazy UserService userService, UserCourseRelationRepository userCourseRelationRepository) {
+                       @Lazy
+                       UserService userService,
+                       UserCourseRelationRepository userCourseRelationRepository,
+                       @Lazy
+                       UserCourseService userCourseService) {
     this.courseRepository = courseRepository;
     this.courseMapper = courseMapper;
     this.userService = userService;
     this.userCourseRelationRepository = userCourseRelationRepository;
+    this.userCourseService = userCourseService;
   }
 
   public ApiResponse<List<CourseResponse>> getAllCourse() {
@@ -145,4 +154,19 @@ public class CourseService {
 
   }
 
+  public ApiResponse<UserCourseResponse> updatePoint(@Valid UserCourseUpdateRequest userCourse) {
+    UserCourseRelation relation = userCourseService.save(userCourse);
+    return ApiResponse.<UserCourseResponse>builder()
+      .code(200)
+      .data(courseMapper.toUserCourseResponse(relation))
+      .build();
+  }
+
+  public ApiResponse<Boolean> deleteUserCourse(String userId, String courseId) {
+    boolean flag=userCourseService.delete(userId,courseId);
+       return ApiResponse.<Boolean>builder()
+      .code(200)
+      .data(flag)
+      .build();
+  }
 }

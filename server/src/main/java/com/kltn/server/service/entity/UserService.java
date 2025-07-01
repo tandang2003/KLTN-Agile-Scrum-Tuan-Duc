@@ -46,8 +46,7 @@ public class UserService {
   }
 
   public UserResponse getCurrUser() {
-    UserResponse userResponse = userMapper.toUserResponse(getCurrentUser());
-    return userResponse;
+    return userMapper.toUserDetailResponse(getCurrentUser());
   }
 
   public boolean checkingUser(String userId) {
