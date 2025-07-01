@@ -11,6 +11,7 @@ import {
   ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
+  WorkspaceDetailResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -63,7 +64,7 @@ const workspaceApi = createApi({
           )
       }
     }),
-    getWorkspace: builder.query<WorkspaceResponse, Id>({
+    getWorkspace: builder.query<WorkspaceDetailResponse, Id>({
       async queryFn(arg) {
         try {
           const data = await workspaceService.getWorkSpace(arg)

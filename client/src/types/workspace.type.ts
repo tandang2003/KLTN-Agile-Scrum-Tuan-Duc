@@ -44,15 +44,11 @@ type UpdateWorkspaceReqType = Omit<UpdateWorkspaceSchemaType, 'date'> & {
 
 type WorkspaceDetailResponse = Pick<
   WorkSpaceModel,
-  | 'id'
-  | 'name'
-  | 'description'
-  | 'start'
-  | 'end'
-  | 'timePerSprint'
-  | 'sprintNum'
+  'id' | 'name' | 'description' | 'start' | 'end' | 'sprintNum'
 > & {
-  currentSprint: SprintResponse
+  prevSprint: SprintResponse | null
+  currentSprint: SprintResponse | null
+  nextSprint: SprintResponse | null
 }
 
 type WorkspaceResponse = {
@@ -61,10 +57,10 @@ type WorkspaceResponse = {
   owner: {
     name: string
   }
-  description: string
-  currentSprint: SprintResponse
-  start: Date
-  end: Date
+  prevSprint: SprintResponse | null
+  currentSprint: SprintResponse | null
+  nextSprint: SprintResponse | null
+  sprintNum: number
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>

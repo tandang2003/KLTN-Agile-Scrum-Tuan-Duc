@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
+import { useAlertHost } from '@/components/AleartHost'
 
 type ItemSkillProps = {
   data: SkillResponse
@@ -33,21 +34,33 @@ type ItemSkillProps = {
 const ItemSkill = ({ data }: ItemSkillProps) => {
   const dispatch = useAppDispatch()
   const [deleteSkill] = useDeleteSkillMutation()
-
+  const { showAlert } = useAlertHost()
   const handleUpdate = () => {
     dispatch(setUpdateDataSkill(data))
     dispatch(enableDialogSkill())
   }
 
   const handleDelete = () => {
-    deleteSkill(data)
-      .unwrap()
-      .then(() => {
-        console.log('Skill deleted successfully')
-      })
-      .catch(() => {
-        toast.error('Failed to delete skill')
-      })
+    showAlert({
+      title: 'Xóa kỹ năng',
+      type: 'warning',
+      message: (
+        <p>
+          Bạn có chắc chắn muốn xóa kỹ năng{' '}
+          <b className='text-black'>{data.skillName}</b> không?
+        </p>
+      ),
+      onConfirm: () => {
+        return deleteSkill(data)
+          .unwrap()
+          .then(() => {
+            console.log('Skill deleted successfully')
+          })
+          .catch(() => {
+            toast.error('Failed to delete skill')
+          })
+      }
+    })
   }
 
   return (
@@ -61,32 +74,13 @@ const ItemSkill = ({ data }: ItemSkillProps) => {
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem onClick={handleUpdate}>Update</DropdownMenuItem>
+          <DropdownMenuItem className='hover-opacity' onClick={handleUpdate}>
+            Update
+          </DropdownMenuItem>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Delete
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you absolutely delete skill
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DropdownMenuItem className='cancel mt-2' onSelect={handleDelete}>
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
