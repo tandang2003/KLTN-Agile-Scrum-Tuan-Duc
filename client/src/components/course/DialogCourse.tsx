@@ -7,6 +7,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import FormCreateCourse from '@/components/course/FormCreateCource'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 const DialogCourse = () => {
   const dispatch = useAppDispatch()
@@ -24,6 +26,12 @@ const DialogCourse = () => {
           <DialogTitle>Môn học</DialogTitle>
         </DialogHeader>
         <DialogDescription />
+        <ScrollArea className='max-h-[300px]'>
+          <div className='mr-3'>
+            <FormCreateCourse />
+          </div>
+          <ScrollBar />
+        </ScrollArea>
       </DialogContent>
     </DialogController>
   )

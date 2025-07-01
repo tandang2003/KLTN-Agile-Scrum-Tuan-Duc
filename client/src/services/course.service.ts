@@ -39,7 +39,7 @@ const courseService = {
     return res.data.data
   },
   addCourse: async (req: CreateCourseRequestType) => {
-    const res = await httpService.put<
+    const res = await httpService.post<
       ResponseApi<UserCourseResponseType[]>,
       {
         coursePoints: CreateCourseRequestType

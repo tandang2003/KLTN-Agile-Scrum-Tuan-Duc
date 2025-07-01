@@ -1,5 +1,5 @@
+import { getErrorMessage } from '@/lib/form'
 import courseService from '@/services/course.service'
-import skillService from '@/services/skill.service'
 import {
   CourseResponseType,
   CreateCourseRequestType,
@@ -7,16 +7,17 @@ import {
 } from '@/types/course.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
+import axios from 'axios'
 
 const courseApi = createApi({
   reducerPath: 'courseApi',
   baseQuery: () => ({ data: {} }), // you likely want to replace this with fetchBaseQuery if not using custom service
   tagTypes: ['Courses', 'CoursesUser'],
   endpoints: (builder) => ({
-    getAllCourse: builder.query<Array<string>, void>({
+    getAllCourse: builder.query<Array<CourseResponseType>, void>({
       async queryFn() {
         try {
-          const data = await skillService.getSkills()
+          const data = await courseService.getListCourse()
           return { data }
         } catch (error) {
           return { error }
@@ -83,15 +84,20 @@ const courseApi = createApi({
           const data = await courseService.addCourse(arg)
           return { data: data }
         } catch (error) {
-          return { error }
+          return {
+            error: getErrorMessage(error)
+          }
         }
       },
-      invalidatesTags: () => [
-        {
-          type: 'CoursesUser' as const,
-          id: 'LIST'
-        }
-      ]
+      invalidatesTags: (_, error) =>
+        error
+          ? []
+          : [
+              {
+                type: 'CoursesUser' as const,
+                id: 'LIST'
+              }
+            ]
     })
   })
 })
