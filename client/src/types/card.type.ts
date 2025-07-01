@@ -12,8 +12,6 @@ type CardModelType = {
   numComment?: number
   numAttach?: number
   numAssigner?: number
-  // assigners?: Assigner[]
-  // tags?: { name: string; color: TagColorKey }[]
   status: IssueStatus
 }
 

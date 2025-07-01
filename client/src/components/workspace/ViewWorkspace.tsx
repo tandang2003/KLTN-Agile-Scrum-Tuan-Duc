@@ -9,14 +9,13 @@ import {
   TimelineConnector,
   TimelineContent,
   TimelineDescription,
-  TimelineDot,
   TimelineItem,
   TimelineSeparator,
   TimelineTitle
 } from '@/components/ui/timeline'
-import { PackageCheck, ShoppingCart, Truck } from 'lucide-react'
 import Icon from '@/components/Icon'
 import { isAfter, isBefore } from 'date-fns'
+import messages from '@/constant/message.const'
 
 type ViewWorkspaceProps = {
   data: WorkspaceDetailResponse
@@ -36,22 +35,19 @@ const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
           </ToolTip>
           <Separator className='my-2' />
           <div className='flex items-center gap-2'>
-            <h3 className=''>Total sprint</h3>
+            <h3>{messages.component.viewWorkspace.totalSprint}</h3>
             <span className='rounded-xl bg-blue-500 px-4 py-2 text-white'>
               {data.sprintNum}
             </span>
           </div>
           <Separator className='my-2' />
           <ul className='flex items-center gap-4'>
-            <span>Start</span>
+            <span>{messages.component.viewWorkspace.start}</span>
             <span className='rounded-xl bg-green-500 px-4 py-2 text-white'>
               {formatDate(data.start)}
             </span>
-            <span>Current </span>
-            <span className='rounded-xl bg-amber-500 px-4 py-2 text-white'>
-              {formatDate(new Date())}
-            </span>
-            <span>End </span>
+
+            <span>{messages.component.viewWorkspace.end}</span>
             <span className='rounded-xl bg-red-500 px-4 py-2 text-white'>
               {formatDate(data.end)}
             </span>
@@ -59,14 +55,21 @@ const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
 
           <Separator className='my-2' />
           <div>
-            <h3 className='h3'>Description</h3>
-            <HtmlViewer value={data.description} />
+            <h3 className='h3'>
+              {messages.component.viewWorkspace.description.title}
+            </h3>
+            <HtmlViewer
+              value={data.description}
+              fallback={messages.component.viewWorkspace.description.fallback}
+            />
           </div>
         </div>
       </div>
       <Separator className='my-2' />
       <div>
-        <h3 className='h3'>Timeline</h3>
+        <h3 className='h3'>
+          {messages.component.viewWorkspace.timeline.title}
+        </h3>
         <div>
           <Timeline orientation='horizontal' className='min-h-40'>
             {sprints?.map((item, index) => {

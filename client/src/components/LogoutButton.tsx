@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { logoutThunk } from '@/feature/auth/auth.slice'
-import { HOME_PATH } from '@/lib/const'
+import { HOME_PATH } from '@/constant/app.const'
 import { ComponentProps, forwardRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
 
 type LogoutButtonProps = ComponentProps<typeof Button>
 
@@ -17,13 +18,13 @@ const LogoutButton = forwardRef<HTMLButtonElement, LogoutButtonProps>(
     const navigate = useNavigate()
     const handleLogout = () => {
       dispatch(logoutThunk({ accessToken: accessToken })).finally(() => {
-        toast.success('Logout success')
+        toast.success(messages.component.logoutButton.toast)
       })
       navigate(HOME_PATH, { replace: true })
     }
     return (
       <Button {...props} ref={ref} onClick={handleLogout}>
-        Logout
+        {messages.component.logoutButton.title}
       </Button>
     )
   }

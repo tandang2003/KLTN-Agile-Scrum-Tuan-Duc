@@ -1,7 +1,7 @@
 import DialogController, {
   DialogControllerProps
 } from '@/components/dialog/DialogController'
-import CreateWorkspaceForm from '@/components/form/CreateWorkspaceForm'
+import CreateWorkspaceForm from '@/components/workspace/CreateWorkspaceForm'
 import {
   DialogContent,
   DialogDescription,

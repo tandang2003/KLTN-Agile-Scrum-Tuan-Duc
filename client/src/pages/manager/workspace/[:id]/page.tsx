@@ -11,9 +11,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
-import { formatDate } from '@/lib/utils'
 import WorkspaceNavigate from '@/pages/manager/workspace/[:id]/navigate'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -38,7 +38,7 @@ const WorkspaceDetailPage = () => {
       <div className='relative mt-1 mb-4 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 text-gray-100'>
         <span className='text-sm font-semibold'># {data.id}</span>
         <h1 className='h1 pb-2'>
-          Workspace: <strong>{data.name}</strong>
+          <strong>{data.name}</strong>
         </h1>
 
         <DropdownMenu>
@@ -46,14 +46,21 @@ const WorkspaceDetailPage = () => {
             <Icon icon={'lucide:more-horizontal'} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Settings</DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <RequiredAuth roles={['teacher']}>
+              <DropdownMenuLabel>
+                {messages.manager.workspace.detail.options.teacher.label}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setOpenDialogAddStudent((state) => !state)}
               >
                 <Icon icon={'hugeicons:student'} />
-                Add Student
+                {messages.manager.workspace.detail.options.teacher.addStudent}
+              </DropdownMenuItem>
+            </RequiredAuth>
+            <RequiredAuth roles={['student']}>
+              <DropdownMenuItem disabled>
+                {messages.manager.workspace.detail.options.empty}
               </DropdownMenuItem>
             </RequiredAuth>
           </DropdownMenuContent>
@@ -66,7 +73,7 @@ const WorkspaceDetailPage = () => {
           {projectId ? (
             <Button variant='default' size='sm' asChild>
               <NavLink to={`/manager/workspace/project/${projectId}`}>
-                Your Project
+                {messages.manager.workspace.detail.project.me}
               </NavLink>
             </Button>
           ) : (
@@ -76,7 +83,7 @@ const WorkspaceDetailPage = () => {
               onClick={() => setOpenDialogCreateProject(true)}
             >
               <PlusIcon />
-              New Group
+              {messages.manager.workspace.detail.project.create}
             </Button>
           )}
         </RequiredAuth>

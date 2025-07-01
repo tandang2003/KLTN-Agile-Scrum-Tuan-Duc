@@ -15,7 +15,7 @@ import {
   useUpdateSprintMutation
 } from '@/feature/sprint/sprint.api'
 import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
-import { HttpStatusCode, WEIGHT_POSITION } from '@/lib/const'
+import { HttpStatusCode, WEIGHT_POSITION } from '@/constant/app.const'
 import { handleErrorApi } from '@/lib/form'
 import { Id } from '@/types/other.type'
 import { BaseSprintFormType } from '@/types/sprint.type'

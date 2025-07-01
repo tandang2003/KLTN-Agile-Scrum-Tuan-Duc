@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sheet'
 import { useGetResourcesQuery } from '@/feature/project/project.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import { REPORT_DIR } from '@/lib/const'
+import { REPORT_DIR } from '@/constant/app.const'
 import resourceService from '@/services/resource.service'
 import { SprintOverview } from '@/types/sprint.type'
 import { useEffect, useState } from 'react'

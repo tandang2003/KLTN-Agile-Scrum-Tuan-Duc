@@ -13,7 +13,7 @@ import {
   openDialogUpdateSprint,
   setSprintActive
 } from '@/feature/sprint/sprint.slice'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import { toISODateString } from '@/lib/date.helper'
 import { getStatusSprint } from '@/lib/sprint.helper'
 import { cn, formatDate } from '@/lib/utils'

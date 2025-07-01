@@ -18,7 +18,7 @@ import { useAppSelector } from '@/context/redux/hook'
 import workspaceApi, {
   useInviteStudentWorkspaceMutation
 } from '@/feature/workspace/workspace.api'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import { cn } from '@/lib/utils'
 import userService from '@/services/user.service'
 import { Id } from '@/types/other.type'

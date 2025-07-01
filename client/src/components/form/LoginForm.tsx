@@ -25,9 +25,10 @@ import { loginThunk } from '@/feature/auth/auth.slice'
 import { useAppDispatch } from '@/context/redux/hook'
 import { handleErrorApi } from '@/lib/form'
 import { ValidationError } from '@/types/http.type'
-import { HOME_PATH } from '@/lib/const'
+import { HOME_PATH } from '@/constant/app.const'
 import { toast } from 'sonner'
 import { store } from '@/context/redux/store'
+import messages from '@/constant/message.const'
 
 const LoginForm = ({
   className,
@@ -52,7 +53,7 @@ const LoginForm = ({
     dispatch(loginThunk(value))
       .unwrap()
       .then(() => {
-        toast.success('Login success, welcome to TaskFlow')
+        toast.success(messages.auth.login.success)
         navigate(from, { replace: true })
       })
       .catch(() => {
@@ -72,9 +73,9 @@ const LoginForm = ({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className='text-2xl'>Login</CardTitle>
+          <CardTitle className='text-2xl'>Đăng nhập</CardTitle>
           <CardDescription>
-            Enter your university id below to login to your account
+            Vui lòng nhập thông tin đăng nhập của bạn để tiếp tục
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,7 +87,7 @@ const LoginForm = ({
                   name='uniId'
                   render={({ field }) => (
                     <FormItem className='grid gap-2'>
-                      <FormLabel>University Id</FormLabel>
+                      <FormLabel>Mã sinh viên</FormLabel>
                       <FormControl>
                         <Input type='text' placeholder='2113xxxx' {...field} />
                       </FormControl>
@@ -99,7 +100,7 @@ const LoginForm = ({
                   name='password'
                   render={({ field }) => (
                     <FormItem className='grid gap-2'>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Mật khẩu</FormLabel>
                       <FormControl>
                         <Input type='password' {...field} />
                       </FormControl>
@@ -111,24 +112,24 @@ const LoginForm = ({
                   href='#'
                   className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
                 >
-                  Forgot your password?
+                  Quên mật khẩu?
                 </a>
                 <Button
                   type='submit'
                   className='w-full'
                   loading={form.formState.isSubmitting}
                 >
-                  Login
+                  Đăng nhập
                 </Button>
               </div>
 
               <div className='mt-4 text-center text-sm'>
-                Don&apos;t have an account?{' '}
+                Nếu bạn chưa có tài khoản?{' '}
                 <NavLink
                   to='/auth/register'
                   className='underline underline-offset-4'
                 >
-                  Sign up
+                  Đăng ký
                 </NavLink>
               </div>
             </form>

@@ -13,19 +13,10 @@ import { enableDialogSkill } from '@/feature/trigger/trigger.slice'
 import { SkillLevel } from '@/types/model/typeOf'
 import { SkillResponse } from '@/types/skill.type'
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
-import { toast } from 'sonner'
 import { useAlertHost } from '@/components/AleartHost'
+import messages, { getProficiencyDisplayName } from '@/constant/message.const'
+import { toast } from 'sonner'
+import Message from '@/components/Messgae'
 
 type ItemSkillProps = {
   data: SkillResponse
@@ -42,22 +33,24 @@ const ItemSkill = ({ data }: ItemSkillProps) => {
 
   const handleDelete = () => {
     showAlert({
-      title: 'Xóa kỹ năng',
+      title: messages.component.skill.item.alert.title,
       type: 'warning',
       message: (
-        <p>
-          Bạn có chắc chắn muốn xóa kỹ năng{' '}
-          <b className='text-black'>{data.skillName}</b> không?
-        </p>
+        <Message
+          template={messages.component.skill.item.alert.message}
+          values={{
+            name: <b className='text-black'>{data.skillName}</b>
+          }}
+        />
       ),
       onConfirm: () => {
         return deleteSkill(data)
           .unwrap()
           .then(() => {
-            console.log('Skill deleted successfully')
+            toast.success(messages.component.skill.item.toast.delete.success)
           })
           .catch(() => {
-            toast.error('Failed to delete skill')
+            toast.error(messages.component.skill.item.toast.delete.failed)
           })
       }
     })
@@ -67,7 +60,7 @@ const ItemSkill = ({ data }: ItemSkillProps) => {
     <div className='flex items-center rounded-md border-2 border-gray-200 px-4 py-2 shadow-md'>
       <span className='text-lg'>{data.skillName}</span>
       <Badge className='ml-auto' skillLevel={data.proficiency}>
-        {SkillLevel[data.proficiency]}
+        {getProficiencyDisplayName(data.proficiency)}
       </Badge>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -75,11 +68,11 @@ const ItemSkill = ({ data }: ItemSkillProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuItem className='hover-opacity' onClick={handleUpdate}>
-            Update
+            {messages.component.skill.item.update}
           </DropdownMenuItem>
 
           <DropdownMenuItem className='cancel mt-2' onSelect={handleDelete}>
-            Delete
+            {messages.component.skill.item.delete}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

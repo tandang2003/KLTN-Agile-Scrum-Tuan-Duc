@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
-import { DEFAULT_STATUS } from '@/lib/const'
+import { DEFAULT_STATUS } from '@/constant/app.const'
 import boardService from '@/services/board.service'
 import {
   CreateIssueRequest,
