@@ -1,4 +1,5 @@
 import ToolTip from '@/components/Tooltip'
+import messages from '@/constant/message.const'
 import { formatDate } from '@/lib/utils'
 import { ProjectWorkspaceDataTable } from '@/types/workspace.type'
 import { ColumnDef } from '@tanstack/react-table'
@@ -6,10 +7,12 @@ import { NavLink } from 'react-router-dom'
 
 type ProjectColumns = ProjectWorkspaceDataTable
 
+const { createAt, name, id } = messages.component.dataTable.project.columns
+
 const columns: ColumnDef<ProjectColumns>[] = [
   {
     accessorKey: 'id',
-    header: '#',
+    header: id,
     size: 50,
     cell: ({ row }) => {
       const value: string = row.getValue('id')
@@ -31,11 +34,11 @@ const columns: ColumnDef<ProjectColumns>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'Name'
+    header: name
   },
   {
     accessorKey: 'createdAt',
-    header: 'Create at',
+    header: createAt,
     cell: ({ row }) => {
       const value: Date = row.getValue('createdAt')
       return formatDate(value)

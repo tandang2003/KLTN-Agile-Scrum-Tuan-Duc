@@ -1,6 +1,6 @@
 import Icon from '@/components/Icon'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
-import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
+import { DialogCreateProject } from '@/components/project/DialogCreateProject'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

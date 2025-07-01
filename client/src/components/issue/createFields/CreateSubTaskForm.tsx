@@ -5,8 +5,10 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useRef } from 'react'
+import messages from '@/constant/message.const'
 
 const CreateSubTaskForm = () => {
+  const message = messages.component.issue.create.form
   const { control } = useFormContext<BaseIssueFormType>()
   const orderRef = useRef<number>(0)
   const { fields, append, remove } = useFieldArray({
@@ -25,7 +27,7 @@ const CreateSubTaskForm = () => {
   return (
     <div className='border-accent mt-4 border-2 p-2 shadow-lg'>
       <div className='flex justify-between'>
-        <h2>Sub tasks</h2>
+        <h2>{message.subTasks.label}</h2>
         <Button type='button' onClick={handleAppend}>
           <Icon icon={'ic:baseline-plus'} />
         </Button>
@@ -51,6 +53,8 @@ type CreateSubTaskProps = {
 }
 
 const CreateSubTaskItemForm = ({ index, onRemove }: CreateSubTaskProps) => {
+  const message = messages.component.issue.create.form
+
   const { control } = useFormContext<BaseIssueFormType>()
   return (
     <div className='flex items-center gap-2'>
@@ -60,7 +64,7 @@ const CreateSubTaskItemForm = ({ index, onRemove }: CreateSubTaskProps) => {
         render={({ field }) => (
           <FormItem className='flex-1'>
             <FormControl>
-              <Input placeholder='Task' {...field} />
+              <Input placeholder={message.subTasks.placeholder} {...field} />
             </FormControl>
           </FormItem>
         )}
@@ -68,7 +72,7 @@ const CreateSubTaskItemForm = ({ index, onRemove }: CreateSubTaskProps) => {
       <Icon
         icon={'lineicons:xmark'}
         onClick={onRemove}
-        className='grid size-[30px] place-items-center rounded-md bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
+        className='cancel grid size-[30px] place-items-center rounded-md'
       />
     </div>
   )

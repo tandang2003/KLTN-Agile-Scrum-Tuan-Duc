@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils'
 import { TopicModel } from '@/types/model/common.model'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { BaseIssueFormType } from '@/types/issue.type'
+import messages from '@/constant/message.const'
 type CreateTopicProps = {}
 
 const topicData: TopicModel[] = [
@@ -35,6 +36,7 @@ const topicData: TopicModel[] = [
 ]
 
 const CreateTopicForm = ({}: CreateTopicProps) => {
+  const message = messages.component.issue.create.form
   const { control } = useFormContext<BaseIssueFormType>()
   const { fields, append, remove } = useFieldArray({
     control: control,
@@ -57,7 +59,7 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
                       return <Badge className='inline-block'>{item.name}</Badge>
                     })
                   ) : (
-                    <span>Topic</span>
+                    <span>{message.topic}</span>
                   )}
                 </PopoverTrigger>
                 <PopoverContent align='start' className='w-72 p-0'>

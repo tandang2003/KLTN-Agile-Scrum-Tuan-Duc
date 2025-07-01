@@ -1,8 +1,16 @@
 import { RoleType } from '@/types/auth.type'
-import { SkillLevel, SprintStatusType } from '@/types/model/typeOf'
+import {
+  IssuePriority,
+  IssueTag,
+  SkillLevel,
+  SprintStatusType
+} from '@/types/model/typeOf'
 
 const messages = {
-  validation: {},
+  validation: {
+    uniId: 'Mã sinh viên cần 8 ký tự',
+    inviteSelf: 'Bạn không thể mời chính mình'
+  },
   auth: {
     login: {
       success: 'Đăng nhập thành công',
@@ -28,13 +36,90 @@ const messages = {
       email: 'Email',
       phone: 'Số điện thoại'
     },
-    course: {},
-    skill: {},
+    course: {
+      list: {
+        empty: 'Không có dữ liệu về môn học của bạn'
+      }
+    },
+    skill: {
+      list: {
+        empty: 'Không có dữ liệu về kỹ năng của bạn'
+      }
+    },
     workspace: {
       title: 'Khu vực môn học'
     }
   },
   component: {
+    dataTable: {
+      pagination: {
+        previous: 'Trang trước',
+        next: 'Trang tiếp theo',
+        page: 'Trang',
+        of: 'của',
+        total: 'Tổng số',
+        itemsPerPage: 'Mục mỗi trang',
+        first: 'Trang đầu tiên',
+        last: 'Trang cuối cùng'
+      },
+      user: {
+        columns: {
+          uniId: '#',
+          name: 'Tên',
+          className: 'Lớp',
+          role: 'Vai trò'
+        }
+      },
+      project: {
+        columns: {
+          id: '#',
+          name: 'Tên nhóm',
+          createAt: ' Ngày tạo'
+        }
+      },
+      sprint: {
+        columns: {
+          id: '#',
+          title: 'Tên nhóm',
+          point: 'Điểm',
+          status: 'Trạng thái',
+          start: 'Ngày bắt đầu',
+          end: 'Ngày kết thúc',
+          predict: 'Dự đoán kết thúc'
+        },
+        actions: {
+          report: 'Báo cáo'
+        }
+      }
+    },
+    dialog: {
+      addStudent: {
+        title: 'Thêm sinh viên',
+        description: 'Sinh viên sẽ được mời tham gia khu vực môn học này',
+        form: {
+          uniId: {
+            placeholder: 'Nhập mã sinh viên'
+          },
+          submit: 'Thêm sinh viên',
+          cancel: 'Hủy'
+        },
+        toast: {
+          notfound: {
+            message: 'Sinh viên không tồn tại',
+            description: 'Sinh viên với mã {{ids}} không tồn tại'
+          },
+          success: {
+            message: 'Mời sinh viên thành công',
+            description: 'Đã gửi lời mời đến sinh viên với mã {{ids}}'
+          },
+          conflict: {
+            message: 'Sinh viên đã tham gia khu vực môn học này',
+            description:
+              'Sinh viên với mã {{ids}} đã tham gia khu vực môn học này'
+          }
+        }
+      }
+    },
     userDropdown: {
       account: 'Thông tin tài khoản',
       workspace: 'Khu vực môn học'
@@ -118,6 +203,33 @@ const messages = {
           description: `{{name}} - #{{id}}`
         },
         failed: 'Tạo khu vực môn học thất bại, vui lòng thử lại sau'
+      }
+    },
+    project: {
+      header: {
+        dropdown: {
+          invite: 'Mời sinh viên'
+        }
+      },
+      dialog: {
+        invite: {
+          title: 'Tạo nhóm',
+          description: 'Nhóm sẽ được tạo trong khu vực môn học này'
+        }
+      },
+      form: {
+        create: {
+          name: 'Tên nhóm',
+          description: 'Mô tả nhóm',
+          submit: 'Tạo nhóm',
+          toast: {
+            success: {
+              message: 'Tạo nhóm thành công',
+              description: `Nhóm {{name}} - #{{id}}`
+            },
+            failed: 'Tạo nhóm thất bại, vui lòng thử lại sau'
+          }
+        }
       }
     },
     sprint: {
@@ -227,6 +339,51 @@ const messages = {
         },
         create: 'Tạo issue'
       }
+    },
+    issue: {
+      create: {
+        title: 'Tạo issue',
+        form: {
+          title: 'Tên issue',
+          description: 'Mô tả chi tiết',
+          priority: 'Mức độ ưu tiên',
+          tag: 'Loại issue',
+          dateStart: 'Ngày bắt đầu',
+          dateEnd: 'Ngày hết hạn',
+          subTasks: {
+            label: 'Đầu công việc',
+            placeholder: 'Nhập tên đầu công việc'
+          },
+          sprint: {
+            label: 'Chọn sprint',
+            placeholder: 'Chọn sprint để gán cho issue',
+            null: 'Không chọn'
+          },
+          topic: 'Chủ đề',
+          select: {
+            placeholder: 'Chọn sinh viên',
+            null: 'Không chọn',
+            assignee: 'Người thực hiện',
+            reviewer: 'Người đánh giá'
+          },
+          submit: ' Tạo issue'
+        },
+        toast: {
+          success: {
+            message: 'Tạo issue thành công',
+            description: `Issue {{name}} - #{{id}}`
+          },
+          failed: 'Tạo issue thất bại, vui lòng thử lại sau'
+        }
+      }
+    },
+    notification: {
+      title: 'Thông báo'
+    },
+    ui: {
+      datePicker: {
+        placeholder: 'Chọn ngày'
+      }
     }
   },
   manager: {
@@ -270,6 +427,19 @@ const messages = {
           create: 'Tạo mẫu Sprint'
         }
       }
+    },
+    project: {
+      navigate: {
+        backlog: 'Backlog',
+        board: 'Bảng',
+        report: 'Báo cáo'
+      },
+      backlog: {
+        list: {
+          empty:
+            'Chưa có danh sách các sprint, vui lòng đợi giáo viên tạo trước'
+        }
+      }
     }
   },
   other: {
@@ -308,10 +478,31 @@ const getSprintStatusDisplayName = (status: SprintStatusType): string => {
   return map[status] ?? 'Không xác định'
 }
 
+const getTagDisplayName = (tag: IssueTag): string => {
+  const map: Record<IssueTag, string> = {
+    THEORY: 'Lý thuyết',
+    PRACTICE: 'Thực hành'
+  }
+  return map[tag] ?? 'Không xác định'
+}
+
+const getPriorityDisplayName = (priority: IssuePriority): string => {
+  const map: Record<IssuePriority, string> = {
+    BLOCKED: 'Đang bị chặn',
+    TRIVIAL: 'Không đáng kể',
+    MINOR: 'Nhỏ',
+    MAJOR: 'Lớn ',
+    CRITICAL: 'Nghiêm trọng '
+  }
+  return map[priority] ?? 'Không xác định'
+}
+
 export default messages
 
 export {
   getRoleDisplayName,
   getProficiencyDisplayName,
-  getSprintStatusDisplayName
+  getSprintStatusDisplayName,
+  getTagDisplayName,
+  getPriorityDisplayName
 }

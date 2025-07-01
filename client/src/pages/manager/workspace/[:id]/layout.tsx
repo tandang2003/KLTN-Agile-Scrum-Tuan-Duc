@@ -1,10 +1,7 @@
 import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintFilter } from '@/feature/board/board.slice'
 import { getTokenProjectThunk } from '@/feature/project/project.slice'
-import {
-  setSprintActive,
-  setSprintCurrent
-} from '@/feature/sprint/sprint.slice'
+import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import { setCurrentWorkspaceId } from '@/feature/workspace/workspace.slice'
 import { toISODateString } from '@/lib/date.helper'

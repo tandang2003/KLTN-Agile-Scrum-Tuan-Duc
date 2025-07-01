@@ -6,6 +6,7 @@ import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
+import { RoleType } from '@/types/auth.type'
 
 const CreateWorkspaceSchema = z.object({
   name: stringSchema.min(1, 'Tên không được để trống'),
@@ -66,8 +67,10 @@ type ListProjectWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
 
 type StudentWorkspaceDataTable = Pick<
   UserModel,
-  'id' | 'name' | 'className' | 'role' | 'uniId'
->
+  'id' | 'name' | 'className' | 'uniId'
+> & {
+  role: RoleType
+}
 
 type ProjectWorkspaceDataTable = Pick<
   ProjectModel,

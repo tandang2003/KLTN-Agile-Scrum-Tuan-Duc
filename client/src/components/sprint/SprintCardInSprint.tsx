@@ -1,4 +1,4 @@
-import { useAlertHost } from '@/components/AlertHost'
+import { useAlertHost } from '@/components/AleartHost'
 import Icon from '@/components/Icon'
 import Message from '@/components/Message'
 import ToolTip from '@/components/Tooltip'

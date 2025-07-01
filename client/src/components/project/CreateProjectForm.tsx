@@ -1,4 +1,5 @@
 import Editor from '@/components/Editor'
+import Message from '@/components/Message'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -9,6 +10,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useCreateProjectMutation } from '@/feature/project/project.api'
 import { getTokenProjectThunk } from '@/feature/project/project.slice'
@@ -26,6 +28,7 @@ type CreateProjectFormProps = {
 }
 
 const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
+  const message = messages.component.project.form.create
   const [createProject] = useCreateProjectMutation()
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.authSlice.user?.id)
@@ -49,13 +52,21 @@ const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
         .unwrap()
         .then((response) => {
           dispatch(getTokenProjectThunk(workspaceId))
-          toast.success(`Create project successful`, {
-            description: `Project #${response.id} - ${response.name}`
+          toast.success(message.toast.success.message, {
+            description: (
+              <Message
+                template={message.toast.success.description}
+                values={{
+                  id: response.id,
+                  name: response.name
+                }}
+              />
+            )
           })
           setOpenDialog?.(false)
         })
         .catch(() => {
-          toast.error('Create project failed')
+          toast.error(message.toast.failed)
         })
     }
   }
@@ -69,7 +80,7 @@ const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{message.name}</FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Nhóm 1' {...field} />
                   </FormControl>
@@ -82,7 +93,7 @@ const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
               name='description'
               render={({ field }) => (
                 <FormItem className='mt-4'>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{message.description}</FormLabel>
 
                   <FormControl>
                     <Editor
@@ -101,7 +112,7 @@ const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
             type='submit'
             loading={form.formState.isSubmitting}
           >
-            Create
+            {message.submit}
           </Button>
         </form>
       </Form>

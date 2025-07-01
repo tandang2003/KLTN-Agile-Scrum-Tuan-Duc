@@ -13,7 +13,7 @@ import { enableDialogSkill } from '@/feature/trigger/trigger.slice'
 import { SkillLevel } from '@/types/model/typeOf'
 import { SkillResponse } from '@/types/skill.type'
 
-import { useAlertHost } from '@/components/AlertHost'
+import { useAlertHost } from '@/components/AleartHost'
 import messages, { getProficiencyDisplayName } from '@/constant/message.const'
 import { toast } from 'sonner'
 import Message from '@/components/Message'

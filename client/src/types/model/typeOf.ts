@@ -5,11 +5,11 @@ const statusOrder: IssueStatus[] = ['TODO', 'INPROCESS', 'REVIEW', 'DONE']
 type IssueStatus = (typeof issueStatusList)[number]
 
 const issuePriorityList = [
-  'CRITICAL',
-  'MAJOR',
-  'MINOR',
+  'BLOCKED',
   'TRIVIAL',
-  'BLOCKED'
+  'MINOR',
+  'MAJOR',
+  'CRITICAL'
 ] as const
 
 type IssuePriority = (typeof issuePriorityList)[number]

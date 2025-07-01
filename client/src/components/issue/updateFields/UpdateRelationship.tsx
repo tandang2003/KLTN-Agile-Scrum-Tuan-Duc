@@ -35,7 +35,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import Icon from '@/components/Icon'
-import { useAlertHost } from '@/components/AlertHost'
+import { useAlertHost } from '@/components/AleartHost'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]

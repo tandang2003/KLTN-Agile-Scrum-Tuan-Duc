@@ -15,6 +15,7 @@ import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
+import { getSprintStatusDisplayName } from '@/constant/message.const'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
@@ -70,7 +71,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   statusSprint={getStatusSprint(item)}
                   className='ml-auto basis-[100px]'
                 >
-                  {getStatusSprint(item)}
+                  {getSprintStatusDisplayName(getStatusSprint(item))}
                 </Badge>
                 <span className='mr-3 basis-[200px]'>
                   {formatDate(item.start)} - {formatDate(item.end)}
