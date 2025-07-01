@@ -1,5 +1,6 @@
-import { useAlertHost } from '@/components/AleartHost'
+import { useAlertHost } from '@/components/AlertHost'
 import Icon from '@/components/Icon'
+import Message from '@/components/Message'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -9,6 +10,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 import {
   useDeleteIssueMutation,
   useMoveIssueToBacklogMutation
@@ -24,6 +26,7 @@ type SprintCardInSprintProps = {
 }
 
 const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
+  const message = messages.component.sprint.sprintCardInSprint
   const { start, end, sprintId, id } = item
   const {
     util: { getStatusSprint }
@@ -40,12 +43,19 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
     })
       .unwrap()
       .then(() => {
-        toast.success('Issue moved to backlog successfully', {
-          description: `Issue ${item.name} has been moved to the backlog.`
+        toast.success(message.toast.moveToBacklog.success.message, {
+          description: (
+            <Message
+              template={message.toast.moveToBacklog.success.description}
+              values={{
+                name: item.name
+              }}
+            />
+          )
         })
       })
       .catch((err) => {
-        toast.error('Failed to move issue to backlog', {
+        toast.error(message.toast.moveToBacklog.failed, {
           description: err.data?.message || 'An error occurred.'
         })
       })
@@ -53,17 +63,24 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
 
   const handleDelete = () => {
     showAlert({
-      title: 'Delete Issue',
+      title: message.alert.delete.title,
       type: 'warning',
-      message: `Are you sure you want to delete issue ${item.name}? This action cannot be undone.`,
+      message: (
+        <Message
+          template={message.alert.delete.message}
+          values={{
+            name: item.name
+          }}
+        />
+      ),
       onConfirm: () => {
         return deleteIssue(id)
           .unwrap()
           .then(() => {
-            toast.success('Issue deleted successfully')
+            toast.success(message.toast.delete.success)
           })
           .catch(() => {
-            toast.error('Failed to delete issue')
+            toast.error(message.toast.delete.failed)
           })
       }
     })
@@ -103,16 +120,16 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
                 action(item.id)
               }}
             >
-              Edit
+              {message.dropdown.edit}
             </DropdownMenuItem>
           </RequiredAuth>
           {canMoveToBacklog && (
             <>
               <DropdownMenuItem onClick={handleMoveToBacklog}>
-                Move to backlog
+                {message.dropdown.moveToBacklog}
               </DropdownMenuItem>
               <DropdownMenuItem className='cancel' onClick={handleDelete}>
-                Delete
+                {message.dropdown.delete}
               </DropdownMenuItem>
             </>
           )}

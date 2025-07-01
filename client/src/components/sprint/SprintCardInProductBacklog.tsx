@@ -23,6 +23,7 @@ import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
 type SprintCardInProductBacklogProps = {
   data: IssueResponse
 }
@@ -30,6 +31,7 @@ type SprintCardInProductBacklogProps = {
 const SprintCardInProductBacklog = ({
   data: item
 }: SprintCardInProductBacklogProps) => {
+  const message = messages.component.sprint.sprintCardInBacklog
   const { workspaceId } = useAppId()
   const [moveToSprint] = useMoveIssueToSprintMutation()
   const [reopen] = useReopenIssueMutation()
@@ -102,10 +104,12 @@ const SprintCardInProductBacklog = ({
                 action(item.id)
               }}
             >
-              Edit
+              {message.dropdown.edit}
             </DropdownMenuItem>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>
+                {message.dropdown.moveToSprint}
+              </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   {sprints &&

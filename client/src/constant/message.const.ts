@@ -1,5 +1,5 @@
 import { RoleType } from '@/types/auth.type'
-import { SkillLevel } from '@/types/model/typeOf'
+import { SkillLevel, SprintStatusType } from '@/types/model/typeOf'
 
 const messages = {
   validation: {},
@@ -72,8 +72,7 @@ const messages = {
             success: 'Xóa kỹ năng thành công',
             failed: 'Đã có lỗi xảy ra, vui lòng thử lại sau'
           },
-          update: 'Cập nhật kỹ năng thành công',
-          error: 'Đã có lỗi xảy ra, vui lòng thử lại sau'
+          update: 'Cập nhật kỹ năng thành công'
         }
       }
     },
@@ -120,6 +119,114 @@ const messages = {
         },
         failed: 'Tạo khu vực môn học thất bại, vui lòng thử lại sau'
       }
+    },
+    sprint: {
+      template: {
+        dialog: {
+          title: 'Mẫu Sprint',
+          toast: {
+            create: {
+              success: {
+                message: 'Tạo mẫu Sprint thành công',
+                description: `{{title}} - #{{id}}`
+              },
+              conflict:
+                'Đã có mẫu sprint được tạo trong khoảng thời gian này, vui lòng chọn thời gian khác',
+              failed: 'Tạo mẫu Sprint thất bại, vui lòng thử lại sau'
+            },
+            update: {
+              success: {
+                message: 'Cập nhập Sprint thành công',
+                description: `Sprint {{title}} - #{{id}}`
+              },
+              failed: 'Cập nhật Sprint thất bại, vui lòng thử lại sau'
+            }
+          }
+        },
+        baseForm: {
+          name: 'Tên Sprint',
+          storyPoint: {
+            label: 'Story Point',
+            placeholder: 'Nhập số điểm',
+            description:
+              'Số điểm của Sprint này, dùng để tính toán khối lượng công việc'
+          },
+          duration: 'Thời gian Sprint',
+          startDate: 'Ngày bắt đầu',
+          endDate: 'Ngày kết thúc',
+          predict: 'Dự đoán kết thúc',
+          customDuration: 'Tùy chỉnh',
+          week: 'tuần',
+          submit: {
+            create: 'Tạo mẫu Sprint',
+            update: 'Cập nhật mẫu Sprint'
+          }
+        },
+        card: {
+          point: 'Điểm',
+          dropdown: {
+            edit: 'Chỉnh sửa',
+            delete: 'Xóa'
+          },
+          alert: {
+            title: 'Xóa mẫu Sprint',
+            message: 'Bạn có chắc chắn muốn xóa mẫu Sprint "{{title}}" không?'
+          },
+          toast: {
+            delete: {
+              success: 'Xóa mẫu Sprint thành công',
+              conflict: 'Sprint đã kết thúc, không thể xóa',
+              failed: 'Xóa mẫu Sprint thất bại, vui lòng thử lại sau'
+            }
+          }
+        }
+      },
+      listIssueInProductBacklog: {
+        list: {
+          empty: 'Chưa có issue nào trong Product Backlog'
+        },
+        create: 'Tạo issue'
+      },
+      listIssueInSprint: {
+        list: {
+          empty: 'Chưa có issue nào trong Sprint này'
+        },
+        create: 'Tạo issue'
+      },
+      sprintCardInBacklog: {
+        dropdown: {
+          moveToSprint: 'Chuyển sang sprint',
+          edit: 'Chỉnh sửa issue'
+        }
+      },
+      sprintCardInSprint: {
+        dropdown: {
+          moveToBacklog: 'Chuyển sang Product Backlog',
+          edit: 'Chỉnh sửa issue',
+          delete: 'Xóa issue'
+        },
+        alert: {
+          delete: {
+            title: 'Xóa issue',
+            message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
+          }
+        },
+        toast: {
+          moveToBacklog: {
+            success: {
+              message: 'Chuyển issue vào Product Backlog thành công',
+              description: `Issue {{name}} đã được chuyển về Product Backlog`
+            },
+            failed:
+              'Chuyển issue vào Product Backlog thất bại, vui lòng thử lại sau'
+          },
+          delete: {
+            success: 'Xóa issue thành công',
+            failed: 'Xóa issue thất bại, vui lòng thử lại sau'
+          }
+        },
+        create: 'Tạo issue'
+      }
     }
   },
   manager: {
@@ -140,7 +247,6 @@ const messages = {
           },
           empty: 'Không có tùy chọn nào'
         },
-
         student: {
           title: 'Danh sách sinh viên',
           empty: 'Chưa có sinh viên nào tham gia khu vực này'
@@ -156,6 +262,12 @@ const messages = {
           student: 'Sinh viên',
           project: 'Nhóm',
           template: 'Mẫu Sprint'
+        },
+        template: {
+          list: {
+            empty: 'Chưa có mẫu Sprint nào được tạo trong khu vực môn học này'
+          },
+          create: 'Tạo mẫu Sprint'
         }
       }
     }
@@ -187,6 +299,19 @@ const getProficiencyDisplayName = (proficiency: number): string => {
   return map[proficiency as SkillLevel] ?? 'Không xác định'
 }
 
+const getSprintStatusDisplayName = (status: SprintStatusType): string => {
+  const map: Record<SprintStatusType, string> = {
+    PENDING: 'Chưa bắt đầu',
+    RUNNING: 'Đang diễn ra',
+    COMPLETE: 'Đã hoàn thành'
+  }
+  return map[status] ?? 'Không xác định'
+}
+
 export default messages
 
-export { getRoleDisplayName, getProficiencyDisplayName }
+export {
+  getRoleDisplayName,
+  getProficiencyDisplayName,
+  getSprintStatusDisplayName
+}

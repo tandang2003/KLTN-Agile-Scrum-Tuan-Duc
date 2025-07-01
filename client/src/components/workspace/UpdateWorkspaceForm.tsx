@@ -1,5 +1,5 @@
 import Editor from '@/components/Editor'
-import Message from '@/components/Messgae'
+import Message from '@/components/Message'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
