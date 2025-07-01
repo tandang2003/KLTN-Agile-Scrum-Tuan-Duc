@@ -23,8 +23,10 @@ import BoardPage from '@/pages/manager/workspace/project/board/page'
 import ProjectPage from '@/pages/manager/workspace/project/page'
 import ReportPage from '@/pages/manager/workspace/project/report/page'
 import NotFoundPage from '@/pages/not-found'
+import UserCoursePage from '@/pages/user/course/page'
 import UserLayout from '@/pages/user/layout'
 import UserPage from '@/pages/user/page'
+import UserSkillPage from '@/pages/user/skill/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
@@ -60,7 +62,11 @@ const AppRoutes = () => {
               </RequiredAuth>
             }
           >
-            <Route index element={<UserPage />} />
+            <Route element={<UserPage />}>
+              <Route index element={<Navigate to='skill' replace />} />
+              <Route path='skill' element={<UserSkillPage />} />
+              <Route path='course' element={<UserCoursePage />} />
+            </Route>
           </Route>
 
           <Route

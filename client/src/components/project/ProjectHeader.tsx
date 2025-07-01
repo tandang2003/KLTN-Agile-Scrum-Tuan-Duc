@@ -31,10 +31,6 @@ const ProjectHeader = ({ data }: ProjectHeaderProps) => {
               <Icon icon={'lucide:more-horizontal'} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuItem>
-                <Icon icon={'mdi:information'} />
-                Information
-              </DropdownMenuItem>
               <RequiredAuth roles={['student']}>
                 <DropdownMenuItem
                   className='hover:!bg-yellow-400'
