@@ -1,15 +1,12 @@
 import { Id } from '@/types/other.type'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
-import UpdateWorkspaceForm from '@/components/form/UpdateWorkspaceForm'
+import UpdateWorkspaceForm from '@/components/workspace/UpdateWorkspaceForm'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAppId from '@/hooks/use-app-id'
 import LoadingBoundary from '@/components/LoadingBoundary'
-import {
-  WorkspaceDetailResponse,
-  WorkspaceResponse
-} from '@/types/workspace.type'
+import { WorkspaceDetailResponse } from '@/types/workspace.type'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import ViewWorkspace from '@/components/form/ViewWorkspace'
+import ViewWorkspace from '@/components/workspace/ViewWorkspace'
 
 const SummaryTab = () => {
   const { workspaceId } = useAppId()

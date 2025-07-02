@@ -1,4 +1,4 @@
-import { dateRange, string } from '@/types/common.type'
+import { dateRange, stringSchema } from '@/types/other.type'
 import {
   IssuePriority,
   issuePriorityList,
@@ -66,7 +66,9 @@ type ResourceResponse = {
 }
 
 const SubTaskModelSchema = z.object({
-  name: string,
+  name: stringSchema.min(1, {
+    message: 'Tên công việc không được để trống'
+  }),
   order: z.number(),
   checked: z.boolean()
 })
@@ -80,12 +82,16 @@ type TopicModelType = z.infer<typeof TopicModelSchema>
 
 const BaseIssueSchema = z
   .object({
-    description: string,
+    description: stringSchema.min(1, { message: 'Mô tả không được để trống' }),
     sprintId: z.string().optional(),
-    status: string,
-    priority: z.enum(issuePriorityList),
-    tag: z.enum(issueTagList),
-    topics: z.array(TopicModelSchema),
+    status: stringSchema.min(1, 'Trạng thái là bắt buộc'),
+    priority: z.enum(issuePriorityList, {
+      errorMap: () => ({ message: 'Vui lòng chọn độ ưu tiên' })
+    }),
+    tag: z.enum(issueTagList, {
+      errorMap: () => ({ message: 'Vui lòng chọn thẻ' })
+    }),
+    topics: z.array(TopicModelSchema).optional(),
     assigneeId: z.string().optional(),
     reviewerId: z.string().optional(),
     subtasks: z.array(SubTaskModelSchema).optional(),
@@ -93,13 +99,13 @@ const BaseIssueSchema = z
   })
   .partial()
   .extend({
-    name: string
+    name: stringSchema.min(1, { message: 'Tên không được để trống' })
   })
 
 const CreateIssueSchema = BaseIssueSchema.extend({
   sprint: z
     .object({
-      id: z.string(),
+      id: stringSchema.min(1, { message: 'Sprint là bắt buộc' }),
       start: z.coerce.date().optional(),
       end: z.coerce.date().optional()
     })
@@ -108,8 +114,8 @@ const CreateIssueSchema = BaseIssueSchema.extend({
 })
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
-  id: string,
-  name: string.optional(),
+  id: stringSchema,
+  name: stringSchema.optional(),
   subtasks: z.array(SubTaskModelSchema).optional()
 })
 

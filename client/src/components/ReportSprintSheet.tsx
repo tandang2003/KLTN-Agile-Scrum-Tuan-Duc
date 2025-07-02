@@ -12,11 +12,12 @@ import {
 } from '@/components/ui/sheet'
 import { useGetResourcesQuery } from '@/feature/project/project.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import { REPORT_DIR } from '@/lib/const'
+import { REPORT_DIR } from '@/constant/app.const'
 import resourceService from '@/services/resource.service'
 import { SprintOverview } from '@/types/sprint.type'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
 
 type Sprint = SprintOverview
 
@@ -34,6 +35,7 @@ const ReportSprintSheet = ({
   isOpen,
   onOpenChange
 }: ReportSprintSheetProps) => {
+  const message = messages.component.reportSprintSheet
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
@@ -176,15 +178,15 @@ const ReportSprintSheet = ({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className='min-w-[50vw]'>
         <SheetHeader>
-          <SheetTitle>Upload Report</SheetTitle>
+          <SheetTitle>{message.title}</SheetTitle>
 
-          <SheetDescription>
-            Upload sprint documents. Click close when done.
-          </SheetDescription>
+          <SheetDescription>{message.description}</SheetDescription>
         </SheetHeader>
         <div className='mt-4 grid flex-1 auto-rows-min grid-cols-2 gap-6'>
           <div>
-            <h4 className='mb-3 text-base font-semibold'>Daily 1</h4>
+            <h4 className='mb-3 text-base font-semibold'>
+              {message.form.daily1.label}
+            </h4>
             <MediaProvider
               thumbnail={daily1 ?? undefined}
               type={{
@@ -198,7 +200,9 @@ const ReportSprintSheet = ({
             />
           </div>
           <div>
-            <h4 className='mb-3 text-base font-semibold'>Daily 2</h4>
+            <h4 className='mb-3 text-base font-semibold'>
+              {message.form.daily2.label}
+            </h4>
             <MediaProvider
               thumbnail={daily2 ?? undefined}
               signatureFn={handleSignatureFn}
@@ -208,7 +212,9 @@ const ReportSprintSheet = ({
             />
           </div>
           <div className='col-span-2'>
-            <h4 className='mb-3 text-base font-semibold'>Backlog</h4>
+            <h4 className='mb-3 text-base font-semibold'>
+              {message.form.backlog.label}
+            </h4>
             <MediaProvider
               thumbnail={backlog ?? undefined}
               signatureFn={handleSignatureFn}
@@ -221,14 +227,12 @@ const ReportSprintSheet = ({
         <SheetFooter className='mt-3'>
           <div className='flex w-full items-center justify-between'>
             <p>
-              {status === 'COMPLETE' &&
-                'Sprint is complete, you cannot upload report.'}
-              {status === 'PENDING' &&
-                'Sprint is pending, you can upload report.'}
+              {status === 'COMPLETE' && message.status.complete}
+              {status === 'PENDING' && message.status.pending}
             </p>
             <SheetClose asChild>
               <Button className='cancel' variant='outline'>
-                Close
+                {message.close}
               </Button>
             </SheetClose>
           </div>

@@ -23,6 +23,7 @@ type SelectEnumProps<
   name: TName
   label?: string
   data: TOption
+  renderItem?: (item: TOption[number]) => React.ReactNode
 }
 
 const SelectEnum = <
@@ -33,7 +34,8 @@ const SelectEnum = <
   control,
   name,
   label,
-  data
+  data,
+  renderItem
 }: SelectEnumProps<TFieldValues, TName, TOption>) => {
   return (
     <FormField
@@ -51,7 +53,7 @@ const SelectEnum = <
             <SelectContent>
               {data.map((item) => (
                 <SelectItem key={item} value={item}>
-                  {item}
+                  {renderItem ? renderItem(item) : item}
                 </SelectItem>
               ))}
             </SelectContent>

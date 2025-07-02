@@ -47,7 +47,7 @@ export function DatePickerWithRange({
                 format(date.from, 'LLL dd, y')
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{messages.component.ui.datePicker.placeholder}</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -73,6 +73,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages from '@/constant/message.const'
 
 type DatePickerWithPresetsProps = {
   date?: Date
@@ -119,7 +120,11 @@ export function DatePickerWithPresets({
           )}
         >
           <CalendarIcon />
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          {date ? (
+            format(date, 'PPP')
+          ) : (
+            <span>{messages.component.ui.datePicker.placeholder}</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent

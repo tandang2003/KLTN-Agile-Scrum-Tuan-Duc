@@ -2,6 +2,7 @@ import Icon from '@/components/Icon'
 import InfiniteScrollList from '@/components/InfiniteScrollList'
 import NotificationItem from '@/components/notification/NotificationItem'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import messages from '@/constant/message.const'
 import {
   useClearNotificationsMutation,
   useLazyGetProjectNotificationsQuery
@@ -41,7 +42,7 @@ const NotificationList = ({}: NotificationListProps) => {
   return (
     <>
       <div className='mb-4 flex items-center justify-between'>
-        <span className='text-lg'>Notification</span>
+        <span className='text-lg'>{messages.component.notification.title}</span>
         <Icon
           className='hover-opacity'
           icon={'mdi:reload'}

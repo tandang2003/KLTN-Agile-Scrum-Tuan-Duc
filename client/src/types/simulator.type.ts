@@ -6,7 +6,7 @@ const ClockSimulatorSchema = z
     timeSpeech: z.coerce.number().int().positive()
   })
   .refine((data) => new Date() < data.to, {
-    message: 'Date to must be in the future',
+    message: 'Ngày kết thúc phải sau ngày hiện tại',
     path: ['to']
   })
 

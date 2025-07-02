@@ -15,7 +15,7 @@ const ListComment = () => {
         const response: CommentResType = JSON.parse(value.body)
         setComment?.([
           {
-            id: uuid(),
+            id: response.id ?? uuid(),
             from: response.from,
             content: response.content,
             createdAt: response.createdAt

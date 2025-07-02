@@ -2,6 +2,7 @@ import Editor from '@/components/Editor'
 import HtmlViewer from '@/components/HtmlViewer'
 import InlineEdit from '@/components/InlineEdit'
 import { FormField } from '@/components/ui/form'
+import messages from '@/constant/message.const'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
@@ -41,7 +42,9 @@ const UpdateDescriptionIssue = ({}: UpdateDescriptionIssueProps) => {
                 <HtmlViewer
                   className='rounded-md border-2 px-2 py-3 text-base'
                   value={value}
-                  fallback={'Add a description...'}
+                  fallback={
+                    messages.component.issue.update.form.descriptionFallback
+                  }
                 />
               )
             }}

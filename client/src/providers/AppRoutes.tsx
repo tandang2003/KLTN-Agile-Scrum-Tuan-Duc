@@ -94,10 +94,6 @@ const AppRoutes = () => {
                     path='template'
                     element={<WorkspaceSprintTemplatePage />}
                   />
-
-                  <Route path='setting' element={<SettingLayout />}>
-                    <Route index element={<WorkspaceSettingPage />} />
-                  </Route>
                 </Route>
               </Route>
               <Route path='project'>

@@ -8,6 +8,7 @@ import { useAppDispatch } from '@/context/redux/hook'
 import { useGetCourseOfUserQuery } from '@/feature/course/course.api'
 import { enableDialogCourse } from '@/feature/trigger/trigger.slice'
 import { UserCourseResponseType } from '@/types/course.type'
+import messages from '@/constant/message.const'
 
 const UserCoursePage = () => {
   const { data = [], isFetching } = useGetCourseOfUserQuery()
@@ -28,7 +29,7 @@ const UserCoursePage = () => {
           className='mx-3 gap-2'
           loading={isFetching}
           emptyComponent={
-            <div className='mx-3'>Không có dữ liệu về môn học của bạn</div>
+            <div className='mx-3'>{messages.user.course.list.empty}</div>
           }
           render={(item, index) => <CourseUserItem key={index} data={item} />}
         />

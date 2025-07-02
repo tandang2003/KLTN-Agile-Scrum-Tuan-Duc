@@ -5,17 +5,16 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
+import messages from '@/constant/message.const'
 import { CreateIssueType } from '@/types/issue.type'
-import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 const CreateDateIssueForm = () => {
+  const message = messages.component.issue.create.form
   const { control, watch } = useFormContext<CreateIssueType>()
 
   const sprint = watch('sprint')
-  useEffect(() => {
-    console.log('sprint', sprint)
-  }, [sprint])
+
   return (
     <>
       <FormField
@@ -23,7 +22,7 @@ const CreateDateIssueForm = () => {
         name='date.from'
         render={({ field }) => (
           <FormItem className='flex-1'>
-            <FormLabel>Time start</FormLabel>
+            <FormLabel>{message.dateStart}</FormLabel>
             <DatePickerWithPresets
               min={sprint?.start ? new Date(sprint.start) : undefined}
               max={sprint?.end ? new Date(sprint.end) : undefined}
@@ -47,7 +46,7 @@ const CreateDateIssueForm = () => {
         render={({ field }) => {
           return (
             <FormItem className='flex-1'>
-              <FormLabel>Time end</FormLabel>
+              <FormLabel>{message.dateEnd}</FormLabel>
               <DatePickerWithPresets
                 date={field.value}
                 min={sprint?.start ? new Date(sprint.start) : undefined}

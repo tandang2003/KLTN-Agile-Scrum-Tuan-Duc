@@ -1,11 +1,11 @@
 import { ProjectModel } from '@/types/model/project.model'
-import { Id } from '@/types/other.type'
+import { Id, stringSchema } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
 
 const CreateProjectForm = z.object({
-  name: z.string(),
-  description: z.string()
+  name: stringSchema,
+  description: stringSchema
 })
 
 type CreateProjectFormType = z.infer<typeof CreateProjectForm>

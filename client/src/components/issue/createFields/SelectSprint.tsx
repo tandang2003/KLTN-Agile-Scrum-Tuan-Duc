@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages from '@/constant/message.const'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
@@ -22,6 +23,7 @@ import { useFormContext } from 'react-hook-form'
 type SelectSprintProps = {}
 
 const SelectSprint = ({}: SelectSprintProps) => {
+  const message = messages.component.issue.create
   const { workspaceId } = useAppId()
   const form = useFormContext<CreateIssueType>()
   const { control, setValue } = form
@@ -53,7 +55,7 @@ const SelectSprint = ({}: SelectSprintProps) => {
       name='sprintId'
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Sprint</FormLabel>
+          <FormLabel>{message.form.sprint.label}</FormLabel>
           <Select
             onValueChange={(value) => {
               field.onChange(value)
@@ -63,11 +65,11 @@ const SelectSprint = ({}: SelectSprintProps) => {
           >
             <FormControl>
               <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select a member' />
+                <SelectValue placeholder={message.form.sprint.placeholder} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value={null!}>Not assign</SelectItem>
+              <SelectItem value={null!}>{message.form.sprint.null}</SelectItem>
               {data?.map((item, index) => {
                 const isDisabled = workspace?.currentSprint
                   ? isBefore(item.start, workspace.currentSprint.start)

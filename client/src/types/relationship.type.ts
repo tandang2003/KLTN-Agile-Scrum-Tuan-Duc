@@ -6,7 +6,7 @@ import { z } from 'zod'
 const CreateRelationshipIssueSchema = z.object({
   issueRelatedId: z.string(),
   typeRelation: z.string().refine((val) => val in IssueRelationShip, {
-    message: 'Invalid typeRelation key'
+    message: 'Loại quan hệ không hợp lệ'
   })
 })
 

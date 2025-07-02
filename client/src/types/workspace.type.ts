@@ -1,4 +1,4 @@
-import { dateRange } from '@/types/common.type'
+import { dateRange, stringSchema } from '@/types/other.type'
 import { PageRequest } from '@/types/http.type'
 import { ProjectModel } from '@/types/model/project.model'
 import { UserModel } from '@/types/model/user.model'
@@ -6,27 +6,17 @@ import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
+import { RoleType } from '@/types/auth.type'
 
 const CreateWorkspaceSchema = z.object({
-  name: z.string(),
+  name: stringSchema.min(1, 'Tên không được để trống'),
   description: z.string().optional(),
-  date: dateRange.refine((data) => data.from <= data.to, {
-    message: 'Date end need after date start',
-    path: ['to']
-  })
+  date: dateRange
 })
 
 const UpdateWorkspaceSchema = z.object({
   description: z.string().optional(),
-  date: z
-    .object({
-      from: z.date(),
-      to: z.date()
-    })
-    .refine((data) => data.from <= data.to, {
-      message: 'Date end need after date start',
-      path: ['to']
-    })
+  date: dateRange
 })
 
 type CreateWorkspaceSchemaType = z.infer<typeof CreateWorkspaceSchema>
@@ -77,8 +67,10 @@ type ListProjectWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
 
 type StudentWorkspaceDataTable = Pick<
   UserModel,
-  'id' | 'name' | 'className' | 'role' | 'uniId'
->
+  'id' | 'name' | 'className' | 'uniId'
+> & {
+  role: RoleType
+}
 
 type ProjectWorkspaceDataTable = Pick<
   ProjectModel,

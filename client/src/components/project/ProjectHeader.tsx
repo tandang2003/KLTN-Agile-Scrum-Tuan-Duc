@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 import { ProjectDetailResponse } from '@/types/project.type'
 import { useState } from 'react'
 
@@ -37,7 +38,7 @@ const ProjectHeader = ({ data }: ProjectHeaderProps) => {
                   onClick={() => setIsOpen(true)}
                 >
                   <Icon icon={'fluent-mdl2:add-friend'} />
-                  Invite
+                  {messages.component.project.header.dropdown.invite}
                 </DropdownMenuItem>
               </RequiredAuth>
             </DropdownMenuContent>

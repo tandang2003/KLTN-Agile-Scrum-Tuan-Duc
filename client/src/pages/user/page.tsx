@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import messages, { getRoleDisplayName } from '@/constant/message.const'
 import UserAvatar from '@/pages/user/avatar'
 import UserNavigate from '@/pages/user/navigate'
 import UserWorkspace from '@/pages/user/workspace'
@@ -37,11 +38,11 @@ const Info = () => {
 
   return (
     <div className='rounded-md'>
-      <LineUserInfo title='Full name' value={user.name} />
-      <LineUserInfo title='User Id' value={`#${user.uniId}`} />
+      <LineUserInfo title={messages.user.info.name} value={user.name} />
+      <LineUserInfo title={messages.user.info.uniId} value={`${user.uniId}`} />
       <LineUserInfo
-        title='Role'
-        value={<Badge role={user.role}>{user.role}</Badge>}
+        title={messages.user.info.role}
+        value={<Badge role={user.role}>{getRoleDisplayName(user.role)}</Badge>}
       />
     </div>
   )
