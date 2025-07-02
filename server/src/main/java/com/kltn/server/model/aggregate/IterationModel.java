@@ -3,6 +3,7 @@ package com.kltn.server.model.aggregate;
 import java.util.List;
 
 public class IterationModel {
+  private String sprint_id;
   private int sprintDuration;
   private int numOfIssueAtStart;
   private int numOfIssueAdded;
@@ -21,6 +22,7 @@ public class IterationModel {
   }
 
   private IterationModel(IterationModelBuilder builder) {
+   this.sprint_id = builder.sprint_id;
     this.sprintDuration = builder.sprintDuration;
     this.numOfIssueAtStart = builder.numOfIssueAtStart;
     this.numOfIssueAdded = builder.numOfIssueAdded;
@@ -33,6 +35,7 @@ public class IterationModel {
   }
 
   public static class IterationModelBuilder {
+    private String sprint_id;
     private int sprintDuration;
     private int numOfIssueAtStart;
     private int numOfIssueAdded;
@@ -42,6 +45,11 @@ public class IterationModel {
     private int numOfIssueDone;
     private List<IssueModel> issueModelList;
     private int teamSize;
+
+    public IterationModelBuilder sprint_id(String sprint_id) {
+      this.sprint_id = sprint_id;
+      return this;
+    }
 
     public IterationModelBuilder sprintDuration(int sprintDuration) {
       this.sprintDuration = sprintDuration;
@@ -163,5 +171,13 @@ public class IterationModel {
 
   public void setTeamSize(int teamSize) {
     this.teamSize = teamSize;
+  }
+
+  public String getSprint_id() {
+    return sprint_id;
+  }
+
+  public void setSprint_id(String sprint_id) {
+    this.sprint_id = sprint_id;
   }
 }

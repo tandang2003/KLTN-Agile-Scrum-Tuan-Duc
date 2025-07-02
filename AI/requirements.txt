@@ -6,6 +6,10 @@ pymysql
 pydantic
 python-dotenv
 joblib
-scikit-learn
+
 pydantic-settings
 motor
+pickle4
+scikit-learn>=1.0
+pandas>=2.1
+numpy>=1.21
