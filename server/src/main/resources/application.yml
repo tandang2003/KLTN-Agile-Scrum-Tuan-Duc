@@ -25,10 +25,7 @@ spring:
     time-zone: Asia/Ho_Chi_Minh
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
-    properties:
-      hibernate:
-        time-zone: Asia/Ho_Chi_Minh
+
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
