@@ -34,11 +34,27 @@ const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
             {data.id}
           </ToolTip>
           <Separator className='my-2' />
-          <div className='flex items-center gap-2'>
-            <h3>{messages.component.viewWorkspace.totalSprint}</h3>
-            <span className='rounded-xl bg-blue-500 px-4 py-2 text-white'>
-              {data.sprintNum}
-            </span>
+          <div className='flex py-2'>
+            <div className='flex items-center gap-2'>
+              <h3>{messages.component.viewWorkspace.totalSprint}</h3>
+              <span className='rounded-xl bg-blue-500 px-4 py-2 text-white'>
+                {data.sprintNum}
+              </span>
+            </div>
+            <Separator orientation='vertical' className='mx-2' />
+
+            <div className='flex items-center gap-2'>
+              <h3>{messages.component.viewWorkspace.course}</h3>
+              <ToolTip
+                trigger={
+                  <span className='rounded-xl bg-blue-500 px-4 py-2 text-white'>
+                    {data.course.name}
+                  </span>
+                }
+              >
+                {data.course.id}
+              </ToolTip>
+            </div>
           </div>
           <Separator className='my-2' />
           <ul className='flex items-center gap-4'>

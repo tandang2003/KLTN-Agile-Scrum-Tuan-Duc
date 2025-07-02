@@ -75,6 +75,12 @@ const workspaceApi = createApi({
       },
       providesTags: (_, __, id) => [{ type: 'Workspaces', id }]
     }),
+    clearGetWorkspace: builder.mutation<void, Id>({
+      queryFn: () => {
+        return { data: undefined }
+      },
+      invalidatesTags: (_, __, id) => [{ type: 'Workspaces', id }]
+    }),
     createWorkspace: builder.mutation<
       WorkspaceResponse,
       CreateWorkspaceReqType
@@ -196,5 +202,6 @@ export const {
   useGetListStudentWorkspaceQuery,
   useUpdateWorkspaceMutation,
   useGetListProjectWorkspaceQuery,
-  useInviteStudentWorkspaceMutation
+  useInviteStudentWorkspaceMutation,
+  useClearGetWorkspaceMutation
 } = workspaceApi

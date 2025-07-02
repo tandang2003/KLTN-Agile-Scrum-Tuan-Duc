@@ -22,7 +22,9 @@ const CreateCourseSchema = z.object({
           return val.trim() !== ''
         }, 'Bạn cần chọn một môn học'),
         point: z.coerce
-          .number()
+          .number({
+            message: 'Điểm không hợp lệ'
+          })
           .min(0)
           .max(10)
           .refine((val) => {

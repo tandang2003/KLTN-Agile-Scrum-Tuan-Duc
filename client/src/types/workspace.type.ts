@@ -7,11 +7,13 @@ import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
 import { RoleType } from '@/types/auth.type'
+import { CourseResponseType, UserCourseResponseType } from '@/types/course.type'
 
 const CreateWorkspaceSchema = z.object({
   name: stringSchema.min(1, 'Tên không được để trống'),
   description: z.string().optional(),
-  date: dateRange
+  date: dateRange,
+  courseId: z.string().min(1, 'Khóa học không được để trống')
 })
 
 const UpdateWorkspaceSchema = z.object({
@@ -39,6 +41,8 @@ type WorkspaceDetailResponse = Pick<
   prevSprint: SprintResponse | null
   currentSprint: SprintResponse | null
   nextSprint: SprintResponse | null
+  course: CourseResponseType
+  prerequisiteCourse: UserCourseResponseType[]
 }
 
 type WorkspaceResponse = {

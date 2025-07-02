@@ -33,6 +33,7 @@ const DialogInviteStudentProject = ({
   onOpen
 }: DialogInviteStudentProjectProps) => {
   const validation = messages.validation
+  const message = messages.component.project.invite
   const uniId = useAppSelector((state) => state.authSlice.user?.uniId)
   const [input, setInput] = useState<string>('')
   const [ids, setIds] = useState<string[]>([])
@@ -132,14 +133,12 @@ const DialogInviteStudentProject = ({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Invite students</DialogTitle>
-          <DialogDescription>
-            Student will add to workspace immediately
-          </DialogDescription>
+          <DialogTitle>{message.title}</DialogTitle>
+          <DialogDescription>{message.description}</DialogDescription>
         </DialogHeader>
         <div className='h-16'>
           <Input
-            placeholder='ID Student'
+            placeholder={message.form.uniId.placeholder}
             className='peer'
             value={input}
             onChange={(e) => {
@@ -169,17 +168,17 @@ const DialogInviteStudentProject = ({
         </ScrollArea>
         <DialogFooter>
           <DialogClose asChild>
-            <Button className='bg-red-600'>Cancel</Button>
+            <Button className='cancel'>{message.form.cancel}</Button>
           </DialogClose>
           <Button
             className={cn(
-              'bg-yellow-400',
+              'success',
               ids.length === 0 && 'hover:cursor-not-allowed'
             )}
             disabled={ids.length === 0}
             onClick={handleInvite}
           >
-            Invite
+            {message.form.submit}
           </Button>
         </DialogFooter>
       </DialogContent>

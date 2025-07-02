@@ -8,21 +8,20 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import messages from '@/constant/message.const'
 
 type DialogCreateWorkspaceProps = {} & DialogControllerProps
 const DialogCreateWorkspace = ({
   open,
   onOpen
 }: DialogCreateWorkspaceProps) => {
+  const message = messages.component.dialogCreateWorkspace
   return (
     <DialogController open={open} onOpen={onOpen}>
       <DialogContent className='sm:max-w-[70vw]'>
         <DialogHeader>
-          <DialogTitle>Create workspace</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
+          <DialogTitle>{message.title}</DialogTitle>
+          <DialogDescription>{message.description}</DialogDescription>
         </DialogHeader>
         <CreateWorkspaceForm />
       </DialogContent>

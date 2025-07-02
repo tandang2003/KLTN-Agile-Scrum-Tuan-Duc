@@ -111,6 +111,15 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
       end: end
     }) === 'PENDING'
 
+  const canEdit =
+    start &&
+    end &&
+    getStatusSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    }) === 'RUNNING'
+
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
       <ToolTip
@@ -130,24 +139,27 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <RequiredAuth roles={['student']}>
-            <DropdownMenuItem
-              onClick={() => {
-                action(item.id)
-              }}
-            >
-              {message.dropdown.edit}
-            </DropdownMenuItem>
-          </RequiredAuth>
+          {canEdit && (
+            <RequiredAuth roles={['student']}>
+              <DropdownMenuItem
+                onClick={() => {
+                  action(item.id)
+                }}
+              >
+                {message.dropdown.edit}
+              </DropdownMenuItem>
+            </RequiredAuth>
+          )}
+
           {canMoveToBacklog && (
-            <>
+            <RequiredAuth roles={['student']}>
               <DropdownMenuItem onClick={handleMoveToBacklog}>
                 {message.dropdown.moveToBacklog}
               </DropdownMenuItem>
               <DropdownMenuItem className='cancel' onClick={handleDelete}>
                 {message.dropdown.delete}
               </DropdownMenuItem>
-            </>
+            </RequiredAuth>
           )}
           {item.status === 'DONE' && (
             <DropdownMenuItem onClick={handleReopen}>

@@ -97,6 +97,7 @@ const CreateProjectForm = ({ setOpenDialog }: CreateProjectFormProps) => {
 
                   <FormControl>
                     <Editor
+                      className='h-full'
                       {...field}
                       value={field.value}
                       classNameContainer='h-[200px] rounded-md border shadow-sm'

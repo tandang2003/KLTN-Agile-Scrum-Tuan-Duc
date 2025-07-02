@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon'
+import LoadingBoundary from '@/components/LoadingBoundary'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
 import { DialogCreateProject } from '@/components/project/DialogCreateProject'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import WorkspaceCourseCheckLayer from '@/components/workspace/WorkspaceCourseCheckLayer'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import messages from '@/constant/message.const'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
@@ -97,6 +99,12 @@ const WorkspaceDetailPage = () => {
       <DialogCreateProject
         open={openDialogCreateProject}
         onOpen={setOpenDialogCreateProject}
+      />
+
+      <WorkspaceCourseCheckLayer
+        workspaceId={workspaceId}
+        course={data.course}
+        prerequisiteCourse={data.prerequisiteCourse}
       />
     </div>
   )

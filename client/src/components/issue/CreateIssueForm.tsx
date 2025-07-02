@@ -40,7 +40,7 @@ type CreateIssueFormProps = {
 }
 
 const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
-  const message = messages.component.issue.create
+  const message = messages.component.issue
   const { projectId } = useAppId()
   const [create] = useCreateIssueMutation()
 
@@ -77,10 +77,10 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
     create(req)
       .unwrap()
       .then((response) => {
-        toast.success(message.toast.success.message, {
+        toast.success(message.create.toast.success.message, {
           description: (
             <Message
-              template={message.toast.success.description}
+              template={message.create.toast.success.description}
               values={{
                 name: response.name,
                 issue: response.id
@@ -98,7 +98,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           })
         }
       })
-      .catch(() => toast.error(message.toast.failed))
+      .catch(() => toast.error(message.create.toast.failed))
       .finally(() => {
         onSubmit?.()
       })
@@ -113,7 +113,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{message.form.name}</FormLabel>
+                  <FormLabel>{message.create.form.name}</FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Solve Problem' {...field} />
                   </FormControl>
@@ -126,7 +126,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               name='description'
               render={({ field }) => (
                 <FormItem className='mt-4'>
-                  <FormLabel>{message.form.description}</FormLabel>
+                  <FormLabel>{message.description}</FormLabel>
 
                   <FormControl>
                     <Editor
@@ -149,7 +149,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               <SelectEnum
                 control={form.control}
                 name='priority'
-                label={message.form.priority}
+                label={message.priority}
                 renderItem={(item) => (
                   <span>{getPriorityDisplayName(item)}</span>
                 )}
@@ -158,19 +158,19 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               <SelectEnum
                 control={form.control}
                 name='tag'
-                label={message.form.tag}
+                label={message.create.form.tag}
                 renderItem={(item) => <span>{getTagDisplayName(item)}</span>}
                 data={issueTagList}
               />
               <SelectMember
                 control={form.control}
                 name='assigneeId'
-                label={message.form.select.assignee}
+                label={message.assignee}
               />
               <SelectMember
                 control={form.control}
                 name='reviewerId'
-                label={message.form.select.reviewer}
+                label={message.reviewer}
               />
             </div>
 
@@ -183,7 +183,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           type='submit'
           loading={form.formState.isSubmitting}
         >
-          {message.form.submit}
+          {message.create.form.submit}
         </Button>
       </form>
     </Form>
