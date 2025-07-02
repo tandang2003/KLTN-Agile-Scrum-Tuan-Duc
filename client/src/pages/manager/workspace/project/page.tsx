@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
+import messages from '@/constant/message.const'
 import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
@@ -65,7 +66,7 @@ const ProjectPage = () => {
 
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
-              <Button>Predict</Button>
+              <Button>{messages.manager.project.predict}</Button>
             </div>
             <Outlet
               context={{

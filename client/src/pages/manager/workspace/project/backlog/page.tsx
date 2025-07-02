@@ -2,6 +2,7 @@ import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import SprintAccordion from '@/components/sprint/SprintAccordion'
+import messages from '@/constant/message.const'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import { SprintModel } from '@/types/model/sprint.model'
@@ -15,19 +16,13 @@ const BacklogPage = () => {
 
   return (
     <>
-      <div className='px-4'>
-        <LoadingBoundary<SprintModel[]>
-          data={data}
-          isLoading={isFetching}
-          fallback={
-            <div>
-              No sprint template, please wait teacher add sprint template
-            </div>
-          }
-        >
-          {(data) => <SprintAccordion sprints={data} />}
-        </LoadingBoundary>
-      </div>
+      <LoadingBoundary<SprintModel[]>
+        data={data}
+        isLoading={isFetching}
+        fallback={<div>{messages.manager.project.backlog.list.empty}</div>}
+      >
+        {(data) => <SprintAccordion sprints={data} />}
+      </LoadingBoundary>
       <DialogCreateIssue />
       <DialogUpdateIssue />
     </>

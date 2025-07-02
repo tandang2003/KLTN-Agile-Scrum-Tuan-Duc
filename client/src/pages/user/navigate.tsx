@@ -5,6 +5,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink
 } from '@/components/ui/navigation-menu'
+import messages from '@/constant/message.const'
 import { Link, useLocation } from 'react-router-dom'
 
 const UserNavigate = () => {
@@ -24,7 +25,7 @@ const UserNavigate = () => {
               className='flex flex-row items-center gap-2'
             >
               <Icon icon={'mdi:idea'} size={30} />
-              Kỹ năng
+              {messages.user.navigate.skill}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -40,7 +41,7 @@ const UserNavigate = () => {
               className='flex flex-row items-center gap-2'
             >
               <Icon icon={'hugeicons:course'} size={30} />
-              Môn học
+              {messages.user.navigate.course}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>

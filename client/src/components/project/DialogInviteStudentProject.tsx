@@ -17,13 +17,14 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/context/redux/hook'
 import projectApi from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import { cn } from '@/lib/utils'
 import projectService from '@/services/project.service'
 import userService from '@/services/user.service'
 import axios from 'axios'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
 
 type DialogInviteStudentProjectProps = {} & DialogControllerProps
 
@@ -31,18 +32,20 @@ const DialogInviteStudentProject = ({
   open,
   onOpen
 }: DialogInviteStudentProjectProps) => {
+  const validation = messages.validation
   const uniId = useAppSelector((state) => state.authSlice.user?.uniId)
   const [input, setInput] = useState<string>('')
   const [ids, setIds] = useState<string[]>([])
   const { projectId, workspaceId } = useAppId()
+
   const handleAddId = async () => {
     if (!input) return
     if (input.length != 8) {
-      toast.error('ID Student need 8 character')
+      toast.error(validation.uniId)
       return
     }
     if (uniId && uniId === input) {
-      toast.error('You can not invite your self')
+      toast.error(validation.inviteSelf)
       return
     }
     try {

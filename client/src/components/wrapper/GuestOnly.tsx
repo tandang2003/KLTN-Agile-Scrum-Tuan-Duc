@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/context/redux/hook'
-import { HOME_PATH } from '@/lib/const'
+import { HOME_PATH } from '@/constant/app.const'
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'

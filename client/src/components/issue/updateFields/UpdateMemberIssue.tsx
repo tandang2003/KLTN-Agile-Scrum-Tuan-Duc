@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages from '@/constant/message.const'
 import { useGetMembersQuery } from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
 import { useAutoUpdateField } from '@/hooks/use-update'
@@ -32,6 +33,7 @@ type SelectMemberProps = {
 }
 
 const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
+  const message = messages.component.issue
   const { projectId } = useAppId()
   const { data } = useGetMembersQuery(projectId as Id, {
     skip: !projectId
@@ -44,7 +46,6 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
     value: PathValue<UpdateIssueType, FieldName>
   ) => Promise<any> | undefined = (field, value) => {
     let selectedValue = value !== 'null' ? value : undefined
-    console.log('selectedValue', selectedValue)
     let req: UpdateIssueRequest
     if (field == 'assigneeId')
       req = {
@@ -77,11 +78,11 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select a member' />
+                <SelectValue placeholder={message.select.placeholder} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value='null'>Not assign</SelectItem>
+              <SelectItem value='null'>{message.select.null}</SelectItem>
               {data?.map((item) => {
                 return (
                   <SelectItem key={item.id} value={item.uniId}>

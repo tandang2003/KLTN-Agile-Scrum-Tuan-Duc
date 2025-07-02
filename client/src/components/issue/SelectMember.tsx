@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages from '@/constant/message.const'
 import { useGetMembersQuery } from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
 import { Id } from '@/types/other.type'
@@ -37,11 +38,17 @@ const SelectMember = ({ control, name, label }: SelectMemberProps) => {
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select a member' />
+                <SelectValue
+                  placeholder={
+                    messages.component.issue.create.form.select.placeholder
+                  }
+                />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value={null!}>Not assign</SelectItem>
+              <SelectItem value={null!}>
+                {messages.component.issue.create.form.select.null}
+              </SelectItem>
               {data?.map((item) => {
                 return (
                   <SelectItem key={item.id} value={item.uniId}>

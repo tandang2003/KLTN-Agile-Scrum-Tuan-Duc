@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages from '@/constant/message.const'
 import {
   BaseSprintFormSchema,
   BaseSprintFormType,
@@ -44,6 +45,7 @@ const SprintTemplateBaseForm = ({
   initialValues,
   submitText = 'Create Sprint'
 }: SprintTemplateFormProps) => {
+  const message = messages.component.sprint.template.baseForm
   const [durationValue, setDurationValue] = useState<{
     active: DurationType
     list: DurationType[]
@@ -111,7 +113,7 @@ const SprintTemplateBaseForm = ({
               name='title'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sprint name</FormLabel>
+                  <FormLabel>{message.name}</FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Analysis' {...field} />
                   </FormControl>
@@ -124,15 +126,14 @@ const SprintTemplateBaseForm = ({
               name='storyPoint'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Story Point</FormLabel>
+                  <FormLabel>{message.storyPoint.label}</FormLabel>
                   <FormDescription>
-                    This is a story point that sprint is archived before end of
-                    sprint
+                    {message.storyPoint.description}
                   </FormDescription>
                   <FormControl>
                     <Input
                       type='number'
-                      placeholder='1'
+                      placeholder={message.storyPoint.placeholder}
                       {...field}
                       onChange={field.onChange}
                     />
@@ -144,7 +145,7 @@ const SprintTemplateBaseForm = ({
 
             <div className='mt-4 flex gap-3'>
               <FormItem>
-                <FormLabel>Duration</FormLabel>
+                <FormLabel>{message.duration}</FormLabel>
                 <Select
                   onValueChange={(value) => {
                     handleSelectDurationChange(value)
@@ -152,7 +153,7 @@ const SprintTemplateBaseForm = ({
                   defaultValue={
                     !isNumber(durationValue.active)
                       ? durationValue.active
-                      : durationValue.active + ' week'
+                      : durationValue.active + ' ' + message.week
                   }
                 >
                   <FormControl>
@@ -167,7 +168,9 @@ const SprintTemplateBaseForm = ({
                           key={index}
                           value={item?.toString() ?? 'custom'}
                         >
-                          {isNumber(item) ? `${item} week` : 'custom'}
+                          {isNumber(item)
+                            ? `${item} ${message.week}`
+                            : message.customDuration}
                         </SelectItem>
                       )
                     })}
@@ -183,7 +186,7 @@ const SprintTemplateBaseForm = ({
                 name='start'
                 render={({ field }) => (
                   <FormItem className='flex-1'>
-                    <FormLabel>Time start</FormLabel>
+                    <FormLabel>{message.startDate}</FormLabel>
                     <DatePickerWithPresets
                       date={field.value}
                       setDate={(date) => {
@@ -204,7 +207,7 @@ const SprintTemplateBaseForm = ({
                 name='end'
                 render={({ field }) => (
                   <FormItem className='flex-1'>
-                    <FormLabel>Time end</FormLabel>
+                    <FormLabel>{message.endDate}</FormLabel>
                     <DatePickerWithPresets
                       disabled={durationValue.active !== 'custom'}
                       min={form.getValues('start')}
@@ -225,7 +228,7 @@ const SprintTemplateBaseForm = ({
               name='predict'
               render={({ field }) => (
                 <FormItem className='flex-1 shrink-0'>
-                  <FormLabel>Time predict</FormLabel>
+                  <FormLabel>{message.predict}</FormLabel>
                   <DatePickerWithPresets
                     date={field.value}
                     min={form.getValues('start')}

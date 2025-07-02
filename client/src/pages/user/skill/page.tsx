@@ -4,6 +4,7 @@ import DialogSkill from '@/components/skill/DialogSkill'
 import ItemSkill from '@/components/skill/ItemSkill'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import messages from '@/constant/message.const'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetSkillsQuery } from '@/feature/skill/skill.api'
 import { enableDialogSkill } from '@/feature/trigger/trigger.slice'
@@ -27,7 +28,9 @@ const UserSkillPage = () => {
           data={data}
           className='mx-3 gap-2'
           loading={isFetching}
-          emptyComponent={<div className='mx-3'>Bạn chưa có kỹ năng nào</div>}
+          emptyComponent={
+            <div className='mx-3'>{messages.user.skill.list.empty}</div>
+          }
           render={(item, index) => <ItemSkill key={index} data={item} />}
         />
         <ScrollArea />

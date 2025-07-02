@@ -1,4 +1,5 @@
 import Editor from '@/components/Editor'
+import Message from '@/components/Message'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithRange } from '@/components/ui/date-picker'
 import {
@@ -10,6 +11,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useCreateWorkspaceMutation } from '@/feature/workspace/workspace.api'
@@ -51,15 +53,25 @@ const CreateWorkspaceForm = () => {
     })
       .unwrap()
       .then((response) =>
-        toast.success('Create workspace successful', {
-          description: `Workspace #${response.id} - ${response.name}`
-        })
+        toast.success(
+          messages.component.createWorkspace.toast.success.message,
+          {
+            description: (
+              <Message
+                template={
+                  messages.component.createWorkspace.toast.success.description
+                }
+                values={{ name: response.name, id: response.id }}
+              />
+            )
+          }
+        )
       )
       .then(() => {
         dispatch(setStateDialogWorkspace(!state))
       })
       .catch((error) => {
-        toast.error('Create workspace failed')
+        toast.error(messages.component.createWorkspace.toast.failed)
         handleErrorApi(error)
       })
   }
@@ -74,7 +86,9 @@ const CreateWorkspaceForm = () => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>
+                    {messages.component.createWorkspace.form.name}
+                  </FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Lập trình Web' {...field} />
                   </FormControl>
@@ -88,7 +102,10 @@ const CreateWorkspaceForm = () => {
                 name='date'
                 render={({ field }) => (
                   <FormItem className='mt-4'>
-                    <FormLabel>Time start - end</FormLabel>
+                    <FormLabel>
+                      {messages.component.createWorkspace.form.dateStart} -
+                      {messages.component.createWorkspace.form.dateEnd}
+                    </FormLabel>
                     <DatePickerWithRange
                       date={{
                         from: field.value.from,
@@ -109,7 +126,9 @@ const CreateWorkspaceForm = () => {
               name='description'
               render={({ field }) => (
                 <FormItem className='mt-4'>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>
+                    {messages.component.createWorkspace.form.description}
+                  </FormLabel>
 
                   <FormControl>
                     <Editor
@@ -127,7 +146,7 @@ const CreateWorkspaceForm = () => {
             type='submit'
             loading={form.formState.isSubmitting}
           >
-            Create
+            {messages.component.createWorkspace.form.submit}
           </Button>
         </form>
       </Form>

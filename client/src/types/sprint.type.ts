@@ -3,7 +3,7 @@ import { Id, stringSchema } from '@/types/other.type'
 import { z } from 'zod'
 
 const BaseSprintFormSchema = z.object({
-  title: stringSchema(),
+  title: stringSchema,
   storyPoint: z.coerce.number().positive(),
   start: z.date(),
   predict: z.date(),

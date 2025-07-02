@@ -8,18 +8,16 @@ type ItemCommentProps = {
   name: string
   createdAt: Date
   avatar?: string
-  key: string
 }
 
 const ItemComment = ({
-  key,
   name = 'Anonymous',
   message,
   createdAt,
   avatar = 'https://github.com/shadcn.png'
 }: ItemCommentProps) => {
   return (
-    <div key={key} className='grid grid-cols-[50px_1fr] gap-2'>
+    <div className='grid grid-cols-[50px_1fr] gap-2'>
       <div>
         <Avatar className='mt-2'>
           <AvatarImage src={avatar} alt={name} />
