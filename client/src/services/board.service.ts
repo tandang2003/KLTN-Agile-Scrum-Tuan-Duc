@@ -7,6 +7,7 @@ import {
 import { DEFAULT_POSITION } from '@/lib/board.helper'
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
+import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 
 const boardService = {
@@ -74,6 +75,39 @@ const boardService = {
     const positionUpdated: Position = {
       ...position,
       [status]: [...(position[status] || []), issueId]
+    }
+
+    const positionSprintUpdated: PositionSprint = {
+      ...positionSprint,
+      [sprintId]: {
+        ...positionUpdated
+      }
+    }
+
+    const response = await httpService.put<ResponseApi<void>, PositionSprint>(
+      `/project/${projectId}/position`,
+      positionSprintUpdated
+    )
+    return response.data.data
+  },
+  removePosition: async (
+    req: Omit<NewPositionReq, 'status'> & {
+      statusPrev: IssueStatus
+    }
+  ) => {
+    const { projectId, sprintId, issueId, statusPrev } = req
+    const responseSprint = await httpService.get<PositionSprint | null>(
+      `/project/${projectId}/position`
+    )
+
+    const positionSprint: PositionSprint = responseSprint.data || {}
+    const position: Position = positionSprint[sprintId] || DEFAULT_POSITION
+
+    const positionUpdated: Position = {
+      ...position,
+      [statusPrev]: [
+        ...(position[statusPrev].filter((i) => i !== issueId) || [])
+      ]
     }
 
     const positionSprintUpdated: PositionSprint = {
