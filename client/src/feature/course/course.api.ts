@@ -7,7 +7,6 @@ import {
 } from '@/types/course.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
-import axios from 'axios'
 
 const courseApi = createApi({
   reducerPath: 'courseApi',

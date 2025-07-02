@@ -1,4 +1,3 @@
-import { FilterSprintBoard } from '@/components/board/type'
 import {
   setAuthorization,
   setProjectAuthorization

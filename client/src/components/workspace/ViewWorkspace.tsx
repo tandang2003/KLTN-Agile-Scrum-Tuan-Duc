@@ -1,9 +1,7 @@
 import HtmlViewer from '@/components/HtmlViewer'
+import Icon from '@/components/Icon'
 import ToolTip from '@/components/Tooltip'
 import { Separator } from '@/components/ui/separator'
-import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
-import { cn, formatDate } from '@/lib/utils'
-import { WorkspaceDetailResponse } from '@/types/workspace.type'
 import {
   Timeline,
   TimelineConnector,
@@ -13,16 +11,18 @@ import {
   TimelineSeparator,
   TimelineTitle
 } from '@/components/ui/timeline'
-import Icon from '@/components/Icon'
-import { isAfter, isBefore } from 'date-fns'
 import messages from '@/constant/message.const'
+import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
+import { cn, formatDate } from '@/lib/utils'
+import { WorkspaceDetailResponse } from '@/types/workspace.type'
+import { isAfter } from 'date-fns'
 
 type ViewWorkspaceProps = {
   data: WorkspaceDetailResponse
 }
 
 const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
-  const { currentSprint, nextSprint, prevSprint } = data
+  const { currentSprint } = data
   const { data: sprints } = useGetListSprintQuery(data.id, {
     skip: !data.id
   })

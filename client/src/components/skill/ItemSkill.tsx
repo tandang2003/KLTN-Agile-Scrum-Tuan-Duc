@@ -10,13 +10,12 @@ import { useAppDispatch } from '@/context/redux/hook'
 import { useDeleteSkillMutation } from '@/feature/skill/skill.api'
 import { setUpdateDataSkill } from '@/feature/skill/skill.slice'
 import { enableDialogSkill } from '@/feature/trigger/trigger.slice'
-import { SkillLevel } from '@/types/model/typeOf'
 import { SkillResponse } from '@/types/skill.type'
 
 import { useAlertHost } from '@/components/AleartHost'
+import Message from '@/components/Message'
 import messages, { getProficiencyDisplayName } from '@/constant/message.const'
 import { toast } from 'sonner'
-import Message from '@/components/Message'
 
 type ItemSkillProps = {
   data: SkillResponse

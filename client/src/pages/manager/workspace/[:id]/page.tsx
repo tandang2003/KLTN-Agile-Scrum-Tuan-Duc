@@ -1,5 +1,4 @@
 import Icon from '@/components/Icon'
-import LoadingBoundary from '@/components/LoadingBoundary'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
 import { DialogCreateProject } from '@/components/project/DialogCreateProject'
 import { Button } from '@/components/ui/button'

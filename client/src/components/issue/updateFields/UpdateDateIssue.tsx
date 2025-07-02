@@ -8,7 +8,6 @@ import { useFormContext } from 'react-hook-form'
 
 const UpdateDateIssue = () => {
   const { sprint } = useSprintActive()
-  console.log('sprint active', sprint)
   if (!sprint) return null
   const form = useFormContext<UpdateIssueType>()
 
