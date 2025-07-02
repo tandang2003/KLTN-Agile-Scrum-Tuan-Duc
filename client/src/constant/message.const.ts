@@ -168,6 +168,7 @@ const messages = {
     },
     viewWorkspace: {
       totalSprint: 'Tổng số Sprint',
+      course: 'Môn học trước',
       start: 'Ngày bắt đầu môn học',
       end: 'Ngày kết thúc môn học',
       description: {
@@ -181,6 +182,7 @@ const messages = {
     updateWorkspace: {
       form: {
         name: 'Tên không gian',
+        course: 'Môn học trước',
         dateStart: 'Ngày bắt đầu',
         dateEnd: 'Ngày kết thúc',
         description: 'Mô tả',
@@ -198,6 +200,7 @@ const messages = {
       form: {
         name: 'Tên không gian',
         dateStart: 'Ngày bắt đầu',
+        course: 'Môn học trước',
         dateEnd: 'Ngày kết thúc',
         description: 'Mô tả',
         submit: 'Tạo không gian'
@@ -209,6 +212,23 @@ const messages = {
         },
         failed: 'Tạo khu vực môn học thất bại, vui lòng thử lại sau'
       }
+    },
+    workspaceCourseLayerCheck: {
+      title: 'Cập nhập điểm môn học',
+      description:
+        'Môn học này cần yêu cầu bạn phải tham gia môn {{name}}} và các môn học tiên quyết khác. Vui lòng nhập điểm của các môn học này để tiếp tục.',
+      form: {
+        submit: 'Cập nhật điểm',
+        cancel: 'Hủy'
+      },
+      toast: {
+        success: 'Cập nhật điểm thành công',
+        failed: 'Cập nhật điểm thất bại, vui lòng thử lại sau'
+      }
+    },
+    dialogCreateWorkspace: {
+      title: 'Tạo khu vực môn học',
+      description: 'Khu vực môn học sẽ được tạo trong hệ thống của bạn'
     },
     project: {
       header: {
@@ -234,6 +254,17 @@ const messages = {
             },
             failed: 'Tạo nhóm thất bại, vui lòng thử lại sau'
           }
+        }
+      },
+      invite: {
+        title: 'Mời sinh viên vào nhóm',
+        description: 'Sinh viên sẽ được mời tham gia nhóm này',
+        form: {
+          uniId: {
+            placeholder: 'Nhập mã sinh viên'
+          },
+          submit: 'Mời sinh viên',
+          cancel: 'Hủy'
         }
       }
     },

@@ -10,17 +10,21 @@ import {
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 
-import { getStatusSprint, sortSprintsByDateStart } from '@/lib/sprint.helper'
+import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
 import { getSprintStatusDisplayName } from '@/constant/message.const'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
 
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const refContent = useRef<HTMLDivElement>(null)
   const [sprintId, setSprintId] = useState<Id | null>(null)
 

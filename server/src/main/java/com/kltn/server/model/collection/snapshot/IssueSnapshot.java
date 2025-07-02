@@ -27,6 +27,9 @@ public class IssueSnapshot {
   private String position;
   private List<Relation<String>> related;
 
+  public IssueSnapshot() {
+  }
+
   public IssueSnapshot(IssueSnapshotBuilder issueSnapshotBuilder) {
     this.nkTaskId = issueSnapshotBuilder.nkTaskId;
     this.name = issueSnapshotBuilder.name;
@@ -53,7 +56,6 @@ public class IssueSnapshot {
   public static IssueSnapshotBuilder builder() {
     return new IssueSnapshotBuilder();
   }
-
 
   public static class IssueSnapshotBuilder {
     private String nkTaskId;
@@ -82,7 +84,6 @@ public class IssueSnapshot {
       return this;
     }
 
-
     public IssueSnapshotBuilder numChangeOfPriority(int numChangeOfPriority) {
       this.numChangeOfPriority = numChangeOfPriority;
       return this;
@@ -90,6 +91,11 @@ public class IssueSnapshot {
 
     public IssueSnapshotBuilder name(String name) {
       this.name = name;
+      return this;
+    }
+
+    public IssueSnapshotBuilder status(String status) {
+      this.status = status;
       return this;
     }
 
@@ -123,11 +129,7 @@ public class IssueSnapshot {
       return this;
     }
 
-    public IssueSnapshotBuilder status(String status) {
-      this.status = status;
-      return this;
-    }
-
+    // Default constructor
     public IssueSnapshotBuilder priority(String priority) {
       this.priority = priority;
       return this;
@@ -342,4 +344,5 @@ public class IssueSnapshot {
   public void setRelated(List<Relation<String>> related) {
     this.related = related;
   }
+
 }

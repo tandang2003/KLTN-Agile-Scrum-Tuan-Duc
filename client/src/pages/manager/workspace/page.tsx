@@ -1,6 +1,6 @@
 import WorkspaceCard from '@/components/card/WorkspaceCard'
 import Container from '@/components/Container'
-import DialogCreateWorkspace from '@/components/dialog/DialogCreateWorkspace'
+import DialogCreateWorkspace from '@/components/workspace/DialogCreateWorkspace'
 import Icon from '@/components/Icon'
 import ListView from '@/components/ListView'
 import { Button } from '@/components/ui/button'

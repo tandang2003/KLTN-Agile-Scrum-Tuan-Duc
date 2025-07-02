@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import messages from '@/constant/message.const'
+import messages, { getProficiencyDisplayName } from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook'
 import {
   useCreateSkillMutation,
@@ -169,7 +169,7 @@ const FormSkill = () => {
                           key={index}
                           value={SkillLevel[item].toString()}
                         >
-                          {item}
+                          {getProficiencyDisplayName(SkillLevel[item])}
                         </SelectItem>
                       ))}
                     </SelectContent>
