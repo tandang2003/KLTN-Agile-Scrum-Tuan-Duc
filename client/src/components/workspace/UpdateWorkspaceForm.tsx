@@ -84,15 +84,26 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
           className='rounded-md px-2 py-4 shadow-md'
         >
           <div className='[&>*:not(:first-element)]:mt-3'>
-            <FormItem>
-              <FormLabel>
-                {messages.component.updateWorkspace.form.name}
-              </FormLabel>
-              <FormControl>
-                <Input type='text' disabled value={data?.name} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <div className='flex gap-5 [&>*]:flex-1'>
+              <FormItem>
+                <FormLabel>
+                  {messages.component.updateWorkspace.form.name}
+                </FormLabel>
+                <FormControl>
+                  <Input type='text' disabled value={data?.name} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+              <FormItem>
+                <FormLabel>
+                  {messages.component.updateWorkspace.form.course}
+                </FormLabel>
+                <FormControl>
+                  <Input type='text' disabled value={data?.course.name} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </div>
             <div className='flex gap-5 [&>*]:flex-1'>
               <FormItem className='mt-4'>
                 <FormLabel>

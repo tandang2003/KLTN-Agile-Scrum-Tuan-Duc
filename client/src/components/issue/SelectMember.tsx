@@ -39,15 +39,13 @@ const SelectMember = ({ control, name, label }: SelectMemberProps) => {
             <FormControl>
               <SelectTrigger className='w-full'>
                 <SelectValue
-                  placeholder={
-                    messages.component.issue.create.form.select.placeholder
-                  }
+                  placeholder={messages.component.issue.select.placeholder}
                 />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
               <SelectItem value={null!}>
-                {messages.component.issue.create.form.select.null}
+                {messages.component.issue.select.null}
               </SelectItem>
               {data?.map((item) => {
                 return (
