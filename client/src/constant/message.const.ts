@@ -1,4 +1,5 @@
 import { RoleType } from '@/types/auth.type'
+import { IssueRelationShip } from '@/types/model/relationship'
 import {
   IssuePriority,
   IssueTag,
@@ -123,6 +124,10 @@ const messages = {
     userDropdown: {
       account: 'Thông tin tài khoản',
       workspace: 'Khu vực môn học'
+    },
+    header: {
+      login: 'Đăng nhập',
+      register: 'Đăng ký'
     },
     logoutButton: {
       title: 'Đăng xuất',
@@ -309,13 +314,24 @@ const messages = {
         dropdown: {
           moveToSprint: 'Chuyển sang sprint',
           edit: 'Chỉnh sửa issue'
+        },
+        toast: {
+          moveToSprint: {
+            success: {
+              message: 'Chuyển issue vào sprint thành công',
+              description: `Issue {{name}} đã được chuyển vào sprint`
+            },
+            failed: 'Chuyển issue vào sprint thất bại, vui lòng thử lại sau',
+            conflict: 'Sprint này đang chạy, không thể thêm issue'
+          }
         }
       },
       sprintCardInSprint: {
         dropdown: {
           moveToBacklog: 'Chuyển sang Product Backlog',
           edit: 'Chỉnh sửa issue',
-          delete: 'Xóa issue'
+          delete: 'Xóa issue',
+          reopen: 'Mở lại issue'
         },
         alert: {
           delete: {
@@ -332,6 +348,11 @@ const messages = {
             failed:
               'Chuyển issue vào Product Backlog thất bại, vui lòng thử lại sau'
           },
+          reopen: {
+            success: 'Mở lại issue thành công',
+            conflict: 'Issue không ở trạng thái DONE, không thể mở lại',
+            failed: 'Mở lại issue thất bại, vui lòng thử lại sau'
+          },
           delete: {
             success: 'Xóa issue thành công',
             failed: 'Xóa issue thất bại, vui lòng thử lại sau'
@@ -341,32 +362,33 @@ const messages = {
       }
     },
     issue: {
+      topic: 'Chủ đề',
+      description: 'Mô tả chi tiết',
+      priority: 'Mức độ ưu tiên',
+      select: {
+        placeholder: 'Chọn sinh viên',
+        null: 'Không chọn'
+      },
+      assignee: 'Người thực hiện',
+      reviewer: 'Người đánh giá',
+      subTasks: {
+        label: 'Đầu công việc',
+        placeholder: 'Nhập tên đầu công việc'
+      },
       create: {
         title: 'Tạo issue',
         form: {
-          title: 'Tên issue',
-          description: 'Mô tả chi tiết',
-          priority: 'Mức độ ưu tiên',
+          name: 'Tên issue',
           tag: 'Loại issue',
           dateStart: 'Ngày bắt đầu',
           dateEnd: 'Ngày hết hạn',
-          subTasks: {
-            label: 'Đầu công việc',
-            placeholder: 'Nhập tên đầu công việc'
-          },
+
           sprint: {
             label: 'Chọn sprint',
             placeholder: 'Chọn sprint để gán cho issue',
             null: 'Không chọn'
           },
-          topic: 'Chủ đề',
-          select: {
-            placeholder: 'Chọn sinh viên',
-            null: 'Không chọn',
-            assignee: 'Người thực hiện',
-            reviewer: 'Người đánh giá'
-          },
-          submit: ' Tạo issue'
+          submit: 'Tạo issue'
         },
         toast: {
           success: {
@@ -374,6 +396,26 @@ const messages = {
             description: `Issue {{name}} - #{{id}}`
           },
           failed: 'Tạo issue thất bại, vui lòng thử lại sau'
+        }
+      },
+      update: {
+        form: {
+          comment: 'Bình luận',
+          detail: 'Mô tả chi tiết',
+          priority: 'Mức độ ưu tiên',
+          duration: 'Thời gian',
+          descriptionFallback: 'Chưa có mô tả nào cho issue này',
+          attachment: 'File đính kèm',
+          subTask: {
+            add: 'Thêm',
+            cancel: 'Hủy'
+          },
+          relationship: {
+            title: 'Quan hệ giữa các issue',
+            fallback: 'Chưa có quan hệ nào được thiết lập',
+            add: 'Thêm',
+            cancel: 'Hủy'
+          }
         }
       }
     },
@@ -384,6 +426,37 @@ const messages = {
       datePicker: {
         placeholder: 'Chọn ngày'
       }
+    },
+    reportSprintSheet: {
+      title: 'Báo cáo Sprint',
+      description: 'Báo cáo Sprint sẽ được gửi đến giáo viên của bạn',
+      form: {
+        daily1: {
+          label: 'Daily 1',
+          placeholder: 'Nhập nội dung Daily 1'
+        },
+        daily2: {
+          label: 'Daily 2',
+          placeholder: 'Nhập nội dung Daily 2'
+        },
+        backlog: {
+          label: 'Backlog',
+          placeholder: 'Tải lên file Backlog'
+        }
+      },
+      status: {
+        complete: 'Sprint đã hoàn thành, bạn không thể cập nhập các báo cáo',
+        pending: 'Sprint chưa sẵn sàng, bạn không thể cập nhập các báo cáo'
+      },
+      close: 'Đóng',
+      toast: {
+        success: 'Gửi báo cáo thành công',
+        failed: 'Gửi báo cáo thất bại, vui lòng thử lại sau'
+      }
+    },
+    editorComment: {
+      placeholder: 'Nhập bình luận của bạn tại đây',
+      send: 'Gửi'
     }
   },
   manager: {
@@ -429,6 +502,7 @@ const messages = {
       }
     },
     project: {
+      predict: 'Dự đoán',
       navigate: {
         backlog: 'Backlog',
         board: 'Bảng',
@@ -497,6 +571,22 @@ const getPriorityDisplayName = (priority: IssuePriority): string => {
   return map[priority] ?? 'Không xác định'
 }
 
+const getRelationshipDisplayName = (type: IssueRelationShip): string => {
+  const map: Record<IssueRelationShip, string> = {
+    [IssueRelationShip.BLOCKS]: 'Chặn',
+    [IssueRelationShip.IS_BLOCKED_BY]: 'Bị chặn bởi',
+    [IssueRelationShip.RELATES_TO]: 'Liên quan đến',
+    [IssueRelationShip.IS_RELATED_TO]: 'Được liên quan đến',
+    [IssueRelationShip.DEPENDS_ON]: 'Phụ thuộc vào',
+    [IssueRelationShip.IS_DEPENDED_ON_BY]: 'Được phụ thuộc vào',
+    [IssueRelationShip.SUPERSEDES]: 'Thay thế',
+    [IssueRelationShip.IS_SUPERSEDED_BY]: 'Bị thay thế bởi',
+    [IssueRelationShip.DUPLICATES]: 'Trùng lặp',
+    [IssueRelationShip.IS_DUPLICATED_BY]: 'Bị trùng lặp bởi'
+  }
+  return map[type] ?? 'Không xác định'
+}
+
 export default messages
 
 export {
@@ -504,5 +594,6 @@ export {
   getProficiencyDisplayName,
   getSprintStatusDisplayName,
   getTagDisplayName,
-  getPriorityDisplayName
+  getPriorityDisplayName,
+  getRelationshipDisplayName
 }

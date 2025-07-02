@@ -29,6 +29,7 @@ import {
 } from '@dnd-kit/sortable'
 import { forwardRef, useRef } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import messages from '@/constant/message.const'
 
 type UpdateSubTaskFormProp = {
   open?: boolean
@@ -37,7 +38,7 @@ type UpdateSubTaskFormProp = {
 
 const UpdateSubTaskForm = ({ open, cancel }: UpdateSubTaskFormProp) => {
   const orderRef = useRef<number>(0)
-
+  const message = messages.component.issue.subTasks
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10
@@ -106,7 +107,7 @@ const UpdateSubTaskForm = ({ open, cancel }: UpdateSubTaskFormProp) => {
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <span className='text-lg'>Sub Task</span>
+      <span className='text-lg'>{message.label}</span>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -212,20 +213,21 @@ type CreateSubTaskProps = {
 
 const SubTaskItemForm = forwardRef<HTMLInputElement, CreateSubTaskProps>(
   ({ cancel, handleAppend, ...props }, ref) => {
+    const message = messages.component.issue.subTasks
     return (
       <div className='flex flex-col gap-2'>
         <FormItem className='flex-1'>
           <FormControl>
-            <Input placeholder='Task' {...props} ref={ref} />
+            <Input placeholder={message.placeholder} {...props} ref={ref} />
           </FormControl>
         </FormItem>
 
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={handleAppend} className='success'>
-            Add
+            {messages.component.issue.update.form.subTask.add}
           </Button>
           <Button type='button' onClick={() => cancel()} className='cancel'>
-            Cancel
+            {messages.component.issue.update.form.subTask.cancel}
           </Button>
         </div>
       </div>

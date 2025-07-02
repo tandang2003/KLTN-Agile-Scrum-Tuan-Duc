@@ -8,7 +8,7 @@ import { useRef } from 'react'
 import messages from '@/constant/message.const'
 
 const CreateSubTaskForm = () => {
-  const message = messages.component.issue.create.form
+  const message = messages.component.issue
   const { control } = useFormContext<BaseIssueFormType>()
   const orderRef = useRef<number>(0)
   const { fields, append, remove } = useFieldArray({
@@ -53,7 +53,7 @@ type CreateSubTaskProps = {
 }
 
 const CreateSubTaskItemForm = ({ index, onRemove }: CreateSubTaskProps) => {
-  const message = messages.component.issue.create.form
+  const message = messages.component.issue
 
   const { control } = useFormContext<BaseIssueFormType>()
   return (

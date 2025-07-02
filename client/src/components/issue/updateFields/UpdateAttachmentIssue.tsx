@@ -16,6 +16,7 @@ import {
   FileUploadList,
   FileUploadTrigger
 } from '@/components/ui/file-upload'
+import messages from '@/constant/message.const'
 import useAppId from '@/hooks/use-app-id'
 import { uuid } from '@/lib/utils'
 import resourceService from '@/services/resource.service'
@@ -130,7 +131,9 @@ export const UpdateAttachmentIssue = ({
       }}
     >
       <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-        <span className='text-lg'>Attachments</span>
+        <span className='text-lg'>
+          {messages.component.issue.update.form.attachment}
+        </span>
         <UpdateAttachmentIssueUpload />
         <ListAttachmentIssue />
       </div>
@@ -269,7 +272,7 @@ const UpdateAttachmentIssueUpload = ({}: UpdateAttachmentIssueUploadProps) => {
           <div className='flex items-center justify-center rounded-full border p-2.5'>
             <Upload className='text-muted-foreground size-6' />
           </div>
-          <p className='text-sm font-medium'>Drag & drop files here</p>
+          <p className='text-sm font-medium'>Kéo thả file vào đây</p>
         </div>
         <FileUploadTrigger asChild></FileUploadTrigger>
       </FileUploadDropzone>

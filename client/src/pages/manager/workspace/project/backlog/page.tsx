@@ -16,15 +16,13 @@ const BacklogPage = () => {
 
   return (
     <>
-      <div className='px-4'>
-        <LoadingBoundary<SprintModel[]>
-          data={data}
-          isLoading={isFetching}
-          fallback={<div>{messages.manager.project.backlog.list.empty}</div>}
-        >
-          {(data) => <SprintAccordion sprints={data} />}
-        </LoadingBoundary>
-      </div>
+      <LoadingBoundary<SprintModel[]>
+        data={data}
+        isLoading={isFetching}
+        fallback={<div>{messages.manager.project.backlog.list.empty}</div>}
+      >
+        {(data) => <SprintAccordion sprints={data} />}
+      </LoadingBoundary>
       <DialogCreateIssue />
       <DialogUpdateIssue />
     </>

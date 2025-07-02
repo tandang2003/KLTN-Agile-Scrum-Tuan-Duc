@@ -113,7 +113,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{message.form.title}</FormLabel>
+                  <FormLabel>{message.form.name}</FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Solve Problem' {...field} />
                   </FormControl>

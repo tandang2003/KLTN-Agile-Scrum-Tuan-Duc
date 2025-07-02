@@ -21,6 +21,7 @@ import { TopicModelType, UpdateIssueType } from '@/types/issue.type'
 import { useCommandState } from 'cmdk'
 import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import messages from '@/constant/message.const'
 type UpdateTopicProps = {}
 
 const UpdateTopicForm = ({}: UpdateTopicProps) => {
@@ -106,7 +107,7 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
                   )
                 })
               ) : (
-                <span>Topic</span>
+                <span>{messages.component.issue.topic}</span>
               )}
             </PopoverTrigger>
             <PopoverContent align='start' className='w-72 p-0'>

@@ -10,10 +10,12 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { HttpStatusCode } from '@/constant/app.const'
 import messages from '@/constant/message.const'
 import {
   useDeleteIssueMutation,
-  useMoveIssueToBacklogMutation
+  useMoveIssueToBacklogMutation,
+  useReopenIssueMutation
 } from '@/feature/issue/issue.api'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import useSprintCurrent from '@/hooks/use-sprint-current'
@@ -35,6 +37,7 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const [deleteIssue] = useDeleteIssueMutation()
   const { showAlert } = useAlertHost()
+  const [reopen] = useReopenIssueMutation()
 
   const handleMoveToBacklog = () => {
     moveToBacklog({
@@ -58,6 +61,19 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
         toast.error(message.toast.moveToBacklog.failed, {
           description: err.data?.message || 'An error occurred.'
         })
+      })
+  }
+
+  const handleReopen = () => {
+    reopen(item.id)
+      .unwrap()
+      .then(() => {
+        toast.message(message.toast.reopen.success)
+      })
+      .catch((err) => {
+        if (err.status === HttpStatusCode.Conflict)
+          toast.error(message.toast.reopen.conflict)
+        else toast.error(message.toast.reopen.failed)
       })
   }
 
@@ -134,8 +150,8 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
             </>
           )}
           {item.status === 'DONE' && (
-            <DropdownMenuItem onClick={handleMoveToBacklog}>
-              Reopen
+            <DropdownMenuItem onClick={handleReopen}>
+              {message.dropdown.reopen}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

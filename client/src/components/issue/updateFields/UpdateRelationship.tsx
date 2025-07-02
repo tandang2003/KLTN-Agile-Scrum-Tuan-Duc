@@ -36,6 +36,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import Icon from '@/components/Icon'
 import { useAlertHost } from '@/components/AleartHost'
+import messages, { getRelationshipDisplayName } from '@/constant/message.const'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -48,6 +49,7 @@ const UpdateRelationship = ({
   open,
   cancel
 }: UpdateRelationshipProps) => {
+  const message = messages.component.issue.update.form.relationship
   const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>({
     typeRelation: 'BLOCKS'
   })
@@ -88,10 +90,10 @@ const UpdateRelationship = ({
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <span className='text-lg'>Linked issue</span>
+      <span className='text-lg'>{message.title}</span>
       <LoadingBoundary<RelationshipResponse[]>
         loading='Loading relationships...'
-        fallback='No relationships found'
+        fallback={message.fallback}
         data={relationships}
         isLoading={isLoading}
       >
@@ -116,7 +118,7 @@ const UpdateRelationship = ({
               <SelectContent>
                 {issueRelationOptions.map(({ label, value }) => (
                   <SelectItem key={label} value={value}>
-                    {label}
+                    {getRelationshipDisplayName(value)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -150,14 +152,14 @@ const UpdateRelationship = ({
               className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
               onClick={() => cancel?.()}
             >
-              Cancel
+              {message.cancel}
             </Button>
             <Button
               type='button'
               onClick={handleSubmit}
               className='bg-green-500 text-white hover:cursor-pointer hover:opacity-60'
             >
-              Create
+              {message.add}
             </Button>
           </div>
         </>
@@ -198,7 +200,7 @@ const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
         return (
           <div key={key}>
             <span className='mt-4 mb-2 inline-block text-base'>
-              {IssueRelationLabels[key as IssueRelationShip]}
+              {getRelationshipDisplayName(key as IssueRelationShip)}
             </span>
             <div className='mt-2 flex flex-col gap-1'>
               {value.map((item) => {
