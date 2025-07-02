@@ -3,20 +3,18 @@ import {
   Tabs,
   TabsContent,
   TabsLinkTrigger,
-  TabsList,
-  TabsTrigger
+  TabsList
 } from '@/components/ui/tabs'
 import { useAppSelector } from '@/context/redux/hook'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import SummaryTab from '@/pages/manager/workspace/[:id]/summary/page'
 import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/template/page'
 import { Id } from '@/types/other.type'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const WorkspaceSettingPage = () => {
   const workspaceId = useAppSelector((state) => state.workspaceSlice.currentId)
   const location = useLocation()
-  const navigate = useNavigate()
   const { data, isFetching } = useGetWorkspaceQuery(workspaceId as Id, {
     skip: !workspaceId,
     refetchOnMountOrArgChange: true

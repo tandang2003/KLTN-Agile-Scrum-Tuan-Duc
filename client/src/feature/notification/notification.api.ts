@@ -1,5 +1,5 @@
 import notificationService from '@/services/notification.service'
-import { Page, PageRequest } from '@/types/http.type'
+import { Page } from '@/types/http.type'
 import {
   NotificationResponse,
   ProjectNotificationRequest

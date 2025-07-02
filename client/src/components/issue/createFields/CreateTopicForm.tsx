@@ -36,7 +36,7 @@ const topicData: TopicModel[] = [
 ]
 
 const CreateTopicForm = ({}: CreateTopicProps) => {
-  const message = messages.component.issue.create.form
+  const message = messages.component.issue
   const { control } = useFormContext<BaseIssueFormType>()
   const { fields, append, remove } = useFieldArray({
     control: control,

@@ -19,6 +19,7 @@ import {
 } from '@/feature/issue/issue.api'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import useSprintCurrent from '@/hooks/use-sprint-current'
+import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { toast } from 'sonner'
 
@@ -46,16 +47,25 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
     })
       .unwrap()
       .then(() => {
-        toast.success(message.toast.moveToBacklog.success.message, {
-          description: (
-            <Message
-              template={message.toast.moveToBacklog.success.description}
-              values={{
-                name: item.name
-              }}
-            />
-          )
-        })
+        boardService
+          .removePosition({
+            issueId: id,
+            sprintId: sprintId,
+            projectId: item.projectId,
+            statusPrev: item.status
+          })
+          .then(() => {
+            toast.success(message.toast.moveToBacklog.success.message, {
+              description: (
+                <Message
+                  template={message.toast.moveToBacklog.success.description}
+                  values={{
+                    name: item.name
+                  }}
+                />
+              )
+            })
+          })
       })
       .catch((err) => {
         toast.error(message.toast.moveToBacklog.failed, {
@@ -65,16 +75,30 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
   }
 
   const handleReopen = () => {
-    reopen(item.id)
-      .unwrap()
-      .then(() => {
-        toast.message(message.toast.reopen.success)
-      })
-      .catch((err) => {
-        if (err.status === HttpStatusCode.Conflict)
-          toast.error(message.toast.reopen.conflict)
-        else toast.error(message.toast.reopen.failed)
-      })
+    showAlert({
+      title: message.alert.reopen.title,
+      type: 'info',
+      message: (
+        <Message
+          template={message.alert.reopen.message}
+          values={{
+            name: item.name
+          }}
+        />
+      ),
+      onConfirm: () => {
+        return reopen(item.id)
+          .unwrap()
+          .then(() => {
+            toast.message(message.toast.reopen.success)
+          })
+          .catch((err) => {
+            if (err.status === HttpStatusCode.Conflict)
+              toast.error(message.toast.reopen.conflict)
+            else toast.error(message.toast.reopen.failed)
+          })
+      }
+    })
   }
 
   const handleDelete = () => {

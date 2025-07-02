@@ -368,6 +368,15 @@ const messages = {
           delete: {
             title: 'Xóa issue',
             message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
+          },
+          moveToSprint: {
+            title: 'Chuyển issue sang sprint',
+            message:
+              'Bạn có chắc chắn muốn chuyển issue "{{name}}" sang sprint này không?'
+          },
+          reopen: {
+            title: 'Mở lại issue',
+            message: 'Bạn có chắc chắn muốn mở lại issue "{{name}}" không?'
           }
         },
         toast: {

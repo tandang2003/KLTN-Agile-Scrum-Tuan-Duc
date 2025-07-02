@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import { useAlertHost } from '@/components/AleartHost'
+import Icon from '@/components/Icon'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
@@ -9,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages, { getRelationshipDisplayName } from '@/constant/message.const'
 import {
   useCreateRelationshipMutation,
   useDeleteRelationshipMutation,
@@ -17,7 +26,6 @@ import {
 } from '@/feature/relationship/relationship.api'
 import { IssueResponse } from '@/types/issue.type'
 import {
-  IssueRelationLabels,
   issueRelationOptions,
   IssueRelationShip
 } from '@/types/model/relationship'
@@ -28,15 +36,6 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import Icon from '@/components/Icon'
-import { useAlertHost } from '@/components/AleartHost'
-import messages, { getRelationshipDisplayName } from '@/constant/message.const'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
