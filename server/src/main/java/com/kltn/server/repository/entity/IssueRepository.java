@@ -31,8 +31,12 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
 
   int countByProjectIdAndSprintIdAndAssigneeNotNull(String projectId, String sprintId);
 
-  @Query("SELECT COUNT(DISTINCT i.sprint) " + "FROM IssueRelation ir " + "JOIN ir.issueRelated i " + "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " + "AND ir.issue.id = :issueId")
-  int getNumberOfAffectVersions(@Param("issueId") String id);
+  @Query("SELECT COUNT(DISTINCT i.sprint) " +
+    "FROM IssueRelation ir " +
+    "JOIN ir.issueRelated i " +
+    "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " +
+    "AND ir.issue.id = :issueId")
+  int getNumberOfAffectVersions(@Param("issueId") String issueId);
 
   @Query(value = "SELECT r.* FROM issues i JOIN issue_resources rs ON i.id=rs.issue_id" + "JOIN resources r ON r" +
                  ".id=rs.issue_id",
