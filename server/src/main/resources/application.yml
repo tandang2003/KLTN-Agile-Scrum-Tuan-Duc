@@ -5,18 +5,18 @@ spring:
       access-token:
         time-of-life: 30M
         key:
-          private-key: key/access/private_key.pem
-          public-key: key/access/public_key.pem
+          private-key: classpath:key/access/private_key.pem
+          public-key: classpath:key/access/public_key.pem
       refresh-token:
         time-of-life: 120H
         key:
-          private-key: key/refresh/private_key.pem
-          public-key: key/refresh/public_key.pem
+          private-key: classpath:key/refresh/private_key.pem
+          public-key: classpath:key/refresh/public_key.pem
       verify-token:
         time-of-life: 48H
         key:
-          private-key: key/verify/private_key.pem
-          public-key: key/verify/public_key.pem
+          private-key: classpath:key/verify/private_key.pem
+          public-key: classpath:key/verify/public_key.pem
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
