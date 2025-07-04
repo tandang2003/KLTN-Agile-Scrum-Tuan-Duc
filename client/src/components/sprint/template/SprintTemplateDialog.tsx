@@ -159,6 +159,7 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
               start: new Date(dataSprint.start),
               predict: new Date(dataSprint.predict),
               end: new Date(dataSprint.end),
+              description: dataSprint.description,
               storyPoint: dataSprint.storyPoint
             }}
             onSubmit={(values, form) => {
