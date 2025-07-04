@@ -24,7 +24,7 @@ public class IssueCreateRequest {
   private String name;
   @NotEmpty
   private String projectId;
-  //    @NotEmpty
+  // @NotEmpty
   private String sprintId;
   @Enumerated(EnumType.STRING)
   private IssueStatus status;
@@ -36,16 +36,17 @@ public class IssueCreateRequest {
   private List<TopicRequest> topics;
   private List<SubTaskRequest> subtasks;
   private List<AttachmentRequest> attachments;
-  //    @NotEmpty
+  // @NotEmpty
   private String description;
-  //    @NotEmpty
+  // @NotEmpty
   private String assigneeId;
-  //    @NotEmpty
+  // @NotEmpty
   private String reviewerId;
   @DateTimeFormat(pattern = LOCAL_DATE_TIME)
   private Instant start;
   @DateTimeFormat(pattern = LOCAL_DATE_TIME)
   private Instant end;
+  int complexOfDescription;
 
   public IssueCreateRequest() {
   }
@@ -168,5 +169,13 @@ public class IssueCreateRequest {
 
   public void setSubtasks(List<SubTaskRequest> subtasks) {
     this.subtasks = subtasks;
+  }
+
+  public int getComplexOfDescription() {
+    return complexOfDescription;
+  }
+
+  public void setComplexOfDescription(int complexOfDescription) {
+    this.complexOfDescription = complexOfDescription;
   }
 }

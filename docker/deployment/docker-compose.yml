@@ -112,6 +112,22 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
       ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "echo",
+          "ruok",
+          "|",
+          "nc",
+          "localhost",
+          "${ZOOKEEPER_CLIENT_PORT}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app-kafka1:
     image: confluentinc/cp-kafka:7.6.0
@@ -152,4 +168,6 @@ volumes:
   mongo_data:
     driver: local
   mysql_data:
+    driver: local
+  zookeeper_data:
     driver: local
