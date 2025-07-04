@@ -1,5 +1,3 @@
-import React from 'react'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -8,10 +6,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { useForm } from 'react-hook-form'
-import { LoginSchema, LoginsSchemaType } from '@/types/schema/auth.schema'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
   FormControl,
@@ -20,15 +14,21 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { loginThunk } from '@/feature/auth/auth.slice'
-import { useAppDispatch } from '@/context/redux/hook'
-import { handleErrorApi } from '@/lib/form'
-import { ValidationError } from '@/types/http.type'
-import { HOME_PATH } from '@/constant/app.const'
-import { toast } from 'sonner'
-import { store } from '@/context/redux/store'
+import { Input } from '@/components/ui/input'
+import { WORKSPACE_PATH } from '@/constant/app.const'
 import messages from '@/constant/message.const'
+import { useAppDispatch } from '@/context/redux/hook'
+import { store } from '@/context/redux/store'
+import { loginThunk } from '@/feature/auth/auth.slice'
+import { handleErrorApi } from '@/lib/form'
+import { cn } from '@/lib/utils'
+import { ValidationError } from '@/types/http.type'
+import { LoginSchema, LoginsSchemaType } from '@/types/schema/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const LoginForm = ({
   className,
@@ -39,7 +39,7 @@ const LoginForm = ({
   const location = useLocation()
 
   // fallback path if no previous location
-  const from = location.state?.from?.pathname || HOME_PATH
+  const from = location.state?.from?.pathname || WORKSPACE_PATH
 
   const form = useForm<LoginsSchemaType>({
     resolver: zodResolver(LoginSchema),

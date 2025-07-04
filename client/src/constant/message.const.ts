@@ -181,8 +181,8 @@ const messages = {
     },
     updateWorkspace: {
       form: {
-        name: 'Tên không gian',
-        course: 'Môn học trước',
+        name: 'Tên môn học',
+        course: 'Môn học',
         dateStart: 'Ngày bắt đầu',
         dateEnd: 'Ngày kết thúc',
         description: 'Mô tả',
@@ -198,12 +198,12 @@ const messages = {
     },
     createWorkspace: {
       form: {
-        name: 'Tên không gian',
+        name: 'Tên môn học',
         dateStart: 'Ngày bắt đầu',
-        course: 'Môn học trước',
+        course: 'Môn học trong chương trình đào tạo',
         dateEnd: 'Ngày kết thúc',
         description: 'Mô tả',
-        submit: 'Tạo không gian'
+        submit: 'Tạo'
       },
       toast: {
         success: {
@@ -227,7 +227,7 @@ const messages = {
       }
     },
     dialogCreateWorkspace: {
-      title: 'Tạo khu vực môn học',
+      title: 'Tạo môn học',
       description: 'Khu vực môn học sẽ được tạo trong hệ thống của bạn'
     },
     project: {

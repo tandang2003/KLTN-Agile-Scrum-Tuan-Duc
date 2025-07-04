@@ -100,11 +100,13 @@ const WorkspaceDetailPage = () => {
         onOpen={setOpenDialogCreateProject}
       />
 
-      <WorkspaceCourseCheckLayer
-        workspaceId={workspaceId}
-        course={data.course}
-        prerequisiteCourse={data.prerequisiteCourse}
-      />
+      <RequiredAuth roles={['student']} mode='hide'>
+        <WorkspaceCourseCheckLayer
+          workspaceId={workspaceId}
+          course={data.course}
+          prerequisiteCourse={data.prerequisiteCourse}
+        />
+      </RequiredAuth>
     </div>
   )
 }
