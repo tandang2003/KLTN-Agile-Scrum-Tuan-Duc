@@ -29,7 +29,7 @@ public class ProjectRoleAuthorizationFilter extends AbstractAuthenticationProces
     private final JwtDecoder jwtDecoder;
 
     // @Autowired
-    public ProjectRoleAuthorizationFilter(JwtDecoder jwtDecoder) {
+    public ProjectRoleAuthorizationFilter(@Qualifier("verifyTokenDecoder") JwtDecoder jwtDecoder) {
         // super("/project/");
         super(new OrRequestMatcher(
                 new AntPathRequestMatcher("/project/**"),

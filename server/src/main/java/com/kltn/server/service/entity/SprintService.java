@@ -99,7 +99,7 @@ public class SprintService {
     }
 
     public ApiResponse<SprintResponse> teacherUpdateSprint(SprintTeacherUpdateTimeRequest updateRequest) {
-        Sprint sprint = getSprintById(updateRequest.id());
+          Sprint sprint = getSprintById(updateRequest.id());
         Instant now = ClockSimulator.now()
                              .truncatedTo(ChronoUnit.MINUTES);
         Instant start = sprint.getDtStart()
@@ -109,15 +109,15 @@ public class SprintService {
 
         boolean isOngoing = (now.equals(start) || now.equals(end) || (now.isAfter(start) && now.isBefore(end)));
 
-        if (isOngoing)
-            throw AppException.builder()
-                              .error(Error.SPRINT_ALREADY_START)
-                              .build();
-
-        if (end.isBefore(now))
-            throw AppException.builder()
-                              .error(Error.SPRINT_ALREADY_END)
-                              .build();
+//        if (isOngoing)
+//            throw AppException.builder()
+//                              .error(Error.SPRINT_ALREADY_START)
+//                              .build();
+//
+//        if (end.isBefore(now))
+//            throw AppException.builder()
+//                              .error(Error.SPRINT_ALREADY_END)
+//                              .build();
 
         sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
         List<Sprint> sprintList = sprintRepository.findAllByWorkspaceId(sprint.getWorkspace()

@@ -9,10 +9,10 @@ import java.time.Instant;
 
 import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 
-@ValidTimeRangeValidator(mainField = "start", dependencyField = "end", constraint = DateConstraint.BEFORE)
-@ValidTimeRangeValidator(mainField = "end", dependencyField = "start", constraint = DateConstraint.AFTER)
-@ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
-@ValidTimeRangeValidator(mainField = "start", constraint = DateConstraint.AFTER_NOW)
+//@ValidTimeRangeValidator(mainField = "start", dependencyField = "end", constraint = DateConstraint.BEFORE)
+//@ValidTimeRangeValidator(mainField = "end", dependencyField = "start", constraint = DateConstraint.AFTER)
+//@ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
+//@ValidTimeRangeValidator(mainField = "start", constraint = DateConstraint.AFTER_NOW)
 public record SprintTeacherUpdateTimeRequest(String id,
                                              String title,
                                              String description,
