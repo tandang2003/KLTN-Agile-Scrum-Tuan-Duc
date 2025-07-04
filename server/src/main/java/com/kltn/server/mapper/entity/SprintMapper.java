@@ -26,6 +26,7 @@ public interface SprintMapper {
 
     @Mappings({@Mapping(target = "title", source = "title"),
                @Mapping(target = "id", source = "id"),
+               @Mapping(target = "description",source = "description"),
                @Mapping(target = "storyPoint", source = "storyPoint"),
                @Mapping(target = "predict", source = "dtPredict"),
                @Mapping(target = "start", source = "dtStart"),
