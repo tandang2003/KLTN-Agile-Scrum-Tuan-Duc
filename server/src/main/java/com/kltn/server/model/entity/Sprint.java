@@ -36,6 +36,7 @@ public class Sprint extends BaseEntity {
   public Sprint(SprintEntityBuilder sprintBuilder) {
     super(sprintBuilder);
     this.title = sprintBuilder.title;
+    this.description = sprintBuilder.description;
     this.dtStart = sprintBuilder.DTStart;
     this.dtEnd = sprintBuilder.DTEnd;
     this.projectSprints = sprintBuilder.projectSprints;
