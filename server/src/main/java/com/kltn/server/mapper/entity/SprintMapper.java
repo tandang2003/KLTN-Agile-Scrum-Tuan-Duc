@@ -13,6 +13,7 @@ import java.util.Map;
 @Mapper(componentModel = "spring")
 public interface SprintMapper {
     @Mappings({@Mapping(target = "title", source = "title"),
+               @Mapping(target = "description", source = "description"),
                @Mapping(target = "dtStart", source = "start"),
                @Mapping(target = "dtEnd", source = "end"),
                @Mapping(target = "storyPoint", source = "storyPoint"),
@@ -47,6 +48,7 @@ public interface SprintMapper {
     SprintResponse toSprintStudentUpdateResponse(ProjectSprint projectSprint);
 
     @Mappings({@Mapping(target = "title", source = "updateRequest.title"),
+               @Mapping(target = "description", source = "updateRequest.description"),
                @Mapping(target = "storyPoint", source = "updateRequest.storyPoint"),
                @Mapping(target = "dtStart", source = "updateRequest.start"),
                @Mapping(target = "dtEnd", source = "updateRequest.end"),

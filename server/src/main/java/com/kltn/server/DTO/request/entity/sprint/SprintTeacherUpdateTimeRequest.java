@@ -15,6 +15,7 @@ import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 @ValidTimeRangeValidator(mainField = "start", constraint = DateConstraint.AFTER_NOW)
 public record SprintTeacherUpdateTimeRequest(String id,
                                              String title,
+                                             String description,
                                              @DateTimeFormat(pattern = LOCAL_DATE_TIME)
                                              Instant start,
                                              @DateTimeFormat(pattern = LOCAL_DATE_TIME)
@@ -28,6 +29,7 @@ public record SprintTeacherUpdateTimeRequest(String id,
     public static class SprintTeacherUpdateTimeRequestBuilder {
         private String id;
         private String title;
+        private String description;
         private Instant dtStart;
         private Instant dtEnd;
         private Instant predict;
@@ -49,6 +51,11 @@ public record SprintTeacherUpdateTimeRequest(String id,
         public SprintTeacherUpdateTimeRequestBuilder title(String title) {
             this.title = title;
             return this;
+        }
+
+        public SprintTeacherUpdateTimeRequestBuilder description(String description) {
+          this.description = description;
+          return this;
         }
 
         public SprintTeacherUpdateTimeRequestBuilder storyPoint(int storyPoint) {
@@ -73,7 +80,7 @@ public record SprintTeacherUpdateTimeRequest(String id,
 
 
         public SprintTeacherUpdateTimeRequest build() {
-            return new SprintTeacherUpdateTimeRequest(id, title, dtStart, dtEnd, storyPoint, predict, position);
+            return new SprintTeacherUpdateTimeRequest(id, title, description,dtStart, dtEnd, storyPoint, predict, position);
         }
 
     }

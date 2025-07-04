@@ -14,6 +14,7 @@ import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
 @ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
 public record SprintCreationRequest(@NotEmpty String workspaceId,
                                     String title,
+                                    String description,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant start,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant end,
                                     int storyPoint,
@@ -24,6 +25,7 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
   public static class SprintCreationRequestBuilder {
     private String workspaceId;
     private String title;
+    private String description;
     private Instant dtStart;
     private Instant dtEnd;
     private Instant predict;
@@ -37,6 +39,11 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
 
     public SprintCreationRequestBuilder title(String title) {
       this.title = title;
+      return this;
+    }
+
+    public SprintCreationRequestBuilder description(String description) {
+      this.description = description;
       return this;
     }
 
@@ -66,7 +73,7 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
     }
 
     public SprintCreationRequest build() {
-      return new SprintCreationRequest(workspaceId, title, dtStart, dtEnd, storyPoint, predict, position);
+      return new SprintCreationRequest(workspaceId, title, description, dtStart, dtEnd, storyPoint, predict, position);
     }
 
   }

@@ -13,6 +13,9 @@ public class Sprint extends BaseEntity {
   @Column(name = "title",
           columnDefinition = "LONGTEXT")
   private String title;
+  @Column(name = "description",
+    columnDefinition = "LONGTEXT")
+  private String description;
   @Column(name = "dt_start")
   private Instant dtStart;
   @Column(name = "dt_end")
@@ -51,6 +54,7 @@ public class Sprint extends BaseEntity {
     private int storyPoint;
     private Instant dtPredict;
     private String title;
+    private String description;
     private Instant DTStart;
     private Instant DTEnd;
     private List<ProjectSprint> projectSprints;
@@ -76,6 +80,11 @@ public class Sprint extends BaseEntity {
 
     public SprintEntityBuilder storyPoint(int storyPoint) {
       this.storyPoint = storyPoint;
+      return this;
+    }
+
+    public SprintEntityBuilder description(String description) {
+      this.description = description;
       return this;
     }
 
@@ -206,5 +215,12 @@ public class Sprint extends BaseEntity {
     this.issues = issues;
   }
 
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }
 
