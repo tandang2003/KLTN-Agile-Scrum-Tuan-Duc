@@ -95,7 +95,8 @@ const BaseIssueSchema = z
     assigneeId: z.string().optional(),
     reviewerId: z.string().optional(),
     subtasks: z.array(SubTaskModelSchema).optional(),
-    date: dateRange.optional()
+    date: dateRange.optional(),
+    complexOfDescription: z.number().optional()
   })
   .partial()
   .extend({

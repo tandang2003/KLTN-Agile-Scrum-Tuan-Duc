@@ -74,6 +74,7 @@ export enum StorageItem {
   Simulator = 'simulator'
 }
 export const HOME_PATH = '/'
+export const WORKSPACE_PATH = '/manager/workspace'
 export const LOGIN_PATH = '/auth/login'
 export const WEIGHT_POSITION = 1000
 export const MAX_SIZE = 2 * 1024 * 1024 // 2MB
