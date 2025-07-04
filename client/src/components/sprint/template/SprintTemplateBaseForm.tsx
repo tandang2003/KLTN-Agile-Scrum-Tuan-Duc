@@ -1,3 +1,4 @@
+import Editor from '@/components/Editor'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
@@ -100,6 +101,7 @@ const SprintTemplateBaseForm = ({
   }
 
   const handleSubmit = (values: CreateSprintFormType) => {
+    console.log(values)
     onSubmit?.(values, form)
   }
 
@@ -121,21 +123,21 @@ const SprintTemplateBaseForm = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name='storyPoint'
+              name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{message.storyPoint.label}</FormLabel>
+                  <FormLabel>{message.description.label}</FormLabel>
                   <FormDescription>
-                    {message.storyPoint.description}
+                    {message.description.description}
                   </FormDescription>
                   <FormControl>
-                    <Input
-                      type='number'
-                      placeholder={message.storyPoint.placeholder}
+                    <Editor
+                      className='h-full'
                       {...field}
-                      onChange={field.onChange}
+                      classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
                   </FormControl>
                   <FormMessage />
@@ -223,26 +225,49 @@ const SprintTemplateBaseForm = ({
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name='predict'
-              render={({ field }) => (
-                <FormItem className='flex-1 shrink-0'>
-                  <FormLabel>{message.predict}</FormLabel>
-                  <DatePickerWithPresets
-                    date={field.value}
-                    min={form.getValues('start')}
-                    max={form.getValues('end')}
-                    setDate={(date) => {
-                      if (date) {
-                        field.onChange(new Date(date))
-                      }
-                    }}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='mt-4 flex gap-3'>
+              <FormField
+                control={form.control}
+                name='predict'
+                render={({ field }) => (
+                  <FormItem className='flex-1 shrink-0'>
+                    <FormLabel>{message.predict}</FormLabel>
+                    <DatePickerWithPresets
+                      date={field.value}
+                      min={form.getValues('start')}
+                      max={form.getValues('end')}
+                      setDate={(date) => {
+                        if (date) {
+                          field.onChange(new Date(date))
+                        }
+                      }}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='storyPoint'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{message.storyPoint.label}</FormLabel>
+                    <FormDescription>
+                      {message.storyPoint.description}
+                    </FormDescription>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        placeholder={message.storyPoint.placeholder}
+                        {...field}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           <Button

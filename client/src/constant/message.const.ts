@@ -10,7 +10,17 @@ import {
 const messages = {
   validation: {
     uniId: 'Mã sinh viên cần 8 ký tự',
-    inviteSelf: 'Bạn không thể mời chính mình'
+    inviteSelf: 'Bạn không thể mời chính mình',
+    sprint: {
+      form: {
+        name: 'Tên sprint không được để trống',
+        storyPoint: 'Số điểm sprint phải là số dương',
+        startDate: 'Ngày bắt đầu phải trước ngày kết thúc',
+        endDate: 'Ngày kết thúc phải sau ngày bắt đầu',
+        predict: 'Dự đoán kết thúc phải nằm trong khoảng thời gian của sprint',
+        description: 'Mô tả sprint không được để trống'
+      }
+    }
   },
   auth: {
     login: {
@@ -298,6 +308,11 @@ const messages = {
             placeholder: 'Nhập số điểm',
             description:
               'Số điểm của Sprint này, dùng để tính toán khối lượng công việc'
+          },
+          description: {
+            label: 'Mô tả Sprint',
+            placeholder: 'Nhập mô tả Sprint',
+            description: 'Mô tả Sprint này, có thể để trống'
           },
           duration: 'Thời gian Sprint',
           startDate: 'Ngày bắt đầu',
