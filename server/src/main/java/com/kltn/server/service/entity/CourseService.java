@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -35,11 +36,8 @@ public class CourseService {
 
   @Autowired
   public CourseService(CourseRepository courseRepository, CourseMapper courseMapper,
-                       @Lazy
-                       UserService userService,
-                       UserCourseRelationRepository userCourseRelationRepository,
-                       @Lazy
-                       UserCourseService userCourseService) {
+                       @Lazy UserService userService, UserCourseRelationRepository userCourseRelationRepository,
+                       @Lazy UserCourseService userCourseService) {
     this.courseRepository = courseRepository;
     this.courseMapper = courseMapper;
     this.userService = userService;
@@ -59,19 +57,32 @@ public class CourseService {
 
   public ApiResponse<List<CourseResponse>> getPrerequisiteCourse(String courseId) {
     Course course = getCourse(courseId);
-    List<Course> prerequisiteCourses = course.getDependentCourses()
-      .stream()
-      .map(CourseRelation::getPrerequisiteCourse)
-      .toList()
-      ;
-    List<CourseResponse> courseResponses = courseMapper.toListResponse(prerequisiteCourses);
+    List<Course> courses = new ArrayList<>();
+    recursiveFindingPrerequisiteCourse(courses, course);
+
+
+    List<CourseResponse> courseResponses = courseMapper.toListResponse(courses);
     return ApiResponse.<List<CourseResponse>>builder()
       .code(200)
       .data(courseResponses)
       .message("Get all prerequisite course successful")
       .build();
+  }
 
-
+  public void recursiveFindingPrerequisiteCourse(List<Course> courses, Course course) {
+    if (courses == null || course.getDependentCourses().isEmpty()) {
+      return;
+    } else {
+      List<Course> prerequited = course.getDependentCourses()
+        .stream()
+        .map(CourseRelation::getPrerequisiteCourse)
+        .toList()
+        ;
+      for (Course prerequisiteCourse : prerequited) {
+        recursiveFindingPrerequisiteCourse(courses, prerequisiteCourse);
+        courses.add(prerequisiteCourse);
+      }
+    }
   }
 
   public ApiResponse<List<CourseResponse>> getDependentCourse(String courseId) {
@@ -102,8 +113,7 @@ public class CourseService {
   }
 
   public Course getCourse(String id) {
-    return courseRepository
-      .findById(id)
+    return courseRepository.findById(id)
 //      .findByCourseId(id)
       .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_COURSE).build());
   }
@@ -130,17 +140,13 @@ public class CourseService {
           .courseId(dependentCourse.getId())
           .userId(user.getId())
           .build());
-        if (!flag)
-          throw AppException.builder()
-            .error(Error.MISSING_PREREQUISITE)
-            .message(String.format(Error.MISSING_PREREQUISITE.getMessage(), dependentCourse.getName(), course.getName()))
-            .build();
+        if (!flag) throw AppException.builder()
+          .error(Error.MISSING_PREREQUISITE)
+          .message(String.format(Error.MISSING_PREREQUISITE.getMessage(), dependentCourse.getName(), course.getName()))
+          .build();
       }
       UserCourseRelation userCourseRelation = UserCourseRelation.builder()
-        .id(UserCourseRelationId.builder()
-          .userId(user.getId())
-          .courseId(course.getCourseId())
-          .build())
+        .id(UserCourseRelationId.builder().userId(user.getId()).courseId(course.getCourseId()).build())
         .course(course)
         .user(user)
         .point(entry.getValue())
@@ -154,19 +160,21 @@ public class CourseService {
 
   }
 
-  public ApiResponse<UserCourseResponse> updatePoint(@Valid UserCourseUpdateRequest userCourse) {
-    UserCourseRelation relation = userCourseService.save(userCourse);
-    return ApiResponse.<UserCourseResponse>builder()
+  public ApiResponse<List<UserCourseResponse>> updatePoint(@Valid UserCourseUpdateRequest userCourse) {
+//    UserCourseRelation relation = userCourseService.save(userCourse);
+    List<UserCourseRelation> relations = new ArrayList<>();
+    String userID = userCourse.getUserId();
+    for (UserCourseUpdateRequest.CoursePointUpdateDetail course : userCourse.getCoursePoints()) {
+      relations.add(userCourseService.save(userID, course.getCourseId(), course.getPoint()));
+    }
+    return ApiResponse.<List<UserCourseResponse>>builder()
       .code(200)
-      .data(courseMapper.toUserCourseResponse(relation))
+      .data(courseMapper.toListUserCourseResponse(relations))
       .build();
   }
 
   public ApiResponse<Boolean> deleteUserCourse(String userId, String courseId) {
-    boolean flag=userCourseService.delete(userId,courseId);
-       return ApiResponse.<Boolean>builder()
-      .code(200)
-      .data(flag)
-      .build();
+    boolean flag = userCourseService.delete(userId, courseId);
+    return ApiResponse.<Boolean>builder().code(200).data(flag).build();
   }
 }
