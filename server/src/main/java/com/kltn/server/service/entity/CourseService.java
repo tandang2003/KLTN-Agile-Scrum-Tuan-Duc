@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,11 +55,11 @@ public class CourseService {
 
   public ApiResponse<List<CourseResponse>> getPrerequisiteCourse(String courseId) {
     Course course = getCourse(courseId);
-    List<Course> courses = new ArrayList<>();
+    Set<Course> courses = new LinkedHashSet<>();
     recursiveFindingPrerequisiteCourse(courses, course);
 
 
-    List<CourseResponse> courseResponses = courseMapper.toListResponse(courses);
+    List<CourseResponse> courseResponses = courseMapper.toListResponse(courses.stream().toList());
     return ApiResponse.<List<CourseResponse>>builder()
       .code(200)
       .data(courseResponses)
@@ -69,7 +67,7 @@ public class CourseService {
       .build();
   }
 
-  public void recursiveFindingPrerequisiteCourse(List<Course> courses, Course course) {
+  public void recursiveFindingPrerequisiteCourse(Set<Course> courses, Course course) {
     if (courses == null || course.getDependentCourses().isEmpty()) {
       return;
     } else {
@@ -85,14 +83,27 @@ public class CourseService {
     }
   }
 
+  public void recursiveFindingDependentCourse(Set<Course> courses, Course course) {
+    if (courses == null || course.getPrerequisiteCourses().isEmpty()) {
+      return;
+    } else {
+      List<Course> prerequited = course.getPrerequisiteCourses()
+        .stream()
+        .map(CourseRelation::getDependentCourse)
+        .toList()
+        ;
+      for (Course prerequisiteCourse : prerequited) {
+        courses.add(prerequisiteCourse);
+        recursiveFindingDependentCourse(courses, prerequisiteCourse);
+      }
+    }
+  }
+
   public ApiResponse<List<CourseResponse>> getDependentCourse(String courseId) {
     Course course = getCourse(courseId);
-    List<Course> prerequisiteCourses = course.getPrerequisiteCourses()
-      .stream()
-      .map(CourseRelation::getDependentCourse)
-      .toList()
-      ;
-    List<CourseResponse> courseResponses = courseMapper.toListResponse(prerequisiteCourses);
+    Set<Course> courses = new LinkedHashSet<>();
+    recursiveFindingDependentCourse(courses, course);
+    List<CourseResponse> courseResponses = courseMapper.toListResponse(courses.stream().toList());
     return ApiResponse.<List<CourseResponse>>builder()
       .code(200)
       .data(courseResponses)
