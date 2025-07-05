@@ -5,7 +5,6 @@ import com.kltn.server.DTO.request.entity.course.UserCourseUpdateRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.course.CourseResponse;
 import com.kltn.server.DTO.response.course.UserCourseResponse;
-import com.kltn.server.model.entity.Course;
 import com.kltn.server.service.entity.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,7 @@ public class CourseController {
   }
 
   @PutMapping
-  public ResponseEntity<ApiResponse<UserCourseResponse>> updatePoint(
+  public ResponseEntity<ApiResponse<List<UserCourseResponse>>> updatePoint(
     @Valid @RequestBody UserCourseUpdateRequest userCourse) {
     var response = courseService.updatePoint(userCourse);
     return ResponseEntity.status(response.getCode()).body(response);
