@@ -137,9 +137,7 @@ const ClockSimulator = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className='fixed bottom-5 left-5 z-50' asChild>
-        {ClockDisplay}
-      </DialogTrigger>
+      <DialogTrigger asChild>{ClockDisplay}</DialogTrigger>
       <DialogContent className='top-1/4' aria-describedby={undefined}>
         <DialogTitle />
         <DialogHeader>
