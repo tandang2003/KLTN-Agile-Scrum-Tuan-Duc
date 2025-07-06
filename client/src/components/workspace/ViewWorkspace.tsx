@@ -87,7 +87,7 @@ const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
           {messages.component.viewWorkspace.timeline.title}
         </h3>
         <div>
-          <Timeline orientation='horizontal' className='min-h-40'>
+          <Timeline orientation='vertical' className='min-h-40'>
             {sprints?.map((item, index) => {
               return (
                 <TimelineItem
@@ -113,7 +113,7 @@ const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
                   <TimelineContent>
                     <ToolTip
                       trigger={
-                        <TimelineTitle className='line-clamp-1'>
+                        <TimelineTitle className='line-clamp-1 inline'>
                           {item.title}
                         </TimelineTitle>
                       }

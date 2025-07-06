@@ -18,6 +18,7 @@ import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/templat
 import WorkspacePage from '@/pages/manager/workspace/page'
 import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import BoardPage from '@/pages/manager/workspace/project/board/page'
+import ProjectDashBoard from '@/pages/manager/workspace/project/dashboard/page'
 import ProjectPage from '@/pages/manager/workspace/project/page'
 import ReportPage from '@/pages/manager/workspace/project/report/page'
 import NotFoundPage from '@/pages/not-found'
@@ -105,6 +106,7 @@ const AppRoutes = () => {
                       <Route path='board' element={<BoardPage />} />
                       <Route path='backlog' element={<BacklogPage />} />
                       <Route path='report' element={<ReportPage />} />
+                      <Route path='dashboard' element={<ProjectDashBoard />} />
                     </Route>
                   </Route>
                 </Route>
