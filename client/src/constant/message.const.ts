@@ -62,6 +62,19 @@ const messages = {
     }
   },
   component: {
+    dashboard: {
+      chart: {
+        issueTrend: {
+          title: 'Sự biến thiên của issue',
+          labelX: 'Sprint',
+          labelY: 'Số lượng issue',
+          dataset: {
+            labelIssueAdded: 'Issue được thêm',
+            labelIssueRemoved: 'Issue bị loại bỏ'
+          }
+        }
+      }
+    },
     dataTable: {
       pagination: {
         previous: 'Trang trước',
@@ -91,12 +104,14 @@ const messages = {
       sprint: {
         columns: {
           id: '#',
-          title: 'Tên nhóm',
+          title: 'Tên Sprint',
           point: 'Điểm',
           status: 'Trạng thái',
           start: 'Ngày bắt đầu',
           end: 'Ngày kết thúc',
-          predict: 'Dự đoán kết thúc'
+          predict: 'Dự đoán kết thúc',
+          predictStatus: 'Trạng thái dự đoán',
+          detail: 'Chi tiết'
         },
         actions: {
           report: 'Báo cáo'
@@ -561,7 +576,8 @@ const messages = {
       navigate: {
         backlog: 'Backlog',
         board: 'Bảng',
-        report: 'Báo cáo'
+        report: 'Báo cáo',
+        dashboard: 'Thống kê'
       },
       backlog: {
         list: {
