@@ -5,6 +5,7 @@ import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppSelector } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 import { DEFAULT_POSITION } from '@/lib/board.helper'
 import boardService from '@/services/board.service'
 import issueService from '@/services/issue.service'
@@ -13,7 +14,7 @@ import { Id } from '@/types/other.type'
 import { ProjectParams } from '@/types/route.type'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -21,6 +22,7 @@ const BoardPage = () => {
   const { projectId } = useParams<ProjectParams>()
   const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
   const sprintId = sprint?.id
+  const { sprint: currentSprint } = useSprintCurrent()
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
@@ -45,6 +47,13 @@ const BoardPage = () => {
         })
     }
   }, [projectId, sprintId])
+
+  const isDisabled = useMemo(() => {
+    if (!projectId || !sprintId) return true
+    if (!currentSprint) return true
+    if (currentSprint.id !== sprintId) return true
+    return false
+  }, [projectId, sprintId, currentSprint])
 
   const handleOnChangeAPI = useCallback(
     (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
@@ -167,6 +176,7 @@ const BoardPage = () => {
               indexTo: data.indexTo
             })
           }}
+          disabled={isDisabled}
         />
       )}
       <DialogUpdateIssue />

@@ -34,7 +34,7 @@ spring:
         spring:
           json:
             type:
-              mapping: "project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
+              mapping: "send_mail: com.kltn.server.DTO.request.base.MailRequest, project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -44,7 +44,7 @@ spring:
             trusted:
               packages: com.kltn.server.DTO.request.log, com.kltn.server.DTO.request.kafka
             type:
-              mapping: "project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
+              mapping: "send_mail: com.kltn.server.DTO.request.base.MailRequest, project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
     bootstrap-servers: localhost:9092
 #    , localhost:9093, localhost:9094
 
@@ -98,8 +98,6 @@ app:
 
 verify:
   invite-project-link: https://localhost:3000/verify?token=
-data:
-  filepath: "resources/data"
 #kafka:
 #  topic:
 #    send-object-customer:

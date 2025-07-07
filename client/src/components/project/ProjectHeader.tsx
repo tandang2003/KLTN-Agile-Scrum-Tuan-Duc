@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon'
 import Notification from '@/components/notification/Notification'
 import DialogInviteStudentProject from '@/components/project/DialogInviteStudentProject'
+import DialogStudentProject from '@/components/project/DialogStudentProject'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,7 @@ type ProjectHeaderProps = {
 
 const ProjectHeader = ({ data }: ProjectHeaderProps) => {
   const [open, setIsOpen] = useState<boolean>(false)
+  const [openDialogMember, setOpenDialogMember] = useState<boolean>(false)
   return (
     <>
       <div className='flex items-center rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 pb-2 text-white'>
@@ -41,11 +43,22 @@ const ProjectHeader = ({ data }: ProjectHeaderProps) => {
                   {messages.component.project.header.dropdown.invite}
                 </DropdownMenuItem>
               </RequiredAuth>
+              <DropdownMenuItem
+                className='hover-opacity'
+                onClick={() => setOpenDialogMember(true)}
+              >
+                <Icon icon={'fluent-mdl2:add-friend'} />
+                {messages.component.project.header.dropdown.members}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
       <DialogInviteStudentProject open={open} onOpen={setIsOpen} />
+      <DialogStudentProject
+        open={openDialogMember}
+        onOpen={setOpenDialogMember}
+      />
     </>
   )
 }
