@@ -35,7 +35,7 @@ restore-mysql:
 	@db_name="$(DB_NAME)"; \
 	read -p "Enter timestamp (or type 'last'): " ts; \
 	if [ "$$ts" = "last" ]; then \
-		ts=$$(basename $$(ls -d $(CURDIR)/data/mysql/*/ | tail -n 1))
+		ts=$$(basename $$(ls -d $(CURDIR)/data/mysql/*/ | tail -n 1));  \
 	fi; \
 	echo "♻️ Restoring from timestamp: $$ts"; \
 	. $(VENV) && $(PYTHON) -m $(RESTORE_SCRIPT_MYSQL) $$ts
@@ -60,7 +60,7 @@ restore-mongo:
 	@db_name="$(DB_NAME)"; \
 	read -p "Enter timestamp (or type 'last'): " ts; \
 	if [ "$$ts" = "last" ]; then \
-		ts=$$(basename $$(ls -d $(CURDIR)/data/mongo/*/ | tail -n 1))
+		ts=$$(basename $$(ls -d $(CURDIR)/data/mongo/*/ | tail -n 1));\
 	fi; \
 	echo "♻️ Restoring from timestamp: $$ts"; \
 	. $(VENV) && $(PYTHON) -m $(RESTORE_SCRIPT_MONGO) $$ts

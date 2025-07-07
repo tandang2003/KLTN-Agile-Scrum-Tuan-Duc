@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.kltn.server.service.entity.WorkspaceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.*;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("decision")
@@ -63,6 +65,7 @@ public class DecisionController {
   @Value("${data.filepath}")
   String filePathOfData;
 
+  @Autowired
   public DecisionController(DecisionService decisionService, WorkspaceService workspaceService, ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository, IssueService issueService) {
     this.decisionService = decisionService;
     this.workspaceService = workspaceService;
@@ -85,17 +88,18 @@ public class DecisionController {
   }
 
   @GetMapping("store-data")
-  public ResponseEntity<ApiResponse<Boolean>> storeData(@RequestParam String stage) {
+  public ResponseEntity<ApiResponse<Boolean>> storeData(@RequestParam String stage, @RequestParam String workspaceId) {
     Instant now = ClockSimulator.now();
-//    List<Sprint> sprints = sprintRepository.findAllByDtStartAfterAndDtEndBefore(now, now);
-    List<Sprint> sprints = sprintRepository.getAllByDtCreatedAfter(now);
+    Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
+    List<Sprint> sprints = workspace.getSprints()
+      .stream()
+      .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
+      .collect(Collectors.toList());
     for (Sprint sprint : sprints) {
-      Workspace workspace = sprint.getWorkspace();
-//      if (sprint.getDtStart().isBefore(now) && sprint.getDtEnd().isAfter(now)) {
-        List<Project> projects = sprint.getProjects();
-        for (Project project : projects) {
-          writeToExcel(workspace.getId(), project.getId(), sprint.getId(), stage);
-        }
+      List<Project> projects = sprint.getProjects();
+      for (Project project : projects) {
+        writeToExcel(workspace.getId(), project.getId(), sprint.getId(), stage);
+      }
 //      }
     }
     return ResponseEntity.ok().body(ApiResponse.<Boolean>builder().data(true).build());
@@ -107,12 +111,16 @@ public class DecisionController {
     Project project = projectService.getProjectById(projectId);
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
     List<Issue> issues = issueService.getIssuesBySprintId(sprintId, projectId);
-    String courseFile = filePathOfData + "/" + stage + "/" + workspace.getName();
+    String courseFile = this.filePathOfData + "/" + stage + "/" + workspace.getName();
     String sprintFilePath = courseFile + "/" + "sprint.xlsx";
     String issueFilePath = courseFile + "/" + "issue.xlsx";
 
 
     File file = new File(sprintFilePath);
+    File parentDir = file.getParentFile();
+    if (parentDir != null && !parentDir.exists()) {
+      parentDir.mkdirs(); // create directories if not exist
+    }
     Workbook workbook;
     Sheet sheet;
     try {
@@ -137,43 +145,41 @@ public class DecisionController {
       // Append new data row
       int rowCount = sheet.getLastRowNum();
       Row newRow = sheet.createRow(rowCount + 1);
-//      for (int i = 0; i < sprintRow.length; i++) {
-//        Cell cell = newRow.createCell(i);
-//        switch (sprintRow[i]) {
-//          case "project_id":
-//            cell.setCellValue(projectId);
-//            break;
-//          case "sprint_id":
-//            cell.setCellValue(sprint.getId());
-//            break;
-//          case "planday":
-//            cell.setCellValue(decisionService.calculateSprintDuration(sprint));
-//            break;
-//          case "no_issue_starttime":
-//            cell.setCellValue(issueService.getNumberOfIssuesAtStart(project, sprint));
-//            break;
-//          case "no_issue_added":
-//            cell.setCellValue(issueService.getNumberOfIssuesAdded(project, sprint));
-//            break;
-//          case "no_issue_removed":
-//            cell.setCellValue(issueService.getNumberOfIssuesRemoved(project, sprint));
-//            break;
-//          case "no_issue_todo":
-//            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
-//            break;
-//          case "no_issue_inprogress":
-//            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.INPROCESS));
-//            break;
-//          case "no_issue_done":
-//            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
-//            break;
-//          case "no_team_size":
-//            cell.setCellValue(issueService.getNumberOfMembersInSprint(project, sprint));
-//
-//            break;
-//        }
-//
-//      }
+      for (int i = 0; i < sprintRow.length; i++) {
+        Cell cell = newRow.createCell(i);
+        switch (sprintRow[i]) {
+          case "project_id":
+            cell.setCellValue(projectId);
+            break;
+          case "sprint_id":
+            cell.setCellValue(sprint.getId());
+            break;
+          case "planday":
+            cell.setCellValue(decisionService.calculateSprintDuration(sprint));
+            break;
+          case "no_issue_starttime":
+            cell.setCellValue(issueService.getNumberOfIssuesAtStart(project, sprint));
+            break;
+          case "no_issue_added":
+            cell.setCellValue(issueService.getNumberOfIssuesAdded(project, sprint));
+            break;
+          case "no_issue_removed":
+            cell.setCellValue(issueService.getNumberOfIssuesRemoved(project, sprint));
+            break;
+          case "no_issue_todo":
+            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
+            break;
+          case "no_issue_inprogress":
+            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.INPROCESS));
+            break;
+          case "no_issue_done":
+            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
+            break;
+          case "no_team_size":
+            cell.setCellValue(issueService.getNumberOfMembersInSprint(project, sprint));
+            break;
+        }
+      }
 
       // Write to file
       FileOutputStream fos = new FileOutputStream(sprintFilePath);
@@ -187,7 +193,10 @@ public class DecisionController {
       e.printStackTrace();
     }
     file = new File(issueFilePath);
-
+    parentDir = file.getParentFile();
+    if (parentDir != null && !parentDir.exists()) {
+      parentDir.mkdirs(); // create directories if not exist
+    }
 
     try {
       if (file.exists()) {
@@ -211,56 +220,59 @@ public class DecisionController {
 
       // Append new data row
       int rowCount = sheet.getLastRowNum();
-//      for (Issue issue : issues) {
-//        Row newRow = sheet.createRow(rowCount + 1);
-//        for (int i = 0; i < issueRow.length; i++) {
-//          Cell cell = newRow.createCell(i);
-//          switch (issueRow[i]) {
-//            case "project_id":
-//              cell.setCellValue(projectId);
-//              break;
-//            case "sprint_id":
-//              cell.setCellValue(sprintId);
-//              break;
-//            case "type":
-//              cell.setCellValue(issue.getTag().name());
-//              break;
-//            case "priority":
-//              cell.setCellValue(issue.getPriority().name());
-//              break;
-//            case "no_affect_version":
-//              cell.setCellValue(issueService.getNumberOfAffectVersions(issue.getId()));
-//              break;
-//            case "no_fix_version":
-//              cell.setCellValue(issueService.getNumberOfFixVersions(issue.getId()));
-//              break;
-//            case "no_link":
-//              cell.setCellValue(issueService.getNumberOfLink(issue.getId()));
-//              break;
-//            case "no_issue_blocking":
-//              cell.setCellValue(issueService.getNumberOfBlocked(issue.getId()));
-//              break;
-//            case "no_issue_blocked":
-//              cell.setCellValue(issueService.getNumberOfBlock(issue.getId()));
-//              break;
-//            case "no_fix_version_change":
-//              cell.setCellValue(issueService.getNumChangeFixVersion(issue.getId()));
-//              break;
-//            case "no_priority_change":
-//              cell.setCellValue(issue.getNumChangeOfPriority());
-//              break;
-//            case "no_description_change":
-//              cell.setCellValue(issue.getNumChangeOfDescription());
-//              break;
-//            case "complexity_of_description":
-//              cell.setCellValue(issue.getComplexOfDescription());
-//              break;
-//            case "suitable_assignee":
-//              cell.setCellValue(issueService.calculateCompatibleOfAssignee(issue));
-//              break;
-//          }
-//        }
-//      }
+      for (Issue issue : issues) {
+        Row newRow = sheet.createRow(rowCount + 1);
+        for (int i = 0; i < issueRow.length; i++) {
+          Cell cell = newRow.createCell(i);
+          switch (issueRow[i]) {
+            case "issue_name":
+              cell.setCellValue(issue.getName());
+              break;
+            case "project_id":
+              cell.setCellValue(projectId);
+              break;
+            case "sprint_id":
+              cell.setCellValue(sprintId);
+              break;
+            case "type":
+              cell.setCellValue(issue.getTag().name());
+              break;
+            case "priority":
+              cell.setCellValue(issue.getPriority().name());
+              break;
+            case "no_affect_version":
+              cell.setCellValue(issueService.getNumberOfAffectVersions(issue.getId()));
+              break;
+            case "no_fix_version":
+              cell.setCellValue(issueService.getNumberOfFixVersions(issue.getId()));
+              break;
+            case "no_link":
+              cell.setCellValue(issueService.getNumberOfLink(issue.getId()));
+              break;
+            case "no_issue_blocking":
+              cell.setCellValue(issueService.getNumberOfBlocked(issue.getId()));
+              break;
+            case "no_issue_blocked":
+              cell.setCellValue(issueService.getNumberOfBlock(issue.getId()));
+              break;
+            case "no_fix_version_change":
+              cell.setCellValue(issueService.getNumChangeFixVersion(issue.getId()));
+              break;
+            case "no_priority_change":
+              cell.setCellValue(issue.getNumChangeOfPriority());
+              break;
+            case "no_description_change":
+              cell.setCellValue(issue.getNumChangeOfDescription());
+              break;
+            case "complexity_of_description":
+              cell.setCellValue(issue.getComplexOfDescription());
+              break;
+            case "suitable_assignee":
+              cell.setCellValue(issueService.calculateCompatibleOfAssignee(issue));
+              break;
+          }
+        }
+      }
       // Write to file
       FileOutputStream fos = new FileOutputStream(issueFilePath);
       workbook.write(fos);
