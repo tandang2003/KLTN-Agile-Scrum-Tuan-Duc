@@ -97,7 +97,9 @@ app:
     - /ws
 
 verify:
-  invite-project-link: http://localhost:3000/invite?token=
+  invite-project-link: https://localhost:3000/verify?token=
+data:
+  filepath: resources/data
 #kafka:
 #  topic:
 #    send-object-customer:

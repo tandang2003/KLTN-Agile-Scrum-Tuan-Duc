@@ -45,10 +45,7 @@ public class DecisionService {
     Instant start = sprint.getDtStart();
     Instant now = ClockSimulator.now();
     if (start.isAfter(now)) {
-      throw AppException.builder()
-        .error(Error.SPRINT_CONFLICT_TIME)
-        .message("Sprint has not started yet")
-        .build();
+      throw AppException.builder().error(Error.SPRINT_CONFLICT_TIME).message("Sprint has not started yet").build();
     }
     IterationModel.IterationModelBuilder iterationModelBuilder = IterationModel.builder();
     iterationModelBuilder.sprint_id(sprintId);
@@ -57,8 +54,7 @@ public class DecisionService {
     iterationModelBuilder.numOfIssueAdded(issueService.getNumberOfIssuesAdded(project, sprint));
     iterationModelBuilder.numOfIssueRemoved(issueService.getNumberOfIssuesRemoved(project, sprint));
     iterationModelBuilder.numOfIssueTodo(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
-    iterationModelBuilder.numOfIssueInProgress(
-      issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.INPROCESS));
+    iterationModelBuilder.numOfIssueInProgress(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.INPROCESS));
     iterationModelBuilder.numOfIssueDone(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
     iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
     iterationModelBuilder.issueModelList(getIssuesInSprint(project, sprint));
@@ -71,10 +67,7 @@ public class DecisionService {
   private List<IssueModel> getIssuesInSprint(Project project, Sprint sprint) {
     List<Issue> issues = issueService.getIssuesBySprintId(project.getId(), sprint.getId());
     if (issues == null || issues.isEmpty()) {
-      throw AppException.builder()
-        .error(Error.NOT_FOUND)
-        .message("No issues found in the sprint")
-        .build();
+      throw AppException.builder().error(Error.NOT_FOUND).message("No issues found in the sprint").build();
     }
     List<IssueModel> issueModels = new ArrayList<>();
     for (Issue issue : issues) {
@@ -100,13 +93,11 @@ public class DecisionService {
     return issueModels;
   }
 
-  private int calculateSprintDuration(Sprint sprint) {
+  public int calculateSprintDuration(Sprint sprint) {
     if (sprint.getDtStart() == null || sprint.getDtEnd() == null) {
       return 0;
     }
-    return (int) (sprint.getDtEnd()
-      .toEpochMilli() - sprint.getDtStart()
-      .toEpochMilli()) / (1000 * 60 * 60 * 24);
+    return (int) (sprint.getDtEnd().toEpochMilli() - sprint.getDtStart().toEpochMilli()) / (1000 * 60 * 60 * 24);
   }
 
 
