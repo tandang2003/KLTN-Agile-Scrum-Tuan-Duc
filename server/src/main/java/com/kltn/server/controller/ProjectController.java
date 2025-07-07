@@ -56,7 +56,7 @@ public class ProjectController {
   }
 
   @GetMapping("/{projectId}/members")
-  @PreAuthorize("hasAuthority('assign_project_members')")
+//  @PreAuthorize("hasAuthority('assign_project_members')")
   public ResponseEntity<ApiResponse<List<UserResponse>>> getMembersOfProject(@PathVariable String projectId) {
     ApiResponse<List<UserResponse>> members = projectService.getMembersOfProject(projectId);
     return ResponseEntity.status(members.getCode())

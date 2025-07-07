@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public record MailRequest(String to, String templateName, Map<String, String> variable,
-                          Map<String, String> resource, Map<String, Object> data, String confirmationLink) {
+                          Map<String, String> resource, Map<String, String> data, String confirmationLink) {
 
 
     public static class MailRequestBuilder {
@@ -13,7 +13,7 @@ public record MailRequest(String to, String templateName, Map<String, String> va
         private String templateName;
         private Map<String, String> variable;
         private Map<String, String> resource;
-        private Map<String, Object> data;
+        private Map<String, String> data;
         private String confirmationLink;
 
         public MailRequestBuilder() {
@@ -26,7 +26,7 @@ public record MailRequest(String to, String templateName, Map<String, String> va
             return this;
         }
 
-        public MailRequestBuilder data(Map<String, Object> data) {
+        public MailRequestBuilder data(Map<String, String> data) {
             this.data = data;
             return this;
         }
@@ -86,7 +86,7 @@ public record MailRequest(String to, String templateName, Map<String, String> va
         return confirmationLink;
     }
 
-    public MailRequest rebuild(String to, Map<String, Object> data) {
+    public MailRequest rebuild(String to, Map<String, String> data) {
         return MailRequest.builder()
                 .to(to)
                 .templateName(templateName)

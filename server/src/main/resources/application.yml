@@ -98,6 +98,8 @@ app:
 
 verify:
   invite-project-link: https://localhost:3000/verify?token=
+data:
+  filepath: "resources/data"
 #kafka:
 #  topic:
 #    send-object-customer:

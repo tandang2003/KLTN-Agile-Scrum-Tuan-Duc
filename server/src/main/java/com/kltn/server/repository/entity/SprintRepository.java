@@ -12,4 +12,10 @@ public interface SprintRepository extends JpaRepository<Sprint, String> {
     List<Sprint> findAllByWorkspaceId(String workspaceId);
 
     List<Sprint> findAllByDtEndAfter(Instant instant);
+
+    List<Sprint> findAllByDtStartAfterAndDtEndBefore(Instant dtStartAfter, Instant dtEndBefore);
+
+  List<Sprint> getAllByCreatedByAfter(String createdByAfter);
+
+  List<Sprint> getAllByDtCreatedAfter(Instant dtCreatedAfter);
 }
