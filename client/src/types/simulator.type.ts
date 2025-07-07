@@ -1,14 +1,9 @@
 import { z } from 'zod'
 
-const ClockSimulatorSchema = z
-  .object({
-    to: z.coerce.date(),
-    timeSpeech: z.coerce.number().int().positive()
-  })
-  .refine((data) => new Date() < data.to, {
-    message: 'Ngày kết thúc phải sau ngày hiện tại',
-    path: ['to']
-  })
+const ClockSimulatorSchema = z.object({
+  to: z.coerce.date(),
+  timeSpeech: z.coerce.number().int().positive()
+})
 
 type ClockSimulatorReqType = z.infer<typeof ClockSimulatorSchema>
 type ClockSimulatorResponseType = {

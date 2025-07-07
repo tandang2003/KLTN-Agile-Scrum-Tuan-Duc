@@ -258,13 +258,23 @@ const messages = {
     project: {
       header: {
         dropdown: {
-          invite: 'Mời sinh viên'
+          invite: 'Mời sinh viên',
+          members: 'Danh sách thành viên'
         }
       },
       dialog: {
         invite: {
           title: 'Tạo nhóm',
           description: 'Nhóm sẽ được tạo trong khu vực môn học này'
+        },
+        members: {
+          title: 'Danh sách thành viên',
+          description: 'Danh sách thành viên của nhóm này',
+          table: {
+            email: 'Email',
+            uniId: 'Mã sinh viên',
+            name: 'Tên'
+          }
         }
       },
       form: {

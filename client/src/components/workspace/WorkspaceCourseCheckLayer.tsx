@@ -18,7 +18,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import messages from '@/constant/message.const'
-import { useCreateCourseMutation } from '@/feature/course/course.api'
+import {
+  useCreateCourseMutation,
+  useGetPrerequisiteCourseQuery
+} from '@/feature/course/course.api'
 import { useClearGetWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import {
   CourseResponseType,
@@ -30,7 +33,7 @@ import {
 import { Id } from '@/types/other.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DialogTitle } from '@radix-ui/react-dialog'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -43,25 +46,71 @@ type WorkspaceCourseCheckLayerProps = {
 const WorkspaceCourseCheckLayer = ({
   workspaceId,
   course,
-  prerequisiteCourse
+  prerequisiteCourse: prerequisiteCourseOfUser
 }: WorkspaceCourseCheckLayerProps) => {
   const message = messages.component.workspaceCourseLayerCheck
-  const courseNeedField = prerequisiteCourse.filter(
-    (item) => item.point === -1.0
+
+  const { data: prerequisiteCourse, isLoading } = useGetPrerequisiteCourseQuery(
+    course.id as Id,
+    {
+      skip: !course.id
+    }
   )
+
+  // Calculate unmet prerequisites only when data is ready
+  const courseNeedField = useMemo(() => {
+    if (!prerequisiteCourse) return []
+    const allPrerequisiteCourseCompleted = prerequisiteCourseOfUser.every(
+      (userCourse) =>
+        userCourse.point !== -1.0 &&
+        prerequisiteCourse.some((item) => item.id === userCourse.course.id)
+    )
+    if (allPrerequisiteCourseCompleted) return []
+
+    return prerequisiteCourse.filter(
+      (item) =>
+        !prerequisiteCourseOfUser.some(
+          (userCourse) =>
+            userCourse.course.id === item.id && userCourse.point !== -1.0
+        )
+    )
+  }, [prerequisiteCourse, prerequisiteCourseOfUser])
+
+  const [open, setIsOpen] = useState(false)
+  const [hasInitialized, setHasInitialized] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && !hasInitialized) {
+      if (courseNeedField.length > 0) {
+        setIsOpen(true)
+      }
+      setHasInitialized(true)
+    }
+  }, [isLoading, courseNeedField, hasInitialized])
+
   const [clear] = useClearGetWorkspaceMutation()
-  const [open, setIsOpen] = useState<boolean>(courseNeedField.length !== 0)
   const [create, { error, isError }] = useCreateCourseMutation()
 
   const form = useForm<CreateCourseSchemaType>({
     resolver: zodResolver(CreateCourseSchema),
     defaultValues: {
       courses: courseNeedField.map((item) => ({
-        courseId: item.course.id,
+        courseId: item.id,
         point: undefined
       }))
     }
   })
+
+  useEffect(() => {
+    if (courseNeedField.length > 0) {
+      form.reset({
+        courses: courseNeedField.map((item) => ({
+          courseId: item.id,
+          point: undefined
+        }))
+      })
+    }
+  }, [courseNeedField])
 
   const handleSubmit = (data: CreateCourseSchemaType) => {
     const dataParse = CreateCourseSchemeParse.parse(data)
@@ -76,6 +125,8 @@ const WorkspaceCourseCheckLayer = ({
         toast.error(message.toast.failed)
       })
   }
+
+  if (!hasInitialized) return null // Wait until all is ready
 
   return (
     <Dialog open={open}>
@@ -108,27 +159,25 @@ const WorkspaceCourseCheckLayer = ({
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
-            {courseNeedField.map((item, index) => {
-              return (
-                <FormField
-                  key={item.course.id}
-                  name={`courses.${index}.point`}
-                  render={({ field }) => (
-                    <FormItem className='mt-2 flex flex-col gap-2'>
-                      <Label>{item.course.name}</Label>
-                      <FormControl>
-                        <Input
-                          type='number'
-                          {...field}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )
-            })}
+            {courseNeedField.map((item, index) => (
+              <FormField
+                key={item.id}
+                name={`courses.${index}.point`}
+                render={({ field }) => (
+                  <FormItem className='mt-2 flex flex-col gap-2'>
+                    <Label>{item.name}</Label>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        {...field}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
             <Button
               loading={form.formState.isSubmitting}
               className='mt-2'
