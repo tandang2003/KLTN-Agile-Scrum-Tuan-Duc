@@ -142,7 +142,7 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
       id: sprintId,
       start: start,
       end: end
-    }) === 'RUNNING'
+    }) !== 'COMPLETE'
 
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
