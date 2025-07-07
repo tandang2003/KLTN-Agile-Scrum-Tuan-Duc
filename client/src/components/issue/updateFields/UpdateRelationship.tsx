@@ -138,7 +138,7 @@ const UpdateRelationship = ({
               </SelectContent>
             </Select>
 
-            <SelectIssueRelated
+            {/* <SelectIssueRelated
               issueId={issueId}
               typeRelation={form?.typeRelation as IssueRelationShip}
               onChange={(issueId) => {
@@ -147,9 +147,9 @@ const UpdateRelationship = ({
                   issueRelatedId: issueId
                 }))
               }}
-            />
+            /> */}
 
-            {/* <Select
+            <Select
               value={form?.issueRelatedId}
               onValueChange={(value) => {
                 setForm((prev) => ({
