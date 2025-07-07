@@ -17,6 +17,19 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
 import messages, { getRelationshipDisplayName } from '@/constant/message.const'
 import {
   useCreateRelationshipMutation,
@@ -36,6 +49,8 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -123,7 +138,18 @@ const UpdateRelationship = ({
               </SelectContent>
             </Select>
 
-            <Select
+            <SelectIssueRelated
+              issueId={issueId}
+              typeRelation={form?.typeRelation as IssueRelationShip}
+              onChange={(issueId) => {
+                setForm((prev) => ({
+                  ...prev,
+                  issueRelatedId: issueId
+                }))
+              }}
+            />
+
+            {/* <Select
               value={form?.issueRelatedId}
               onValueChange={(value) => {
                 setForm((prev) => ({
@@ -142,7 +168,7 @@ const UpdateRelationship = ({
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
 
           <div className='mt-3 flex justify-end gap-2'>
@@ -164,6 +190,89 @@ const UpdateRelationship = ({
         </>
       )}
     </div>
+  )
+}
+
+type SelectIssueRelatedProps = {
+  issueId?: Id
+  typeRelation?: IssueRelationShip
+  onChange?: (issueId: Id) => void
+}
+
+const SelectIssueRelated = ({
+  issueId,
+  onChange,
+  typeRelation
+}: SelectIssueRelatedProps) => {
+  const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
+  const [open, setOpen] = useState(false)
+  const [issueName, setIssueName] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  useEffect(() => {
+    if (!open) return
+    if (!issueId || !typeRelation) return
+    trigger({
+      issueId: issueId,
+      type: typeRelation as IssueRelationShip
+    })
+  }, [issueId, typeRelation, open, trigger])
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant='outline'
+          role='combobox'
+          aria-expanded={open}
+          className='w-full justify-between'
+        >
+          {issueName
+            ? issues?.find((framework) => framework.name === issueName)?.name
+            : 'Chọn issue liên quan'}
+          <ChevronsUpDown className='opacity-50' />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align='start' className='w-full p-0'>
+        <Command
+          filter={(value, search) => {
+            console.log(value, search)
+            if (value.includes(search)) return 1
+            return 0
+          }}
+        >
+          <CommandInput
+            className='h-9'
+            value={searchTerm}
+            onValueChange={setSearchTerm}
+            placeholder='Chọn issue liên quan'
+          />
+          <CommandList>
+            <CommandEmpty>Không có issue</CommandEmpty>
+
+            <CommandGroup>
+              {issues?.map((issue) => (
+                <CommandItem
+                  key={issue.id}
+                  value={issue.name}
+                  onSelect={(currentValue) => {
+                    setIssueName(currentValue === issueName ? '' : currentValue)
+                    setOpen(false)
+                    onChange?.(issue.id)
+                  }}
+                >
+                  {issue.name}
+                  <Check
+                    className={cn(
+                      'ml-auto',
+                      issueName === issue.id ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   )
 }
 
@@ -253,7 +362,7 @@ const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuItem className='cancel' onClick={handleDelete}>
-            Delete
+            Xóa
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
