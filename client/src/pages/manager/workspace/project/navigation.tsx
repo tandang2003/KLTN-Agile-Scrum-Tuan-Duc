@@ -15,7 +15,8 @@ type ProjectNavigationProps = {
 
 const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
   const { pathname } = useLocation()
-  const { backlog, board, report } = messages.manager.project.navigate
+  const { backlog, board, report, dashboard } =
+    messages.manager.project.navigate
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -49,6 +50,17 @@ const ProjectNavigation = ({ id }: ProjectNavigationProps) => {
             data-active={pathname.includes('/report')}
           >
             <Link to={`/manager/workspace/project/${id}/report`}>{report}</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            className='data-[active=true]:active-tag'
+            asChild
+            data-active={pathname.includes('/dashboard')}
+          >
+            <Link to={`/manager/workspace/project/${id}/dashboard`}>
+              {dashboard}
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

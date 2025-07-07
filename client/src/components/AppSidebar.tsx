@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/sidebar'
 import UserDropdown from '@/components/UserDropdown'
 import { useGetListWorkspaceQuery } from '@/feature/workspace/workspace.api'
+import ClockSimulator from '@/components/ClockSimulator'
+import RequiredAuthNoRedirect from '@/components/wrapper/RequiredAuthNoRedirect'
 
 function AppSidebar({
   children,
@@ -93,11 +95,13 @@ function AppSidebar({
       <SidebarInset>
         <div className='relative flex flex-col'>
           <header className='sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center gap-2 bg-white transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
-            <div className='flex w-full items-center justify-between gap-2 px-4'>
+            <div className='flex w-full items-center gap-2 px-4'>
               <SidebarTrigger className='-ml-1' />
               <Separator orientation='vertical' className='mr-2 h-4' />
-              <span className='flex-1'>Search</span>
-              <span>
+              <RequiredAuthNoRedirect>
+                <ClockSimulator />
+              </RequiredAuthNoRedirect>
+              <span className='ml-auto'>
                 <UserDropdown className='bg-gray-100 text-black hover:text-white' />
               </span>
             </div>
