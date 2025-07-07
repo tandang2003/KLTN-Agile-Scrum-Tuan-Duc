@@ -1,4 +1,4 @@
-import { dateRange, stringSchema } from '@/types/other.type'
+import { dateRange, dateRangeOptional, stringSchema } from '@/types/other.type'
 import {
   IssuePriority,
   issuePriorityList,
@@ -99,11 +99,9 @@ const BaseIssueSchema = z
     complexOfDescription: z.number().optional()
   })
   .partial()
-  .extend({
-    name: stringSchema.min(1, { message: 'Tên không được để trống' })
-  })
 
 const CreateIssueSchema = BaseIssueSchema.extend({
+  name: stringSchema.min(1, { message: 'Tên không được để trống' }),
   sprint: z
     .object({
       id: stringSchema.min(1, { message: 'Sprint là bắt buộc' }),
@@ -111,7 +109,8 @@ const CreateIssueSchema = BaseIssueSchema.extend({
       end: z.coerce.date().optional()
     })
     .optional(),
-  position: z.string().nullable().optional()
+  position: z.string().nullable().optional(),
+  date: dateRangeOptional
 })
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
