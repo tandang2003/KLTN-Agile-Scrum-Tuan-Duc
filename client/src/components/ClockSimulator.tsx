@@ -155,7 +155,7 @@ const ClockSimulator = () => {
                     <FormControl>
                       <DatePickerWithPresets
                         disabled={isReset}
-                        date={field.value}
+                        date={field.value ?? config?.initTime}
                         setDate={field.onChange}
                       />
                     </FormControl>

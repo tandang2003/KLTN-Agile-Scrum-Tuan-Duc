@@ -36,37 +36,41 @@ public class DecisionController {
   private final SprintService sprintService;
   private final SprintRepository sprintRepository;
   private final IssueService issueService;
-  String[] sprintRow = new String[]{
-    "project_id",
-    "sprint_id",
-    "planday",
-    "no_issue_starttime",
-    "no_issue_added",
-    "no_issue_removed",
-    "no_issue_todo",
-    "no_issue_inprogress",
-    "no_issue_done",
-    "no_team_size"};
-  String[] issueRow = new String[]{
-    "project_id",
-    "sprint_id",
-    "type",
-    "priority",
-    "no_affect_version",
-    "no_fix_version",
-    "no_link",
-    "no_issue_blocking",
-    "no_issue_blocked",
-    "no_fix_version_change",
-    "no_priority_change",
-    "no_description_change",
-    "complexity_of_description",
-    "suitable_assignee"};
+  String[] sprintRow = new String[] {
+      "project_id",
+      "sprint_id",
+      "planday",
+      "story_point",
+      "no_issue_starttime",
+      "no_issue_added",
+      "no_issue_removed",
+      "no_issue_todo",
+      "no_issue_inprogress",
+      "no_issue_done",
+      "no_team_size" };
+  String[] issueRow = new String[] {
+      "issue_name",
+      "project_id",
+      "sprint_id",
+      "type",
+      "priority",
+      "no_affect_version",
+      "no_fix_version",
+      "no_link",
+      "no_issue_blocking",
+      "no_issue_blocked",
+      "no_fix_version_change",
+      "no_priority_change",
+      "no_description_change",
+      "complexity_of_description",
+      "suitable_assignee" };
   @Value("${data.filepath}")
   String filePathOfData;
 
   @Autowired
-  public DecisionController(DecisionService decisionService, WorkspaceService workspaceService, ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository, IssueService issueService) {
+  public DecisionController(DecisionService decisionService, WorkspaceService workspaceService,
+      ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository,
+      IssueService issueService) {
     this.decisionService = decisionService;
     this.workspaceService = workspaceService;
     this.projectService = projectService;
@@ -81,10 +85,10 @@ public class DecisionController {
 
     // Placeholder for decision logic
     return ResponseEntity.ok(ApiResponse.<Void>builder()
-      .code(200)
-      .message("Decision retrieved successfully")
-      .data(null)
-      .build());
+        .code(200)
+        .message("Decision retrieved successfully")
+        .data(null)
+        .build());
   }
 
   @GetMapping("store-data")
@@ -92,15 +96,15 @@ public class DecisionController {
     Instant now = ClockSimulator.now();
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
     List<Sprint> sprints = workspace.getSprints()
-      .stream()
-      .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
-      .collect(Collectors.toList());
+        .stream()
+        .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
+        .collect(Collectors.toList());
     for (Sprint sprint : sprints) {
       List<Project> projects = sprint.getProjects();
       for (Project project : projects) {
         writeToExcel(workspace.getId(), project.getId(), sprint.getId(), stage);
       }
-//      }
+      // }
     }
     return ResponseEntity.ok().body(ApiResponse.<Boolean>builder().data(true).build());
   }
@@ -110,11 +114,10 @@ public class DecisionController {
     Sprint sprint = sprintService.getSprintById(sprintId);
     Project project = projectService.getProjectById(projectId);
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
-    List<Issue> issues = issueService.getIssuesBySprintId(sprintId, projectId);
+    List<Issue> issues = issueService.getIssuesBySprintId(projectId, sprintId);
     String courseFile = this.filePathOfData + "/" + stage + "/" + workspace.getName();
     String sprintFilePath = courseFile + "/" + "sprint.xlsx";
     String issueFilePath = courseFile + "/" + "issue.xlsx";
-
 
     File file = new File(sprintFilePath);
     File parentDir = file.getParentFile();
@@ -153,6 +156,9 @@ public class DecisionController {
             break;
           case "sprint_id":
             cell.setCellValue(sprint.getId());
+            break;
+          case "story_point":
+            cell.setCellValue(sprint.getStoryPoint());
             break;
           case "planday":
             cell.setCellValue(decisionService.calculateSprintDuration(sprint));
@@ -219,9 +225,10 @@ public class DecisionController {
       }
 
       // Append new data row
+
       int rowCount = sheet.getLastRowNum();
       for (Issue issue : issues) {
-        Row newRow = sheet.createRow(rowCount + 1);
+        Row newRow = sheet.createRow(++rowCount);
         for (int i = 0; i < issueRow.length; i++) {
           Cell cell = newRow.createCell(i);
           switch (issueRow[i]) {
