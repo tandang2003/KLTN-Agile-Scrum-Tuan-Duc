@@ -153,6 +153,7 @@ export function DatePickerWithPresets({
             onSelect={setDate}
             disabled={(date) => isDisable(date)}
             onDayBlur={onDayBlur}
+            defaultMonth={date ?? new Date()}
           />
         </div>
       </PopoverContent>

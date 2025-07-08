@@ -15,11 +15,12 @@ import { ProjectParams } from '@/types/route.type'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 import { toast } from 'sonner'
 
 const BoardPage = () => {
-  const { projectId } = useParams<ProjectParams>()
+  const { projectId } = useOutletContext<ProjectParams>()
+  const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
   const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
   const sprintId = sprint?.id
   const { sprint: currentSprint } = useSprintCurrent()
@@ -32,8 +33,6 @@ const BoardPage = () => {
       skip: !projectId || !sprintId
     }
   )
-
-  const [columns, setColumns] = useState<Position>(DEFAULT_POSITION)
 
   useEffect(() => {
     if (projectId && sprintId) {

@@ -8,7 +8,10 @@ import { useFormContext } from 'react-hook-form'
 
 const UpdateDateIssue = () => {
   const { sprint } = useSprintActive()
-  if (!sprint) return null
+  const min = sprint?.start ?? undefined
+  const max = sprint?.end ?? undefined
+  const date = undefined
+
   const form = useFormContext<UpdateIssueType>()
 
   const { control, getValues } = form
@@ -52,9 +55,9 @@ const UpdateDateIssue = () => {
           return (
             <FormItem>
               <DatePickerWithPresets
-                date={field.value}
-                min={sprint.start}
-                max={sprint.end}
+                date={field.value ?? date}
+                min={min}
+                max={max}
                 onDayBlur={(date) => {
                   if (date) {
                     field.onChange(date)
@@ -74,9 +77,9 @@ const UpdateDateIssue = () => {
           return (
             <FormItem className='mt-2'>
               <DatePickerWithPresets
-                date={field.value}
-                min={sprint.start}
-                max={sprint.end}
+                date={field.value ?? max}
+                min={min}
+                max={max}
                 onDayBlur={(date) => {
                   if (date) {
                     field.onChange(date)
