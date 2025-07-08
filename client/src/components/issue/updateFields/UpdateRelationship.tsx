@@ -168,7 +168,7 @@ const UpdateRelationship = ({
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select> */}
+            </Select>
           </div>
 
           <div className='mt-3 flex justify-end gap-2'>

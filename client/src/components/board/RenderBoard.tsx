@@ -15,20 +15,17 @@ type RenderBoardProps = {
     items: IssueResponse[]
   }
   handleOnMove: OnMove
+  disabled?: boolean
 }
 
-const RenderBoard = ({ data, handleOnMove }: RenderBoardProps) => {
+const RenderBoard = ({ data, handleOnMove, disabled }: RenderBoardProps) => {
   const dataToRender = cloneDeep(toBoardModel(data.items, data.columns))
   const role = useAppSelector((state) => state.authSlice.user?.role)
   if (!role) return null
   return (
     <div className='flex-1'>
       <ScrollArea className='h-full'>
-        <Board
-          data={dataToRender}
-          onMove={handleOnMove}
-          disabled={role === 'teacher'}
-        />
+        <Board data={dataToRender} onMove={handleOnMove} disabled={disabled} />
         <ScrollBar orientation='vertical' />
         <ScrollBar orientation='horizontal' />
       </ScrollArea>

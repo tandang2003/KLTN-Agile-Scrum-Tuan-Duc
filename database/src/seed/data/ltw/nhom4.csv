@@ -1,0 +1,23 @@
+sprint_id,name,commplex_of_description,position,priority,status,tag,project_id,description
+de1a9928-7d90-4b22-9f2c-1c1977a9b1d3,Vẽ ERD,1,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+565e13cb-7a4c-4f75-88f2-903a54ddc690,Đối tượng sử dụng chính,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+20550769-da23-4d54-983e-bdcc62d80a37,Ràng buộc trạng thai đơn hàng,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+0a98d5b3-7a3f-4cd0-a294-b04adeccbe7c,Tạo UI giỏ hàng,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+28e4b229-c075-444e-bb7e-b2f27a9fd103,Tạo Api đơn hàng và thành toán,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+565e13cb-7a4c-4f75-88f2-903a54ddc690,Mô hình kinh doanh bán quần áo,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+0a98d5b3-7a3f-4cd0-a294-b04adeccbe7c,Viết SQL,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+de1a9928-7d90-4b22-9f2c-1c1977a9b1d3,Tìm hiểu về Java Servlet,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,"<ol><li data-list=""bullet""><span class=""ql-ui"" contenteditable=""false""></span>Routes</li><li data-list=""bullet""><span class=""ql-ui"" contenteditable=""false""></span>Dispatcher</li><li data-list=""bullet""><span class=""ql-ui"" contenteditable=""false""></span>Filter</li><li data-list=""bullet""><span class=""ql-ui"" contenteditable=""false""></span>Model Attribute</li></ol>"
+5d57fb7a-7aab-4264-a6cf-12fc55f5093d,Xây dựng Bankend Đăng nhập/Đăng ký,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+018a1ba5-dda1-4179-b73e-176e6693a371,Viết SQL lấy danh sách sản phẩm (có phân trang),0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+565e13cb-7a4c-4f75-88f2-903a54ddc690,Bảo quản sản phẩm,3,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+28e4b229-c075-444e-bb7e-b2f27a9fd103,Tạo Ui đơn hàng,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+0e1c0884-cd4f-4efe-85cf-ed3d6c1fce8d,Tạo UI mã giảm giá,2,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+,Tạo data mẫu cho sản phẩm,0,0,CRITICAL,BACKLOG,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+0a98d5b3-7a3f-4cd0-a294-b04adeccbe7c,Tích hợp backend,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+5d57fb7a-7aab-4264-a6cf-12fc55f5093d,Xây dựng UI đăng nhập/Đăng ký,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+018a1ba5-dda1-4179-b73e-176e6693a371,Thực hiện UI trang sản phẩm mới,3,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+018a1ba5-dda1-4179-b73e-176e6693a371,Tạo Api phân trang và tích hợp,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+0e1c0884-cd4f-4efe-85cf-ed3d6c1fce8d,Viết SQL mã giảm giá,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+20550769-da23-4d54-983e-bdcc62d80a37,Quản lý đơn hàng cho admin,1,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+28e4b229-c075-444e-bb7e-b2f27a9fd103,Tích hợp đơn hàng,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>
+0e1c0884-cd4f-4efe-85cf-ed3d6c1fce8d,Tích hợp giỏ hàng,0,0,CRITICAL,TODO,THEORY,3d4c23db-a9f0-41d2-aa6e-5254b7f48277,<p><br></p>

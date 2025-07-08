@@ -75,3 +75,8 @@ restore-mongo-into:
 	echo "🔀 Merging from timestamp: $$ts into database: $$db"; \
 	. $(VENV) && $(PYTHON) -m $(RESTORE_SCRIPT_MONGO) $$ts $$db
 
+run:
+	. $(VENV) && $(PYTHON) $(FILE)
+
+run-module:
+	. $(VENV) && $(PYTHON) -m $(MODULE)

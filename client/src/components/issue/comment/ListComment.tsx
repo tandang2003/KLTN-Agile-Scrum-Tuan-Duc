@@ -13,9 +13,10 @@ const ListComment = () => {
     if (ws && isReady && ws.connected) {
       const subscriber = ws.subscribe(`/topic/room/${issueId}`, (value) => {
         const response: CommentResType = JSON.parse(value.body)
+        console.log('Receive comment', response)
         setComment?.([
           {
-            id: response.id ?? uuid(),
+            id: uuid(),
             from: response.from,
             content: response.content,
             createdAt: response.createdAt
@@ -35,7 +36,7 @@ const ListComment = () => {
       {comment?.map((item) => {
         return (
           <ItemComment
-            key={item.id}
+            key={item?.id ?? uuid()}
             name={item.from}
             message={item.content}
             createdAt={item.createdAt}

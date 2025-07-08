@@ -23,7 +23,7 @@ const UserSkillPage = () => {
           <Icon icon='lucide:plus' />
         </Button>
       </span>
-      <ScrollArea className='my-2 h-[50px]'>
+      <ScrollArea className='my-2 min-h-[200px]'>
         <ListView<SkillResponse>
           data={data}
           className='mx-3 gap-2'

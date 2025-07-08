@@ -56,6 +56,7 @@ const ProjectHeader = ({ data }: ProjectHeaderProps) => {
       </div>
       <DialogInviteStudentProject open={open} onOpen={setIsOpen} />
       <DialogStudentProject
+        data={data}
         open={openDialogMember}
         onOpen={setOpenDialogMember}
       />
