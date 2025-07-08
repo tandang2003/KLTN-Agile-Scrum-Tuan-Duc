@@ -53,8 +53,9 @@ export const CommentProvider = ({
     const headers = {
       Authorization: `Bearer ${accessToken}`
     }
-    const socket = new SockJS(`${envConfig.BACKEND_URL}/ws`)
-    const stompClient = Stomp.over(socket)
+    const stompClient = Stomp.over(
+      () => new SockJS(`${envConfig.BACKEND_URL}/ws`)
+    )
     stompClient.connectHeaders = headers
     stompClient.reconnectDelay = 5000
     stompClient.debug = () => {}

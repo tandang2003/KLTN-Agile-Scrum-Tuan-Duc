@@ -1,4 +1,4 @@
-import { HOME_PATH } from '@/lib/const'
+import { HOME_PATH } from '@/constant/app.const'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { NavLink } from 'react-router-dom'

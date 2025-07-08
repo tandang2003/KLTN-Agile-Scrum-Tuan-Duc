@@ -72,7 +72,7 @@ const KanbanCard = ({
       )}
       <CardUI
         className='rounded-none border-none bg-transparent p-0 shadow-none'
-        onClick={() => onClick?.()}
+        onClick={() => !disabled && onClick?.()}
       >
         <CardHeader className='p-0'>
           <CardTitle className='line-clamp-2 overflow-hidden text-lg leading-[1.67] text-wrap text-ellipsis'>

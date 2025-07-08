@@ -1,5 +1,6 @@
 import authReducer from '@/feature/auth/auth.slice'
 import { boardReducer } from '@/feature/board/board.slice'
+import courseApi from '@/feature/course/course.api'
 import issueApi from '@/feature/issue/issue.api'
 import { issueReducer } from '@/feature/issue/issue.slice'
 import notificationApi from '@/feature/notification/notification.api'
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   [userApi.reducerPath]: userApi.reducer,
   [relationshipApi.reducerPath]: relationshipApi.reducer,
   [notificationApi.reducerPath]: notificationApi.reducer,
+  [courseApi.reducerPath]: courseApi.reducer,
   authSlice: authReducer,
   workspaceSlice: workspaceReducer,
   projectSlice: projectReducer,

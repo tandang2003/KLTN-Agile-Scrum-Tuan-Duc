@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import messages from '@/constant/message.const'
 import useAppId from '@/hooks/use-app-id'
 import { SprintOverview } from '@/types/sprint.type'
 import { lazy, Suspense, useState } from 'react'
@@ -38,7 +39,9 @@ const SprintColumnsAction = ({
           <Icon icon='ri:more-fill' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem onClick={handleOpen}>Report</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleOpen} className='hover-opacity'>
+            {messages.component.dataTable.sprint.actions.report}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 

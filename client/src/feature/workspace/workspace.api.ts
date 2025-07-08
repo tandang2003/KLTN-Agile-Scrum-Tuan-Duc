@@ -11,6 +11,7 @@ import {
   ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
+  WorkspaceDetailResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -63,7 +64,7 @@ const workspaceApi = createApi({
           )
       }
     }),
-    getWorkspace: builder.query<WorkspaceResponse, Id>({
+    getWorkspace: builder.query<WorkspaceDetailResponse, Id>({
       async queryFn(arg) {
         try {
           const data = await workspaceService.getWorkSpace(arg)
@@ -73,6 +74,12 @@ const workspaceApi = createApi({
         }
       },
       providesTags: (_, __, id) => [{ type: 'Workspaces', id }]
+    }),
+    clearGetWorkspace: builder.mutation<void, Id>({
+      queryFn: () => {
+        return { data: undefined }
+      },
+      invalidatesTags: (_, __, id) => [{ type: 'Workspaces', id }]
     }),
     createWorkspace: builder.mutation<
       WorkspaceResponse,
@@ -195,5 +202,6 @@ export const {
   useGetListStudentWorkspaceQuery,
   useUpdateWorkspaceMutation,
   useGetListProjectWorkspaceQuery,
-  useInviteStudentWorkspaceMutation
+  useInviteStudentWorkspaceMutation,
+  useClearGetWorkspaceMutation
 } = workspaceApi

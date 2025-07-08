@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { resetUpdateDataSkill } from '@/feature/skill/skill.slice'
 import { disableDialogSkill } from '@/feature/trigger/trigger.slice'
@@ -26,7 +27,7 @@ const DialogSkill = ({}: DialogSkillProps) => {
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Skill</DialogTitle>
+          <DialogTitle>{messages.component.skill.dialog.title}</DialogTitle>
         </DialogHeader>
         <DialogDescription />
         <FormSkill />

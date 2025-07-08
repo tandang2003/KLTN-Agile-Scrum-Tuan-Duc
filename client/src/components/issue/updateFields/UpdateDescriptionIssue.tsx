@@ -2,7 +2,9 @@ import Editor from '@/components/Editor'
 import HtmlViewer from '@/components/HtmlViewer'
 import InlineEdit from '@/components/InlineEdit'
 import { FormField } from '@/components/ui/form'
+import messages from '@/constant/message.const'
 import { useAutoUpdateField } from '@/hooks/use-update'
+import { getComplexityBilingual } from '@/lib/issue.helper'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { useFormContext } from 'react-hook-form'
@@ -17,11 +19,19 @@ const UpdateDescriptionIssue = ({}: UpdateDescriptionIssueProps) => {
     form: form,
     field: 'description',
     callApi: (field, value) => {
-      return issueService.updateIssue({
-        id: getValues('id'),
-        fieldChanging: field,
-        [field]: value
-      })
+      return issueService
+        .updateIssue({
+          id: getValues('id'),
+          fieldChanging: field,
+          [field]: value
+        })
+        .then(() => {
+          issueService.updateIssue({
+            id: getValues('id'),
+            fieldChanging: 'complexOfDescription',
+            complexOfDescription: getComplexityBilingual(value ?? '')
+          })
+        })
     }
   })
   return (
@@ -41,7 +51,9 @@ const UpdateDescriptionIssue = ({}: UpdateDescriptionIssueProps) => {
                 <HtmlViewer
                   className='rounded-md border-2 px-2 py-3 text-base'
                   value={value}
-                  fallback={'Add a description...'}
+                  fallback={
+                    messages.component.issue.update.form.descriptionFallback
+                  }
                 />
               )
             }}

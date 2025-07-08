@@ -3,6 +3,7 @@ import SprintTemplateCard from '@/components/sprint/template/SprintTemplateCard'
 
 import SprintTemplateDialog from '@/components/sprint/template/SprintTemplateDialog'
 import { Button } from '@/components/ui/button'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import {
@@ -27,7 +28,6 @@ const WorkspaceSprintTemplatePage = () => {
     <div>
       <div className='my-2 flex justify-end'>
         <Button
-          className=''
           variant='default'
           size='sm'
           onClick={() => {
@@ -35,7 +35,7 @@ const WorkspaceSprintTemplatePage = () => {
           }}
         >
           <PlusIcon />
-          Create Sprint
+          {messages.manager.workspace.detail.template.create}
         </Button>
       </div>
 
@@ -44,7 +44,9 @@ const WorkspaceSprintTemplatePage = () => {
         loading={isFetching}
         className='flex flex-col gap-4'
         emptyComponent={
-          <div className='mt-4'>No sprint found, please create sprint</div>
+          <div className='mt-4'>
+            {messages.manager.workspace.detail.template.list.empty}
+          </div>
         }
         render={(item) => {
           return <SprintTemplateCard key={item.id} id={item.id} data={item} />

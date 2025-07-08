@@ -9,11 +9,17 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { cn } from '@/lib/utils'
-import { createContext, useCallback, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState
+} from 'react'
 
 interface AlertState {
   title?: string
-  message?: string
+  message?: string | ReactNode
   type?: AlertType
   onConfirm?: () => Promise<void>
   onCancel?: () => void
@@ -71,7 +77,7 @@ const AlertHostProvider = ({ children }: AlertHostProps) => {
                 hideAlert()
               }}
             >
-              Cancel
+              Hủy
             </AlertDialogCancel>
             <AlertDialogAction
               className={cn(
@@ -87,7 +93,7 @@ const AlertHostProvider = ({ children }: AlertHostProps) => {
                 })
               }}
             >
-              Continue
+              Tiếp tục
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

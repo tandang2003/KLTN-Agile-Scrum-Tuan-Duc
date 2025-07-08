@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import { useAlertHost } from '@/components/AleartHost'
+import Icon from '@/components/Icon'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
@@ -10,6 +18,20 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+import messages, { getRelationshipDisplayName } from '@/constant/message.const'
+import {
   useCreateRelationshipMutation,
   useDeleteRelationshipMutation,
   useGetRelationshipQuery,
@@ -17,7 +39,6 @@ import {
 } from '@/feature/relationship/relationship.api'
 import { IssueResponse } from '@/types/issue.type'
 import {
-  IssueRelationLabels,
   issueRelationOptions,
   IssueRelationShip
 } from '@/types/model/relationship'
@@ -28,14 +49,8 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import Icon from '@/components/Icon'
-import { useAlertHost } from '@/components/AleartHost'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -48,15 +63,21 @@ const UpdateRelationship = ({
   open,
   cancel
 }: UpdateRelationshipProps) => {
-  const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>()
+  const message = messages.component.issue.update.form.relationship
+  const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>({
+    typeRelation: 'BLOCKS'
+  })
   const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
   const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
   const [createIssue] = useCreateRelationshipMutation()
 
+  useEffect(() => {
+    handleSubmit()
+  }, [])
+
   const handleSubmit = async () => {
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)
     if (!dataParser.success) {
-      toast.error('Invalid data')
       return
     }
     const data = dataParser.data
@@ -83,10 +104,10 @@ const UpdateRelationship = ({
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <span className='text-lg'>Linked issue</span>
+      <span className='text-lg'>{message.title}</span>
       <LoadingBoundary<RelationshipResponse[]>
         loading='Loading relationships...'
-        fallback='No relationships found'
+        fallback={message.fallback}
         data={relationships}
         isLoading={isLoading}
       >
@@ -111,11 +132,22 @@ const UpdateRelationship = ({
               <SelectContent>
                 {issueRelationOptions.map(({ label, value }) => (
                   <SelectItem key={label} value={value}>
-                    {label}
+                    {getRelationshipDisplayName(value)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
+            {/* <SelectIssueRelated
+              issueId={issueId}
+              typeRelation={form?.typeRelation as IssueRelationShip}
+              onChange={(issueId) => {
+                setForm((prev) => ({
+                  ...prev,
+                  issueRelatedId: issueId
+                }))
+              }}
+            /> */}
 
             <Select
               value={form?.issueRelatedId}
@@ -145,19 +177,102 @@ const UpdateRelationship = ({
               className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
               onClick={() => cancel?.()}
             >
-              Cancel
+              {message.cancel}
             </Button>
             <Button
               type='button'
               onClick={handleSubmit}
               className='bg-green-500 text-white hover:cursor-pointer hover:opacity-60'
             >
-              Create
+              {message.add}
             </Button>
           </div>
         </>
       )}
     </div>
+  )
+}
+
+type SelectIssueRelatedProps = {
+  issueId?: Id
+  typeRelation?: IssueRelationShip
+  onChange?: (issueId: Id) => void
+}
+
+const SelectIssueRelated = ({
+  issueId,
+  onChange,
+  typeRelation
+}: SelectIssueRelatedProps) => {
+  const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
+  const [open, setOpen] = useState(false)
+  const [issueName, setIssueName] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  useEffect(() => {
+    if (!open) return
+    if (!issueId || !typeRelation) return
+    trigger({
+      issueId: issueId,
+      type: typeRelation as IssueRelationShip
+    })
+  }, [issueId, typeRelation, open, trigger])
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant='outline'
+          role='combobox'
+          aria-expanded={open}
+          className='w-full justify-between'
+        >
+          {issueName
+            ? issues?.find((framework) => framework.name === issueName)?.name
+            : 'Chọn issue liên quan'}
+          <ChevronsUpDown className='opacity-50' />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align='start' className='w-full p-0'>
+        <Command
+          filter={(value, search) => {
+            console.log(value, search)
+            if (value.includes(search)) return 1
+            return 0
+          }}
+        >
+          <CommandInput
+            className='h-9'
+            value={searchTerm}
+            onValueChange={setSearchTerm}
+            placeholder='Chọn issue liên quan'
+          />
+          <CommandList>
+            <CommandEmpty>Không có issue</CommandEmpty>
+
+            <CommandGroup>
+              {issues?.map((issue) => (
+                <CommandItem
+                  key={issue.id}
+                  value={issue.name}
+                  onSelect={(currentValue) => {
+                    setIssueName(currentValue === issueName ? '' : currentValue)
+                    setOpen(false)
+                    onChange?.(issue.id)
+                  }}
+                >
+                  {issue.name}
+                  <Check
+                    className={cn(
+                      'ml-auto',
+                      issueName === issue.id ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   )
 }
 
@@ -193,7 +308,7 @@ const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
         return (
           <div key={key}>
             <span className='mt-4 mb-2 inline-block text-base'>
-              {IssueRelationLabels[key as IssueRelationShip]}
+              {getRelationshipDisplayName(key as IssueRelationShip)}
             </span>
             <div className='mt-2 flex flex-col gap-1'>
               {value.map((item) => {
@@ -247,7 +362,7 @@ const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuItem className='cancel' onClick={handleDelete}>
-            Delete
+            Xóa
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

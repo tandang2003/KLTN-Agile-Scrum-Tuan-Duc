@@ -7,6 +7,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { disableCreateIssue } from '@/feature/trigger/trigger.slice'
 import { parseStringToDate } from '@/lib/date.helper'
@@ -25,7 +26,7 @@ const DialogCreateIssue = ({}: DialogCreateIssueProps) => {
     >
       <DialogContent className='sm:max-w-[95vw]'>
         <DialogHeader>
-          <DialogTitle>Create Issue</DialogTitle>
+          <DialogTitle>{messages.component.issue.create.title}</DialogTitle>
         </DialogHeader>
         <DialogDescription />
         <ScrollArea className='h-[65vh] py-4'>

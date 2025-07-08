@@ -3,6 +3,7 @@ import SprintCardInSprint from '@/components/sprint/SprintCardInSprint'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { setSprintActive } from '@/feature/sprint/sprint.slice'
@@ -23,6 +24,7 @@ const ListIssueInSprint = ({
   start,
   end
 }: ListIssueInSprintProps) => {
+  const message = messages.component.sprint.listIssueInSprint
   const dispatch = useAppDispatch()
   const { projectId } = useAppId()
   const { data, isFetching } = useGetListIssueQuery(
@@ -54,7 +56,7 @@ const ListIssueInSprint = ({
       className={cn('gap-3')}
       emptyComponent={
         <div className='flex rounded-sm border-2 bg-white px-4 py-2'>
-          Not has any issues
+          {message.list.empty}
         </div>
       }
       render={(item, index) => {
@@ -67,7 +69,7 @@ const ListIssueInSprint = ({
             variant={'default'}
             onClick={handleOpenCreateIssue}
           >
-            Create issue
+            {message.create}
           </Button>
         </RequiredAuth>
       }

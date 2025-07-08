@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { getPriorityDisplayName } from '@/constant/message.const'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
@@ -45,7 +46,7 @@ const UpdatePriorityIssue = ({}: UpdatePriorityIssueProps) => {
               {issuePriorityList.map((item, index) => {
                 return (
                   <SelectItem key={index} value={item}>
-                    {item}
+                    {getPriorityDisplayName(item)}
                   </SelectItem>
                 )
               })}

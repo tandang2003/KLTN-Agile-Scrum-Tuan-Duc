@@ -82,7 +82,13 @@ const issueApi = createApi({
           return { error }
         }
       },
-      invalidatesTags: () => {
+      invalidatesTags: (_, error, { sprintId }) => {
+        if (error) {
+          return []
+        }
+        if (sprintId) {
+          return [{ type: 'SprintIssue', id: sprintId }]
+        }
         return [{ type: 'Issues', id: 'LIST' }]
       }
     }),

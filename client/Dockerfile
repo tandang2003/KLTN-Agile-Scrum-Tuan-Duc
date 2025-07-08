@@ -16,11 +16,9 @@ COPY . .
 # Set environment variables for the build
 ARG BACKEND_URL
 
-ENV VITE_BACKEND_URL=$BACKEND_URL
-
-
 # Build the React app
-RUN npm run build
+RUN VITE_BACKEND_URL=$BACKEND_URL npm run build
+
 
 
 # --- Production Stage (Nginx) ---
@@ -30,7 +28,7 @@ RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf 
 
 EXPOSE 80
 

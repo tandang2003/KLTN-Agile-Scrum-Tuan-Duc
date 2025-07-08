@@ -18,13 +18,15 @@ import { useAppSelector } from '@/context/redux/hook'
 import workspaceApi, {
   useInviteStudentWorkspaceMutation
 } from '@/feature/workspace/workspace.api'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import { cn } from '@/lib/utils'
 import userService from '@/services/user.service'
 import { Id } from '@/types/other.type'
 import axios from 'axios'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
+import Message from '@/components/Message'
 
 type DialogAddStudentProps = {
   workspaceId: Id
@@ -39,15 +41,16 @@ const DialogAddStudent = ({
   const [input, setInput] = useState<string>('')
   const [ids, setIds] = useState<string[]>([])
   const [inviteStudent] = useInviteStudentWorkspaceMutation()
-
+  const message = messages.component.dialog.addStudent
+  const validation = messages.validation
   const handleAddId = async () => {
     if (!input) return
     if (input.length != 8) {
-      toast.error('ID Student need 8 character')
+      toast.error(validation.uniId)
       return
     }
     if (uniId && uniId === input) {
-      toast.error('You can not invite your self')
+      toast.error(validation.inviteSelf)
       return
     }
     try {
@@ -68,7 +71,14 @@ const DialogAddStudent = ({
           }
           case HttpStatusCode.NotFound: {
             setInput('')
-            toast.error(`Student ${input} is not exist`)
+            toast.error(message.toast.notfound.message, {
+              description: (
+                <Message
+                  template={message.toast.notfound.description}
+                  values={{ id: input }}
+                />
+              )
+            })
             break
           }
 
@@ -86,7 +96,16 @@ const DialogAddStudent = ({
         studentIds: ids
       }).unwrap()
       onOpen(!open)
-      toast.success(`Invite student ${ids.join(', ')} success`)
+      toast.success(message.toast.success.message, {
+        description: (
+          <Message
+            template={message.toast.success.description}
+            values={{
+              ids: ids.join(', ')
+            }}
+          />
+        )
+      })
     } catch (error) {
       if (axios.isAxiosError(error)) {
         switch (error.response?.status) {
@@ -99,8 +118,26 @@ const DialogAddStudent = ({
               ])
             }
 
-            toast.success(`Invite student ${idsSuccess.join(', ')} success`)
-            toast.warning(`Student ${idsError.join(', ')} is in project`)
+            toast.success(message.toast.success.message, {
+              description: (
+                <Message
+                  template={message.toast.success.description}
+                  values={{
+                    ids: idsSuccess.join(', ')
+                  }}
+                />
+              )
+            })
+            toast.success(message.toast.conflict.message, {
+              description: (
+                <Message
+                  template={message.toast.conflict.description}
+                  values={{
+                    ids: idsError.join(', ')
+                  }}
+                />
+              )
+            })
             break
           }
           default:
@@ -131,14 +168,12 @@ const DialogAddStudent = ({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Invite students</DialogTitle>
-          <DialogDescription>
-            Student will add to workspace immediately
-          </DialogDescription>
+          <DialogTitle>{message.title}</DialogTitle>
+          <DialogDescription>{message.description}</DialogDescription>
         </DialogHeader>
         <div className='h-16'>
           <Input
-            placeholder='ID Student'
+            placeholder={message.form.uniId.placeholder}
             className='peer'
             value={input}
             onChange={(e) => {
@@ -168,7 +203,7 @@ const DialogAddStudent = ({
         </ScrollArea>
         <DialogFooter>
           <DialogClose asChild>
-            <Button className='bg-red-600'>Cancel</Button>
+            <Button className='bg-red-600'> {message.form.cancel}</Button>
           </DialogClose>
           <Button
             className={cn(
@@ -178,7 +213,7 @@ const DialogAddStudent = ({
             disabled={ids.length === 0}
             onClick={handleInvite}
           >
-            Invite
+            {message.form.submit}
           </Button>
         </DialogFooter>
       </DialogContent>

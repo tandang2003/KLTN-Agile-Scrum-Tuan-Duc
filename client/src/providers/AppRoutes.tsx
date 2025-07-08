@@ -12,19 +12,20 @@ import ManagerPage from '@/pages/manager/page'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import WorkspaceProjectPage from '@/pages/manager/workspace/[:id]/project/page'
-import SettingLayout from '@/pages/manager/workspace/[:id]/setting/layout'
-import WorkspaceSettingPage from '@/pages/manager/workspace/[:id]/setting/page'
 import WorkspaceStudentPage from '@/pages/manager/workspace/[:id]/student/page'
 import SummaryTab from '@/pages/manager/workspace/[:id]/summary/page'
 import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/template/page'
 import WorkspacePage from '@/pages/manager/workspace/page'
 import BacklogPage from '@/pages/manager/workspace/project/backlog/page'
 import BoardPage from '@/pages/manager/workspace/project/board/page'
+import ProjectDashBoard from '@/pages/manager/workspace/project/dashboard/page'
 import ProjectPage from '@/pages/manager/workspace/project/page'
 import ReportPage from '@/pages/manager/workspace/project/report/page'
 import NotFoundPage from '@/pages/not-found'
+import UserCoursePage from '@/pages/user/course/page'
 import UserLayout from '@/pages/user/layout'
 import UserPage from '@/pages/user/page'
+import UserSkillPage from '@/pages/user/skill/page'
 import InviteProjectPage from '@/pages/verification/invite-project/page'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
@@ -60,7 +61,11 @@ const AppRoutes = () => {
               </RequiredAuth>
             }
           >
-            <Route index element={<UserPage />} />
+            <Route element={<UserPage />}>
+              <Route index element={<Navigate to='skill' replace />} />
+              <Route path='skill' element={<UserSkillPage />} />
+              <Route path='course' element={<UserCoursePage />} />
+            </Route>
           </Route>
 
           <Route
@@ -88,10 +93,6 @@ const AppRoutes = () => {
                     path='template'
                     element={<WorkspaceSprintTemplatePage />}
                   />
-
-                  <Route path='setting' element={<SettingLayout />}>
-                    <Route index element={<WorkspaceSettingPage />} />
-                  </Route>
                 </Route>
               </Route>
               <Route path='project'>
@@ -105,6 +106,7 @@ const AppRoutes = () => {
                       <Route path='board' element={<BoardPage />} />
                       <Route path='backlog' element={<BacklogPage />} />
                       <Route path='report' element={<ReportPage />} />
+                      <Route path='dashboard' element={<ProjectDashBoard />} />
                     </Route>
                   </Route>
                 </Route>

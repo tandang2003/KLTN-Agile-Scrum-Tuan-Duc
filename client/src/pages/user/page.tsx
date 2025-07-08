@@ -1,11 +1,12 @@
 import { Badge } from '@/components/ui/badge'
+import messages, { getRoleDisplayName } from '@/constant/message.const'
 import UserAvatar from '@/pages/user/avatar'
-import UserSkill from '@/pages/user/skill'
+import UserNavigate from '@/pages/user/navigate'
 import UserWorkspace from '@/pages/user/workspace'
 import { UserLayoutContextType } from '@/types/route.type'
 
 import { ReactNode } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { Outlet, useOutletContext } from 'react-router-dom'
 
 const UserPage = () => {
   return (
@@ -22,8 +23,11 @@ const UserPage = () => {
           <UserWorkspace />
         </div>
       </div>
-      <div className='mt-10 border-2 p-2 shadow-md'>
-        <UserSkill />
+      <div className='mt-10 p-2'>
+        <UserNavigate />
+        <div className='mt-2 rounded-md border-2 shadow-md'>
+          <Outlet />
+        </div>
       </div>
     </section>
   )
@@ -34,11 +38,11 @@ const Info = () => {
 
   return (
     <div className='rounded-md'>
-      <LineUserInfo title='Full name' value={user.name} />
-      <LineUserInfo title='User Id' value={`#${user.uniId}`} />
+      <LineUserInfo title={messages.user.info.name} value={user.name} />
+      <LineUserInfo title={messages.user.info.uniId} value={`${user.uniId}`} />
       <LineUserInfo
-        title='Role'
-        value={<Badge role={user.role}>{user.role}</Badge>}
+        title={messages.user.info.role}
+        value={<Badge role={user.role}>{getRoleDisplayName(user.role)}</Badge>}
       />
     </div>
   )

@@ -52,9 +52,9 @@ const loginThunk = createAsyncThunk<UserInfoResponse, LoginReq>(
 
 const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
   'auth/user',
-  async (_, { rejectWithValue, signal }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const data = await userService.getInfo(signal)
+      const data = await userService.getInfo()
       return data.data
     } catch (_) {
       tokenService.removeTokenLocal()
@@ -72,7 +72,7 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
       return rejectWithValue('Token invalid')
     } finally {
       tokenService.removeTokenLocal()
-      toast.success('Logout')
+      toast.success('Logout by token expired')
       dispatch(workspaceApi.util.resetApiState())
     }
   }

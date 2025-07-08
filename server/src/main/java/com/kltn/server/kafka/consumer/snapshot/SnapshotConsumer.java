@@ -88,9 +88,7 @@ public class SnapshotConsumer {
                                     "Issue not found")))),
             mapResources, relationships);
         projectSnapshot = snapshotRepository.save(projectSnapshot);
-        // issues.forEach(issue -> {
-        // issue.setSprint(null);
-        // });
+
       }
     }
   }

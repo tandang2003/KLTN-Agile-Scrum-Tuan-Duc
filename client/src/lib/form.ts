@@ -35,3 +35,10 @@ export function handleErrorApi({
     })
   }
 }
+
+export const getErrorMessage = (error: any): string => {
+  if (error?.response?.data?.message) {
+    return error.response.data.message
+  }
+  return error?.message || 'Lỗi server'
+}

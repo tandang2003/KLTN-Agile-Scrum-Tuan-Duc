@@ -7,6 +7,7 @@ import {
 import { Link, useLocation } from 'react-router-dom'
 import { Id } from '@/types/other.type'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 
 type WorkspaceNavigateProps = {
   id: Id
@@ -24,7 +25,9 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
             data-active={pathname.includes('/summary')}
             className='data-[active=true]:active-tag'
           >
-            <Link to={`/manager/workspace/${id}/summary`}>Summary</Link>
+            <Link to={`/manager/workspace/${id}/summary`}>
+              {messages.manager.workspace.detail.navigate.summary}
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
@@ -35,7 +38,9 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
               className='data-[active=true]:active-tag'
               data-active={pathname.includes('/project')}
             >
-              <Link to={`/manager/workspace/${id}/project`}>Project</Link>
+              <Link to={`/manager/workspace/${id}/project`}>
+                {messages.manager.workspace.detail.navigate.project}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </RequiredAuth>
@@ -46,7 +51,9 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
             asChild
             data-active={pathname.includes('/student')}
           >
-            <Link to={`/manager/workspace/${id}/student`}>Student</Link>
+            <Link to={`/manager/workspace/${id}/student`}>
+              {messages.manager.workspace.detail.navigate.student}
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <RequiredAuth roles={['teacher']}>
@@ -56,7 +63,9 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
               asChild
               data-active={pathname.includes('/template')}
             >
-              <Link to={`/manager/workspace/${id}/template`}>Template</Link>
+              <Link to={`/manager/workspace/${id}/template`}>
+                {messages.manager.workspace.detail.navigate.template}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </RequiredAuth>

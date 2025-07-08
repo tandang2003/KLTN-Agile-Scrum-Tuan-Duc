@@ -13,13 +13,15 @@ import {
   openDialogUpdateSprint,
   setSprintActive
 } from '@/feature/sprint/sprint.slice'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import { toISODateString } from '@/lib/date.helper'
 import { getStatusSprint } from '@/lib/sprint.helper'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { toast } from 'sonner'
+import messages, { getSprintStatusDisplayName } from '@/constant/message.const'
+import Message from '@/components/Message'
 type SprintTemplateCardProps = {
   id: Id
   data: SprintResponse
@@ -27,6 +29,7 @@ type SprintTemplateCardProps = {
 }
 
 const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
+  const message = messages.component.sprint.template.card
   const [deleteSprint] = useDeleteSprintMutation()
   const dispatch = useAppDispatch()
   const { showAlert } = useAlertHost()
@@ -45,18 +48,27 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
 
   const handleDelete = () => {
     showAlert({
-      title: 'Delete sprint',
+      title: message.alert.title,
       type: 'warning',
-      message: `Are you sure you want to delete sprint "${data.title}"? This action cannot be undone.`,
+      message: (
+        <Message
+          template={message.alert.message}
+          values={{
+            title: data.title
+          }}
+        />
+      ),
       onConfirm: async () => {
         return deleteSprint(data.id)
           .unwrap()
           .then(() => {
-            toast.success('Sprint deleted successfully')
+            toast.success(message.toast.delete.success)
           })
           .catch((error) => {
             if (error.status === HttpStatusCode.Conflict) {
-              toast.error('Sprint is ended, cannot delete')
+              toast.error(message.toast.delete.conflict)
+            } else {
+              toast.error(message.toast.delete.failed)
             }
           })
       }
@@ -76,22 +88,27 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
           {formatDate(data.start, 'd MMM')} - {formatDate(data.end, 'd MMM')}
         </span>
         <span className='ml-auto flex items-center gap-4'>
-          <span>Point: </span>
+          <span>{message.point}: </span>
           <Badge className='bg-green-500'>{data.storyPoint}</Badge>
-          <Badge statusSprint={getStatusSprint(data)} className='ml-auto'>
-            {getStatusSprint(data)}
+          <Badge
+            statusSprint={getStatusSprint(data)}
+            className='ml-auto w-[100px]'
+          >
+            {getSprintStatusDisplayName(getStatusSprint(data))}
           </Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Icon icon={'ri:more-fill'} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuItem onClick={handleUpdate}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleUpdate}>
+                {message.dropdown.edit}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className='bg-red-500 text-white hover:cursor-pointer hover:opacity-80'
                 onClick={handleDelete}
               >
-                Delete
+                {message.dropdown.delete}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

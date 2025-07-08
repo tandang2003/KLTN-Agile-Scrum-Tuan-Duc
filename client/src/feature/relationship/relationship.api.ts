@@ -121,6 +121,7 @@ export default relationshipApi
 export const {
   useGetRelationshipQuery,
   useLazyGetIssueAvailableQuery,
+  useGetIssueAvailableQuery,
   useCreateRelationshipMutation,
   useDeleteRelationshipMutation
 } = relationshipApi

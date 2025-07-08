@@ -172,6 +172,10 @@
   @apply bg-red-400! text-white! hover:cursor-pointer hover:bg-red-600!;
 }
 
+@utility success {
+  @apply bg-green-400! text-white! hover:cursor-pointer hover:bg-green-600!;
+}
+
 @utility hover-opacity {
   @apply hover:cursor-pointer hover:bg-none hover:opacity-65;
 }
