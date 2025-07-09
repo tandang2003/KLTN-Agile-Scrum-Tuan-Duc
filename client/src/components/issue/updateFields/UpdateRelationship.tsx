@@ -72,10 +72,14 @@ const UpdateRelationship = ({
   const [createIssue] = useCreateRelationshipMutation()
 
   useEffect(() => {
-    handleSubmit()
+    trigger({
+      issueId: issueId,
+      type: form?.typeRelation as IssueRelationShip
+    })
   }, [])
 
   const handleSubmit = async () => {
+    console.log('issueId', issueId)
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)
     if (!dataParser.success) {
       return
@@ -88,12 +92,16 @@ const UpdateRelationship = ({
     })
       .unwrap()
       .then(() => {
-        toast.message('Create relationship success')
+        toast.message('Tạo quan hệ thành công')
+        setForm({
+          typeRelation: 'BLOCKS'
+        })
       })
   }
 
   useEffect(() => {
     if (!open) return
+    console.log(issueId)
     if (form?.typeRelation) {
       trigger({
         issueId: issueId,

@@ -2,6 +2,7 @@ import { addDays, format, isAfter, isBefore, isWithinInterval } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { DateRange } from 'react-day-picker'
+import { vi } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import { Calendar, CalendarProps } from '@/components/ui/calendar'
@@ -40,11 +41,11 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, 'LLL dd, y')} -{' '}
-                  {format(date.to, 'LLL dd, y')}
+                  {format(date.from, 'LLL dd, y', { locale: vi })} -{' '}
+                  {format(date.to, 'LLL dd, y', { locale: vi })}
                 </>
               ) : (
-                format(date.from, 'LLL dd, y')
+                format(date.from, 'LLL dd, y', { locale: vi })
               )
             ) : (
               <span>{messages.component.ui.datePicker.placeholder}</span>
@@ -121,7 +122,7 @@ export function DatePickerWithPresets({
         >
           <CalendarIcon />
           {date ? (
-            format(date, 'PPP')
+            format(date, 'PPP', { locale: vi })
           ) : (
             <span>{messages.component.ui.datePicker.placeholder}</span>
           )}
@@ -150,7 +151,13 @@ export function DatePickerWithPresets({
           <Calendar
             mode='single'
             selected={date}
-            onSelect={setDate}
+            onSelect={(date) => {
+              if (date && setDate) {
+                // Create a date without time
+                date.setHours(0, 0, 0, 0)
+                setDate(date)
+              }
+            }}
             disabled={(date) => isDisable(date)}
             onDayBlur={onDayBlur}
             defaultMonth={date ?? new Date()}

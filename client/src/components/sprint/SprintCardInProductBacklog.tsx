@@ -22,6 +22,7 @@ import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
 import messages from '@/constant/message.const'
 import Message from '@/components/Message'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 type SprintCardInProductBacklogProps = {
   data: IssueResponse
 }
@@ -35,6 +36,9 @@ const SprintCardInProductBacklog = ({
   const { data: sprints, refetch } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const { action } = useOpenIssueUpdate()
   const handleUpdateSprint = (sprintId: Id) => {
     moveToSprint({
@@ -108,6 +112,13 @@ const SprintCardInProductBacklog = ({
                         onClick={() => {
                           handleUpdateSprint(sprint.id)
                         }}
+                        disabled={
+                          getStatusSprint({
+                            end: sprint.end,
+                            start: sprint.start,
+                            id: sprint.id
+                          }) != 'PENDING'
+                        }
                         key={sprint.id}
                         className='cursor-pointer'
                       >
