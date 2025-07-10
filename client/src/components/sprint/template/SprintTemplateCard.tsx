@@ -1,4 +1,4 @@
-import { useAlertHost } from '@/components/AleartHost'
+import { useAlertHost } from '@/components/AlertHost'
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
 import {

@@ -494,7 +494,15 @@ const messages = {
             title: 'Quan hệ giữa các issue',
             fallback: 'Chưa có quan hệ nào được thiết lập',
             add: 'Thêm',
-            cancel: 'Hủy'
+            cancel: 'Hủy',
+            success: 'Thiết lập quan hệ thành công',
+            failed: 'Thiết lập quan hệ thất bại, vui lòng thử lại sau',
+            delete: {
+              title: 'Xóa quan hệ',
+              message: 'Bạn có chắc chắn muốn xóa quan hệ {{name}} không?',
+              success: 'Xóa quan hệ thành công',
+              failed: 'Xóa quan hệ thất bại, vui lòng thử lại sau'
+            }
           }
         }
       }
