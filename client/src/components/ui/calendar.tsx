@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils'
 import { differenceInCalendarDays } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import * as React from 'react'
+import { vi } from 'date-fns/locale'
+
 import {
   DayPicker,
   labelNext,
@@ -165,6 +167,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      locale={vi}
       className={cn('p-3', className)}
       style={{
         width: 248.8 * (columnsDisplayed ?? 1) + 'px'

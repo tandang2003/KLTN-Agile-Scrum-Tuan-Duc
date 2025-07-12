@@ -124,10 +124,11 @@ public class SprintScheduler {
   }
 
   private void sendMessage(String projectId, String sprintId) {
-    String curUser = SecurityContextHolder.getContext()
-        .getAuthentication()
-        .getPrincipal()
-        .toString();
+    String curUser = "21130171";
+//      SecurityContextHolder.getContext()
+//        .getAuthentication()
+//        .getPrincipal()
+//        .toString();
 
     SnapshotRequest payload = SnapshotRequest.builder()
         .projectId(projectId)

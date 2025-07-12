@@ -32,7 +32,6 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import Icon from '@/components/Icon'
-import { useEffect } from 'react'
 
 type FormCreateCourseProps = {}
 

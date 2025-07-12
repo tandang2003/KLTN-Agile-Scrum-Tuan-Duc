@@ -2,6 +2,7 @@ import { addDays, format, isAfter, isBefore, isWithinInterval } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { DateRange } from 'react-day-picker'
+import { vi } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import { Calendar, CalendarProps } from '@/components/ui/calendar'
@@ -10,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 
 type DatePickerWithRangeProps = {
   date?: DateRange
@@ -40,11 +41,10 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, 'LLL dd, y')} -{' '}
-                  {format(date.to, 'LLL dd, y')}
+                  {formatDate(date.from)} - {formatDate(date.to)}
                 </>
               ) : (
-                format(date.from, 'LLL dd, y')
+                formatDate(date.from)
               )
             ) : (
               <span>{messages.component.ui.datePicker.placeholder}</span>
@@ -121,7 +121,7 @@ export function DatePickerWithPresets({
         >
           <CalendarIcon />
           {date ? (
-            format(date, 'PPP')
+            formatDate(date, 'SHORT')
           ) : (
             <span>{messages.component.ui.datePicker.placeholder}</span>
           )}
@@ -137,20 +137,24 @@ export function DatePickerWithPresets({
           }
         >
           <SelectTrigger>
-            <SelectValue placeholder='Select' />
+            <SelectValue placeholder='Chọn' />
           </SelectTrigger>
           <SelectContent position='popper'>
-            <SelectItem value='0'>Today</SelectItem>
-            <SelectItem value='1'>Tomorrow</SelectItem>
-            <SelectItem value='3'>In 3 days</SelectItem>
-            <SelectItem value='7'>In a week</SelectItem>
+            <SelectItem value='0'>Hôm nay</SelectItem>
+            <SelectItem value='1'>Hôm qua</SelectItem>
+            <SelectItem value='3'>3 ngày trước</SelectItem>
+            <SelectItem value='7'>1 tuần</SelectItem>
           </SelectContent>
         </Select>
         <div className='rounded-md border'>
           <Calendar
             mode='single'
             selected={date}
-            onSelect={setDate}
+            onSelect={(date) => {
+              if (date && setDate) {
+                setDate(date)
+              }
+            }}
             disabled={(date) => isDisable(date)}
             onDayBlur={onDayBlur}
             defaultMonth={date ?? new Date()}

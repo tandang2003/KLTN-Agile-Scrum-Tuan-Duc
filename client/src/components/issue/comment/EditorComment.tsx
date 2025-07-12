@@ -19,7 +19,7 @@ const EditorComment = () => {
   const [comment, setComment] = useState<string>('')
 
   const handlePushComment = (val: string) => {
-    if (issueId && isReady) {
+    if (issueId && isReady && ws) {
       commentService.sendComment(ws, issueId, {
         content: val
       })

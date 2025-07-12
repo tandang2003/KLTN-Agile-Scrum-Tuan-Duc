@@ -12,7 +12,7 @@ import { setUpdateDataSkill } from '@/feature/skill/skill.slice'
 import { enableDialogSkill } from '@/feature/trigger/trigger.slice'
 import { SkillResponse } from '@/types/skill.type'
 
-import { useAlertHost } from '@/components/AleartHost'
+import { useAlertHost } from '@/components/AlertHost'
 import Message from '@/components/Message'
 import messages, { getProficiencyDisplayName } from '@/constant/message.const'
 import { toast } from 'sonner'
