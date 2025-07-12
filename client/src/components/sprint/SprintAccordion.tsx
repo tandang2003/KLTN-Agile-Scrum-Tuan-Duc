@@ -17,6 +17,7 @@ import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
 import { getSprintStatusDisplayName } from '@/constant/message.const'
 import useSprintCurrent from '@/hooks/use-sprint-current'
+import HtmlViewer from '@/components/HtmlViewer'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
@@ -82,6 +83,11 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                 </span>
               </AccordionTrigger>
               <AccordionContent ref={refContent}>
+                <div className='mb-2 flex flex-col gap-2'>
+                  <span className='text-xl font-bold'>Nội dung thực hiện</span>
+                  <HtmlViewer value={item.description} />
+                </div>
+
                 {sprintId && (
                   <ListIssueInSprint
                     sprintId={item.id}

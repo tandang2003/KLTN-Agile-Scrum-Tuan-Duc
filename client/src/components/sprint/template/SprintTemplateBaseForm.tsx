@@ -102,7 +102,7 @@ const SprintTemplateBaseForm = ({
   }
 
   const handleSubmit = (values: CreateSprintFormType) => {
-    console.log(values)
+    console.log(JSON.stringify(values))
     onSubmit?.(values, form)
   }
 
@@ -194,7 +194,7 @@ const SprintTemplateBaseForm = ({
                       date={field.value}
                       setDate={(date) => {
                         if (date) {
-                          field.onChange(new Date(date))
+                          field.onChange(date)
                         }
                       }}
                     />
@@ -216,7 +216,7 @@ const SprintTemplateBaseForm = ({
                       min={form.getValues('start')}
                       date={field.value}
                       setDate={(date) => {
-                        if (date) field.onChange(new Date(date))
+                        if (date) field.onChange(date)
                       }}
                     />
                     <div className='h-[20px]'>
@@ -239,7 +239,7 @@ const SprintTemplateBaseForm = ({
                       max={form.getValues('end')}
                       setDate={(date) => {
                         if (date) {
-                          field.onChange(new Date(date))
+                          field.onChange(date)
                         }
                       }}
                     />

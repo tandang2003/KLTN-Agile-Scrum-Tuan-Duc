@@ -14,7 +14,7 @@ import { CommentResType } from '@/types/comment.type.ts'
 
 type CommentContextType = {
   isReady: boolean
-  ws: Client
+  ws?: Client
   comment?: CommentResType[]
   setComment?: (value: CommentResType[]) => void
 }
@@ -50,35 +50,40 @@ export const CommentProvider = ({
     }
   }, [initValue])
   useEffect(() => {
-    const headers = {
-      Authorization: `Bearer ${accessToken}`
-    }
-    const stompClient = Stomp.over(
-      () => new SockJS(`${envConfig.BACKEND_URL}/ws`)
-    )
-    stompClient.connectHeaders = headers
-    stompClient.reconnectDelay = 5000
-    stompClient.debug = () => {}
-    stompClient.onConnect = () => {
-      // console.log('Connected to WebSocket')
-      setIsReady(stompClient.connected)
+    const connectWebSocket = () => {
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      }
+
+      const stompClient = Stomp.over(
+        () => new SockJS(`${envConfig.BACKEND_URL}/ws`)
+      )
+      stompClient.connectHeaders = headers
+      stompClient.reconnectDelay = 5000
+      stompClient.debug = () => {}
+
+      stompClient.onConnect = () => {
+        ws.current = stompClient
+        setIsReady(true)
+      }
+
+      stompClient.onStompError = () => {
+        console.error('WebSocket error')
+      }
+
+      stompClient.onDisconnect = () => {
+        setIsReady(false)
+      }
+
+      stompClient.activate()
     }
 
-    stompClient.onStompError = (_frame) => {
-      // console.error('Broker reported error: ' + frame.headers['message'])
-      // console.error('Additional details: ' + frame.body)
-    }
-
-    stompClient.onDisconnect = () => {
-      // console.log('Disconnect')
-    }
-    stompClient.activate()
-    ws.current = stompClient
+    connectWebSocket()
 
     // Cleanup on component unmount
     return () => {
-      if (stompClient.connected) {
-        stompClient.deactivate()
+      if (ws.current?.connected) {
+        ws.current.deactivate()
       }
     }
   }, [])
@@ -86,7 +91,7 @@ export const CommentProvider = ({
     <CommentContext.Provider
       value={{
         isReady: isReady,
-        ws: ws.current!,
+        ws: ws.current || undefined,
         comment: comment,
         setComment: setComment
       }}

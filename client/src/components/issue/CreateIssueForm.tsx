@@ -34,6 +34,7 @@ import messages, {
   getTagDisplayName
 } from '@/constant/message.const'
 import Message from '@/components/Message'
+import { getComplexityBilingual } from '@/lib/issue.helper'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
@@ -47,6 +48,8 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
   const form = useForm<CreateIssueType>({
     resolver: zodResolver(CreateIssueSchema),
     defaultValues: {
+      name: '',
+      description: '',
       priority: 'CRITICAL',
       tag: 'THEORY',
       date: undefined,
@@ -72,7 +75,8 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
     const req: CreateIssueRequest = {
       projectId: projectId,
       ...values,
-      status: DEFAULT_STATUS
+      status: DEFAULT_STATUS,
+      complexOfDescription: getComplexityBilingual(values.description ?? '')
     }
     create(req)
       .unwrap()

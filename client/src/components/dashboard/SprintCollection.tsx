@@ -43,7 +43,9 @@ const SprintCollection = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sprints?.map((item) => <SprintCollectionRow item={item} />)}
+        {sprints?.map((item) => (
+          <SprintCollectionRow key={item.id} item={item} />
+        ))}
       </TableBody>
     </Table>
   )

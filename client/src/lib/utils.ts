@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { format } from 'date-fns'
+import { vi } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -50,7 +51,7 @@ const formatDate = (
   const resolvedPattern =
     pattern === 'SHORT' || pattern === 'LONG' ? patterns[pattern] : pattern
 
-  return format(date, resolvedPattern)
+  return format(date, resolvedPattern, { locale: vi })
 }
 // Function overload signatures
 function loadSessionStorage<T>(key: string, fallback: T, isObj?: false): T // Case where not parsing JSON, returning raw value

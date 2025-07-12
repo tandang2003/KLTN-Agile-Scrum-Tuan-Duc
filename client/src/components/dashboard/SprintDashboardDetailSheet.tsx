@@ -1,3 +1,4 @@
+import IssueStatusChart from '@/components/dashboard/chart/IssueStatusChart'
 import IssueTrendChart from '@/components/dashboard/chart/IssueTrendChart'
 import { Button } from '@/components/ui/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -24,7 +25,7 @@ const SprintDashboardDetailSheet = ({
   const sprintData: SprintAggregateType[] = useMemo(() => {
     return [
       {
-        id: '1',
+        id: '30%',
         duration: 10,
         issuesStarted: 10,
         issuesAdded: 5,
@@ -35,7 +36,7 @@ const SprintDashboardDetailSheet = ({
         members: 4
       },
       {
-        id: '2',
+        id: '50%',
         duration: 12,
         issuesStarted: 8,
         issuesAdded: 6,
@@ -46,7 +47,7 @@ const SprintDashboardDetailSheet = ({
         members: 5
       },
       {
-        id: '2',
+        id: '80%',
         duration: 12,
         issuesStarted: 8,
         issuesAdded: 6,
@@ -69,13 +70,14 @@ const SprintDashboardDetailSheet = ({
         <ScrollArea className='h-full pb-[100px]'>
           <SprintAggregateByProcess process={25} data={sprintData[0]} />
           <IssueTrendChart sprints={sprintData} />
+          <IssueStatusChart sprints={sprintData} />
           <ScrollBar orientation='horizontal' />
         </ScrollArea>
         <SheetFooter className='mt-3'>
           <div className='flex w-full items-center justify-between'>
             <SheetClose asChild>
               <Button className='cancel' variant='outline'>
-                Close
+                Đóng
               </Button>
             </SheetClose>
           </div>

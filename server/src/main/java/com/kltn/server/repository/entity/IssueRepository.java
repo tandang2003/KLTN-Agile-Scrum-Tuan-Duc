@@ -21,8 +21,6 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   @Query("SELECT i FROM Issue i WHERE i.project.id = ?1 AND i.id != ?2")
   Optional<List<Issue>> findByProjectIdAndIdNot(String projectId, String issueId);
 
-  int countByProjectIdAndSprintIdAndDtCreatedBefore(String projectId, String sprintId, Instant dtCreatedBefore);
-
   int countByProjectIdAndSprintIdAndDtCreatedAfter(String id, String id1, Instant dtStart);
 
   int countByProjectIdAndSprintIdAndDtEndBeforeAndStatus(String id, String id1, Instant now, IssueStatus issueStatus);
@@ -32,18 +30,24 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndSprintIdAndAssigneeNotNull(String projectId, String sprintId);
 
   @Query("SELECT COUNT(DISTINCT i.sprint) " +
-    "FROM IssueRelation ir " +
-    "JOIN ir.issueRelated i " +
-    "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " +
-    "AND ir.issue.id = :issueId")
+      "FROM IssueRelation ir " +
+      "JOIN ir.issue i " +
+      "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " +
+      "AND ir.issueRelated.id = :issueId")
   int getNumberOfAffectVersions(@Param("issueId") String issueId);
 
   @Query(value = "SELECT r.* FROM issues i JOIN issue_resources rs ON i.id=rs.issue_id" + "JOIN resources r ON r" +
-                 ".id=rs.issue_id",
-         nativeQuery = true)
+      ".id=rs.issue_id", nativeQuery = true)
   List<Resource> getResources(String issueId);
 
-  @Query(value = "SELECT ir.* FROM issue_relation ir WHERE ir.issue_id= :issueId ",
-         nativeQuery = true)
+  @Query(value = "SELECT ir.* FROM issue_relation ir WHERE ir.issue_id= :issueId ", nativeQuery = true)
   List<IssueRelation> getIssueRelation(String issueId);
+
+  int countByProjectIdAndSprintIdAndDtAppendBefore(String projectId, String sprintId, Instant dtAppendBefore);
+
+  int countByProjectIdAndSprintIdAndDtAppendLessThanEqual(String projectId, String sprintId,
+      Instant dtAppendIsLessThan);
+
+  int countByProjectIdAndSprintIdAndDtAppendGreaterThan(String projectId, String sprintId,
+      Instant dtAppendIsGreaterThan);
 }
