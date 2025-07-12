@@ -31,13 +31,13 @@ import { useGetAllCourseQuery } from '@/feature/course/course.api'
 import { useCreateWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
 import { handleErrorApi } from '@/lib/form'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import {
   CreateWorkspaceSchema,
   CreateWorkspaceSchemaType
 } from '@/types/workspace.type'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addDays } from 'date-fns'
+import { addDays, format, startOfDay } from 'date-fns'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -65,34 +65,47 @@ const CreateWorkspaceForm = () => {
   })
 
   const handleSubmit = (values: CreateWorkspaceSchemaType) => {
-    createWorkspace({
-      ...values,
-      start: values.date.from,
-      end: values.date.to
+    const start = format(startOfDay(values.date.from), 'yyyy-MM-dd')
+    const end = format(startOfDay(values.date.to), 'yyyy-MM-dd')
+    fetch('/api/workspace/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...values,
+        start: start,
+        end: end
+      })
     })
-      .unwrap()
-      .then((response) =>
-        toast.success(
-          messages.component.createWorkspace.toast.success.message,
-          {
-            description: (
-              <Message
-                template={
-                  messages.component.createWorkspace.toast.success.description
-                }
-                values={{ name: response.name, id: response.id }}
-              />
-            )
-          }
-        )
-      )
-      .then(() => {
-        dispatch(setStateDialogWorkspace(!state))
-      })
-      .catch((error) => {
-        toast.error(messages.component.createWorkspace.toast.failed)
-        handleErrorApi(error)
-      })
+    // createWorkspace({
+    //   ...values,
+    //   start: values.date.from,
+    //   end: values.date.to
+    // })
+    //   .unwrap()
+    //   .then((response) =>
+    //     toast.success(
+    //       messages.component.createWorkspace.toast.success.message,
+    //       {
+    //         description: (
+    //           <Message
+    //             template={
+    //               messages.component.createWorkspace.toast.success.description
+    //             }
+    //             values={{ name: response.name, id: response.id }}
+    //           />
+    //         )
+    //       }
+    //     )
+    //   )
+    //   .then(() => {
+    //     dispatch(setStateDialogWorkspace(!state))
+    //   })
+    //   .catch((error) => {
+    //     toast.error(messages.component.createWorkspace.toast.failed)
+    //     handleErrorApi(error)
+    //   })
   }
 
   return (

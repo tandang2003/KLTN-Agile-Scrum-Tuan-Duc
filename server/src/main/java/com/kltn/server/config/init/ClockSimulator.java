@@ -13,8 +13,8 @@ public class ClockSimulator {
   public ClockSimulator(long timeSpeech) {
     ClockSimulator.timeSpeech = timeSpeech;
     simulatedStartTime = LocalDateTime.of(2025, 2, 1, 0, 0)
-      .atZone(ASIA_HO_CHI_MINH)
-      .toInstant();
+        .atZone(ASIA_HO_CHI_MINH)
+        .toInstant();
   }
 
   public static Instant now() {

@@ -4,33 +4,32 @@ import { useAppSelector } from '@/context/redux/hook'
 import { uuid } from '@/lib/utils'
 import { CommentResType } from '@/types/comment.type'
 import { useEffect } from 'react'
-import { toast } from 'sonner'
 
 const ListComment = () => {
   const issueId = useAppSelector((state) => state.issueSlice.current?.id)
   const { isReady, ws, setComment, comment } = useCommentContext()
   useEffect(() => {
-    if (ws && isReady && ws.connected) {
-      const subscriber = ws.subscribe(`/topic/room/${issueId}`, (value) => {
-        const response: CommentResType = JSON.parse(value.body)
-        console.log('Receive comment', response)
-        setComment?.([
-          {
-            id: uuid(),
-            from: response.from,
-            content: response.content,
-            createdAt: response.createdAt
-          },
-          ...(comment ?? [])
-        ])
+    if (!issueId || !ws || !isReady || !ws.connected) return
+    // toast.message('Subscribe comment')
+    const subscriber = ws.subscribe(`/topic/room/${issueId}`, (value) => {
+      const response: CommentResType = JSON.parse(value.body)
+      setComment?.([
+        {
+          id: uuid(),
+          from: response.from,
+          content: response.content,
+          createdAt: response.createdAt
+        },
+        ...(comment ?? [])
+      ])
 
-        toast.message('Receive message')
-      })
-      return () => {
-        return subscriber.unsubscribe()
-      }
+      // toast.message('Receive message')
+    })
+    return () => {
+      // toast.message('Unsubscribe comment')
+      return subscriber.unsubscribe()
     }
-  }, [ws, isReady])
+  }, [ws, isReady, setComment, issueId])
   return (
     <div>
       {comment?.map((item) => {

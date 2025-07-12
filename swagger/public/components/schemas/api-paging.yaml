@@ -1,0 +1,9 @@
+type: object
+description: contain value in paging
+properties:
+  currentPage:
+    type: number
+  totalPages:
+    type: number
+  totalItems:
+    type: number

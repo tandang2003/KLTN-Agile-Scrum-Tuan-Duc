@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import messages from '@/constant/message.const'
 import { useUpdateWorkspaceMutation } from '@/feature/workspace/workspace.api'
+import { formatDate } from '@/lib/utils'
 import {
   UpdateWorkspaceSchema,
   UpdateWorkspaceSchemaType,
@@ -110,10 +111,7 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
                   {messages.component.updateWorkspace.form.dateStart}
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    disabled
-                    value={data.start && format(data.start, 'LLL dd, y')}
-                  />
+                  <Input disabled value={formatDate(data.start, 'SHORT')} />
                 </FormControl>
                 <div className='h-[20px]'></div>
               </FormItem>

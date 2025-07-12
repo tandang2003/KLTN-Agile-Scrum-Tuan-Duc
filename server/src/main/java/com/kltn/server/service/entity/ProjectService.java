@@ -271,7 +271,7 @@ public class ProjectService {
         Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.DAYS);
         Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.DAYS);
         // previous sprint section
-        if (end.isBefore(now) && daysPrev > end.until(now, ChronoUnit.DAYS)) {
+        if (end.isBefore(now) && daysPrev < end.until(now, ChronoUnit.DAYS)) {
           previous = sprint;
           daysPrev = end.until(now, ChronoUnit.DAYS);
           continue;

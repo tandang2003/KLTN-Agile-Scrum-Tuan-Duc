@@ -1,0 +1,38 @@
+post:
+  summary: Invite student to project
+  description: |
+    Used by:
+    - Leader
+
+    Constraints for inviting a user into a project:
+    - The user must already be a member of the workspace that contains the project.
+    - The user must not already be a member of any other project within the same workspace.
+    - The current number of project members must be less than the maximum allowed number of members for the project.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            userId:
+              type: string
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+    404:
+      description: user id not found
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object

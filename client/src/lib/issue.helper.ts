@@ -73,10 +73,10 @@ function getComplexityBilingual(description: string): number {
   }
 
   // Fallback: Use text length as hint
-  if (text.length < 50) return 1
-  if (text.length < 150) return 2
+  if (text.length < 50) return 2
+  if (text.length < 150) return 3
 
-  return 3 // Default to high if long and unknown
+  return 1 // Default to high if long and unknown
 }
 
 export { getComplexityBilingual }

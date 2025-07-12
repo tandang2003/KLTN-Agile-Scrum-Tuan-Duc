@@ -1,5 +1,6 @@
 import messages from '@/constant/message.const'
-import { SprintAggregateType } from '@/types/aggregate.type'
+import { cn } from '@/lib/utils'
+import { IssueTrendItem } from '@/types/dashboard.type'
 import {
   Chart as ChartJS,
   LineElement,
@@ -24,12 +25,16 @@ ChartJS.register(
 )
 
 type IssueTrendChartProps = {
-  sprints: SprintAggregateType[]
+  data: IssueTrendItem[]
+  className?: string
 }
 
-const IssueTrendChart = ({ sprints }: IssueTrendChartProps) => {
+const IssueTrendChart = ({
+  data: sprints,
+  className
+}: IssueTrendChartProps) => {
   const message = messages.component.dashboard.chart.issueTrend
-  const labels = sprints.map((item) => item.id)
+  const labels = sprints.map((item) => item.process)
 
   const addedIssues = sprints.map((item) => item.issuesAdded)
   const removedIssues = sprints.map((item) => item.issuesRemoved)
@@ -60,16 +65,6 @@ const IssueTrendChart = ({ sprints }: IssueTrendChartProps) => {
       padding: 20
     },
     plugins: {
-      title: {
-        display: true,
-        text: message.title,
-        position: 'top' as const,
-        align: 'center' as const,
-        font: {
-          size: 25
-        },
-        padding: 20
-      },
       legend: {
         position: 'bottom' as const
       }
@@ -97,11 +92,7 @@ const IssueTrendChart = ({ sprints }: IssueTrendChartProps) => {
     }
   }
 
-  return (
-    <div>
-      <Line className='w-full' data={data} options={options} />
-    </div>
-  )
+  return <Line className={cn(className)} data={data} options={options} />
 }
 
 export default IssueTrendChart

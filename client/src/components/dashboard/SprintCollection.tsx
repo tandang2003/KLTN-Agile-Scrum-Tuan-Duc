@@ -1,6 +1,4 @@
-import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -16,34 +14,31 @@ import useSprintCurrent from '@/hooks/use-sprint-current'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
-import { lazy, ReactNode, Suspense, useState } from 'react'
-type SprintCollectionProps = {
-  children: ReactNode
-}
+import { lazy, Suspense, useState } from 'react'
+type SprintCollectionProps = {}
 
-const SprintCollection = () => {
+const SprintCollection = ({}: SprintCollectionProps) => {
   const message = messages.component.dataTable.sprint.columns
   const { workspaceId } = useAppId()
-  const { data: sprints, isFetching } = useGetListSprintQuery(
-    workspaceId as Id,
-    {
-      skip: !workspaceId
-    }
-  )
+  const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
+    skip: !workspaceId
+  })
   return (
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead>#</TableHead>
           <TableHead>{message.title}</TableHead>
           <TableHead>{message.start}</TableHead>
           <TableHead>{message.end}</TableHead>
           <TableHead>{message.status}</TableHead>
           <TableHead>{message.predictStatus}</TableHead>
-          <TableHead className='text-right'></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sprints?.map((item) => <SprintCollectionRow item={item} />)}
+        {sprints?.map((item, index) => (
+          <SprintCollectionRow order={index + 1} key={item.id} item={item} />
+        ))}
       </TableBody>
     </Table>
   )
@@ -54,24 +49,21 @@ const LazySprintDashboardDetailSheet = lazy(
 )
 
 type SprintCollectionRowProps = {
+  order: number
   item: SprintModel
 }
 
-const SprintCollectionRow = ({ item }: SprintCollectionRowProps) => {
+const SprintCollectionRow = ({ order, item }: SprintCollectionRowProps) => {
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
   const [open, setOpen] = useState(false)
   const [hasOpened, setHasOpened] = useState(false)
 
-  const handleOpen = () => {
-    setHasOpened(true)
-    setOpen(true)
-  }
-
   return (
     <>
       <TableRow key={item.id}>
+        <TableCell className='font-medium'>{order}</TableCell>
         <TableCell className='font-medium'>{item.title}</TableCell>
         <TableCell>{formatDate(item.start)}</TableCell>
         <TableCell>{formatDate(item.end)}</TableCell>
@@ -93,17 +85,12 @@ const SprintCollectionRow = ({ item }: SprintCollectionRowProps) => {
           </Badge>
         </TableCell>
         <TableCell>Thanh cong</TableCell>
-        <TableCell className='text-right'>
-          <Button variant={'link'} onClick={handleOpen}>
-            Xem chi tiết
-            <Icon icon={'lsicon:triangle-right-filled'} size={10} />
-          </Button>
-        </TableCell>
       </TableRow>
 
       {hasOpened && (
         <Suspense fallback={null}>
           <LazySprintDashboardDetailSheet
+            sprint={item}
             isOpen={open}
             onOpenChange={setOpen}
           />

@@ -1,0 +1,30 @@
+post:
+  summary: Register student account
+  description: Authenticates a user and returns a JWT token.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            uniId:
+              type: string
+            password:
+              type: string
+            name:
+              type: string
+  responses:
+    200:
+      description: Successful Registration
+    409:
+      description: Account with uniId exist
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+            default:
+              code: 409
+              error: "EXISTED_DATA"
+              message: "Data already exists"

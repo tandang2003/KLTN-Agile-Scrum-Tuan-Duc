@@ -1,4 +1,4 @@
-import { useAlertHost } from '@/components/AleartHost'
+import { useAlertHost } from '@/components/AlertHost'
 import Icon from '@/components/Icon'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -15,13 +15,13 @@ import {
 } from '@/feature/sprint/sprint.slice'
 import { HttpStatusCode } from '@/constant/app.const'
 import { toISODateString } from '@/lib/date.helper'
-import { getStatusSprint } from '@/lib/sprint.helper'
 import { cn, formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { toast } from 'sonner'
 import messages, { getSprintStatusDisplayName } from '@/constant/message.const'
 import Message from '@/components/Message'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 type SprintTemplateCardProps = {
   id: Id
   data: SprintResponse
@@ -29,6 +29,9 @@ type SprintTemplateCardProps = {
 }
 
 const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const message = messages.component.sprint.template.card
   const [deleteSprint] = useDeleteSprintMutation()
   const dispatch = useAppDispatch()
