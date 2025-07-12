@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 
 type DatePickerWithRangeProps = {
   date?: DateRange
@@ -41,11 +41,10 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, 'LLL dd, y', { locale: vi })} -{' '}
-                  {format(date.to, 'LLL dd, y', { locale: vi })}
+                  {formatDate(date.from)} - {formatDate(date.to)}
                 </>
               ) : (
-                format(date.from, 'LLL dd, y', { locale: vi })
+                formatDate(date.from)
               )
             ) : (
               <span>{messages.component.ui.datePicker.placeholder}</span>
@@ -122,7 +121,7 @@ export function DatePickerWithPresets({
         >
           <CalendarIcon />
           {date ? (
-            format(date, 'PPP', { locale: vi })
+            formatDate(date, 'SHORT')
           ) : (
             <span>{messages.component.ui.datePicker.placeholder}</span>
           )}
@@ -138,13 +137,13 @@ export function DatePickerWithPresets({
           }
         >
           <SelectTrigger>
-            <SelectValue placeholder='Select' />
+            <SelectValue placeholder='Chọn' />
           </SelectTrigger>
           <SelectContent position='popper'>
-            <SelectItem value='0'>Today</SelectItem>
-            <SelectItem value='1'>Tomorrow</SelectItem>
-            <SelectItem value='3'>In 3 days</SelectItem>
-            <SelectItem value='7'>In a week</SelectItem>
+            <SelectItem value='0'>Hôm nay</SelectItem>
+            <SelectItem value='1'>Hôm qua</SelectItem>
+            <SelectItem value='3'>3 ngày trước</SelectItem>
+            <SelectItem value='7'>1 tuần</SelectItem>
           </SelectContent>
         </Select>
         <div className='rounded-md border'>
@@ -153,8 +152,6 @@ export function DatePickerWithPresets({
             selected={date}
             onSelect={(date) => {
               if (date && setDate) {
-                // Create a date without time
-                date.setHours(0, 0, 0, 0)
                 setDate(date)
               }
             }}

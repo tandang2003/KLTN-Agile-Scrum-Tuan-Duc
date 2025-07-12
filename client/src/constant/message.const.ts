@@ -72,6 +72,16 @@ const messages = {
             labelIssueAdded: 'Issue được thêm',
             labelIssueRemoved: 'Issue bị loại bỏ'
           }
+        },
+        issueStatus: {
+          title: 'Sự biến thiên trạng thái của issue',
+          labelX: 'Sprint',
+          labelY: 'Số lượng issue',
+          dataset: {
+            labelIssueTodo: 'Issue ở trạng thái todo',
+            labelIssueInProcess: 'Issue ở trạng thái in process',
+            labelIssueReview: 'Issue ở trạng thái reivew'
+          }
         }
       }
     },
