@@ -2,6 +2,7 @@ import { RoleType } from '@/types/auth.type'
 import { IssueRelationShip } from '@/types/model/relationship'
 import {
   IssuePriority,
+  issuePriorityList,
   IssueTag,
   SkillLevel,
   SprintStatusType
@@ -65,8 +66,8 @@ const messages = {
     dashboard: {
       chart: {
         issueTrend: {
-          title: 'Sự biến thiên của issue',
-          labelX: 'Sprint',
+          title: 'Sự biến thiên số lượng issue',
+          labelX: 'Giai đoạn',
           labelY: 'Số lượng issue',
           dataset: {
             labelIssueAdded: 'Issue được thêm',
@@ -74,13 +75,43 @@ const messages = {
           }
         },
         issueStatus: {
-          title: 'Sự biến thiên trạng thái của issue',
-          labelX: 'Sprint',
+          title: 'Sự biến thiên trạng thái của các issue',
+          labelX: 'Giai đoạn',
           labelY: 'Số lượng issue',
           dataset: {
-            labelIssueTodo: 'Issue ở trạng thái todo',
-            labelIssueInProcess: 'Issue ở trạng thái in process',
-            labelIssueReview: 'Issue ở trạng thái reivew'
+            labelIssueTodo: 'Issue chuẩn bị thực hiện',
+            labelIssueInProcess: 'Issue đang thực hiện',
+            labelIssueReview: 'Issue đang đợi review'
+          }
+        },
+        issuePriority: {
+          title: 'Sự phân bố độ ưu tiên của các issue',
+          labelX: 'Giai đoạn',
+          labelY: 'Số lượng issue',
+          scales: {
+            y: 'Số lượng issue',
+            x: 'Cấp độ'
+          }
+        },
+        statusDoughnutChart: {
+          title: 'Thống kê tình trạng issue',
+          dataset: {
+            labelIssueTodo: 'Issue chuẩn bị thực hiện',
+            labelIssueInProcess: 'Issue đang thực hiện',
+            labelIssueReview: 'Issue đang đợi review',
+            labelIssueDone: 'Issue đã hoàn thành'
+          }
+        },
+        workloadBarChart: {
+          title: 'Tần suất làm việc',
+          dataset: {
+            labelIssueFailed: 'Issue chưa hoàn thành',
+            labelIssueTotal: 'Tổng issue',
+            labelIssueDone: 'Issue đã hoàn thành'
+          },
+          scales: {
+            x: 'Số lượng issue',
+            y: 'Thành viên'
           }
         }
       }
@@ -618,7 +649,8 @@ const messages = {
   other: {
     notHandle: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
     notFound: 'Không tìm thấy trang yêu cầu',
-    serverError: 'Đã có lỗi xảy ra, vui lòng thử lại sau'
+    serverError: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+    notData: 'Không có dữ liệu nào để hiển thị'
   }
 }
 

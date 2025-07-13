@@ -1,0 +1,73 @@
+get:
+  summary: Get information sprint
+  description: Get information sprint by project id and sprint id
+  parameters:
+    - name: project_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID of the project
+
+    - name: sprint_id
+      in: query
+      required: true
+      schema:
+        type: string
+      description: ID of the sprint
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: string
+                        description: sprint id
+                      name:
+                        type: string
+                        description: name sprint
+                      description:
+                        type: string
+                        description: description sprint
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                          description: id tag get from project
+                      subTasks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: sub task id
+                            name:
+                              type: string
+                              description: name sub task
+                            check:
+                              type: boolean
+                              description: is finish or no ?
+            example:
+              code: 200
+              id: "sprint-001"
+              name: "Sprint-001"
+              description:
+              tag:
+                - "tag-UX/UI"
+                - "tag-Java"
+              subTasks:
+                - id: "sub-task-001"
+                  name: "task 001"
+                  check: true
+                - id: "sub-task-002"
+                  name: "task 002"
+                  check: false

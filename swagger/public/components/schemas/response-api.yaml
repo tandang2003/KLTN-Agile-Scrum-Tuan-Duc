@@ -2,11 +2,9 @@ type: object
 required:
   - code
 properties:
-  id:
+  code:
     type: integer
-    required: false
-  name:
+  error:
     type: string
-  color:
+  message:
     type: string
-

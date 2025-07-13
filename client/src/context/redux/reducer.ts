@@ -1,6 +1,8 @@
+import aggregateApi from '@/feature/aggregate/aggregate.api'
 import authReducer from '@/feature/auth/auth.slice'
 import { boardReducer } from '@/feature/board/board.slice'
 import courseApi from '@/feature/course/course.api'
+import dashboardApi from '@/feature/dashboard/dashboard.api'
 import issueApi from '@/feature/issue/issue.api'
 import { issueReducer } from '@/feature/issue/issue.slice'
 import notificationApi from '@/feature/notification/notification.api'
@@ -27,6 +29,8 @@ const rootReducer = combineReducers({
   [relationshipApi.reducerPath]: relationshipApi.reducer,
   [notificationApi.reducerPath]: notificationApi.reducer,
   [courseApi.reducerPath]: courseApi.reducer,
+  [aggregateApi.reducerPath]: aggregateApi.reducer,
+  [dashboardApi.reducerPath]: dashboardApi.reducer,
   authSlice: authReducer,
   workspaceSlice: workspaceReducer,
   projectSlice: projectReducer,

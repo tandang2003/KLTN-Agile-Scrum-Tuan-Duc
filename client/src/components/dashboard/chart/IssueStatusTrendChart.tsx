@@ -1,6 +1,7 @@
 import messages from '@/constant/message.const'
 import { cn } from '@/lib/utils'
-import { IssueTrendItem } from '@/types/dashboard.type'
+import { SprintAggregateType } from '@/types/aggregate.type'
+import { IssueStatusTrendItem } from '@/types/dashboard.type'
 import {
   Chart as ChartJS,
   LineElement,
@@ -24,36 +25,44 @@ ChartJS.register(
   Legend
 )
 
-type IssueTrendChartProps = {
-  data: IssueTrendItem[]
+type IssueStatusTrendChartProps = {
+  data: IssueStatusTrendItem[]
   className?: string
 }
 
-const IssueTrendChart = ({
+const IssueStatusTrendChart = ({
   data: sprints,
   className
-}: IssueTrendChartProps) => {
-  const message = messages.component.dashboard.chart.issueTrend
+}: IssueStatusTrendChartProps) => {
+  const message = messages.component.dashboard.chart.issueStatus
   const labels = sprints.map((item) => item.process)
 
-  const addedIssues = sprints.map((item) => item.issuesAdded)
-  const removedIssues = sprints.map((item) => item.issuesRemoved)
+  const issuesTodo = sprints.map((item) => item.issuesTodo)
+  const issuesInProgress = sprints.map((item) => item.issuesInProcess)
+  const issuesReview = sprints.map((item) => item.issuesReview)
 
   const data = {
     labels,
     datasets: [
       {
-        label: message.dataset.labelIssueAdded,
-        data: addedIssues,
+        label: message.dataset.labelIssueTodo,
+        data: issuesTodo,
         borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        backgroundColor: 'yellow',
         tension: 0.4
       },
       {
-        label: message.dataset.labelIssueRemoved,
-        data: removedIssues,
+        label: message.dataset.labelIssueInProcess,
+        data: issuesInProgress,
         borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        backgroundColor: 'blue',
+        tension: 0.4
+      },
+      {
+        label: message.dataset.labelIssueReview,
+        data: issuesReview,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'red',
         tension: 0.4
       }
     ]
@@ -67,6 +76,14 @@ const IssueTrendChart = ({
     plugins: {
       legend: {
         position: 'bottom' as const
+      },
+      tooltip: {
+        callbacks: {
+          title: (tooltipItems) => {
+            const item = tooltipItems[0]
+            return `Sprint ID: ${item.label}`
+          }
+        }
       }
     },
     scales: {
@@ -95,4 +112,4 @@ const IssueTrendChart = ({
   return <Line className={cn(className)} data={data} options={options} />
 }
 
-export default IssueTrendChart
+export default IssueStatusTrendChart
