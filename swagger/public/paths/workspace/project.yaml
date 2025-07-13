@@ -1,0 +1,56 @@
+get:
+  summary: Paging project inside workspace
+  description: |
+    Used by: 
+    - Teacher, that is owner of this workspace
+    Sort by id
+  parameters:
+    - name: page
+      required: false
+      allowEmptyValue: true
+      in: query
+    - name: size
+      required: false
+      allowEmptyValue: true
+      in: query
+  responses:
+    200:
+      description: success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/ApiPaging"
+                      - type: object
+                        properties:
+                          items:
+                            properties:
+                              id:
+                                type: string
+                                description: project id
+                              name:
+                                type: string
+                                description: project name
+                              leader:
+                                type: string
+                                description: leader name
+            example:
+              code: 200
+              message: "Create project success"
+              data:
+                items:
+                  - id: "project-001"
+                    name: Sell clothes
+                    leader: Le Anh Duc
+                  - id: "project-002"
+                    name: Sell Estate
+                    leader: Dang Minh Tan
+                currentPage: 1
+                totalPages: 2
+                totalItems: 4

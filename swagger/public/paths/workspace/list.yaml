@@ -1,0 +1,141 @@
+get:
+  summary: Paging workspace
+  description: |
+    Used by: 
+    - Teacher
+    - Student id appended to workspace
+    Sort by id
+  parameters:
+    - name: page
+      required: false
+      allowEmptyValue: true
+      in: query
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+    - name: size
+      required: false
+      allowEmptyValue: true
+      in: query
+      schema: # Added schema for parameters
+        type: integer
+        format: int32
+        minimum: 1
+        default: 10
+  responses:
+    200:
+      description: success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/ApiPaging"
+                      - type: object
+                        properties:
+                          items:
+                            properties:
+                              id:
+                                type: string
+                                description: project id
+                              name:
+                                type: string
+                                description: student name
+                              role:
+                                type: string
+                                description: name role (student or leader)
+                              className:
+                                type: string
+                                description: student class
+                              project:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    description: name owner
+            example:
+              code: 200
+              message: "Create project success"
+              data:
+                items:
+                  - id: "project-001"
+                    name: Sell clothes
+                    owner:
+                      name: Le Anh Duc
+                  - id: "project-002"
+                    name: Sell Estate
+                    owner:
+                      name: Dang Minh Tan
+                currentPage: 1
+                totalPages: 2
+                totalItems: 4
+post:
+  summary: Add student to workspace
+  description: |
+    Used by: Teacher
+
+    Force add student to workspace
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - id
+            - studentIds
+          properties:
+            id:
+              type: string
+              description: workspace id
+            studentIds:
+              type: array
+              items:
+                type: string
+              description: array contains student id
+        example:
+          id: "workspace-001"
+          studentIds:
+            - "student-001"
+            - "student-002"
+            - "student-003"
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+          example:
+            code: 200
+            message: "Invite student to workspace"
+    409:
+      description: "At least 1 student is exist in workspace"
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    description: array contains student id exist in workspace
+            example:
+              code: 409
+              message: "Invite student to workspace"
+              data:
+                - "student-003"

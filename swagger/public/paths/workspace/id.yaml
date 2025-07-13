@@ -1,0 +1,122 @@
+get:
+  summary: Get information workspace
+  description: Get information workspace and list project id
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: workspace id
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: string
+                        description: workspace id
+                      name:
+                        type: string
+                        description: name workspace
+                      owner:
+                        type: string
+                        description: name owner
+                      sprintNum:
+                        type: number
+                        description: quantity of sprint
+                      timePerSprint:
+                        type: number
+                        description: time per sprint
+                      start:
+                        type: string
+                        description: date time start workspace
+                      end:
+                        type: string
+                        description: date time end workspace
+                      createAt:
+                        type: string
+                        description: date time create workspace
+            example:
+              code: 200
+              message: "Workspace and project info retrieved successfully"
+              data:
+                id: "workspace-1"
+                name: "LTW"
+
+put:
+  summary: Update and setting workspace
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: workspace id
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            sprintNum:
+              type: integer
+            description:
+              type: string
+            end:
+              type: string
+              description: ISO
+
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: string
+                        description: workspace id
+                      name:
+                        type: string
+                        description: name workspace
+                      sprintNum:
+                        type: integer
+                        description: quantity of sprints
+                      timePerSprint:
+                        type: number
+                        description: time for 1 sprint, unit is week
+                      start:
+                        type: string
+                        description: time start workspace, must end start
+                        format: yyyy-MM-dd'T'HH:mm:ss.SSSX
+                      end:
+                        type: string
+                        description: time estimate end workspace, must after start
+                        format: yyyy-MM-dd'T'HH:mm:ss.SSSX
+
+            example:
+              code: 200
+              message: "Workspace and project info retrieved successfully"
+              data:
+                id: "workspace-1"
+                name: "LTW"
+                projects:
+                  - id: "project-1"
+                    name: "Project A"
+                  - id: "project-2"
+                    name: "Project B"

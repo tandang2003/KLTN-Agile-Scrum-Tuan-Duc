@@ -1,0 +1,34 @@
+post:
+  summary: Checking user with uniId has existed in workspace id
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            uniId:
+              type: string
+              description: university id
+            workspaceId:
+              type: string
+              description: workspace id
+  responses:
+    200:
+      description: user with uniId is not exist in workspace id
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+    404:
+      description: user with uniId is exist in workspace id
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object

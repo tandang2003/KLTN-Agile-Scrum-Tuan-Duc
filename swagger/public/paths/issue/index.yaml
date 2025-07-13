@@ -1,5 +1,5 @@
 post:
-  summary: create issue
+  summary: Create issue
   description: create issue by student
   requestBody:
     required: true
@@ -20,10 +20,6 @@ post:
             workspaceId:
               type: string
               description: workspace id
-            storyPoint:
-              type: integer
-              description: story point
-              required: true
             status:
               allOf:
                 - $ref: "#/components/schemas/Status"
@@ -43,7 +39,7 @@ post:
             assignerId:
               type: string
               description: uniId of assigner
-            reviewId:
+            reviewerId:
               type: string
               description: uniId of reviewer
             start:
@@ -65,7 +61,6 @@ post:
           reviewerId: "uni-001"
           start: ""
           end: ""
-
   responses:
     200:
       description: Success
@@ -80,46 +75,45 @@ post:
             code: 200
             message: "Create issue"
 put:
-  summary: update issue
+  summary: Update issue
   description: update issue by student
   requestBody:
-    required: true
     content:
       application/json:
         schema:
           type: object
+          required:
+            - id
+            - name
+            - description
+            - storyPoint
+            - start
+            - end
           properties:
             id:
               type: string
               description: issue id
-              required: true
             name:
               type: string
               description: issue name
-              required: true
             description:
               type: string
               description: issue description
-              required: true
             status:
               $ref: "#/components/schemas/Status"
             storyPoint:
               type: integer
               description: story point assigned to issue
-              required: true
             priority:
               type: string
               description: value allow in Critical, Major, Minor, Trivial, Blocked
-              required: false
-              default: Critical
+              default: CRITICAL
             start:
               type: number
               description: date time start issue
-              required: true
             end:
               type: number
               description: date time end issue
-              required: true
   responses:
     200:
       description: Success
@@ -141,18 +135,20 @@ put:
               storyPoint: 10
               priority: Critical
 patch:
-  summary: change status issue (move card)
+  summary: Change status issue (move card)
+  operationId: changeStatusIssue
   requestBody:
     required: true
     content:
       application/json:
         schema:
           type: object
+          required:
+            - issueId
           properties:
             issueId:
               type: string
               description: issue id
-              required: true
             status:
               $ref: "#/components/schemas/Status"
             position:
@@ -167,50 +163,3 @@ patch:
       description: Success
     400:
       description: Not found issue with id
-
-components:
-  schemas:
-    TagObject:
-      $ref: "../components/tag-object.yml"
-    ResponseApi:
-      $ref: "../components/response-api.yml"
-    ValidationErrorApi:
-      $ref: "../components/validation-error.yml"
-    UnauthorizedErrorApi:
-      $ref: "../components/unauthenticated-error-api.yml"
-    Status:
-      type: string
-      description: status issue, it will be a column name that contain issue
-      default: Backlog
-      enum:
-        - Backlog
-        - Todo
-        - In Process
-        - Review
-        - Done
-    Priority:
-      type: string
-      description: priority of issue
-      default: Critical
-      enum:
-        - Critical
-        - Major
-        - Minor
-        - Trivial
-        - Blocked
-    ApiPaging:
-      type: object
-      description: contain value in paging
-      properties:
-        currentPage:
-          type: number
-        totalPages:
-          type: number
-        totalItems:
-          type: number
-
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
