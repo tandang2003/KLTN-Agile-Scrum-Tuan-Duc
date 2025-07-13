@@ -1,6 +1,5 @@
 import messages from '@/constant/message.const'
 import { cn } from '@/lib/utils'
-import { SprintAggregateType } from '@/types/aggregate.type'
 import { IssueStatusTrendItem } from '@/types/dashboard.type'
 import {
   Chart as ChartJS,

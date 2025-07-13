@@ -23,21 +23,6 @@ import { useCommandState } from 'cmdk'
 import { useState } from 'react'
 type CreateTopicProps = {}
 
-const topicData: TopicModel[] = [
-  {
-    id: '1',
-    name: 'SQL'
-  },
-  {
-    id: '2',
-    name: 'JAVA'
-  },
-  {
-    id: '3',
-    name: 'TYPESCRIPT'
-  }
-]
-
 const CreateTopicForm = ({}: CreateTopicProps) => {
   const message = messages.component.issue
   const { control } = useFormContext<BaseIssueFormType>()
