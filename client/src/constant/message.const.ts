@@ -139,7 +139,8 @@ const messages = {
         columns: {
           id: '#',
           name: 'Tên nhóm',
-          createAt: ' Ngày tạo'
+          createAt: ' Ngày tạo',
+          report: 'Báo cáo'
         }
       },
       sprint: {
@@ -620,7 +621,8 @@ const messages = {
           summary: 'Tổng quan',
           student: 'Sinh viên',
           project: 'Nhóm',
-          template: 'Mẫu Sprint'
+          template: 'Mẫu Sprint',
+          report: 'Báo cáo'
         },
         template: {
           list: {

@@ -33,7 +33,7 @@ const IssueAggregateByProcess = ({ data }: IssueAggregateByProcessProps) => {
         <TableHeader>
           <TableRow>
             <TableHead>Chỉ số</TableHead>
-            {data.aggregate.map((issue) => (
+            {data.aggregate.map((_) => (
               <TableHead key={uuid()}>{uuid()}</TableHead>
             ))}
           </TableRow>

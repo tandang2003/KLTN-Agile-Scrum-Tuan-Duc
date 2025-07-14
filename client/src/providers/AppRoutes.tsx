@@ -12,6 +12,7 @@ import ManagerPage from '@/pages/manager/page'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import WorkspaceProjectPage from '@/pages/manager/workspace/[:id]/project/page'
+import WorkspaceReportPage from '@/pages/manager/workspace/[:id]/report/page'
 import WorkspaceStudentPage from '@/pages/manager/workspace/[:id]/student/page'
 import SummaryTab from '@/pages/manager/workspace/[:id]/summary/page'
 import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/template/page'
@@ -93,6 +94,7 @@ const AppRoutes = () => {
                     path='template'
                     element={<WorkspaceSprintTemplatePage />}
                   />
+                  <Route path='report' element={<WorkspaceReportPage />} />
                 </Route>
               </Route>
               <Route path='project'>

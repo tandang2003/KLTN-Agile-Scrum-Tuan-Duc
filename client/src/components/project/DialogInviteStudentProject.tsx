@@ -81,7 +81,7 @@ const DialogInviteStudentProject = ({
   const handleInvite = async () => {
     if (!projectId || !workspaceId) return
     try {
-      await projectService.inviteStudentToWProject({
+      await projectService.inviteStudentToProject({
         workspaceId,
         projectId: projectId,
         userId: ids

@@ -24,9 +24,12 @@ type UserLayoutContextType = {
   }
 }
 
+type ReportDisplayType = 'project' | 'sprint'
+
 export type {
   ProjectParams,
   WorkspaceParams,
   InviteProjectParams,
-  UserLayoutContextType
+  UserLayoutContextType,
+  ReportDisplayType
 }
