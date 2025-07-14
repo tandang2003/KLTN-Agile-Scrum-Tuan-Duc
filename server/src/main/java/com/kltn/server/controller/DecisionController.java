@@ -36,41 +36,41 @@ public class DecisionController {
   private final SprintService sprintService;
   private final SprintRepository sprintRepository;
   private final IssueService issueService;
-  String[] sprintRow = new String[] {
-      "project_id",
-      "sprint_id",
-      "planday",
-      "story_point",
-      "no_issue_starttime",
-      "no_issue_added",
-      "no_issue_removed",
-      "no_issue_todo",
-      "no_issue_inprogress",
-      "no_issue_done",
-      "no_team_size" };
-  String[] issueRow = new String[] {
-      "issue_name",
-      "project_id",
-      "sprint_id",
-      "type",
-      "priority",
-      "no_affect_version",
-      "no_fix_version",
-      "no_link",
-      "no_issue_blocking",
-      "no_issue_blocked",
-      "no_fix_version_change",
-      "no_priority_change",
-      "no_description_change",
-      "complexity_of_description",
-      "suitable_assignee" };
+  String[] sprintRow = new String[]{
+    "project_id",
+    "sprint_id",
+    "planday",
+    "story_point",
+    "no_issue_starttime",
+    "no_issue_added",
+    "no_issue_removed",
+    "no_issue_todo",
+    "no_issue_inprogress",
+    "no_issue_done",
+    "no_team_size"};
+  String[] issueRow = new String[]{
+    "issue_name",
+    "project_id",
+    "sprint_id",
+    "type",
+    "priority",
+    "no_affect_version",
+    "no_fix_version",
+    "no_link",
+    "no_issue_blocking",
+    "no_issue_blocked",
+    "no_fix_version_change",
+    "no_priority_change",
+    "no_description_change",
+    "complexity_of_description",
+    "suitable_assignee"};
   @Value("${data.filepath}")
   String filePathOfData;
 
   @Autowired
   public DecisionController(DecisionService decisionService, WorkspaceService workspaceService,
-      ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository,
-      IssueService issueService) {
+                            ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository,
+                            IssueService issueService) {
     this.decisionService = decisionService;
     this.workspaceService = workspaceService;
     this.projectService = projectService;
@@ -85,10 +85,10 @@ public class DecisionController {
 
     // Placeholder for decision logic
     return ResponseEntity.ok(ApiResponse.<Void>builder()
-        .code(200)
-        .message("Decision retrieved successfully")
-        .data(null)
-        .build());
+      .code(200)
+      .message("Decision retrieved successfully")
+      .data(null)
+      .build());
   }
 
   @GetMapping("store-data")
@@ -96,9 +96,10 @@ public class DecisionController {
     Instant now = ClockSimulator.now();
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
     List<Sprint> sprints = workspace.getSprints()
-        .stream()
-        .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
-        .collect(Collectors.toList());
+      .stream()
+      .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
+      .collect(Collectors.toList())
+      ;
     for (Sprint sprint : sprints) {
       List<Project> projects = sprint.getProjects();
       for (Project project : projects) {
@@ -170,13 +171,14 @@ public class DecisionController {
             cell.setCellValue(issueService.getNumberOfIssuesAdded(project, sprint));
             break;
           case "no_issue_removed":
-            cell.setCellValue(issueService.getNumberOfIssuesRemoved(project, sprint));
+            cell.setCellValue(0);
+//            cell.setCellValue(issueService.getNumberOfIssuesRemoved(project, sprint));
             break;
           case "no_issue_todo":
             cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
             break;
           case "no_issue_inprogress":
-            cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.INPROCESS));
+            cell.setCellValue(issueService.getNumberOfIssuesByTwoStatus(project, sprint, IssueStatus.INPROCESS, IssueStatus.REVIEW));
             break;
           case "no_issue_done":
             cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
