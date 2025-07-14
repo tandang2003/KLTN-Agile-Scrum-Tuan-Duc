@@ -83,7 +83,6 @@ public class ProjectService {
     this.resourceMapper = resourceMapper;
   }
 
-  // @SendKafkaEvent(topic = "project-log")
   @Transactional
   public ApiResponse<ProjectResponse> createProject(ProjectCreationRequest creationRequest) {
     WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder()
