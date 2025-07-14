@@ -58,7 +58,7 @@ const SprintCollectionRow = ({ order, item }: SprintCollectionRowProps) => {
     util: { getStatusSprint }
   } = useSprintCurrent()
   const [open, setOpen] = useState(false)
-  const [hasOpened, setHasOpened] = useState(false)
+  const [hasOpened] = useState(false)
 
   return (
     <>

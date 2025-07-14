@@ -1,6 +1,4 @@
-import IssueStatusTrendChart from '@/components/dashboard/chart/IssueStatusTrendChart'
 import IssueStatusDoughnutChart from '@/components/dashboard/chart/IssueStatusDoughnutChart'
-import IssueTrendChart from '@/components/dashboard/chart/IssueTrendChart'
 import MultiWorkloadBarChart from '@/components/dashboard/chart/WorkloadBarChart'
 import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
 import { useSprintDashboardDetailSheet } from '@/components/dashboard/SprintDashboardDetailSheet'
@@ -27,12 +25,12 @@ const SprintDashboardTab = ({}: SprintDashboardTabProps) => {
       {(data) => {
         return (
           <div className='grid grid-cols-2 gap-4'>
-            <ContainerDashboard className='flex-1'>
+            {/* <ContainerDashboard className='flex-1'>
               <IssueTrendChart sprints={data} />
             </ContainerDashboard>
             <ContainerDashboard className='flex-1'>
               <IssueStatusTrendChart sprints={data} />
-            </ContainerDashboard>
+            </ContainerDashboard> */}
             <ContainerDashboard className='grid flex-1 place-items-center'>
               <div className='grid size-[400px] place-items-center'>
                 <IssueStatusDoughnutChart

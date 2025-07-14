@@ -41,9 +41,9 @@ const projectService = {
 
     return response.data.data
   },
-  inviteStudentToWProject: async (req: InviteStudentProjectRequestType) => {
+  inviteStudentToProject: async (req: InviteStudentProjectRequestType) => {
     const response = await httpService.post<
-      ResponseApi<ResourceOfSprintResponseType>,
+      ResponseApi<void>,
       InviteStudentProjectRequestType
     >(`/project/invite`, req)
 

@@ -1,3 +1,5 @@
+import { Id } from '@/types/other.type'
+
 type GetSignatureRequestType = {
   projectId: string
   issueId: string
@@ -63,6 +65,20 @@ type ResourceOfSprintResponseType = {
   fileBacklog: ResourceResponseType | null
 }
 
+type ProjectResourceResponseType = Array<
+  {
+    id: Id
+    name: string
+  } & ResourceOfSprintResponseType
+>
+
+type SprintResourceResponseType = Array<
+  {
+    id: Id
+    name: string
+  } & ResourceOfSprintResponseType
+>
+
 export type {
   GetSignatureRequestType,
   GetSignatureResponseType,
@@ -71,5 +87,7 @@ export type {
   ResourceResponseType,
   CreateResourceDailyRequestType,
   ResourceOfSprintResponseType,
-  CreateResourceAvatarRequestType
+  CreateResourceAvatarRequestType,
+  ProjectResourceResponseType,
+  SprintResourceResponseType
 }

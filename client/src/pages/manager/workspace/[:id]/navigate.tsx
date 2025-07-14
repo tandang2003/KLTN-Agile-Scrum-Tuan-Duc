@@ -68,6 +68,17 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className='data-[active=true]:active-tag'
+              asChild
+              data-active={pathname.includes('/report')}
+            >
+              <Link to={`/manager/workspace/${id}/report`}>
+                {messages.manager.workspace.detail.navigate.report}
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
         </RequiredAuth>
       </NavigationMenuList>
     </NavigationMenu>
