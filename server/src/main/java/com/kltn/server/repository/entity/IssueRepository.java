@@ -28,6 +28,8 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
 
   int countByProjectIdAndSprintIdAndStatus(String projectId, String sprintId, IssueStatus status);
 
+  @Query(value = "SELECT COUNT(DISTINCT assignee_id) FROM issues " +
+      "WHERE project_id = :projectId AND sprint_id = :sprintId AND assignee_id IS NOT NULL", nativeQuery = true)
   int countByProjectIdAndSprintIdAndAssigneeNotNull(String projectId, String sprintId);
 
   @Query("SELECT COUNT(DISTINCT i.sprint) " +
