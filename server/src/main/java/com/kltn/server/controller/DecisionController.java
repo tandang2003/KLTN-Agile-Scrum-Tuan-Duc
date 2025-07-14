@@ -178,7 +178,7 @@ public class DecisionController {
             cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
             break;
           case "no_issue_inprogress":
-            cell.setCellValue(issueService.getNumberOfIssuesByTwoStatus(project, sprint, IssueStatus.INPROCESS, IssueStatus.REVIEW));
+            cell.setCellValue(issueService.getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
             break;
           case "no_issue_done":
             cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
