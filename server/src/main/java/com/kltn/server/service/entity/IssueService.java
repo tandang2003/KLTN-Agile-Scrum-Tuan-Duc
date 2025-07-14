@@ -707,6 +707,10 @@ public class IssueService {
     return taskRepository.countByProjectIdAndSprintIdAndStatus(project.getId(), sprint.getId(), status);
   }
 
+  public int getNumberOfIssuesByTwoStatus(Project project, Sprint sprint,IssueStatus status, IssueStatus status2) {
+    return taskRepository.countByProjectIdAndSprintIdAndStatusOrStatus(project.getId(), sprint.getId(), status, status2);
+  }
+
   public int getNumberOfMembersInSprint(Project project, Sprint sprint) {
     return taskRepository.countByProjectIdAndSprintIdAndAssigneeNotNull(project.getId(), sprint.getId());
   }

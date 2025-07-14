@@ -87,7 +87,7 @@ public class Issue extends BaseEntity {
     this.project = builder.project;
     this.sprint = builder.sprint;
     this.open = builder.open;
-    this.dtAppend= builder.dtAppend;
+    this.dtAppend = builder.dtAppend;
   }
 
   public Issue() {

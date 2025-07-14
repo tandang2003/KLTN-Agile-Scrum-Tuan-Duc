@@ -50,4 +50,6 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
 
   int countByProjectIdAndSprintIdAndDtAppendGreaterThan(String projectId, String sprintId,
       Instant dtAppendIsGreaterThan);
+
+  int countByProjectIdAndSprintIdAndStatusOrStatus(String projectId, String sprintId, IssueStatus status, IssueStatus status1);
 }
