@@ -2,6 +2,7 @@ import ReportColumnsAction from '@/components/datatable/report/project/projectCo
 import ToolTip from '@/components/Tooltip'
 import messages from '@/constant/message.const'
 import { formatDate } from '@/lib/utils'
+import { Id } from '@/types/other.type'
 import { ProjectWorkspaceDataTable } from '@/types/workspace.type'
 import { ColumnDef } from '@tanstack/react-table'
 import { NavLink } from 'react-router-dom'
@@ -51,15 +52,9 @@ const columns: ColumnDef<ProjectColumns>[] = [
     header: report,
     size: 50,
     cell: ({ row }) => {
-      const sprintId: string = row.original.id
+      const projectId: Id = row.original.id
 
-      return (
-        <ReportColumnsAction
-          sprint={{
-            id: sprintId
-          }}
-        />
-      )
+      return <ReportColumnsAction projectId={projectId} />
     }
   }
 ]

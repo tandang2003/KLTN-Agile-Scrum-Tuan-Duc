@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.dto.iteration import IterationModel
-from app.models.sprint import map as sprintMap
+from app.models.sprint import map as sprintMap, map_to_dataframe as sprintMapDataframe
 from app.models.Issue import map as issueMap ,map_list as issueMapList, issues_to_dataframe  as issueMapListToDataFrame
 
 from app.services.aggregate import AggregateService
@@ -13,6 +13,7 @@ process = My_Process()
 
 @router.post("")
 async def list_issues(data:IterationModel):
-  process.set_issue_data(sprintMap(data))
+
+  process.set_sprint_data(sprintMapDataframe(data))
   process.set_issue_data(issueMapListToDataFrame(issueMapList(data.issueModelList)))
   return process.process();

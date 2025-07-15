@@ -1,7 +1,9 @@
 import { addWorkspaceItems } from '@/feature/workspace/workspace.slice'
+import resourceService from '@/services/resource.service'
 import workspaceService from '@/services/workspace.service'
 import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
+import { ProjectResourceResponseType } from '@/types/resource.type'
 import {
   CreateWorkspaceReqType,
   InviteStudentWorkspaceReqType,
@@ -189,6 +191,26 @@ const workspaceApi = createApi({
           return { error }
         }
       }
+    }),
+    getAllResourceBySprint: builder.query<ProjectResourceResponseType, Id>({
+      async queryFn(args) {
+        try {
+          const data = await resourceService.getAllResourceBySprint(args)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
+    }),
+    getAllResourceByProject: builder.query<ProjectResourceResponseType, Id>({
+      async queryFn(args) {
+        try {
+          const data = await resourceService.getAllResourceByProject(args)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -203,5 +225,7 @@ export const {
   useUpdateWorkspaceMutation,
   useGetListProjectWorkspaceQuery,
   useInviteStudentWorkspaceMutation,
-  useClearGetWorkspaceMutation
+  useClearGetWorkspaceMutation,
+  useGetAllResourceByProjectQuery,
+  useGetAllResourceBySprintQuery
 } = workspaceApi

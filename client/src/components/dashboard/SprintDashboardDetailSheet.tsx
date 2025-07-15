@@ -24,6 +24,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { createContext, useContext } from 'react'
+import { createCtx } from '@/lib/context.helper'
 type SprintDashboardDetailProps = {
   sprint: SprintModel
   isOpen?: boolean
@@ -36,16 +37,8 @@ type SprintDashboardDetailSheetContextType = {
   }
 }
 
-const SprintDashboardDetailSheetContext =
-  createContext<SprintDashboardDetailSheetContextType | null>(null)
-
-const useSprintDashboardDetailSheet = () => {
-  const context = useContext(SprintDashboardDetailSheetContext)
-  if (!context) {
-    throw new Error('Context not found')
-  }
-  return context
-}
+const [useSprintDashboardDetailSheet, SprintDashboardDetailSheetProvider] =
+  createCtx<SprintDashboardDetailSheetContextType>()
 
 const SprintDashboardDetailSheet = ({
   sprint,
@@ -78,7 +71,7 @@ const SprintDashboardDetailSheet = ({
             </AccordionItem>
           </Accordion>
 
-          <SprintDashboardDetailSheetContext.Provider
+          <SprintDashboardDetailSheetProvider
             value={{
               sprint: {
                 id: sprint.id
@@ -97,7 +90,7 @@ const SprintDashboardDetailSheet = ({
                 <IssueOfSprintDashboardTab />
               </TabsContent>
             </Tabs>
-          </SprintDashboardDetailSheetContext.Provider>
+          </SprintDashboardDetailSheetProvider>
           <ScrollBar orientation='horizontal' />
         </ScrollArea>
 

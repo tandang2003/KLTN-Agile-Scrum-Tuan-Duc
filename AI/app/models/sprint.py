@@ -1,39 +1,39 @@
+import pandas as pd
 from pydantic import BaseModel
 
 from app.dto.iteration import IterationModel
 
 
 class Sprint(BaseModel):
-  # project_id:str
-  # sprint_id: str
-  sprintDuration: int
-  numOfIssueAtStart: int
-  numOfIssueAdded: int
-  numOfIssueRemoved: int
-  numOfIssueTodo: int
-  numOfIssueInProgress: int
-  numOfIssueDone: int
-  teamSize: int
-
-  def __init__(
-    self,
-    sprintId,
-    sprintDuration,
-    numOfIssueAtStart, numOfIssueAdded, numOfIssueRemoved, numOfIssueTodo, numOfIssueInProgress, numOfIssueDone,
-    teamSize
-  ):
-    self.sprintId = sprintId
-    self.sprintDuration = sprintDuration
-    self.numOfIssueAtStart = numOfIssueAtStart
-    self.numOfIssueAdded = numOfIssueAdded
-    self.numOfIssueRemoved = numOfIssueRemoved
-    self.numOfIssueTodo = numOfIssueTodo
-    self.numOfIssueInProgress = numOfIssueInProgress
-    self.numOfIssueDone = numOfIssueDone
-    self.teamSize = teamSize
+  sprint_id: str
+  planday: int
+  story_point:int
+  no_issue_starttime: int
+  no_issue_added: int
+  no_issue_removed: int
+  no_issue_todo: int
+  no_issue_inprogress: int
+  no_issue_done: int
+  no_team_size: int
 
 
 def map(iterator: IterationModel) -> Sprint:
-  return Sprint(iterator.sprint_id, iterator.sprintDuration, iterator.numOfIssueAtStart, iterator.numOfIssueAdded,
-                iterator.numOfIssueRemoved, iterator.numOfIssueTodo, iterator.numOfIssueInProgress,
-                iterator.numOfIssueDone, iterator.teamSize)
+  return Sprint(
+    sprint_id=iterator.sprint_id,
+    planday=iterator.sprintDuration,
+    # story_point=iterator.storyPoint,
+    story_point=12,
+    no_issue_starttime=iterator.numOfIssueAtStart,
+    no_issue_added=iterator.numOfIssueAdded,
+    no_issue_removed=iterator.numOfIssueRemoved,
+    no_issue_todo=iterator.numOfIssueTodo,
+    no_issue_inprogress=iterator.numOfIssueInProgress,
+    no_issue_done=iterator.numOfIssueDone,
+    no_team_size=iterator.teamSize
+  )
+
+
+def map_to_dataframe(iterator: IterationModel) -> pd.DataFrame:
+    sprint = map(iterator)  # map to Sprint (Pydantic model)
+
+    return pd.DataFrame([sprint.model_dump()])
