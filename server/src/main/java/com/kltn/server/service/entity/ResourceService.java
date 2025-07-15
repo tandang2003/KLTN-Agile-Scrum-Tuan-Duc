@@ -237,6 +237,7 @@ public class ResourceService {
 
   public ApiResponse<List<ResourceSprintAcrossProjectResponse>> getResourceAcrossSprint(String id) {
     List<ProjectSprint> projectsSprints = projectSprintService.getProjectSprintBySprintId(id);
+    projectsSprints.sort((p1, p2) -> p2.getSprint().getDtStart().isAfter(p1.getSprint().getDtStart()) ? -1 : 1);
     List<ResourceSprintAcrossProjectResponse> dataResult = new ArrayList<>();
     for (ProjectSprint projectSprint : projectsSprints) {
       var builder = ResourceSprintAcrossProjectResponse.builder()
@@ -256,6 +257,7 @@ public class ResourceService {
 
   public ApiResponse<List<ResourceProjectAcrossSprintResponse>> getResourceAcrossProject(String id) {
     List<ProjectSprint> projectsSprints = projectSprintService.getProjectSprintByProjectId(id);
+    projectsSprints.sort((p1, p2) -> p2.getProject().getName().compareTo(p1.getProject().getName()));
     List<ResourceProjectAcrossSprintResponse> dataResult = new ArrayList<>();
     for (ProjectSprint projectSprint : projectsSprints) {
       var builder = ResourceProjectAcrossSprintResponse.builder()
