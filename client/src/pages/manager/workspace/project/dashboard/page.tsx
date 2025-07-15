@@ -12,7 +12,7 @@ import useAppId from '@/hooks/use-app-id'
 import { ProjectDashBoardProvider } from '@/pages/manager/workspace/project/dashboard/context'
 import { DashboardRes } from '@/types/dashboard.type'
 import { Id } from '@/types/other.type'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import messages from '@/constant/message.const'
 import HeadingDashboard from '@/components/dashboard/HeadingDashboard'
 

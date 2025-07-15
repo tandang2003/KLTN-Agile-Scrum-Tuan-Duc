@@ -7,7 +7,7 @@ const LazyReportSprintSheet = lazy(
 )
 
 type ReportColumnsActionProps = {
-  projectId?: Id
+  projectId: Id
 }
 
 const ReportColumnsAction = ({ projectId }: ReportColumnsActionProps) => {
@@ -33,7 +33,7 @@ const ReportColumnsAction = ({ projectId }: ReportColumnsActionProps) => {
       {hasOpened && (
         <Suspense fallback={null}>
           <LazyReportSprintSheet
-            projectId={projectId!}
+            projectId={projectId}
             isOpen={open}
             onOpenChange={setOpen}
           />
