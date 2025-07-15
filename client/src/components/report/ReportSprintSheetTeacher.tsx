@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import {
   Sheet,
   SheetClose,
@@ -32,11 +33,14 @@ const ReportSprintSheetTeacher = ({
 
           <SheetDescription>{message.description}</SheetDescription>
         </SheetHeader>
-        {children}
+        <ScrollArea className='h-[80%]'>
+          {children}
+          <ScrollBar orientation='vertical' />
+        </ScrollArea>
         <SheetFooter className='mt-3'>
           <div className='flex w-full items-center justify-between'>
             <SheetClose asChild>
-              <Button className='cancel' variant='outline'>
+              <Button className='cancel ml-auto' variant='outline'>
                 {message.close}
               </Button>
             </SheetClose>

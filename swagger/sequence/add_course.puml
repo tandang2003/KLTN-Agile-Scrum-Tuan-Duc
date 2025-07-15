@@ -1,0 +1,55 @@
+@startuml
+
+actor SinhVien as SV
+
+participant "View\n(/user/course)" as View
+participant "Course\nController" as Controller
+participant "Course\nService" as Service
+participant "Course\nRepository" as CourseRepo
+participant "UserCourse\nRelation\nRepository" as UCRRepo
+participant "User\nService" as UService
+
+activate SV
+SV -> View : sinh viên truy cập
+View -> SV : hiển thị danh sách môn học và điểm
+SV -> View : Chọn thêm môn học
+View -> SV : Hiển thị form thêm môn học
+SV -> View : Điền thông tin môn học và điểm
+
+activate Controller
+Controller -> Service : addCourseForUser(coursePoints)
+activate Service
+
+activate UService
+Service -> UService: getCurrentUser
+UService --> Service: return user
+deactivate UService
+
+loop for each (courseName, point) in coursePoints
+    Service -> CourseRepo : getCourse(courseName)
+    CourseRepo --> Service : return Course
+
+    Service -> CourseRepo : getDependentCourses(course)
+    CourseRepo --> Service : List<Course>
+
+    loop for each dependentCourse
+        Service -> UCRRepo : existsById(userId, dependentCourseId)
+        alt not exists
+            Service -> Service : throw MISSING_PREREQUISITE
+        end
+    end
+
+    Service -> UCRRepo : save(userCourseRelation)
+    UCRRepo --> Service : savedRelation
+end
+
+Service -> Controller : return courseModel
+deactivate Service
+
+Controller -> View : return success
+deactivate Controller
+
+View -> SV : Thông báo tạo môn học thành công
+deactivate SV 
+
+@enduml

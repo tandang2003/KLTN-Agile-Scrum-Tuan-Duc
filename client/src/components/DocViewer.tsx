@@ -1,8 +1,18 @@
 import Icon from '@/components/Icon'
 import { createCtx } from '@/lib/context.helper'
-import { ComponentProps, ReactNode, useEffect, useState } from 'react'
+import {
+  cloneElement,
+  ComponentProps,
+  forwardRef,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState
+} from 'react'
 import LibDocViewer, {
+  IDocument,
   IHeaderOverride,
+  MSDocRenderer,
   PDFRenderer,
   PNGRenderer
 } from 'react-doc-viewer'
@@ -13,21 +23,26 @@ import 'react-pdf/dist/Page/TextLayer.css'
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 type DocViewerContextType = {
-  open: (doc: string) => void
+  open: () => void
   close: () => void
   isOpen: boolean
-  currentDoc: string | null
+  currentDoc: IDocument | null
 }
 
 const [useDocViewerContext, DocViewerContextProvider] =
   createCtx<DocViewerContextType>()
 
-const DocViewerRoot = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [currentDoc, setCurrentDoc] = useState<string | null>(null)
+type DocViewerRootProps = {
+  document: IDocument
+  children: ReactNode
+}
 
-  const open = (doc: string) => {
-    setCurrentDoc(doc)
+const DocViewerRoot = ({ children, document }: DocViewerRootProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [currentDoc, setCurrentDoc] = useState<IDocument | null>(null)
+
+  const open = () => {
+    setCurrentDoc(document)
     setIsOpen(true)
   }
 
@@ -44,19 +59,39 @@ const DocViewerRoot = ({ children }: { children: React.ReactNode }) => {
 }
 
 type DocViewerTriggerProps = {
-  document: string
-  children: ReactNode
+  asChild?: boolean
+  children: ReactElement<any, any>
 }
 
-const DocViewerTrigger = ({ document, children }: DocViewerTriggerProps) => {
-  const { open } = useDocViewerContext()
+const DocViewerTrigger = forwardRef<HTMLElement, DocViewerTriggerProps>(
+  ({ asChild = false, children }, ref) => {
+    const { open } = useDocViewerContext()
 
-  return (
-    <div className='cursor-pointer' onClick={() => open(document)}>
-      {children}
-    </div>
-  )
-}
+    const handleClick = () => {
+      open()
+    }
+
+    if (asChild) {
+      return cloneElement(children, {
+        onClick: (e: React.MouseEvent) => {
+          children.props.onClick?.(e)
+          handleClick()
+        },
+        ref
+      })
+    }
+
+    return (
+      <div className='cursor-pointer' onClick={handleClick} ref={ref as any}>
+        {children}
+      </div>
+    )
+  }
+)
+
+DocViewerTrigger.displayName = 'DocViewerTrigger'
+
+export default DocViewerTrigger
 
 const DocViewerHeader: IHeaderOverride = (state) => {
   const { close } = useDocViewerContext()
@@ -91,7 +126,7 @@ const DocViewerContent = () => {
       onClick={close}
     >
       <div
-        className='relative h-[90vh] w-full max-w-6xl overflow-hidden rounded-xl bg-white shadow-2xl'
+        className='relative h-[95vh] w-full max-w-6xl overflow-hidden rounded-xl bg-white shadow-2xl'
         onClick={(e) => e.stopPropagation()} // stop click from bubbling up
       >
         <DocViewer
@@ -109,16 +144,16 @@ const DocViewerContent = () => {
 }
 
 type DocViewer = {
-  document: string
+  document: IDocument
 } & Omit<ComponentProps<typeof LibDocViewer>, 'documents'>
 
 const DocViewer = ({ document, ...props }: DocViewer) => {
   return (
-    <div style={{ height: '80vh', overflow: 'auto' }}>
+    <div style={{ height: '100%', overflow: 'auto' }}>
       <LibDocViewer
         {...props}
-        pluginRenderers={[PDFRenderer, PNGRenderer]}
-        documents={[{ uri: document }]}
+        pluginRenderers={[PDFRenderer, PNGRenderer, MSDocRenderer]}
+        documents={[document]}
       />
     </div>
   )

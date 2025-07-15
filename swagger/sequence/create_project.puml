@@ -1,0 +1,71 @@
+@startuml
+
+actor "Student" as SV
+participant "View\n(/manager/:id)" as View
+participant "Project\nController" as Controller
+participant "Project\nService" as Service
+participant "Workspaces\nUsersProjects\nRepository" as WUPRepo
+participant "Project\nRepository" as ProjectRepo
+participant "Project\nSprint\nService" as SprintService
+participant "Sprint\nScheduler" as Scheduler
+participant "RoleInit" as RoleInit
+participant "Topic\nMapper" as TopicMapper
+participant "Project\nMongoService" as MongoService
+
+activate SV
+SV -> View : Student accesses the page
+
+    alt Student has not joined a project
+        View -> View : Show "Create Project" button
+    else Student already has a project
+        View -> View : Show "Project" button
+    end
+
+SV -> View : Clicks "Create Project"
+
+activate View
+View -> SV : Show project creation form
+SV -> View : Submit project creation form
+View -> Controller : POST /project (creationRequest)
+
+activate Controller
+Controller -> Service : createProject(creationRequest)
+activate Service
+
+
+    Service -> WUPRepo : findById(workspaceId, userId)
+    WUPRepo --> Service : return workspacesUsersProjects
+
+    alt Project already exists
+        Service -> Service : throw AppException(ALREADY_EXISTS)
+    else No existing project
+
+        Service -> ProjectRepo : save(projectEntity)
+        ProjectRepo --> Service : return savedProject
+
+        Service -> SprintService : save(projectId, sprintIds)
+        loop For each sprint with dtEnd
+            Service -> Scheduler : scheduleSprintWithProject(sprintId, projectId, dtEnd)
+        end
+
+        Service -> RoleInit : getRole("LEADER")
+        RoleInit --> Service : return Leader role
+        Service -> WUPRepo : save(updatedWorkspacesUsersProjects)
+
+        Service -> TopicMapper : toTopicList(tags)
+        TopicMapper --> Service : return List<Topic>
+
+        Service -> MongoService : save(projectMongo)
+
+    end
+
+Service --> Controller : return ApiResponse<ProjectResponse>
+deactivate Service
+Controller --> View : return success response
+deactivate Controller
+
+View --> SV : Show success message
+deactivate View
+deactivate SV
+
+@enduml

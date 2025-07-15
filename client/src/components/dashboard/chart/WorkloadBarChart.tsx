@@ -25,7 +25,7 @@ const MultiWorkloadBarChart = ({
 }: MultiWorkloadBarChartProps) => {
   const message = messages.component.dashboard.chart.workloadBarChart
 
-  const labels = data.map((item) => item.assignee)
+  const labels = data.map((item) => item.assignee.name ?? item.assignee)
 
   const chartData = {
     labels,

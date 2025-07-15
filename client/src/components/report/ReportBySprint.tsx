@@ -1,33 +1,40 @@
+import ListView from '@/components/ListView'
 import ReportSprintSheetTeacher from '@/components/report/ReportSprintSheetTeacher'
-import messages from '@/constant/message.const'
+import RowFileReport from '@/components/RowFileReport'
+import ToolTip from '@/components/Tooltip'
+import { useGetAllResourceBySprintQuery } from '@/feature/workspace/workspace.api'
 import { Id } from '@/types/other.type'
+import { ProjectResourceResponseType } from '@/types/resource.type'
 import { ComponentProps } from 'react'
 type Props = {
   sprintId: Id
 } & ComponentProps<typeof ReportSprintSheetTeacher>
 
 const ReportBySprint = ({ sprintId, isOpen, onOpenChange }: Props) => {
-  const message = messages.component.reportSprintSheet
+  const { data, isFetching } = useGetAllResourceBySprintQuery(sprintId)
 
   return (
     <ReportSprintSheetTeacher isOpen={isOpen} onOpenChange={onOpenChange}>
-      <div className='mt-4 grid flex-1 auto-rows-min grid-cols-2 gap-6'>
-        <div>
-          <h4 className='mb-3 text-base font-semibold'>
-            {message.form.daily1.label}
-          </h4>
-          <div></div>
-        </div>
-        <div>
-          <h4 className='mb-3 text-base font-semibold'>
-            {message.form.daily2.label}
-          </h4>
-        </div>
-        <div className='col-span-2'>
-          <h4 className='mb-3 text-base font-semibold'>
-            {message.form.backlog.label}
-          </h4>
-        </div>
+      <div className='mt-4'>
+        <ListView<ProjectResourceResponseType[0]>
+          data={data}
+          loading={isFetching}
+          orientation='vertical'
+          render={(item) => (
+            <div key={item.id} className='mt-3'>
+              <ToolTip trigger={<h2 className='text-xl'>{item.title}</h2>}>
+                {item.id}
+              </ToolTip>
+              <RowFileReport
+                data={{
+                  daily: item.daily,
+                  fileBacklog: item.fileBacklog
+                }}
+              />
+            </div>
+          )}
+          className='gap-4'
+        />
       </div>
     </ReportSprintSheetTeacher>
   )

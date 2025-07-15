@@ -55,7 +55,9 @@ const EditorComment = () => {
               className='w-full'
               classNameContainer='flex-1'
               ref={ref}
-              onChange={(_, __, ___, editor) => onChange(editor.getHTML())}
+              onChange={(_, __, ___, editor) => {
+                onChange(editor.getHTML())
+              }}
             />
             <div className='mt-3 flex justify-end'>
               <Button type='button' onClick={() => onBlur()}>

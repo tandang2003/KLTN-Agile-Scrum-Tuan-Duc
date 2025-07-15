@@ -6,7 +6,7 @@ from sklearn.svm import SVC
 
 
 class My_Process():
-  def __init__(self, model="models/process.pkl", sprint_data=None, issue_data=None):
+  def __init__(self, model="models/model.pkl", sprint_data=None, issue_data=None):
     # change it
     self.model = joblib.load(model)
     self.kmeans = joblib.load("models/process.pkl")
@@ -47,7 +47,8 @@ class My_Process():
   def process(self):
     statistic = self.calculate_issue_statistics(self.issue_data)
     bow = self.bow(self.issue_data, self.k)
-    data = self.merge(self.set_sprint_data, statistic, bow)
+    print(bow)
+    data = self.merge(self.sprint_data, statistic, bow)
     data = data.drop(columns=["sprint_id"])
     y_pred = self.model.predict(data)
     print(y_pred)
@@ -67,16 +68,21 @@ class My_Process():
       "priority": map_priority
     }
 
-    categorical_columns_to_map = ["type", "priority"]
-
-    for col in categorical_columns_to_map:
+    for col in categorical_columns:
       if col in df.columns:
         df[col] = df[col].astype(str).map(mapping_dicts[col])
     # Define numerical aggregation functions
     numerical_columns = [
-      "no_affect_version", "no_fix_version", "no_link", "no_issue_blocking",
-      "no_issue_blocked", "no_fix_version_change", "no_priority_change",
-      "no_description_change", "complexity_of_description", "suitable_assignee"
+      "no_affect_version",
+      "no_link",
+    "no_issue_blocking",
+    "no_issue_blocked",
+    # numOfComment: int
+    "no_fix_version_change",
+    "no_priority_change",
+    "no_description_change",
+    "complexity_of_description",
+    "suitable_assignee"
     ]
 
     numerical_aggregations = {
@@ -85,7 +91,7 @@ class My_Process():
     }
 
     # Group by boardId and sprintId
-    grouped = df.groupby(["project_id", "sprint_id"])
+    grouped = df.groupby(["sprint_id"])
 
     # Numerical statistics
     numerical_stats = grouped.agg(numerical_aggregations)
@@ -114,22 +120,23 @@ class My_Process():
     result = numerical_stats.reset_index()
 
     for cat_stat in categorical_stats:
-      result = result.merge(cat_stat.reset_index(), on=["project_id", "sprint_id"], how="left")
+      result = result.merge(cat_stat.reset_index(), on=["sprint_id"], how="left")
 
     # Replace NaN with 0 in categorical statistics as well
     result = result.fillna(0)
 
     return result
 
-  def bow(df, k):
+  def bow(self,df, k):
     """
     Applies KMeans clustering with k clusters on issue-level data
     and aggregates the cluster counts per (project_id, sprint_id).
     """
     df = df.copy(deep=True)
+    # df.drop(columns=["numOfComment"], inplace=True)
 
     # Drop non-feature columns
-    df = df.drop(columns=["issue_name"])
+
 
 
     categorical_columns = ["type", "priority"]
@@ -158,16 +165,16 @@ class My_Process():
 
     # Prepare features
     # Exclude project_id and sprint_id from the features for clustering
-    feature_columns = [col for col in df.columns if col not in ["project_id", "sprint_id"]]
+    feature_columns = [col for col in df.columns if col not in [ "sprint_id"]]
     X = df[feature_columns].to_numpy()
 
     # KMeans clustering
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-    df["Cluster"] = kmeans.fit_predict(X)
+
+    df["Cluster"] = self.kmeans.predict(X)
 
     # Group and pivot
-    grouped = df.groupby(["project_id", "sprint_id", "Cluster"]).size().reset_index(name="count")
-    df_pivot = grouped.pivot_table(index=["project_id", "sprint_id"], columns="Cluster", values="count", fill_value=0)
+    grouped = df.groupby([ "sprint_id", "Cluster"]).size().reset_index(name="count")
+    df_pivot = grouped.pivot_table(index=[ "sprint_id"], columns="Cluster", values="count", fill_value=0)
     df_pivot.reset_index(inplace=True)
     df_pivot.columns.name = None
 
@@ -177,8 +184,8 @@ class My_Process():
 
     return df_pivot
 
-  def merge(df_label, df_statistics=None, df_bow=None):
-    merge_feature = ["project_id", "sprint_id"]
+  def merge(self,df_label, df_statistics=None, df_bow=None):
+    merge_feature = ["sprint_id"]
     if df_statistics is None or df_statistics.empty:
       return df_bow.merge(df_label, on=merge_feature, how="left")
 

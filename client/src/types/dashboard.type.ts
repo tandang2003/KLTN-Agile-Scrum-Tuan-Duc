@@ -18,7 +18,10 @@ type IssueTrendItem = {
 }
 
 type WorkloadDataItem = {
-  assignee: string
+  assignee: {
+    uniId: string
+    name: string
+  }
   total: number
   done: number
   failed: number

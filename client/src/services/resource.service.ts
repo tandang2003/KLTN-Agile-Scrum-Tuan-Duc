@@ -129,7 +129,7 @@ const resourceService = {
     projectId: Id
   ): Promise<ProjectResourceResponseType> => {
     const res = await httpService.get<ResponseApi<ProjectResourceResponseType>>(
-      `/resource/project/${projectId}`
+      `/resource/${projectId}/sprint`
     )
     return res.data.data
   },
@@ -138,7 +138,7 @@ const resourceService = {
     sprintId: Id
   ): Promise<SprintResourceResponseType> => {
     const res = await httpService.get<ResponseApi<SprintResourceResponseType>>(
-      `/resource/sprint/${sprintId}`
+      `/resource/${sprintId}/project`
     )
     return res.data.data
   }
