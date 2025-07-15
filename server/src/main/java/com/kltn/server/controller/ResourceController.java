@@ -5,9 +5,7 @@ import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.request.entity.resource.StoringAvatarSignatureRequest;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.resource.ResourcePathResponse;
-import com.kltn.server.DTO.response.resource.ResourceResponse;
-import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
+import com.kltn.server.DTO.response.resource.*;
 import com.kltn.server.service.entity.ResourceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
   @RequestMapping("/resource")
@@ -94,4 +93,17 @@ public class ResourceController {
                                           .build());
   }
 
+  @GetMapping("/{id}/project")
+  public ResponseEntity<ApiResponse<List<ResourceSprintAcrossProjectResponse>>> getSprintAcrossProject(@PathVariable String id) {
+    var response = resourceService.getResourceAcrossSprint(id);
+    return ResponseEntity.ok()
+                         .body(response);
+  }
+
+  @GetMapping("/{id}/sprint")
+  public ResponseEntity<ApiResponse<List<ResourceProjectAcrossSprintResponse>>> getProjectAcrossSprint(@PathVariable String id) {
+    var response = resourceService.getResourceAcrossProject(id);
+    return ResponseEntity.ok()
+      .body(response);
+  }
 }
