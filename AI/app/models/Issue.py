@@ -10,89 +10,57 @@ class Issue(BaseModel):
   sprint_id: str
   type: str
   priority: str
-  numOfAffectVersions: int
-  numOfFixVersions: int
-  numOfLink: int
-  numOfBlocked: int
-  numOfBlock: int
-  numOfComment: int
-  numOfChangeFixVersion: int
-  numOfChangeOfPriority: int
-  numOfChangeOfDescription: int
-  complexityOfDescription: int
-  complatibleOfAssignee: float
-  def __init__(self,  sprint_id,
-  type,
-  priority,
-  numOfAffectVersions,
-  numOfFixVersions,
-  numOfLink,
-  numOfBlocked,
-  numOfBlock,
-  numOfComment,
-  numOfChangeFixVersion,
-  numOfChangeOfPriority,
-  numOfChangeOfDescription,
-  complexityOfDescription,
-  complatibleOfAssignee):
-    self.sprint_id = sprint_id
-    self.type = type
-    self.priority = priority
-    self.numOfLink = numOfLink
-    self.numOfBlocked = numOfBlocked
-    self.numOfBlock = numOfBlock
-    self.numOfComment = numOfComment
-    self.numOfFixVersions = numOfFixVersions
-    self.numOfChangeFixVersion = numOfChangeFixVersion
-    self.numOfChangeOfPriority = numOfChangeOfPriority
-    self.numOfChangeOfDescription = numOfChangeOfDescription
-    self.complexityOfDescription = complexityOfDescription
-    self.numOfAffectVersions=numOfAffectVersions
-    self.complatibleOfAssignee = complatibleOfAssignee
-
+  no_affect_version: int
+  no_fix_version: int
+  no_link: int
+  no_issue_blocking: int
+  no_issue_blocked: int
+  # numOfComment: int
+  no_fix_version_change: int
+  no_priority_change: int
+  no_description_change: int
+  complexity_of_description: int
+  suitable_assignee: float
 
 def map(issue: IssueModel) -> Issue:
-  return Issue(
-    sprint_id=issue.sprint_id,
-    type=issue.type,
-    priority=issue.priority,
-    numOfAffectVersions=issue.numOfAffectVersions,
-    numOfFixVersions=issue.numOfFixVersions,
-    numOfLink=issue.numOfLink,
-    numOfBlocked=issue.numOfBlocked,
-    numOfBlock=issue.numOfBlock,
-    numOfComment=issue.numOfComment,
-    numOfChangeFixVersion=issue.numOfChangeFixVersion,
-    numOfChangeOfPriority=issue.numOfChangeOfPriority,
-    numOfChangeOfDescription=issue.numOfChangeOfDescription,
-    complexityOfDescription=issue.complexityOfDescription,
-    complatibleOfAssignee=issue.complatibleOfAssignee
-  )
+    return Issue(
+      sprint_id=issue.sprint_id,
+      type=issue.type,
+      priority=issue.priority,
+      no_affect_version=issue.numOfAffectVersions,
+      no_fix_version=issue.numOfFixVersions,
+      no_link=issue.numOfLink,
+      no_issue_blocked=issue.numOfBlocked,
+      no_issue_blocking=issue.numOfBlock,
+      no_fix_version_change=issue.numOfChangeFixVersion,
+      no_priority_change=issue.numOfChangeOfPriority,
+      no_description_change=issue.numOfChangeOfDescription,
+      complexity_of_description=issue.complexityOfDescription,
+      suitable_assignee=issue.complatibleOfAssignee
+    )
+
+
 def map_list( issues:List[IssueModel])-> List[Issue]:
-  issues= []
-  for i in range(len(issues)):
-    issues[i] = map(issues[i])
-  return issues
-
-
-
+  result= list()
+  for i in range(0,len(issues)):
+    result.append(map(issues[i]))
+  return result
 
 def issues_to_dataframe(issues: List[Issue]) -> pd.DataFrame:
-  data = [{
-    "sprint_id": issue.sprint_id,
-    "type": issue.type,
-    "priority": issue.priority,
-    "numOfAffectVersions": issue.numOfAffectVersions,
-    "numOfFixVersions": issue.numOfFixVersions,
-    "numOfLink": issue.numOfLink,
-    "numOfBlocked": issue.numOfBlocked,
-    "numOfBlock": issue.numOfBlock,
-    "numOfComment": issue.numOfComment,
-    "numOfChangeFixVersion": issue.numOfChangeFixVersion,
-    "numOfChangeOfPriority": issue.numOfChangeOfPriority,
-    "numOfChangeOfDescription": issue.numOfChangeOfDescription,
-    "complexityOfDescription": issue.complexityOfDescription,
-    "complatibleOfAssignee": issue.complatibleOfAssignee
-  } for issue in issues]
+    data = [{
+      "sprint_id": issue.sprint_id,
+      "type": issue.type,
+      "priority": issue.priority,
+      "no_affect_version": issue.no_affect_version,
+      "no_fix_version": issue.no_fix_version,
+      "no_link": issue.no_link,
+      "no_issue_blocked": issue.no_issue_blocked,
+      "no_issue_blocking": issue.no_issue_blocking,
+      "no_fix_version_change": issue.no_fix_version_change,
+      "no_priority_change": issue.no_priority_change,
+      "no_description_change": issue.no_description_change,
+      "complexity_of_description": issue.complexity_of_description,
+      "suitable_assignee": issue.suitable_assignee
+    } for issue in issues]
 
-  return pd.DataFrame(data)
+    return pd.DataFrame(data)

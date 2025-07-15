@@ -18,4 +18,8 @@ public interface SprintRepository extends JpaRepository<Sprint, String> {
   List<Sprint> getAllByCreatedByAfter(String createdByAfter);
 
   List<Sprint> getAllByDtCreatedAfter(Instant dtCreatedAfter);
+
+    boolean findByIdAndDtEndAfter(String id, Instant dtEndAfter);
+
+  boolean existsByIdAndDtEndAfter(String id, Instant dtEndAfter);
 }

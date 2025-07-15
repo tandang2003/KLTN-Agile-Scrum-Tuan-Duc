@@ -1,0 +1,60 @@
+@startuml
+
+actor SinhVien as SV
+
+participant "View\n(/user/skill)" as View
+participant "Skill\nController" as Controller
+participant "Skill\nService" as SkillService
+participant "User\nService" as UserService
+participant "Skill\nRepository" as SkillRepository
+participant "PersonalSkill\nRepository" as PKR
+
+activate SV
+SV -> View : sinh viên truy cập vào
+View -> View : hiển thị\ndanh sách kỹ năng và cấp độ
+SV -> View : Chọn thêm kỹ năng
+View -> View : Hiển thị form thêm kỹ năng
+SV -> View : Điền thông tin \nkỹ năng và cấp độ
+
+View -> Controller : POST /skill
+activate Controller
+
+Controller -> SkillService : createSkill\n(skillName, proficiency)
+activate SkillService
+
+SkillService -> UserService : getCurrentUser
+activate UserService
+UserService --> SkillService : return currentUser
+deactivate UserService
+
+activate SkillRepository
+SkillService -> SkillRepository : existsByName(skillName)
+SkillRepository --> SkillService : return boolean
+deactivate SkillRepository
+
+
+alt Skill does not exist
+    SkillService -> SkillRepository : save(skillModel)
+    SkillRepository --> SkillService : return savedSkill
+
+else Skill already exists
+    SkillService -> SkillRepository : findByName(skillName)
+    SkillRepository --> SkillService : return existingSkill
+end
+
+SkillService -> PKR : save(personalSkillModel)
+activate PKR
+PKR --> SkillService : return void
+deactivate PKR
+
+SkillService --> Controller : return void
+deactivate SkillService
+
+Controller -> View: return success
+deactivate Controller
+
+View -> SV : Thông báo\ntạo kỹ năng thành công
+
+deactivate SV
+
+@enduml

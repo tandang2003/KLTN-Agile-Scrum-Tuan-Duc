@@ -5,6 +5,7 @@ import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.relationship.IssueRelation;
+import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueStatus;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,4 +56,32 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
       Instant dtAppendIsGreaterThan);
 
   int countByProjectIdAndSprintIdAndStatusIn(String projectId, String sprintId, Collection<IssueStatus> statuses);
+
+  int countByProjectIdAndSprintId(String projectId, String sprintId);
+
+  int countByProjectIdAndSprintIdAndStatusNot(String projectId, String sprintId, IssueStatus status);
+
+  int countByProjectIdAndSprintIdAndAssigneeId(String projectId, String sprintId, String assigneeId);
+
+  int countByProjectIdAndSprintIdAndAssigneeIdAndStatus(String projectId, String sprintId, String assigneeId,
+      IssueStatus status);
+
+  int countByProjectIdAndSprintIdAndAssigneeIdAndStatusNot(String projectId, String sprintId, String assigneeId,
+      IssueStatus status);
+
+  int countByProjectIdAndSprintIdAndPriority(String projectId, String sprintId, IssuePriority priority);
+
+  int countByProjectId(String projectId);
+
+  int countByProjectIdAndStatus(String projectId, IssueStatus status);
+
+  int countByProjectIdAndStatusNot(String projectId, IssueStatus status);
+
+  int countByProjectIdAndPriority(String projectId, IssuePriority priority);
+
+  int countByProjectIdAndAssigneeId(String projectId, String assigneeId);
+
+  int countByProjectIdAndAssigneeIdAndStatus(String projectId, String assigneeId, IssueStatus status);
+
+  int countByProjectIdAndAssigneeIdAndStatusNot(String projectId, String assigneeId, IssueStatus status);
 }

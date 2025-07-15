@@ -1,0 +1,64 @@
+@startuml
+
+actor SinhVien as SV
+participant "View" as View
+participant "Workspace\nController" as Controller
+participant "Workspace\nService" as Service
+participant "Workspace\nRepository" as Repo
+participant "User\nService" as UService
+
+activate SV
+SV -> View : Sinh viên truy cập vào\n/manager
+
+activate View
+View -> Controller : GET /workspace/list?\npage=1&size=5
+Controller -> Service : getWorkspaceByOwnerIdPaging(req)
+
+activate Service
+activate UService
+Service -> UService : getCurrentUser()
+UService --> Service : return User
+deactivate UService
+
+alt User is teacher
+    Service -> Repo : findAllByOwnerId(userId, paging)
+    Repo --> Service : return workspacePage
+else Other roles (e.g., student)
+    Service -> Repo : findAllByMembersId(userId, paging)
+    Repo --> Service : return workspacePage
+end
+
+loop for each workspace
+    Service -> Service : setStatusSprint(workspace)
+    
+    alt sprints is null or empty
+        Service -> Service : skip setting status
+    else sprints is not empty
+        loop for each sprint
+            alt sprint ends before today
+                alt closest past sprint
+                    Service -> Service : setPrevSprint(sprint)
+                end
+            end
+
+            alt sprint starts after today
+                alt closest future sprint
+                    Service -> Service : setNextSprint(sprint)
+                end
+            end
+
+            alt today is within [start, end]
+                Service -> Service : setCurrentSprint(sprint)
+            end
+        end
+    end
+end
+deactivate Service
+
+Service --> Controller : return paging workspace
+Controller --> View : return paging workspace
+View -> SV : Hiển thị danh sách workspace
+
+deactivate View
+deactivate SV
+@enduml

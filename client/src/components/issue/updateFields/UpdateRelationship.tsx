@@ -37,6 +37,7 @@ import {
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
 import Message from '@/components/Message'
+import _ from 'lodash'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -149,7 +150,7 @@ const UpdateRelationship = ({
                 <SelectValue placeholder='Relation' />
               </SelectTrigger>
               <SelectContent>
-                {issues?.map((item) => (
+                {_.orderBy(issues, ['name'])?.map((item) => (
                   <SelectItem key={item.id} value={item.id}>
                     {item.name}
                   </SelectItem>
