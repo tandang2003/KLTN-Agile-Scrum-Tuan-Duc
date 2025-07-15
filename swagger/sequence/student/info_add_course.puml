@@ -1,5 +1,5 @@
 @startuml
-
+autonumber
 actor SinhVien as SV
 
 participant "View\n(/user/course)" as View

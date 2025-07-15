@@ -1,34 +1,28 @@
 @startuml
-'https://plantuml.com/component-diagram
+actor "Student" as Student
+participant  "View\n(/manager/project/:id)" as View
+participant "Issue\nController" as Controller
+participant "Issue\nService" as Service
+participant "Issue\nRepository" as Repository
+database Database
 
+== Access and display data ==
 
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
+Student -> View : Student accesses
+View -> View : Display list of sprints and product backlog
+Student -> View : Select sprint to add issue
+View -> View : Display add issue form
+Student -> View : Fill in issue information
 
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
+== Submit and process issue ==
 
-cloud {
-  [Example 1]
-}
-
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
+View -> Controller : POST /issue
+Controller -> Service : createIssue(issue)
+Service -> Repository : jpa: save(issueModel)
+Repository -> Database : save(issueModel)
+Database --> Repository : return issueModel
+Repository --> Service : return issueModel
+Service --> Controller : return issueModel
+Controller --> View : Display issue created successfully
 
 @enduml
