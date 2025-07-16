@@ -14,20 +14,20 @@ import com.kltn.server.service.entity.IssueService;
 import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.entity.SprintService;
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class DecisionService {
-
+  @Value("${python.server}")
+  private String pythonServer;
   private final ProjectService projectService;
   private final SprintService sprintService;
   private final IssueService issueService;
@@ -39,7 +39,7 @@ public class DecisionService {
   }
 
   @Transactional
-  public ResponseEntity<ApiResponse<Void>> makePredict(String projectId, String sprintId) {
+  public boolean makePredict(String projectId, String sprintId) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
     Instant start = sprint.getDtStart();
@@ -59,9 +59,7 @@ public class DecisionService {
     iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
     iterationModelBuilder.issueModelList(getIssuesInSprint(project, sprint));
     IterationModel iterationModel = iterationModelBuilder.build();
-    sendToPython(iterationModel);
-//    return ApiResponse.<IterationModel>builder().code();
-    return null;
+    return sendToPython(iterationModel);
   }
 
   private List<IssueModel> getIssuesInSprint(Project project, Sprint sprint) {
@@ -86,8 +84,7 @@ public class DecisionService {
         .numOfChangeOfDescription(issue.getNumChangeOfDescription())
         .complexityOfDescription(issue.getComplexOfDescription())
         .complatibleOfAssignee(issueService.calculateCompatibleOfAssignee(issue))
-        .build()
-        ;
+        .build();
       issueModels.add(issueModel);
     }
     return issueModels;
@@ -101,16 +98,18 @@ public class DecisionService {
   }
 
 
-  private void sendToPython(IterationModel data) {
+  private boolean sendToPython(IterationModel data) {
     RestTemplate restTemplate = new RestTemplate();
-    String url = "http://localhost:8000/aggregate";
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     HttpEntity<IterationModel> request = new HttpEntity<>(data, headers);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-    System.out.println("Python Response: " + response.getBody());
+    ResponseEntity<Integer[]> response = restTemplate.postForEntity(pythonServer, request, Integer[].class);
+    System.out.println("Python Response: ");
+    assert response.getBody() != null;
+    int result = response.getBody()[0];
+    return result == 0;
   }
 }
