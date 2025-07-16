@@ -1,6 +1,6 @@
 @startuml
-
-actor SinhVien as SV
+autonumber
+actor Student as SV
 
 participant "View\n(/user/course)" as View
 participant "Course\nController" as Controller
@@ -9,47 +9,56 @@ participant "Course\nRepository" as CourseRepo
 participant "UserCourse\nRelation\nRepository" as UCRRepo
 participant "User\nService" as UService
 
+SV -> View : Student accesses
 activate SV
-SV -> View : sinh viên truy cập
-View -> SV : hiển thị danh sách môn học và điểm
-SV -> View : Chọn thêm môn học
-View -> SV : Hiển thị form thêm môn học
-SV -> View : Điền thông tin môn học và điểm
-
+activate View
+View --> SV : Display list of courses and grades
+SV -> View : Click "Add Course"
+View --> SV : Show add course form
+SV -> View : Fill in course info and grade
+View -> Controller: POST /course
 activate Controller
-Controller -> Service : addCourseForUser(coursePoints)
+Controller -> Service : addCourse\nForUser(coursePoints)
 activate Service
 
-activate UService
 Service -> UService: getCurrentUser
+activate UService
 UService --> Service: return user
 deactivate UService
 
 loop for each (courseName, point) in coursePoints
     Service -> CourseRepo : getCourse(courseName)
+    activate CourseRepo
     CourseRepo --> Service : return Course
-
+    deactivate CourseRepo
     Service -> CourseRepo : getDependentCourses(course)
+    activate CourseRepo
     CourseRepo --> Service : List<Course>
+    deactivate CourseRepo
 
     loop for each dependentCourse
         Service -> UCRRepo : existsById(userId, dependentCourseId)
+        activate UCRRepo
+        UCRRepo --> Service: return boolean
+        deactivate UCRRepo
         alt not exists
             Service -> Service : throw MISSING_PREREQUISITE
         end
     end
 
     Service -> UCRRepo : save(userCourseRelation)
+    activate UCRRepo
     UCRRepo --> Service : savedRelation
+    deactivate UCRRepo
 end
 
-Service -> Controller : return courseModel
+Service --> Controller : return courseModel
 deactivate Service
 
-Controller -> View : return success
+Controller --> View : return success
 deactivate Controller
 
-View -> SV : Thông báo tạo môn học thành công
-deactivate SV 
+View --> SV : notify "Course added successfully"
+deactivate SV
 
 @enduml

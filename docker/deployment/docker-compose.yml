@@ -13,6 +13,7 @@ services:
       - SPRING_DATA_REDIS_URL=redis://default:${REDIS_PASSWORD}@app-redis:6379
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=app-kafka1:29092
       - VERIFY_INVITE_PROJECT_LINK=http://localhost:${FE_PORT}/project/invite?token=
+      - PYTHON_SERVER=http://app-ai:8080/aggregate
       - KEY_BASE=/app/keys
     volumes:
       - ./keys:/app/keys

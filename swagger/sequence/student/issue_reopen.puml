@@ -1,0 +1,53 @@
+@startuml
+autonumber
+
+actor "Sinh viên" as SV
+participant "View\n(/manager/project/:projectId)" as View
+participant "IssueController" as Controller
+participant "Issue\nService" as Service
+participant "IssueRepository" as Repo
+database "MySQL" as MySQL
+
+activate SV
+SV -> View : Student access
+activate View
+View -> View : Get list sprint
+SV -> View : Select issue \n& click "Reopen"
+View -> Controller : PUT /issue/{issue_id}/reopen
+
+activate Controller
+Controller -> Service : reopen(req)
+activate Service
+Service -> Repo: findById(req)
+activate Repo
+Repo -> Service: return issue model
+deactivate Repo
+
+alt issue.getStatus() != Done
+  Service --> Controller : throw INVALID_PARAMETER_REQUEST
+  Controller --> View : show error message
+
+  View -> SV : notify "Reopen failed: Invalid status"
+else
+  Service -> Service: issue.setStatus(Backlog)
+  Service -> Service: issue.setReopen(true)
+  Service -> Service: issue.setSprint(null)
+  Service -> Service: issue.setDtAppend(null)
+  Service -> Repo: save(issue)
+  activate Repo
+  Repo --> MySQL :save(issue)
+  activate MySQL
+  MySQL --> Repo  : return issue model
+  deactivate MySQL
+  Repo --> Service: return issue model
+  deactivate Repo
+  Service --> Controller: return success
+  deactivate Service
+  Controller --> View: return success
+  deactivate Controller
+  View --> SV: notify "Reopen success"
+end
+
+deactivate View
+deactivate SV
+@enduml
