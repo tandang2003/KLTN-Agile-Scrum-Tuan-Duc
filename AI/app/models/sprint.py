@@ -22,7 +22,7 @@ def map(iterator: IterationModel) -> Sprint:
     sprint_id=iterator.sprint_id,
     planday=iterator.sprintDuration,
     # story_point=iterator.storyPoint,
-    story_point=12,
+    story_point=15,
     no_issue_starttime=iterator.numOfIssueAtStart,
     no_issue_added=iterator.numOfIssueAdded,
     no_issue_removed=iterator.numOfIssueRemoved,
