@@ -3,7 +3,7 @@
 PYTHON=python3
 VENV = .venv/bin/activate
 
-env:
+
 	@echo "Creating virtual environment..."
 	$(PYTHON) -m venv .venv
 	@echo "Run 'source .venv/bin/activate' to activate the virtual environment."

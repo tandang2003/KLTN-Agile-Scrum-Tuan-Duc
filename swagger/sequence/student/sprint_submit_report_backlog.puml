@@ -1,0 +1,80 @@
+@startuml
+actor "Student" as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Resource\nController" as Controller
+participant "Cloudinary" as Cloud
+participant "Resource\nService" as Service
+participant "Resource\nRepository" as Repo
+participant "ProjectSprint\nService" as PSS
+participant "MySQL" as MySQL
+
+activate SV
+SV -> View : Student accesses
+activate View
+View --> SV : Show list sprint
+SV -> View: Select sprint
+View --> SV: Open Sheet Report\n& show status report
+SV -> View: Upload file\nDaily1 or Daily2
+activate Controller
+View -> Controller : POST /resource/signature
+Controller --> View: return signature upload
+deactivate Controller
+activate Cloud
+View -> Cloud: upload file with signature
+Cloud --> View: file upload success response
+deactivate Cloud
+
+View -> Controller: POST /resource/issue
+activate Controller
+Controller -> Service: uploadFileToTask(req)
+activate Service
+Service -> Repo: save(resource)
+activate Repo
+Repo -> MySQL: save(resource)
+activate MySQL
+MySQL --> Repo: return resource model
+deactivate MySQL
+Repo --> Service: return resource model
+deactivate Repo
+Service --> Controller: return resource model
+deactivate Service
+Controller --> View: return resource model
+deactivate Controller
+View --> SV: notify create file success
+
+View -> Controller: POST /resource/backlog
+activate Controller
+Controller -> Service : uploadFileToBacklogSprint(req)
+activate Service
+Service -> PSS: getProjectSprintById\n(projectSprintId)
+activate PSS
+PSS --> Service: return projectSprint model
+deactivate PSS
+Service -> Service: get resource backlog
+
+alt Backlog exist
+  Service --> Controller: throw\nBACKLOG_FILE_ALREADY_UPLOAD
+  Controller --> View: return failed
+  View --> SV: notify upload\nbacklog failed
+else
+  Service -> Service: projectSprint.\nsetBacklog(resource)
+  Service -> PSS: save(projectSprint)
+  activate PSS
+  PSS -> MySQL: save(projectSprint)
+  activate MySQL
+  MySQL --> PSS: return projectSprint model
+  deactivate MySQL
+  PSS --> Service: return projectSprint model
+  deactivate PSS
+
+  Service --> Controller : return success
+  deactivate Service
+
+  Controller --> View : return success
+  deactivate Controller
+
+  View -> SV : notify upload\nbacklog success
+  deactivate View
+  deactivate SV
+end
+@enduml

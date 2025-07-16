@@ -1,0 +1,57 @@
+@startuml
+autonumber
+
+actor "Sinh viên" as SV
+participant "View\n(/manger/project/:projectId)" as View
+participant "IssueController" as Controller
+participant "Issue\nService" as Service
+participant "Sprint\nService" as SprintService
+participant "Snapshot\nService" as SnapshotService
+participant "IssueRepository" as Repo
+database "MySQL" as MySQL
+database "MongoDB" as MongoDB
+
+activate SV
+SV -> View : Student access
+
+activate View
+View --> SV : Get list sprint
+SV -> View : Select sprint
+View -> Controller : GET /issue/list\n?project_id=projectId\n&sprint_id=sprintId
+
+activate Controller
+Controller -> Service : getIssueById(issueId, sprintId)
+activate Service
+Service -> SprintService: getSprintById(sprintId)
+activate SprintService
+SprintService --> Service : return Sprint
+deactivate SprintService
+
+alt Sprint is expired
+    Service -> SnapshotService : getByProjectIdAndSprintId\n(projectId, sprintId)
+    activate SnapshotService
+    SnapshotService -> MongoDB: getByProjectIdAndSprintId\n(projectId, sprintId)
+    activate MongoDB
+    MongoDB --> SnapshotService: return list issue
+    deactivate MongoDB
+    SnapshotService --> Service: return list issue
+    deactivate SnapshotService
+else
+    Service -> Repo : findAllByProjectIdAndSprintId\n(projectId, sprintId)
+    activate Repo
+    Repo -> MySQL: findAllByProjectIdAndSprintId\n(projectId, sprintId)
+    activate MySQL
+    MySQL --> Repo: return list issue
+    deactivate MySQL
+    Repo --> Service: return list issue
+    deactivate Repo
+end
+
+Service --> Controller : return list issue
+deactivate Service
+Controller --> View : return list issue
+deactivate Controller
+View --> SV : show list issue
+deactivate View
+deactivate SV
+@enduml
