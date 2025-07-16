@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 import messages, { getSprintStatusDisplayName } from '@/constant/message.const'
 import Message from '@/components/Message'
 import useSprintCurrent from '@/hooks/use-sprint-current'
+import ToolTip from '@/components/Tooltip'
 type SprintTemplateCardProps = {
   id: Id
   data: SprintResponse
@@ -86,7 +87,9 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
       )}
     >
       <div className='flex flex-1 items-baseline'>
-        <h3 className='text-md font-bold'>{data.title}</h3>
+        <ToolTip trigger={<h3 className='text-md font-bold'>{data.title}</h3>}>
+          {data.id}
+        </ToolTip>
         <span className='ml-2 text-sm text-gray-500'>
           {formatDate(data.start, 'd MMM')} - {formatDate(data.end, 'd MMM')}
         </span>

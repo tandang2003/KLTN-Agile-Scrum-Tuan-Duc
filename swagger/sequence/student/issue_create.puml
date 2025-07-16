@@ -1,0 +1,76 @@
+@startuml
+autonumber
+actor "Student" as SV
+
+participant "View\n(/manager/project/:id)" as View
+participant "Issue\nController" as Controller
+participant "Issue\nService" as IssueService
+participant "Project\nService" as ProjectService
+participant "Sprint\nService" as SprintService
+participant "Issue\nRepository" as IssueRepository
+participant "IssueMongo\nService" as IssueMongoService
+database "MySQL" as DB
+database "MongoDB" as Mongo
+
+SV -> View : Access project\nbacklog
+activate SV
+activate View
+View --> SV : Display backlog\nand sprint list
+SV -> View : Select sprint\nand add task
+View --> SV : Show task creation form
+SV -> View : Fill in issue details
+
+View -> Controller : POST /issue
+activate Controller
+
+Controller -> IssueService : createTask(request)
+activate IssueService
+IssueService -> IssueService : Map request → entity
+
+IssueService -> ProjectService : getProjectById(projectId)
+activate ProjectService
+ProjectService --> IssueService : return Project
+deactivate ProjectService
+
+IssueService -> SprintService: getSprintById(sprintId)
+activate SprintService
+SprintService --> IssueService : return Sprint
+deactivate SprintService
+
+alt Sprint is expired
+    IssueService -> IssueService : thrown new SprintExpiredException
+else
+IssueService -> IssueService : Assign sprint to task
+end
+
+IssueService -> IssueRepository : save(task)
+activate IssueRepository
+IssueRepository -> DB : Save task
+activate DB
+DB --> IssueRepository : return task
+deactivate DB
+IssueRepository --> IssueService : return task
+deactivate IssueRepository
+
+IssueService -> IssueService : Map task → Mongo
+IssueService -> IssueMongoService : save(taskMongo)
+activate "IssueMongoService"
+IssueMongoService -> Mongo : Save Mongo document
+activate Mongo
+Mongo --> IssueMongoService : return taskMongo
+deactivate Mongo
+IssueMongoService --> IssueService : return taskMongo
+deactivate "IssueMongoService"
+
+IssueService -> IssueService : Generate change log
+
+IssueService --> Controller : return IssueResponse
+deactivate IssueService
+
+Controller --> View : Return success result
+deactivate Controller
+
+View --> SV : Notify success
+deactivate SV
+
+@enduml
