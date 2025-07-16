@@ -1,6 +1,7 @@
 @startuml
+autonumber
 
-actor SinhVien as SV
+actor Student as SV
 
 participant "View\n(/user/skill)" as View
 participant "Skill\nController" as Controller
@@ -10,16 +11,18 @@ participant "Skill\nRepository" as SkillRepository
 participant "PersonalSkill\nRepository" as PKR
 
 activate SV
-SV -> View : sinh viên truy cập vào
-View -> View : hiển thị\ndanh sách kỹ năng và cấp độ
-SV -> View : Chọn thêm kỹ năng
-View -> View : Hiển thị form thêm kỹ năng
-SV -> View : Điền thông tin \nkỹ năng và cấp độ
+SV -> View : student accesses skill page
+activate View
+View --> SV : display list of skills and proficiency levels
+
+SV -> View : click "Add Skill"
+View --> SV : show add skill form
+SV -> View : enter skill name and proficiency level
 
 View -> Controller : POST /skill
 activate Controller
 
-Controller -> SkillService : createSkill\n(skillName, proficiency)
+Controller -> SkillService : createSkill(skillName, proficiency)
 activate SkillService
 
 SkillService -> UserService : getCurrentUser
@@ -27,19 +30,21 @@ activate UserService
 UserService --> SkillService : return currentUser
 deactivate UserService
 
-activate SkillRepository
 SkillService -> SkillRepository : existsByName(skillName)
+activate SkillRepository
 SkillRepository --> SkillService : return boolean
 deactivate SkillRepository
 
-
 alt Skill does not exist
     SkillService -> SkillRepository : save(skillModel)
+    activate SkillRepository
     SkillRepository --> SkillService : return savedSkill
-
+    deactivate SkillRepository
 else Skill already exists
     SkillService -> SkillRepository : findByName(skillName)
+    activate SkillRepository
     SkillRepository --> SkillService : return existingSkill
+    deactivate SkillRepository
 end
 
 SkillService -> PKR : save(personalSkillModel)
@@ -50,11 +55,10 @@ deactivate PKR
 SkillService --> Controller : return void
 deactivate SkillService
 
-Controller -> View: return success
+Controller --> View : return success
 deactivate Controller
 
-View -> SV : Thông báo\ntạo kỹ năng thành công
-
+View --> SV : notify "Skill added successfully"
+deactivate View
 deactivate SV
-
 @enduml

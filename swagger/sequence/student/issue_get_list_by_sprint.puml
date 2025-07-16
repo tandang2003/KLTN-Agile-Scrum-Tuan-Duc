@@ -1,28 +1,57 @@
 @startuml
-actor "Student" as Student
-participant  "View\n(/manager/project/:id)" as View
-participant "Issue\nController" as Controller
+autonumber
+
+actor "Sinh viên" as SV
+participant "View\n(/manger/project/:projectId)" as View
+participant "IssueController" as Controller
 participant "Issue\nService" as Service
-participant "Issue\nRepository" as Repository
-database Database
+participant "Sprint\nService" as SprintService
+participant "Snapshot\nService" as SnapshotService
+participant "IssueRepository" as Repo
+database "MySQL" as MySQL
+database "MongoDB" as MongoDB
 
-== Access and display data ==
+activate SV
+SV -> View : Student access
 
-Student -> View : Student accesses
-View -> View : Display list of sprints and product backlog
-Student -> View : Select sprint to add issue
-View -> View : Display add issue form
-Student -> View : Fill in issue information
+activate View
+View --> SV : Get list sprint
+SV -> View : Select sprint
+View -> Controller : GET /issue/list\n?project_id=projectId\n&sprint_id=sprintId
 
-== Submit and process issue ==
+activate Controller
+Controller -> Service : getIssueById(issueId, sprintId)
+activate Service
+Service -> SprintService: getSprintById(sprintId)
+activate SprintService
+SprintService --> Service : return Sprint
+deactivate SprintService
 
-View -> Controller : POST /issue
-Controller -> Service : createIssue(issue)
-Service -> Repository : jpa: save(issueModel)
-Repository -> Database : save(issueModel)
-Database --> Repository : return issueModel
-Repository --> Service : return issueModel
-Service --> Controller : return issueModel
-Controller --> View : Display issue created successfully
+alt Sprint is expired
+    Service -> SnapshotService : getByProjectIdAndSprintId\n(projectId, sprintId)
+    activate SnapshotService
+    SnapshotService -> MongoDB: getByProjectIdAndSprintId\n(projectId, sprintId)
+    activate MongoDB
+    MongoDB --> SnapshotService: return list issue
+    deactivate MongoDB
+    SnapshotService --> Service: return list issue
+    deactivate SnapshotService
+else
+    Service -> Repo : findAllByProjectIdAndSprintId\n(projectId, sprintId)
+    activate Repo
+    Repo -> MySQL: findAllByProjectIdAndSprintId\n(projectId, sprintId)
+    activate MySQL
+    MySQL --> Repo: return list issue
+    deactivate MySQL
+    Repo --> Service: return list issue
+    deactivate Repo
+end
 
+Service --> Controller : return list issue
+deactivate Service
+Controller --> View : return list issue
+deactivate Controller
+View --> SV : show list issue
+deactivate View
+deactivate SV
 @enduml

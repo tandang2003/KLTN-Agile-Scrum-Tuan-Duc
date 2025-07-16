@@ -1,15 +1,51 @@
 @startuml
-'https://plantuml.com/sequence-diagram
 
 autonumber
 
-== Initialization ==
+actor "Student" as SV
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+participant "View\n(/manger/project/:id)" as  View
+participant "Issue\nController" as  Controller
+participant "Issue\nService" as Service
+participant "Issue\nRepository" as Repo
+participant "Snapshot\nService" as SnapshotService
+activate SV
+SV -> View : Student accesses
+activate View
+View -> View : Display backlog\nand sprint list
+SV -> View : Select sprint
+View --> SV: Show list issue
+SV -> View: Select issue
+View -> Controller : GET /issue/:issueId/:sprintId
+activate Controller
+Controller -> Service : getIssueDetailById(issueId, sprintId)
+activate Service
+alt Sprint is expired
+    Service -> SnapshotService : getByProjectIdAndSprintId\n(projectId, sprintId)
+    activate SnapshotService
+    SnapshotService -> MongoDB: getByProjectIdAndSprintId\n(projectId, sprintId)
+    activate MongoDB
+    MongoDB --> SnapshotService: return list issue model
+    deactivate MongoDB
+    SnapshotService --> Service: return list issue model
+    deactivate SnapshotService
+    Service -> Service: return issue model
+else
+    Service -> Repo : getEntityById\n(projectId, sprintId)
+    activate Repo
+    Repo -> MySQL: findById\n(projectId, sprintId)
+    activate MySQL
+    MySQL --> Repo: return issue model
+    deactivate MySQL
+    Repo --> Service: return issue model
+    deactivate Repo
+end
 
-== Repetition ==
-
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+Service --> Controller : return issueModel
+deactivate Service
+Controller --> View : return issue Model
+deactivate Controller
+View --> SV : Hiển thị chi tiết issue
+deactivate View
+deactivate SV
 @enduml

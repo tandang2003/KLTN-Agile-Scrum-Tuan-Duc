@@ -5,55 +5,50 @@ actor "Student" as SV
 participant "View\n(/manager/project/:id)" as View
 participant "Issue\nController" as Controller
 participant "Issue\nService" as IssueService
-participant "User\nService" as UserService
 participant "Project\nService" as ProjectService
 participant "Sprint\nService" as SprintService
-participant "Resource\nService" as ResourceService
 participant "Issue\nRepository" as IssueRepository
 participant "IssueMongo\nService" as IssueMongoService
-database "DB" as DB
+database "MySQL" as DB
 database "MongoDB" as Mongo
 
-activate SV
 SV -> View : Access project\nbacklog
-View -> View : Display backlog\nand sprint list
+activate SV
+activate View
+View --> SV : Display backlog\nand sprint list
 SV -> View : Select sprint\nand add task
-View -> View : Show task creation form
+View --> SV : Show task creation form
 SV -> View : Fill in issue details
 
 View -> Controller : POST /issue
 activate Controller
 
-Controller -> IssueService : createTaskBacklog(request)
+Controller -> IssueService : createTask(request)
 activate IssueService
 IssueService -> IssueService : Map request → entity
 
 IssueService -> ProjectService : getProjectById(projectId)
+activate ProjectService
 ProjectService --> IssueService : return Project
+deactivate ProjectService
 
+IssueService -> SprintService: getSprintById(sprintId)
+activate SprintService
+SprintService --> IssueService : return Sprint
+deactivate SprintService
 
-alt Has assignee
-    IssueService -> UserService : getUserByUniId(assigneeId)
-    UserService --> IssueService : return Assignee
-    IssueService -> IssueService : Assign assignee to task
-end
-
-alt Has reviewer
-    IssueService -> UserService : getUserByUniId(reviewerId)
-    UserService --> IssueService : return Reviewer
-    IssueService -> IssueService : Assign reviewer to task
-end
-
-alt Has attachments
-    IssueService -> ResourceService : getById(resourceId) (for each file)
-    ResourceService --> IssueService : return Resource
-    IssueService -> IssueService : Assign resources to task
+alt Sprint is expired
+    IssueService -> IssueService : thrown new SprintExpiredException
+else
+IssueService -> IssueService : Assign sprint to task
 end
 
 IssueService -> IssueRepository : save(task)
 activate IssueRepository
 IssueRepository -> DB : Save task
+activate DB
 DB --> IssueRepository : return task
+deactivate DB
 IssueRepository --> IssueService : return task
 deactivate IssueRepository
 
@@ -61,7 +56,9 @@ IssueService -> IssueService : Map task → Mongo
 IssueService -> IssueMongoService : save(taskMongo)
 activate "IssueMongoService"
 IssueMongoService -> Mongo : Save Mongo document
+activate Mongo
 Mongo --> IssueMongoService : return taskMongo
+deactivate Mongo
 IssueMongoService --> IssueService : return taskMongo
 deactivate "IssueMongoService"
 
@@ -70,10 +67,10 @@ IssueService -> IssueService : Generate change log
 IssueService --> Controller : return IssueResponse
 deactivate IssueService
 
-Controller -> View : Return success result
+Controller --> View : Return success result
 deactivate Controller
 
-View -> SV : Notify success
+View --> SV : Notify success
 deactivate SV
 
 @enduml
