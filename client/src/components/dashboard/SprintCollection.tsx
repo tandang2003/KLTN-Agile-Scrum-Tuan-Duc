@@ -32,7 +32,6 @@ const SprintCollection = ({}: SprintCollectionProps) => {
           <TableHead>{message.start}</TableHead>
           <TableHead>{message.end}</TableHead>
           <TableHead>{message.status}</TableHead>
-          <TableHead>{message.predictStatus}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -84,7 +83,6 @@ const SprintCollectionRow = ({ order, item }: SprintCollectionRowProps) => {
             )}
           </Badge>
         </TableCell>
-        <TableCell>Thanh cong</TableCell>
       </TableRow>
 
       {hasOpened && (

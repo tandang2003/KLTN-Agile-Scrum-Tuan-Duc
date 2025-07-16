@@ -587,6 +587,19 @@ const messages = {
     editorComment: {
       placeholder: 'Nhập bình luận của bạn tại đây',
       send: 'Gửi'
+    },
+    sprintPredict: {
+      title: 'Dự đoán Sprint',
+      description:
+        'Dự đoán Sprint sẽ giúp bạn ước lượng thời gian hoàn thành các issue trong Sprint này',
+      form: {
+        submit: 'Dự đoán',
+        cancel: 'Hủy'
+      },
+      toast: {
+        success: 'Dự đoán Sprint thành công',
+        failed: 'Dự đoán Sprint thất bại, vui lòng thử lại sau'
+      }
     }
   },
   manager: {

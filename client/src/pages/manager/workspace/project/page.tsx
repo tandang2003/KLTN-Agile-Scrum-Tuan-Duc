@@ -1,10 +1,9 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
-import { Button } from '@/components/ui/button'
+import SprintPredict from '@/components/SprintPredict'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
-import messages from '@/constant/message.const'
 import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
@@ -66,7 +65,20 @@ const ProjectPage = () => {
 
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
-              <Button>{messages.manager.project.predict}</Button>
+              <SprintPredict
+                project={{
+                  id: data.id,
+                  name: data.name
+                }}
+                sprint={
+                  data.currentSprint?.id && data.currentSprint?.title
+                    ? {
+                        id: data.currentSprint?.id,
+                        name: data.currentSprint?.title
+                      }
+                    : undefined
+                }
+              />
             </div>
             <Outlet
               context={{
