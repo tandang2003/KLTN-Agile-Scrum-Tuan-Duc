@@ -100,6 +100,8 @@ verify:
   invite-project-link: https://localhost:3000/verify?token=
 data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
+python:
+  server: http://localhost:8000/aggregate
 #kafka:
 #  topic:
 #    send-object-customer:
