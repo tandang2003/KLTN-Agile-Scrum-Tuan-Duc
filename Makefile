@@ -1,4 +1,4 @@
-.PHONY: up down server client
+.PHONY: up down server client ai
 
 up:
 	( \
@@ -16,6 +16,12 @@ down:
 		make mysql_stop && \
 		make redis_stop && \
 		make mongo_stop \
+	)
+
+ai:
+	( \
+		cd ./AI && \
+		make run \
 	)
 
 server:

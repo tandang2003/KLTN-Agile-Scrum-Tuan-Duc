@@ -1,4 +1,6 @@
+import httpService from '@/services/http.service'
 import { SprintAggregateProcessType } from '@/types/aggregate.type'
+import { ResponseApi } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 
 const aggregateService = {
@@ -40,6 +42,12 @@ const aggregateService = {
         }
       ])
     })
+  },
+  createPredict: async (projectId: Id, sprintId: Id) => {
+    const res = await httpService.get<ResponseApi<boolean>>(
+      `/decision/${projectId}/${sprintId}/predict`
+    )
+    return res.data.data
   }
 }
 

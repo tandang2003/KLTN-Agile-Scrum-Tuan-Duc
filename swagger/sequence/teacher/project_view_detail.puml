@@ -1,15 +1,47 @@
 @startuml
-'https://plantuml.com/sequence-diagram
-
 autonumber
 
-== Initialization ==
+actor Student as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Project\nController" as Controller
+participant "Project\nService" as Service
+participant "Project\nRepository" as Repo
+participant "User\nService" as UService
+participant "MySQL" as MySQL
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+SV -> View : Student accesses
+activate SV
 
-== Repetition ==
+activate View
+View -> Controller : GET \n /project/:id
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+activate Controller
+Controller -> Service : getById\n(req)
+
+activate Service
+Service -> UService : get \n CurrentUser()
+activate UService
+UService --> Service :  User
+deactivate UService
+
+Service -> Repo : findById \n (id)
+activate Repo
+Repo -> MySQL : project \n model
+activate MySQL
+MySQL --> Repo : project \n model
+deactivate MySQL
+Repo --> Service : project \n model
+deactivate Repo
+
+Service -> Service: setCurrent\nSprint()
+
+Service --> Controller :  project \n model
+deactivate Service
+
+Controller --> View :  project \n model
+deactivate Controller
+View --> SV : show \n project \n detail
+
+deactivate View
+deactivate SV
 @enduml
