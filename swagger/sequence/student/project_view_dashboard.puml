@@ -21,14 +21,14 @@ Controller -> Service : getForStudent(req)
 
 activate Service
 
-Service -> Service: getForSingleSprint(projectId, sprintId)
-Service -> SprintRepo: findById(sprintId)
+Service -> Service: getFor\nSingleSprint\n(projectId, \n sprintId)
+Service -> SprintRepo: findById\n(sprintId)
 activate SprintRepo
-SprintRepo -> MySQL:  findById(sprintId)
+SprintRepo -> MySQL:  findById\n(sprintId)
 activate MySQL
-MySQL --> SprintRepo: return sprint model
+MySQL --> SprintRepo:  sprint model
 deactivate MySQL
-SprintRepo --> Service: return sprint model
+SprintRepo --> Service:  sprint model
 deactivate SprintRepo
 
 alt sprint not expired:
@@ -36,43 +36,43 @@ alt sprint not expired:
   activate IssueRepo
   IssueRepo -> MySQL: countByProjectId\nAndSprintId\n(projectId, sprintId)
   activate MySQL
-  MySQL --> IssueRepo: return issueCreated
+  MySQL --> IssueRepo:  issueCreated
   deactivate MySQL
-  IssueRepo -> Service: return issueCreated
+  IssueRepo -> Service:  issueCreated
   deactivate IssueRepo
 
-  Service -> IssueRepo: countByProjectId\nAndSprintId\nAndStatus\n(projectId, sprintId, IssueStatus.DONE);
+  Service -> IssueRepo: countByProjectId\nAndSprintId\nAndStatus\n(projectId, sprintId, \n IssueStatus.DONE);
   activate IssueRepo
-  IssueRepo -> MySQL: countByProjectId\nAndSprintId\nAndStatus\n(projectId, sprintId, IssueStatus.DONE);
+  IssueRepo -> MySQL: countByProjectId\nAndSprintId\nAndStatus\n(projectId, sprintId, \n IssueStatus.DONE);
   activate MySQL
-  MySQL --> IssueRepo: return issueDone
+  MySQL --> IssueRepo:  issueDone
   deactivate MySQL
-  IssueRepo -> Service: return issueDone
+  IssueRepo -> Service:  issueDone
   deactivate IssueRepo
 
-  Service -> IssueRepo: countBy\nProjectIdAnd\nSprintIdAndStatusNot\n(projectId, sprintId, IssueStatus.DONE);
+  Service -> IssueRepo: countBy\nProjectIdAnd\nSprintIdAndStatusNot\n(projectId, sprintId,\n IssueStatus.DONE);
   activate IssueRepo
-  IssueRepo -> MySQL: countBy\nProjectIdAnd\nSprintIdAndStatusNot\n(projectId, sprintId, IssueStatus.DONE);
+  IssueRepo -> MySQL: countBy\nProjectIdAnd\nSprintIdAndStatusNot\n(projectId, sprintId, \n IssueStatus.DONE);
   activate MySQL
-  MySQL --> IssueRepo: return issueFailed
+  MySQL --> IssueRepo:  issueFailed
   deactivate MySQL
-  IssueRepo -> Service: return issueFailed
+  IssueRepo -> Service:  issueFailed
   deactivate IssueRepo
 else
   Service -> SnapRepo: findByProjectId\nAndSprintId(\nprojectId, sprintId)
   activate SnapRepo
   SnapRepo -> MongoDB: findByProjectId\nAndSprintId\n(projectId, sprintId)
   activate MongoDB
-  MongoDB --> SnapRepo: return issue snapshot
+  MongoDB --> SnapRepo:  issue snapshot
   deactivate MongoDB
-  SnapRepo -> Service: return issue snapshot
+  SnapRepo -> Service:  issue snapshot
   deactivate SnapRepo
   Service -> Service: set issueCreated
   Service -> Service: set issueDone
   Service -> Service: set issueFailed
 end
-Service --> Controller: return response
-Controller --> View: return response
+Service --> Controller:  response
+Controller --> View:  response
 deactivate Controller
 View --> SV: Display Dashboard
 deactivate View
