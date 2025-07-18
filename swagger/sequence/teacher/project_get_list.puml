@@ -1,15 +1,52 @@
 @startuml
-'https://plantuml.com/sequence-diagram
-
 autonumber
 
-== Initialization ==
+actor Teacher as SV
+participant "View\n(/manager/:id/project)" as View
+participant "Project\nController" as Controller
+participant "Project\nService" as Service
+participant "Project\nRepository" as Repo
+participant "User\nService" as UService
+participant "MySQL" as MySQL
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+SV -> View : Teacher \n accesses
+activate SV
+activate View
+View -> Controller : GET \n /workspace/:id/ \n project
 
-== Repetition ==
+activate Controller
+Controller -> Service : getList \n PagingProject\n(req)
+activate Service
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+Service -> UService : get \n CurrentUser()
+activate UService
+UService --> Service :  user
+deactivate UService
+
+Service -> Service: user.getWorkspace()
+
+alt user not has workspace
+     Service --> Controller : throw \n NOT_FOUND\n_WORKSPACE
+     Controller --> View :  return null
+     View --> SV : not display
+else
+    Service -> Repo: getProject\nByWorkspaceId\n(id, page)
+    activate Repo
+    Repo -> MySQL: getProject\nByWorkspaceId\n(id, page)
+    activate MySQL
+    MySQL --> Repo: page project
+    deactivate MySQL
+    Repo --> Service: page project
+    deactivate Repo
+
+    Service --> Controller : list project
+    deactivate Service
+
+    Controller --> View :  list project
+    deactivate Controller
+    View --> SV : display \n list \n project
+deactivate View
+end
+
+deactivate SV
 @enduml

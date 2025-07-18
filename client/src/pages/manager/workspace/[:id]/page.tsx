@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import WorkspaceCourseCheckLayer from '@/components/workspace/WorkspaceCourseCheckLayer'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import messages from '@/constant/message.const'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'

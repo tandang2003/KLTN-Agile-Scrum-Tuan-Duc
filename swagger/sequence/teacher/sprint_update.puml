@@ -15,17 +15,25 @@ SV -> View : Teacher access
 activate SV
 activate View
 View -> View : Display sprint list
-SV -> View : Click add sprint
-View -> View : Show sprint \ncreation form
+SV -> View : Select sprint & \n click update
+View -> View : Show sprint \n detail in \n form update
 SV -> View : Fill in sprint form
 
-View -> Controller : POST /sprint
+View -> Controller : PUT \n /sprint/teacher/update
 activate Controller
 
-Controller -> SprintService : createSprint\n(req)
+Controller -> SprintService : updateSprint\n(req)
 activate SprintService
-SprintService -> SprintService: create sprint \n model from \n req
-
+SprintService -> SprintService: create \n sprint req \n from \n req
+SprintService -> SprintRepository :findById\n(sprint.id)
+activate SprintRepository
+SprintRepository -> MySQL: findById\n(sprint.id)
+activate MySQL
+MySQL --> SprintRepository: sprint model
+deactivate MySQL
+SprintRepository-> SprintService : sprint model
+deactivate SprintRepository
+SprintService -> SprintService: merge \n sprint req \n & sprint model
 SprintService -> SprintRepository : save(sprint)
 activate SprintRepository
 SprintRepository -> MySQL: save(sprint)
@@ -42,7 +50,6 @@ end
 opt sprint model \n has date end
    SprintService -> SprintSchedular: schedule\nSprintEnd\n(sprint)
 end
-
 
 SprintService --> Controller :  sprint
 deactivate SprintService
