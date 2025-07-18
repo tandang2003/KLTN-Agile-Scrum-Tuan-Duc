@@ -1,0 +1,9 @@
+type: string
+description: status issue, it will be a column name that contain issue
+default: Backlog
+enum:
+  - Backlog
+  - Todo
+  - In Process
+  - Review
+  - Done

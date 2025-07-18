@@ -1,0 +1,9 @@
+type: string
+description: priority of issue
+default: Critical
+enum:
+  - Critical
+  - Major
+  - Minor
+  - Trivial
+  - Blocked

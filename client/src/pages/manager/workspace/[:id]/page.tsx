@@ -1,6 +1,6 @@
 import Icon from '@/components/Icon'
 import DialogAddStudent from '@/components/dialog/DialogAddStudent'
-import { DialogCreateProject } from '@/components/dialog/DialogCreateProject'
+import { DialogCreateProject } from '@/components/project/DialogCreateProject'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,9 +11,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
-import { formatDate } from '@/lib/utils'
 import WorkspaceNavigate from '@/pages/manager/workspace/[:id]/navigate'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -38,35 +38,29 @@ const WorkspaceDetailPage = () => {
       <div className='relative mt-1 mb-4 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 text-gray-100'>
         <span className='text-sm font-semibold'># {data.id}</span>
         <h1 className='h1 pb-2'>
-          Workspace: <strong>{data.name}</strong>
+          <strong>{data.name}</strong>
         </h1>
-        <ul className='flex items-center gap-2'>
-          <span>Start</span>
-          <span className='rounded-xl bg-green-500 px-4 py-2'>
-            {formatDate(data.start)}
-          </span>
-          <span>Current </span>
-          <span className='rounded-xl bg-amber-500 px-4 py-2'>
-            {formatDate(new Date())}
-          </span>
-          <span>End </span>
-          <span className='rounded-xl bg-red-500 px-4 py-2'>
-            {formatDate(data.end)}
-          </span>
-        </ul>
+
         <DropdownMenu>
           <DropdownMenuTrigger className='absolute top-5 right-5'>
             <Icon icon={'lucide:more-horizontal'} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Settings</DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <RequiredAuth roles={['teacher']}>
+              <DropdownMenuLabel>
+                {messages.manager.workspace.detail.options.teacher.label}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setOpenDialogAddStudent((state) => !state)}
               >
                 <Icon icon={'hugeicons:student'} />
-                Add Student
+                {messages.manager.workspace.detail.options.teacher.addStudent}
+              </DropdownMenuItem>
+            </RequiredAuth>
+            <RequiredAuth roles={['student']}>
+              <DropdownMenuItem disabled>
+                {messages.manager.workspace.detail.options.empty}
               </DropdownMenuItem>
             </RequiredAuth>
           </DropdownMenuContent>
@@ -79,7 +73,7 @@ const WorkspaceDetailPage = () => {
           {projectId ? (
             <Button variant='default' size='sm' asChild>
               <NavLink to={`/manager/workspace/project/${projectId}`}>
-                Your Project
+                {messages.manager.workspace.detail.project.me}
               </NavLink>
             </Button>
           ) : (
@@ -89,7 +83,7 @@ const WorkspaceDetailPage = () => {
               onClick={() => setOpenDialogCreateProject(true)}
             >
               <PlusIcon />
-              New Group
+              {messages.manager.workspace.detail.project.create}
             </Button>
           )}
         </RequiredAuth>
@@ -104,6 +98,14 @@ const WorkspaceDetailPage = () => {
         open={openDialogCreateProject}
         onOpen={setOpenDialogCreateProject}
       />
+
+      {/* <RequiredAuth roles={['student']} mode='hide'>
+        <WorkspaceCourseCheckLayer
+          workspaceId={workspaceId}
+          course={data.course}
+          prerequisiteCourse={data.prerequisiteCourse}
+        />
+      </RequiredAuth> */}
     </div>
   )
 }

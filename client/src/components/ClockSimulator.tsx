@@ -31,6 +31,7 @@ import {
 } from '@/types/simulator.type'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { isBefore } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -87,6 +88,14 @@ const ClockSimulator = () => {
   }, [])
 
   const handleSubmit = (values: ClockSimulatorReqType) => {
+    if (config)
+      if (isBefore(values.to, config.initTime)) {
+        form.setError('to', {
+          type: 'manual',
+          message: 'The end date must be after the initial time'
+        })
+        return
+      }
     simulatorService.setSimulator(values).then((config) => {
       toast.success('Simulator time set successfully', {
         description: `Simulator time set to ${values.to.toLocaleString()}`
@@ -111,7 +120,6 @@ const ClockSimulator = () => {
           timeSpeech: config.timeSpeech,
           to: config.timeEnd
         })
-        console.log(config.initTime.toUTCString())
         setConfig({
           initTime: config.initTime,
           timeSpeech: config.timeSpeech
@@ -129,9 +137,7 @@ const ClockSimulator = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className='fixed bottom-5 left-5 z-50' asChild>
-        {ClockDisplay}
-      </DialogTrigger>
+      <DialogTrigger asChild>{ClockDisplay}</DialogTrigger>
       <DialogContent className='top-1/4' aria-describedby={undefined}>
         <DialogTitle />
         <DialogHeader>
@@ -149,7 +155,7 @@ const ClockSimulator = () => {
                     <FormControl>
                       <DatePickerWithPresets
                         disabled={isReset}
-                        date={field.value}
+                        date={field.value ?? config?.initTime}
                         setDate={field.onChange}
                       />
                     </FormControl>

@@ -1,0 +1,53 @@
+get:
+  summary: Get info user
+  description: Get info user when after login, return info to view in user card
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            access-token:
+              type: string
+              description: bearer user access token
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      id:
+                        required: true
+                        type: string
+                        description: user id
+                      name:
+                        required: true
+                        type: string
+                        description: user id
+                      uniId:
+                        required: true
+                        type: string
+                        description: university id
+                      className:
+                        required: false
+                        type: string
+                        description: class room id
+                      avatar:
+                        required: false
+            example:
+              code: 200
+              message: "get info user"
+              data:
+                id: "0978-999-111"
+                name: "Le Anh Duc"
+                uniId: "21130320"
+                className: "DH21DTX"
+                avatar: "https://res.cloudinary.com/yourstyle/image/upload/c_scale/q_auto/f_auto/v1/product_img/4/Screenshot%202024-03-24%20170336.png"

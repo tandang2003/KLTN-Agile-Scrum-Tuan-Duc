@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon'
 import { NotificationResponse } from '@/types/notification.type'
 import { formatDistanceToNow } from 'date-fns'
+import { vi } from 'date-fns/locale'
 
 export function formatNotification(notification: NotificationResponse) {
   const { type, change, createdBy, entityTarget } = notification
@@ -34,7 +35,8 @@ type NotificationItemProps = {
 
 const NotificationItem = ({ data }: NotificationItemProps) => {
   const timeAgo = formatDistanceToNow(new Date(data.dtCreated), {
-    addSuffix: true
+    addSuffix: true,
+    locale: vi
   })
   const { icon, message } = formatNotification(data)
   return (

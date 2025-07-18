@@ -1,0 +1,85 @@
+post:
+  summary: Create a workspace
+  description: |
+    Used by: Teacher
+
+    Identify:
+    - Name
+    - Description
+    - Quantity of sprint
+    - Range time of each sprint
+    - Time start workspace
+    - Time end workspace
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              description: workspace name, must not empty
+            description:
+              type: string
+              description: workspace description, must not empty
+            sprintNum:
+              type: integer
+              description: quantity of sprints
+              minimum: 1
+            timePerSprint:
+              type: number
+              description: time for 1 sprint unit is day
+              maximum: 1
+            start:
+              type: string
+              description: time start workspace, must end start
+              format: yyyy-MM-dd'T'HH:mm:ss.SSSX
+            end:
+              type: string
+              description: time estimate end workspace, must after start
+              format: yyyy-MM-dd'T'HH:mm:ss.SSSX
+        example:
+          name: "workspace-LTW"
+          description: "Workspace for student in lab LTW NLU"
+          sprintNum: 10
+          timePerSprint: 1
+          start: "1/1/2025"
+          end: "15/3/2025"
+  responses:
+    201:
+      description: success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: string
+                        description: workspace id
+                      sprintNum:
+                        type: integer
+                        description: quantity of sprints
+                      timePerSprint:
+                        type: number
+                        description: time for 1 sprint, unit is week
+                      start:
+                        type: number
+                        description: time start workspace
+                      end:
+                        type: number
+                        description: time estimate end workspace
+            example:
+              code: 201
+              message: "Create workspace success"
+              data:
+                id: "workspace-001"
+                sprintNum: 10
+                timePerSprint: 1
+                start: "1/1/2025"
+                end: "15/3/2025"

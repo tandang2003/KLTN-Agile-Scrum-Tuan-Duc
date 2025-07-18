@@ -35,7 +35,7 @@ const FilterBoard = ({}: FilterBoardProps) => {
             <TabsTrigger value='sprint'>Sprint</TabsTrigger>
           </TabsList>
 
-          <div className='flex-1 bg-gray-100 p-4'>
+          <div className='flex-1'>
             <TabsContent value='sprint' className='m-0'>
               <LoadingBoundary<SprintModel[]>
                 fallback=''

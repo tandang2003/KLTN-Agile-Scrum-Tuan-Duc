@@ -14,5 +14,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
+  },
+  optimizeDeps: {
+    exclude: ['pdfjs-dist/build/pdf.worker.min.mjs', 'pdfjs-dist']
   }
 })

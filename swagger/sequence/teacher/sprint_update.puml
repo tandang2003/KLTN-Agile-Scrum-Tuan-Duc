@@ -1,0 +1,63 @@
+@startuml
+autonumber
+actor "Student" as SV
+
+participant "View\n(/manager/:id/template)" as View
+participant "Sprint\nController" as Controller
+participant "Sprint\nService" as SprintService
+participant "Sprint\nRepository" as SprintRepository
+participant "Sprint\nSchedular" as SprintSchedular
+participant "Project\nSprintService" as ProjectSprintService
+
+database "MySQL" as MySQL
+
+SV -> View : Teacher access
+activate SV
+activate View
+View -> View : Display sprint list
+SV -> View : Select sprint & \n click update
+View -> View : Show sprint \n detail in \n form update
+SV -> View : Fill in sprint form
+
+View -> Controller : PUT \n /sprint/teacher/update
+activate Controller
+
+Controller -> SprintService : updateSprint\n(req)
+activate SprintService
+SprintService -> SprintService: create \n sprint req \n from \n req
+SprintService -> SprintRepository :findById\n(sprint.id)
+activate SprintRepository
+SprintRepository -> MySQL: findById\n(sprint.id)
+activate MySQL
+MySQL --> SprintRepository: sprint model
+deactivate MySQL
+SprintRepository-> SprintService : sprint model
+deactivate SprintRepository
+SprintService -> SprintService: merge \n sprint req \n & sprint model
+SprintService -> SprintRepository : save(sprint)
+activate SprintRepository
+SprintRepository -> MySQL: save(sprint)
+activate MySQL
+MySQL --> SprintRepository: sprint model
+deactivate MySQL
+SprintRepository --> SprintService: sprint model
+deactivate SprintRepository
+SprintService -> SprintService: get \n projects \n from \n workspace
+loop item in projects
+  SprintService -> SprintService: set sprint \n to project
+  SprintService -> ProjectSprintService: save()
+end
+opt sprint model \n has date end
+   SprintService -> SprintSchedular: schedule\nSprintEnd\n(sprint)
+end
+
+SprintService --> Controller :  sprint
+deactivate SprintService
+
+Controller --> View :  sprint
+deactivate Controller
+
+View --> SV : notify "Create \n sprint success"
+deactivate SV
+
+@enduml

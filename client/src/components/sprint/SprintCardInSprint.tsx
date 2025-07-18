@@ -1,5 +1,6 @@
-import { useAlertHost } from '@/components/AleartHost'
+import { useAlertHost } from '@/components/AlertHost'
 import Icon from '@/components/Icon'
+import Message from '@/components/Message'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -9,12 +10,16 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { HttpStatusCode } from '@/constant/app.const'
+import messages from '@/constant/message.const'
 import {
   useDeleteIssueMutation,
-  useMoveIssueToBacklogMutation
+  useMoveIssueToBacklogMutation,
+  useReopenIssueMutation
 } from '@/feature/issue/issue.api'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
 import useSprintCurrent from '@/hooks/use-sprint-current'
+import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { toast } from 'sonner'
 
@@ -24,6 +29,7 @@ type SprintCardInSprintProps = {
 }
 
 const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
+  const message = messages.component.sprint.sprintCardInSprint
   const { start, end, sprintId, id } = item
   const {
     util: { getStatusSprint }
@@ -32,6 +38,7 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const [deleteIssue] = useDeleteIssueMutation()
   const { showAlert } = useAlertHost()
+  const [reopen] = useReopenIssueMutation()
 
   const handleMoveToBacklog = () => {
     moveToBacklog({
@@ -40,30 +47,80 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
     })
       .unwrap()
       .then(() => {
-        toast.success('Issue moved to backlog successfully', {
-          description: `Issue ${item.name} has been moved to the backlog.`
-        })
+        boardService
+          .removePosition({
+            issueId: id,
+            sprintId: sprintId,
+            projectId: item.projectId,
+            statusPrev: item.status
+          })
+          .then(() => {
+            toast.success(message.toast.moveToBacklog.success.message, {
+              description: (
+                <Message
+                  template={message.toast.moveToBacklog.success.description}
+                  values={{
+                    name: item.name
+                  }}
+                />
+              )
+            })
+          })
       })
       .catch((err) => {
-        toast.error('Failed to move issue to backlog', {
+        toast.error(message.toast.moveToBacklog.failed, {
           description: err.data?.message || 'An error occurred.'
         })
       })
   }
 
+  const handleReopen = () => {
+    showAlert({
+      title: message.alert.reopen.title,
+      type: 'info',
+      message: (
+        <Message
+          template={message.alert.reopen.message}
+          values={{
+            name: item.name
+          }}
+        />
+      ),
+      onConfirm: () => {
+        return reopen(item.id)
+          .unwrap()
+          .then(() => {
+            toast.message(message.toast.reopen.success)
+          })
+          .catch((err) => {
+            if (err.status === HttpStatusCode.Conflict)
+              toast.error(message.toast.reopen.conflict)
+            else toast.error(message.toast.reopen.failed)
+          })
+      }
+    })
+  }
+
   const handleDelete = () => {
     showAlert({
-      title: 'Delete Issue',
+      title: message.alert.delete.title,
       type: 'warning',
-      message: `Are you sure you want to delete issue ${item.name}? This action cannot be undone.`,
+      message: (
+        <Message
+          template={message.alert.delete.message}
+          values={{
+            name: item.name
+          }}
+        />
+      ),
       onConfirm: () => {
         return deleteIssue(id)
           .unwrap()
           .then(() => {
-            toast.success('Issue deleted successfully')
+            toast.success(message.toast.delete.success)
           })
           .catch(() => {
-            toast.error('Failed to delete issue')
+            toast.error(message.toast.delete.failed)
           })
       }
     })
@@ -77,6 +134,15 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
       start: start,
       end: end
     }) === 'PENDING'
+
+  const canEdit =
+    start &&
+    end &&
+    getStatusSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    }) !== 'COMPLETE'
 
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
@@ -97,28 +163,31 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <RequiredAuth roles={['student']}>
-            <DropdownMenuItem
-              onClick={() => {
-                action(item.id)
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-          </RequiredAuth>
+          {canEdit && (
+            <RequiredAuth roles={['student']}>
+              <DropdownMenuItem
+                onClick={() => {
+                  action(item.id)
+                }}
+              >
+                {message.dropdown.edit}
+              </DropdownMenuItem>
+            </RequiredAuth>
+          )}
+
           {canMoveToBacklog && (
-            <>
+            <RequiredAuth roles={['student']}>
               <DropdownMenuItem onClick={handleMoveToBacklog}>
-                Move to backlog
+                {message.dropdown.moveToBacklog}
               </DropdownMenuItem>
               <DropdownMenuItem className='cancel' onClick={handleDelete}>
-                Delete
+                {message.dropdown.delete}
               </DropdownMenuItem>
-            </>
+            </RequiredAuth>
           )}
           {item.status === 'DONE' && (
-            <DropdownMenuItem onClick={handleMoveToBacklog}>
-              Reopen
+            <DropdownMenuItem onClick={handleReopen}>
+              {message.dropdown.reopen}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

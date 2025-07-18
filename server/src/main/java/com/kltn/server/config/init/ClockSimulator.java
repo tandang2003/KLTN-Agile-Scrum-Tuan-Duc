@@ -1,41 +1,51 @@
 package com.kltn.server.config.init;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 
 public class ClockSimulator {
-  private static Instant realTime;
-  private static Instant simulatedTime;
+  private static final ZoneId ASIA_HO_CHI_MINH = ZoneId.of("Asia/Ho_Chi_Minh");
+
+  private static Instant REAL_BOOT_TIME = Instant.now();
+  private static Instant simulatedStartTime;
+
   private static volatile long timeSpeech;
-  private static ZoneId asiaHoChiMinh = ZoneId.of("Asia/Ho_Chi_Minh");
 
   public ClockSimulator(long timeSpeech) {
-    realTime = Instant.now();
-    simulatedTime = Instant.now();
     ClockSimulator.timeSpeech = timeSpeech;
-  }
-
-  public static void setTimeSpeech(long newSpeech) {
-    // cập nhật thời gian ảo hiện tại trước
-    simulatedTime = now();
-    realTime = Instant.now();
-    timeSpeech = newSpeech;
+    simulatedStartTime = LocalDateTime.of(2025, 3, 4, 0, 0)
+        .atZone(ASIA_HO_CHI_MINH)
+        .toInstant();
   }
 
   public static Instant now() {
-    long realElapsedMillis = Duration.between(realTime, Instant.now()).toSeconds();
-    long simulatedElapsedMillis = realElapsedMillis * timeSpeech;
-    return simulatedTime.plusSeconds(simulatedElapsedMillis);
+    long realElapsedSeconds = Duration.between(REAL_BOOT_TIME, Instant.now()).getSeconds();
+    long simulatedElapsedSeconds = realElapsedSeconds * timeSpeech;
+    return simulatedStartTime.plusSeconds(simulatedElapsedSeconds);
   }
 
-  // private static Instant getInstantFromLocalDateTime() {
-  // return LocalDateTime.now(asiaHoChiMinh).toInstant(ZoneOffset.UTC);
-  // }
+  public static void setTimeSpeech(long newTimeSpeech) {
+    // Adjust simulated start time so "now()" remains consistent
+    Instant currentSimulatedNow = now();
+    simulatedStartTime = currentSimulatedNow;
+    timeSpeech = newTimeSpeech;
+
+    // Reset real time base point
+    // so elapsed time is always from the moment of speed change
+    // (i.e., now becomes new base real time)
+    try {
+      java.lang.reflect.Field field = ClockSimulator.class.getDeclaredField("REAL_BOOT_TIME");
+      field.setAccessible(true);
+      field.set(null, Instant.now());
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to reset REAL_BOOT_TIME", e);
+    }
+  }
 
   public static long getTimeSpeech() {
     return timeSpeech;
+  }
+
+  public static LocalDateTime nowAsLocalDateTime() {
+    return LocalDateTime.ofInstant(now(), ASIA_HO_CHI_MINH);
   }
 }

@@ -53,17 +53,16 @@ const ListView = <T,>({
       >
         {loading &&
           loadingItems &&
-          Array(loadingItems.items)
-            .fill(null)
-            .map(
-              (_, index) =>
-                loadingItems.loadingComponent ?? (
-                  <Skeleton key={index} className='h-[100px] w-full' />
-                )
-            )}
+          Array.from({ length: loadingItems.items }).map((_, index) =>
+            loadingItems.loadingComponent ? (
+              <div key={index}>{loadingItems.loadingComponent}</div>
+            ) : (
+              <Skeleton key={index} className='h-[100px] w-full' />
+            )
+          )}
         {data && data.map((item, index) => render(item, index))}
       </div>
-      {((!loading && !data) || data?.length == 0) && emptyComponent}
+      {!loading && (!data || data.length === 0) && emptyComponent}
       {append && append}
     </>
   )

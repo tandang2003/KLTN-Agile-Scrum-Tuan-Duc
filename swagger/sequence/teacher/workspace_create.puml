@@ -1,0 +1,50 @@
+@startuml
+autonumber
+
+actor Teacher as SV
+participant "View\n(/manager)" as View
+participant "Workspace\nController" as Controller
+participant "Workspace\nService" as Service
+participant "Workspace\nRepository" as Repo
+participant "User\nService" as UService
+participant "MySQL" as MySQL
+
+SV -> View : Teacher \n accesses
+activate SV
+
+activate View
+View --> View: show list item
+SV -> View: click \n create \n workspace
+View --> View: show form \n create \n workspace
+SV -> View : fill form & \n  click "Create"
+View -> Controller : POST \n /workspace
+
+activate Controller
+Controller -> Service : create\nWorkspace(req)
+
+activate Service
+Service -> UService : getCurrentUser()
+activate UService
+UService --> Service :  user
+deactivate UService
+
+Service -> Service: setOwner(user)
+Service -> Service: setCourse\n(req.course)
+Repo -> MySQL : save(workspace)
+activate Repo
+activate MySQL
+MySQL --> Repo :  save(workspace)
+deactivate MySQL
+Repo --> Service :  workspace \n model
+deactivate Repo
+
+Service --> Controller :  workspace \n model
+deactivate Service
+
+Controller --> View : workspace \n model
+deactivate Controller
+View --> SV : notify "Create \n workspace \n success"
+
+deactivate View
+deactivate SV
+@enduml

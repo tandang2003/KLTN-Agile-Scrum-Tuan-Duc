@@ -10,16 +10,22 @@ import {
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 
-import { getStatusSprint, sortSprintsByDateStart } from '@/lib/sprint.helper'
+import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
+import { getSprintStatusDisplayName } from '@/constant/message.const'
+import useSprintCurrent from '@/hooks/use-sprint-current'
+import HtmlViewer from '@/components/HtmlViewer'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
 
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const refContent = useRef<HTMLDivElement>(null)
   const [sprintId, setSprintId] = useState<Id | null>(null)
 
@@ -70,13 +76,18 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   statusSprint={getStatusSprint(item)}
                   className='ml-auto basis-[100px]'
                 >
-                  {getStatusSprint(item)}
+                  {getSprintStatusDisplayName(getStatusSprint(item))}
                 </Badge>
                 <span className='mr-3 basis-[200px]'>
                   {formatDate(item.start)} - {formatDate(item.end)}
                 </span>
               </AccordionTrigger>
               <AccordionContent ref={refContent}>
+                <div className='mb-2 flex flex-col gap-2'>
+                  <span className='text-xl font-bold'>Nội dung thực hiện</span>
+                  <HtmlViewer value={item.description} />
+                </div>
+
                 {sprintId && (
                   <ListIssueInSprint
                     sprintId={item.id}

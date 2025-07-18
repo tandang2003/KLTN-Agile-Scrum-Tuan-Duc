@@ -1,0 +1,68 @@
+post:
+  summary: Create sprint
+  description: create sprint by teacher
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - projectId
+            - title
+            - storyPoint
+            - predict
+          properties:
+            projectId:
+              type: string
+              description: project id
+            title:
+              type: string
+              description: issue name
+            storyPoint:
+              type: integer
+              description: minimum story point
+            predict:
+              type: string
+              description: date time to run model predict
+            start:
+              type: string
+              description: date time start
+            end:
+              type: string
+              description: date time end
+        example:
+          projectId: "7b1635b7-8a2d-4054-a2ab-033d930ff799"
+          title: "The furst sprint for project"
+          predict: "2025-05-27T08:15:41.747Z"
+          storyPoint: "12"
+          start: "2025-05-24T08:15:41.747Z"
+          end: "2025-05-30T08:15:41.747Z"
+
+put:
+  summary: Update sprint
+  description: create sprint by student
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            projectId:
+              type: string
+              description: project id
+            sprintId:
+              type: string
+              description: sprint ID
+            dtPlanning:
+              type: string
+              description: date time start
+            dtPreview:
+              type: string
+              description: date time end
+        example:
+          projectId: "7b1635b7-8a2d-4054-a2ab-033d930ff799"
+          sprintId: "869970d9-9109-4cde-89b8-5c69013dff5c"
+          dtPlanning: "2025-05-29T08:15:41.747Z"
+          dtPreview: "2025-05-29T08:15:41.747Z"

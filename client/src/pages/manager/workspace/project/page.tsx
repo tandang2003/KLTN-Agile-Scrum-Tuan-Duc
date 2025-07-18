@@ -1,5 +1,6 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
-import ProjectHeader from '@/components/project/ProjetcHeader'
+import ProjectHeader from '@/components/project/ProjectHeader'
+import SprintPredict from '@/components/SprintPredict'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
@@ -62,8 +63,22 @@ const ProjectPage = () => {
           <>
             <ProjectHeader data={data} />
 
-            <div className='pt-2 pb-4'>
+            <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
+              <SprintPredict
+                project={{
+                  id: data.id,
+                  name: data.name
+                }}
+                sprint={
+                  data.currentSprint?.id && data.currentSprint?.title
+                    ? {
+                        id: data.currentSprint?.id,
+                        name: data.currentSprint?.title
+                      }
+                    : undefined
+                }
+              />
             </div>
             <Outlet
               context={{

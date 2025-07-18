@@ -1,0 +1,73 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
+    redis:
+      url: ${SPRING_DATA_REDIS_URL}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  application:
+    security:
+      access-token:
+        time-of-life: 30M
+        key:
+          private-key: file:${KEY_BASE:/app/keys}/access/private_key.pem
+          public-key: file:${KEY_BASE:/app/keys}/access/public_key.pem
+      refresh-token:
+        time-of-life: 120H
+        key:
+          private-key: file:${KEY_BASE:/app/keys}/refresh/private_key.pem
+          public-key: file:${KEY_BASE:/app/keys}/refresh/public_key.pem
+      verify-token:
+        time-of-life: 48H
+        key:
+          private-key: file:${KEY_BASE:/app/keys}/verify/private_key.pem
+          public-key: file:${KEY_BASE:/app/keys}/verify/public_key.pem
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            type:
+              mapping: "project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.kltn.server.DTO.request.log, com.kltn.server.DTO.request.kafka
+            type:
+              mapping: "project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest"
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ducvui2003@gmail.com
+    password: xqofaipzivcwjdbq
+    protocol: smtp
+    properties:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+
+verify:
+  invite-project-link: ${VERIFY_INVITE_PROJECT_LINK}
+app:
+  time-speech: 7200
+  service:
+    cloudinary:
+      cloud-name: yourstyle
+      api-key: 571775183462891
+      api-secret: rfWLwei-lyOo2LWTIdlu2E5Hr_Y
+      url-upload: https://api.cloudinary.com/v1_1/yourstyle/auto/upload
+      root-folder: KLTN

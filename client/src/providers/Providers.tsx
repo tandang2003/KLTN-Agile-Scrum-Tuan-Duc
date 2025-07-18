@@ -1,4 +1,4 @@
-import AlertHostProvider from '@/components/AleartHost'
+import AlertHostProvider from '@/components/AlertHost'
 import Loading from '@/components/Loading'
 import AppGlobalState from '@/providers/AppGlobalState'
 import StateLoader from '@/providers/StateLoader'

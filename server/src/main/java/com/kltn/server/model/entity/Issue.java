@@ -24,6 +24,7 @@ public class Issue extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "sprint_id")
   private Sprint sprint;
+  private Instant dtAppend;
   // @ManyToOne
   // @JoinColumns({
   // @JoinColumn(name = "project_id", referencedColumnName = "project_id"),
@@ -86,6 +87,7 @@ public class Issue extends BaseEntity {
     this.project = builder.project;
     this.sprint = builder.sprint;
     this.open = builder.open;
+    this.dtAppend = builder.dtAppend;
   }
 
   public Issue() {
@@ -109,6 +111,7 @@ public class Issue extends BaseEntity {
     private boolean open = true;
     private String name;
     private String description;
+    private Instant dtAppend;
     private IssueStatus status;
     // private int storyPoint;
     private IssuePriority priority;
@@ -130,6 +133,11 @@ public class Issue extends BaseEntity {
 
     public IssueEntityBuilder project(Project project) {
       this.project = project;
+      return this;
+    }
+
+    public IssueEntityBuilder dtAppend(Instant dtAppend) {
+      this.dtAppend = dtAppend;
       return this;
     }
 
@@ -424,5 +432,13 @@ public class Issue extends BaseEntity {
 
   public void setOpen(boolean open) {
     this.open = open;
+  }
+
+  public Instant getDtAppend() {
+    return dtAppend;
+  }
+
+  public void setDtAppend(Instant dtAppend) {
+    this.dtAppend = dtAppend;
   }
 }

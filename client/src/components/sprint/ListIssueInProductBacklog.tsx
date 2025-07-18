@@ -3,6 +3,7 @@ import ListView from '@/components/ListView'
 import SprintCardInProductBacklog from '@/components/sprint/SprintCardInProductBacklog'
 import { Button } from '@/components/ui/button'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import messages from '@/constant/message.const'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
 import { setSprintActive } from '@/feature/sprint/sprint.slice'
@@ -13,6 +14,7 @@ import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
 const ListIssueInProductBacklog = () => {
+  const message = messages.component.sprint.listIssueInProductBacklog
   const dispatch = useAppDispatch()
   const { projectId } = useAppId()
   const { data, isFetching } = useGetListIssueQuery(
@@ -35,7 +37,7 @@ const ListIssueInProductBacklog = () => {
       loading={isFetching}
       emptyComponent={
         <div className='flex rounded-sm border-2 bg-white px-4 py-2'>
-          Not has any issues
+          {message.list.empty}
         </div>
       }
       className={cn('gap-3')}
@@ -49,7 +51,7 @@ const ListIssueInProductBacklog = () => {
             variant={'default'}
             onClick={handleOpenCreateIssue}
           >
-            Create issue
+            {message.create}
           </Button>
         </RequiredAuth>
       }

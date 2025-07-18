@@ -1,0 +1,37 @@
+@startuml
+autonumber
+
+actor Student as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Project\nController" as Controller
+participant "Project\nService" as Service
+participant "ChangeLog\nRepository" as ChangeLogRepo
+participant "MongoDB" as MongoDB
+
+activate SV
+SV -> View : Student accesses
+
+activate View
+View -> Controller : GET /project/:id/members?\npage=1&size=5
+
+activate Controller
+Controller -> Service : getNotification(req)
+
+activate Service
+
+Service -> ChangeLogRepo : findAllByProjectId\n(projectId, page);
+activate ChangeLogRepo
+ChangeLogRepo -> MongoDB : findAllByProjectId\n(projectId, page);
+activate MongoDB
+MongoDB --> ChangeLogRepo : return page\nchangeLog model
+deactivate MongoDB
+ChangeLogRepo --> Service : return page\nchangeLog model
+deactivate ChangeLogRepo
+Service --> Controller: return page\nchangeLog
+deactivate Service
+Controller --> View : return page\nchangeLog
+deactivate Controller
+View --> SV : Display list change log
+deactivate View
+deactivate SV
+@enduml

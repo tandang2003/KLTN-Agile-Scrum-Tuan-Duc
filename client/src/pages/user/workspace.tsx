@@ -6,6 +6,7 @@ import Icon from '@/components/Icon'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { NavLink } from 'react-router-dom'
+import messages from '@/constant/message.const'
 
 const UserWorkspace = () => {
   const [page, setPage] = useState<PageRequest>({ page: 0, size: 1 })
@@ -22,13 +23,13 @@ const UserWorkspace = () => {
     <>
       <span className='h3 mb-2 flex items-center gap-2'>
         <Icon icon={'carbon:workspace'} size={45} />
-        <h2>Working workspace</h2>
+        <h2>{messages.user.workspace.title}</h2>
       </span>
       <div>
         <ListViewPagination<WorkspaceResponse>
           minHeight='100px'
           view={{
-            className: 'bg-gray-100 p-2',
+            className: 'bg-gray-100 p-2 gap-2',
             loading: isFetching,
             render: (item) => {
               return (

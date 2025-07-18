@@ -1,0 +1,20 @@
+apis:
+  main:
+    root: ./swagger.yaml
+
+extends:
+  - recommended
+
+rules:
+  operation-operationId: off # Disable missing operationId warnings
+  security-defined: off # Disable security warnings
+  parameter-description: off # Disable parameter description warnings
+  info-contact: off # Disable missing contact info warnings
+  info-license: off # Disable missing license info warnings
+  tag-description: off
+  operation-4xx-response: off # Disable 4xx response warnings
+
+theme:
+  openapi:
+    expandResponses: "200,201"
+    hideDownloadButton: true

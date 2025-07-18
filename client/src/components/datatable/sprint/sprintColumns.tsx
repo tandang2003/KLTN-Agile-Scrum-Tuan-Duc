@@ -2,6 +2,7 @@ import SprintColumnsAction from '@/components/datatable/sprint/sprintColumnsActi
 import Icon from '@/components/Icon'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
+import messages, { getSprintStatusDisplayName } from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { formatDate } from '@/lib/utils'
@@ -10,10 +11,13 @@ import { ColumnDef } from '@tanstack/react-table'
 
 type SprintColumns = SprintWorkspaceDataTable
 
+const { end, point, predict, start, status, title } =
+  messages.component.dataTable.sprint.columns
+
 const columns: ColumnDef<SprintColumns>[] = [
   {
     accessorKey: 'title',
-    header: 'Title',
+    header: title,
     size: 100,
     cell: ({ row }) => {
       const id: string = row.original.id
@@ -24,7 +28,7 @@ const columns: ColumnDef<SprintColumns>[] = [
   },
   {
     accessorKey: 'storyPoint',
-    header: 'Point',
+    header: point,
     size: 50,
     cell: ({ row }) => {
       const value: number = row.getValue('storyPoint')
@@ -33,7 +37,7 @@ const columns: ColumnDef<SprintColumns>[] = [
   },
   {
     accessorKey: '',
-    header: 'Status',
+    header: status,
     cell: ({ row }) => {
       const id: string = row.original.id
       const start: Date = row.original.start
@@ -46,13 +50,17 @@ const columns: ColumnDef<SprintColumns>[] = [
         start,
         end
       })
-      return <Badge statusSprint={status}>{status}</Badge>
+      return (
+        <Badge statusSprint={status}>
+          {getSprintStatusDisplayName(status)}
+        </Badge>
+      )
     }
   },
 
   {
     accessorKey: 'start',
-    header: 'Date start',
+    header: start,
     cell: ({ row }) => {
       const value: Date = row.getValue('start')
       return formatDate(value)
@@ -60,7 +68,7 @@ const columns: ColumnDef<SprintColumns>[] = [
   },
   {
     accessorKey: 'predict',
-    header: 'Date predict',
+    header: predict,
     cell: ({ row }) => {
       const value: Date = row.getValue('predict')
       const current: Date = new Date()
@@ -74,7 +82,7 @@ const columns: ColumnDef<SprintColumns>[] = [
   },
   {
     accessorKey: 'end',
-    header: 'Date end',
+    header: end,
     cell: ({ row }) => {
       const value: Date = row.getValue('end')
       return formatDate(value)

@@ -5,7 +5,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 const skillApi = createApi({
   reducerPath: 'skillApi',
   baseQuery: () => ({ data: {} }), // you likely want to replace this with fetchBaseQuery if not using custom service
-  tagTypes: ['Skills'],
+  tagTypes: ['Courses'],
   endpoints: (builder) => ({
     getAllSkills: builder.query<Array<string>, void>({
       async queryFn() {
@@ -19,7 +19,7 @@ const skillApi = createApi({
       providesTags: () => {
         return [
           {
-            type: 'Skills' as const,
+            type: 'Courses' as const,
             id: 'LIST'
           }
         ]
@@ -37,7 +37,7 @@ const skillApi = createApi({
       providesTags: () => {
         return [
           {
-            type: 'Skills' as const,
+            type: 'Courses' as const,
             id: 'LIST'
           }
         ]
@@ -54,7 +54,7 @@ const skillApi = createApi({
       },
       invalidatesTags: () => [
         {
-          type: 'Skills' as const,
+          type: 'Courses' as const,
           id: 'LIST'
         }
       ]
@@ -71,7 +71,7 @@ const skillApi = createApi({
       },
       invalidatesTags: () => [
         {
-          type: 'Skills' as const,
+          type: 'Courses' as const,
           id: 'LIST'
         }
       ]
@@ -87,7 +87,7 @@ const skillApi = createApi({
       },
       invalidatesTags: () => [
         {
-          type: 'Skills' as const,
+          type: 'Courses' as const,
           id: 'LIST'
         }
       ]

@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { addDays, differenceInDays, format, startOfDay } from 'date-fns'
 
 const formatDateToString = (
   date: Date,
@@ -26,9 +26,16 @@ const toISODateString = (date: Date): string => {
   return new Date(date).toISOString()
 }
 
+function getDateByPercent(start: Date, end: Date, percent: number): Date {
+  const totalDays = differenceInDays(end, start)
+  const targetDay = Math.round((percent / 100) * totalDays)
+  return startOfDay(addDays(start, targetDay))
+}
+
 export {
   formatDateToString,
   formatDateRange,
   parseStringToDate,
-  toISODateString
+  toISODateString,
+  getDateByPercent
 }

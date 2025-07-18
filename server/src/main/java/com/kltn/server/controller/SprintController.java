@@ -17,49 +17,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/sprint")
 public class SprintController {
-    private SprintService sprintService;
+  private SprintService sprintService;
 
-    @Autowired
-    public SprintController(SprintService sprintService) {
-        this.sprintService = sprintService;
-    }
+  @Autowired
+  public SprintController(SprintService sprintService) {
+    this.sprintService = sprintService;
+  }
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('create_sprint')")
-    public ResponseEntity<ApiResponse<SprintResponse>> createSprint(
-            @RequestBody @Valid SprintCreationRequest sprintCreationRequest) {
-        var sprint = sprintService.createSprint(sprintCreationRequest);
-        return ResponseEntity.status(sprint.getCode()).body(sprint);
-    }
+  @PostMapping
+  @PreAuthorize("hasAuthority('create_sprint')")
+  public ResponseEntity<ApiResponse<SprintResponse>> createSprint(
+      @RequestBody @Valid SprintCreationRequest sprintCreationRequest) {
+    var sprint = sprintService.createSprint(sprintCreationRequest);
+    return ResponseEntity.status(sprint.getCode()).body(sprint);
+  }
 
-    @PutMapping("student/update")
-    @PreAuthorize("hasAuthority('update_sprint')")
-    public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
-            @RequestBody @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
-        var sprint = sprintService.studentUpdateSprint(sprintStudentUpdateTimeRequest);
-        return ResponseEntity.status(sprint.getCode()).body(sprint);
-    }
+  @PutMapping("student/update")
+  @PreAuthorize("hasAuthority('update_sprint')")
+  public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
+      @RequestBody @Valid SprintStudentUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+    var sprint = sprintService.studentUpdateSprint(sprintStudentUpdateTimeRequest);
+    return ResponseEntity.status(sprint.getCode()).body(sprint);
+  }
 
-    @PutMapping("teacher/update")
-    @PreAuthorize("hasRole('TEACHER') ")
-    public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
-            @RequestBody @Valid SprintTeacherUpdateTimeRequest sprintStudentUpdateTimeRequest) {
-        var sprint = sprintService.teacherUpdateSprint(sprintStudentUpdateTimeRequest);
-        return ResponseEntity.status(sprint.getCode()).body(sprint);
-    }
+  @PutMapping("teacher/update")
+  @PreAuthorize("hasRole('TEACHER') ")
+  public ResponseEntity<ApiResponse<SprintResponse>> updateSprint(
+      @RequestBody @Valid SprintTeacherUpdateTimeRequest sprintStudentUpdateTimeRequest) {
+    var sprint = sprintService.teacherUpdateSprint(sprintStudentUpdateTimeRequest);
+    return ResponseEntity.status(sprint.getCode()).body(sprint);
+  }
 
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<SprintResponse>>> getList(@RequestParam("workspace_id") String workspaceId) {
-        var sprint = sprintService.getListSprintByWorkspaceId(workspaceId);
-        return ResponseEntity.status(sprint.getCode()).body(sprint);
-    }
+  @GetMapping("/list")
+  public ResponseEntity<ApiResponse<List<SprintResponse>>> getList(@RequestParam("workspace_id") String workspaceId) {
+    var sprint = sprintService.getListSprintByWorkspaceId(workspaceId);
+    return ResponseEntity.status(sprint.getCode()).body(sprint);
+  }
 
-    @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('delete_sprint')")
-    public ResponseEntity<ApiResponse<Void>> deleteSprint(@PathVariable String id) {
-        var sprint = sprintService.deleteSprint(id);
-        return ResponseEntity.status(sprint.getCode()).body(sprint);
-    }
-
+  @DeleteMapping("{id}")
+  @PreAuthorize("hasAuthority('delete_sprint')")
+  public ResponseEntity<ApiResponse<Void>> deleteSprint(@PathVariable String id) {
+    var sprint = sprintService.deleteSprint(id);
+    return ResponseEntity.status(sprint.getCode()).body(sprint);
+  }
 
 }

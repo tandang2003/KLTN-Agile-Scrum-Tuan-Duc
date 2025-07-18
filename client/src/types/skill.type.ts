@@ -1,4 +1,4 @@
-import { string } from '@/types/common.type'
+import { stringSchema } from '@/types/other.type'
 import { z } from 'zod'
 
 type SkillRequest = {
@@ -7,7 +7,7 @@ type SkillRequest = {
 }
 
 const SkillSchema = z.object({
-  skillName: string,
+  skillName: stringSchema,
   proficiency: z.number().min(1).max(5)
 })
 

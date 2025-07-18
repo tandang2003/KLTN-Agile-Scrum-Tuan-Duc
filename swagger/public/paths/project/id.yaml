@@ -1,0 +1,107 @@
+get:
+  summary: Get information project
+  description: |
+    Used by: 
+    - Teacher
+    - Leader and student inside project
+
+    Get information project and list of sprint
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: string
+      required: true
+      description: project id
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: string
+                        description: project id
+                      name:
+                        type: string
+                        description: name project
+                      description:
+                        type: string
+                        description: description project
+                      createAt:
+                        type: string
+                        description: timestamp create a project
+                      updateAt:
+                        type: string
+                        description: timestamp update a project
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: name tag
+                            color:
+                              type: string
+                              description: color tag
+                            workspace:
+                              type: string
+                              description: workspace id
+                      sprints:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: sprint id
+                            process:
+                              type: object
+                              properties:
+                                planning:
+                                  type: string
+                                  description: date planning
+                                preview:
+                                  type: string
+                                  description: date preview
+                            dtStart:
+                              type: string
+                              description: date time start sprint
+                            dtEnd:
+                              type: string
+                              description: date time end sprint
+                example:
+                  code: 200
+                  message: "project info retrieved successfully"
+                  data:
+                    id: "project-001"
+                    name: "Nhom 01"
+                    description: ""
+                    createAt: "2025-04-14T10:02:01+0000"
+                    updateAt: "2025-04-14T10:02:01+0000"
+                    tags:
+                      - name: "UX/UI"
+                        color: "red"
+                      - name: "Java"
+                        color: "pink"
+                    sprints:
+                      - id: "sprint-001"
+                        process:
+                          planning: "2025-04-14T10:02:01+0000"
+                          preview: "2025-04-14T10:02:01+0000"
+                        dtStart: "2025-04-14T10:02:01+0000"
+                        dtEnd: "2025-04-14T10:02:01+0000"
+                      - id: "sprint-002"
+                        process:
+                          planning: "2025-04-14T10:02:01+0000"
+                          preview: "2025-04-14T10:02:01+0000"
+                        dtStart: "2025-04-14T10:02:01+0000"
+                        dtEnd: "2025-04-14T10:02:01+0000"

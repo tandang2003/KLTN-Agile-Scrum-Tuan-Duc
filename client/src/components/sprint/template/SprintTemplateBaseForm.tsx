@@ -1,3 +1,4 @@
+import Editor from '@/components/Editor'
 import { Button } from '@/components/ui/button'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import {
@@ -17,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages from '@/constant/message.const'
 import {
   BaseSprintFormSchema,
   BaseSprintFormType,
@@ -44,6 +46,7 @@ const SprintTemplateBaseForm = ({
   initialValues,
   submitText = 'Create Sprint'
 }: SprintTemplateFormProps) => {
+  const message = messages.component.sprint.template.baseForm
   const [durationValue, setDurationValue] = useState<{
     active: DurationType
     list: DurationType[]
@@ -58,6 +61,7 @@ const SprintTemplateBaseForm = ({
       title: '',
       predict: addDays(new Date(), 4),
       storyPoint: 0,
+      description: '',
       start: addDays(new Date(), 2),
       end: addDays(new Date(), 7)
     }
@@ -98,6 +102,7 @@ const SprintTemplateBaseForm = ({
   }
 
   const handleSubmit = (values: CreateSprintFormType) => {
+    console.log(JSON.stringify(values))
     onSubmit?.(values, form)
   }
 
@@ -111,7 +116,7 @@ const SprintTemplateBaseForm = ({
               name='title'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sprint name</FormLabel>
+                  <FormLabel>{message.name}</FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Analysis' {...field} />
                   </FormControl>
@@ -119,22 +124,21 @@ const SprintTemplateBaseForm = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name='storyPoint'
+              name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Story Point</FormLabel>
+                  <FormLabel>{message.description.label}</FormLabel>
                   <FormDescription>
-                    This is a story point that sprint is archived before end of
-                    sprint
+                    {message.description.description}
                   </FormDescription>
                   <FormControl>
-                    <Input
-                      type='number'
-                      placeholder='1'
+                    <Editor
+                      className='h-full'
                       {...field}
-                      onChange={field.onChange}
+                      classNameContainer='h-[200px] rounded-md border shadow-sm'
                     />
                   </FormControl>
                   <FormMessage />
@@ -144,7 +148,7 @@ const SprintTemplateBaseForm = ({
 
             <div className='mt-4 flex gap-3'>
               <FormItem>
-                <FormLabel>Duration</FormLabel>
+                <FormLabel>{message.duration}</FormLabel>
                 <Select
                   onValueChange={(value) => {
                     handleSelectDurationChange(value)
@@ -152,7 +156,7 @@ const SprintTemplateBaseForm = ({
                   defaultValue={
                     !isNumber(durationValue.active)
                       ? durationValue.active
-                      : durationValue.active + ' week'
+                      : durationValue.active + ' ' + message.week
                   }
                 >
                   <FormControl>
@@ -167,7 +171,9 @@ const SprintTemplateBaseForm = ({
                           key={index}
                           value={item?.toString() ?? 'custom'}
                         >
-                          {isNumber(item) ? `${item} week` : 'custom'}
+                          {isNumber(item)
+                            ? `${item} ${message.week}`
+                            : message.customDuration}
                         </SelectItem>
                       )
                     })}
@@ -183,12 +189,12 @@ const SprintTemplateBaseForm = ({
                 name='start'
                 render={({ field }) => (
                   <FormItem className='flex-1'>
-                    <FormLabel>Time start</FormLabel>
+                    <FormLabel>{message.startDate}</FormLabel>
                     <DatePickerWithPresets
                       date={field.value}
                       setDate={(date) => {
                         if (date) {
-                          field.onChange(new Date(date))
+                          field.onChange(date)
                         }
                       }}
                     />
@@ -204,13 +210,13 @@ const SprintTemplateBaseForm = ({
                 name='end'
                 render={({ field }) => (
                   <FormItem className='flex-1'>
-                    <FormLabel>Time end</FormLabel>
+                    <FormLabel>{message.endDate}</FormLabel>
                     <DatePickerWithPresets
                       disabled={durationValue.active !== 'custom'}
                       min={form.getValues('start')}
                       date={field.value}
                       setDate={(date) => {
-                        if (date) field.onChange(new Date(date))
+                        if (date) field.onChange(date)
                       }}
                     />
                     <div className='h-[20px]'>
@@ -220,26 +226,49 @@ const SprintTemplateBaseForm = ({
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name='predict'
-              render={({ field }) => (
-                <FormItem className='flex-1 shrink-0'>
-                  <FormLabel>Time predict</FormLabel>
-                  <DatePickerWithPresets
-                    date={field.value}
-                    min={form.getValues('start')}
-                    max={form.getValues('end')}
-                    setDate={(date) => {
-                      if (date) {
-                        field.onChange(new Date(date))
-                      }
-                    }}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='mt-4 flex gap-3'>
+              <FormField
+                control={form.control}
+                name='predict'
+                render={({ field }) => (
+                  <FormItem className='flex-1 shrink-0'>
+                    <FormLabel>{message.predict}</FormLabel>
+                    <DatePickerWithPresets
+                      date={field.value}
+                      min={form.getValues('start')}
+                      max={form.getValues('end')}
+                      setDate={(date) => {
+                        if (date) {
+                          field.onChange(date)
+                        }
+                      }}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='storyPoint'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{message.storyPoint.label}</FormLabel>
+                    <FormDescription>
+                      {message.storyPoint.description}
+                    </FormDescription>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        placeholder={message.storyPoint.placeholder}
+                        {...field}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           <Button

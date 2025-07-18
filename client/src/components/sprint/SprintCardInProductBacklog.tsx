@@ -11,18 +11,18 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
-import {
-  useMoveIssueToSprintMutation,
-  useReopenIssueMutation
-} from '@/feature/issue/issue.api'
+import { useMoveIssueToSprintMutation } from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
 import useOpenIssueUpdate from '@/hooks/use-issue-update'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
+import Message from '@/components/Message'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 type SprintCardInProductBacklogProps = {
   data: IssueResponse
 }
@@ -30,12 +30,15 @@ type SprintCardInProductBacklogProps = {
 const SprintCardInProductBacklog = ({
   data: item
 }: SprintCardInProductBacklogProps) => {
+  const message = messages.component.sprint.sprintCardInBacklog
   const { workspaceId } = useAppId()
   const [moveToSprint] = useMoveIssueToSprintMutation()
-  const [reopen] = useReopenIssueMutation()
   const { data: sprints, refetch } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const { action } = useOpenIssueUpdate()
   const handleUpdateSprint = (sprintId: Id) => {
     moveToSprint({
@@ -53,26 +56,22 @@ const SprintCardInProductBacklog = ({
             status: 'TODO'
           })
           .then(() => {
-            toast.message(`Issue ${item.name} moved to sprint successfully`)
+            toast.message(message.toast.moveToSprint.success.message, {
+              description: (
+                <Message
+                  template={message.toast.moveToSprint.success.description}
+                  values={{
+                    name: item.name
+                  }}
+                />
+              )
+            })
           })
       })
       .catch((err) => {
         if (err.status === HttpStatusCode.Conflict)
-          toast.error("Sprint is running, cannot update issue's sprint")
-        else toast.error("Another error occurred while updating issue's sprint")
-      })
-  }
-
-  const handleReopen = () => {
-    reopen(item.id)
-      .unwrap()
-      .then(() => {
-        toast.message(`Issue ${item.name} reopened successfully`)
-      })
-      .catch((err) => {
-        if (err.status === HttpStatusCode.Conflict)
-          toast.error('Issue is not in DONE status, cannot reopen')
-        else toast.error('Another error occurred while reopening issue')
+          toast.error(message.toast.moveToSprint.conflict)
+        else toast.error(message.toast.moveToSprint.failed)
       })
   }
 
@@ -94,18 +93,17 @@ const SprintCardInProductBacklog = ({
             <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            {item.status === 'DONE' && (
-              <DropdownMenuItem onClick={handleReopen}>Reopen</DropdownMenuItem>
-            )}
             <DropdownMenuItem
               onClick={() => {
                 action(item.id)
               }}
             >
-              Edit
+              {message.dropdown.edit}
             </DropdownMenuItem>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Move to sprint</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>
+                {message.dropdown.moveToSprint}
+              </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   {sprints &&
@@ -114,6 +112,13 @@ const SprintCardInProductBacklog = ({
                         onClick={() => {
                           handleUpdateSprint(sprint.id)
                         }}
+                        disabled={
+                          getStatusSprint({
+                            end: sprint.end,
+                            start: sprint.start,
+                            id: sprint.id
+                          }) != 'PENDING'
+                        }
                         key={sprint.id}
                         className='cursor-pointer'
                       >

@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages, { getProficiencyDisplayName } from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook'
 import {
   useCreateSkillMutation,
@@ -94,7 +95,9 @@ const FormSkill = () => {
             render={({ field }) => {
               return (
                 <FormItem>
-                  <FormLabel>Skill</FormLabel>
+                  <FormLabel>
+                    {messages.component.skill.form.skill.label}
+                  </FormLabel>
                   <div className='flex'>
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
@@ -106,7 +109,7 @@ const FormSkill = () => {
                           className='w-[200px] justify-between'
                         >
                           {field.value === ''
-                            ? 'Select framework...'
+                            ? messages.component.skill.form.skill.popover
                             : field.value}
                           <ChevronsUpDown className='opacity-50' />
                         </Button>
@@ -148,7 +151,9 @@ const FormSkill = () => {
             render={({ field }) => {
               return (
                 <FormItem className='w-full'>
-                  <FormLabel>Proficiency</FormLabel>
+                  <FormLabel>
+                    {messages.component.skill.form.proficiency.label}
+                  </FormLabel>
                   <Select
                     defaultValue={field.value.toString()}
                     onValueChange={(value) => field.onChange(parseInt(value))}
@@ -164,7 +169,7 @@ const FormSkill = () => {
                           key={index}
                           value={SkillLevel[item].toString()}
                         >
-                          {item}
+                          {getProficiencyDisplayName(SkillLevel[item])}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -179,7 +184,11 @@ const FormSkill = () => {
           />
         </div>
         <div className='mt-4 flex justify-end'>
-          <Button type='submit'>{mode === 'create' ? 'Add' : 'Update'}</Button>
+          <Button type='submit' className='success'>
+            {mode === 'create'
+              ? messages.component.skill.form.button.add
+              : messages.component.skill.form.button.update}
+          </Button>
         </div>
       </form>
     </Form>

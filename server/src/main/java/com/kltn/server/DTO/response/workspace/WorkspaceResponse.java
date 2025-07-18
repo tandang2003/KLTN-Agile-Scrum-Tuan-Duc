@@ -15,24 +15,20 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record WorkspaceResponse(
-  String id,
-  String name,
-  String description,
-  int sprintNum,
-  @JsonInclude(JsonInclude.Include.ALWAYS)
-  SprintResponse prevSprint,
-  @JsonInclude(JsonInclude.Include.ALWAYS)
-  SprintResponse currentSprint,
-  @JsonInclude(JsonInclude.Include.ALWAYS)
-  SprintResponse nextSprint,
-  UserResponse owner,
-  Instant start,
-  Instant end,
-  List<ProjectResponse> projects,
-  Instant createdAt,
-  CourseResponse course,
-  @JsonProperty("prerequisite course")
-  List<UserCourseResponse> prerequisiteCourse
+    String id,
+    String name,
+    String description,
+    int sprintNum,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse prevSprint,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint,
+    UserResponse owner,
+    Instant start,
+    Instant end,
+    List<ProjectResponse> projects,
+    Instant createdAt,
+    CourseResponse course,
+    List<UserCourseResponse> prerequisiteCourse
 
 ) {
   public static WorkspaceResponseBuilder builder() {
@@ -79,7 +75,6 @@ public record WorkspaceResponse(
       this.sprintNum = sprintNum;
       return this;
     }
-
 
     public WorkspaceResponseBuilder name(String name) {
       this.name = name;
@@ -128,11 +123,9 @@ public record WorkspaceResponse(
 
     public WorkspaceResponse build() {
       return new WorkspaceResponse(
-        id, name, description, sprintNum, prevSprint, currentSprint, nextSprint, owner, start, end, projects,
-        createdAt, course, prerequisiteCourse
-      );
+          id, name, description, sprintNum, prevSprint, currentSprint, nextSprint, owner, start, end, projects,
+          createdAt, course, prerequisiteCourse);
     }
   }
-
 
 }

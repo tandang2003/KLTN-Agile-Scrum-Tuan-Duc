@@ -10,10 +10,12 @@ const SectionComment = () => {
   const id = useAppSelector((state) => state.issueSlice.current?.id)
   const [comment, setComment] = useState<CommentResType[]>()
   useEffect(() => {
-    if (id)
+    if (id) {
+      console.log('fetch comment for issue', id)
       commentService.getComment(id).then((res) => {
         setComment(res)
       })
+    }
   }, [id])
   return (
     <CommentProvider initValue={comment}>

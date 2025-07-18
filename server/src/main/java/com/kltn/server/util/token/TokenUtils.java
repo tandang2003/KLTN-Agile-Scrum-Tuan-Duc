@@ -28,7 +28,7 @@ public class TokenUtils {
   @Value("${spring.application.security.refresh-token.time-of-life}")
   private String refreshTokenTOL;
 
-  @Value("${spring.application.security.verify-token.time-of-life}")
+  @Value("${spring.application.security.refresh-token.time-of-life}")
   private String verifyTokenTOL;
 
   @Autowired
@@ -51,7 +51,7 @@ public class TokenUtils {
     else
       userDetails = (UserDetails) authentication;
     String subject = userDetails.getUsername();
-    Instant now = clockSimulator.now();
+    Instant now = Instant.now();
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                                          .issuer("myApp")
                                          .issuedAt(now)
@@ -72,7 +72,7 @@ public class TokenUtils {
 
   public String generateRefreshToken(Authentication authentication) {
     UserDetails user = (UserDetails) authentication.getPrincipal();
-    Instant now = clockSimulator.now();
+    Instant now = Instant.now();
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                                          .issuer("myApp")
                                          .issuedAt(now)
@@ -88,7 +88,7 @@ public class TokenUtils {
   }
 
   public String generateVerifyToken(String context, Map<String, Object> data) {
-    Instant now = clockSimulator.now();
+    Instant now = Instant.now();
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                                          .issuer("verify_" + context)
                                          .issuedAt(now)

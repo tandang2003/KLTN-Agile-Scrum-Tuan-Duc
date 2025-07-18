@@ -15,67 +15,83 @@ import java.util.List;
 
 @Service
 public class ProjectSprintService {
-    private ProjectSprintRepository projectSprintRepository;
-    private ProjectService projectService;
-    private SprintService sprintService;
+  private ProjectSprintRepository projectSprintRepository;
+  private ProjectService projectService;
+  private SprintService sprintService;
 
-    @Autowired
-    public ProjectSprintService(ProjectSprintRepository projectSprintRepository) {
-        this.projectSprintRepository = projectSprintRepository;
+  @Autowired
+  public ProjectSprintService(ProjectSprintRepository projectSprintRepository) {
+    this.projectSprintRepository = projectSprintRepository;
+  }
+
+  public ProjectSprint create(Project project, Sprint sprint) {
+    ProjectSprintId projectSprintId = ProjectSprintId.builder()
+      .sprintId(sprint.getId())
+      .projectId(project.getId())
+      .build()
+      ;
+    ProjectSprint projectSprint = ProjectSprint.builder()
+      .id(projectSprintId)
+      .project(project)
+      .sprint(sprint)
+      .build()
+      ;
+    projectSprint = projectSprintRepository.save(projectSprint);
+    return projectSprint;
+  }
+
+  public ProjectSprint getProjectSprintById(ProjectSprintId projectSprintId) {
+    return projectSprintRepository.findById(projectSprintId)
+      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_SPRINT_PROJECT_RELATION).build());
+  }
+
+  public ProjectSprint save(ProjectSprint projectSprint) {
+    ProjectSprint savedProjectSprint = projectSprintRepository.save(projectSprint);
+    if (savedProjectSprint == null || savedProjectSprint.getId() == null) {
+      throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
     }
+    return savedProjectSprint;
+  }
 
-    public ProjectSprint create(Project project, Sprint sprint) {
-        ProjectSprintId projectSprintId = ProjectSprintId.builder().sprintId(sprint.getId()).projectId(project.getId()).build();
-        ProjectSprint projectSprint = ProjectSprint.builder()
-                .id(projectSprintId)
-                .project(project)
-                .sprint(sprint)
-                .build();
-        projectSprint = projectSprintRepository.save(projectSprint);
-        return projectSprint;
-    }
-
-    public ProjectSprint getProjectSprintById(ProjectSprintId projectSprintId) {
-        return projectSprintRepository.findById(projectSprintId).orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_SPRINT_PROJECT_RELATION).build());
-    }
-
-    public ProjectSprint save(ProjectSprint projectSprint) {
-        ProjectSprint savedProjectSprint = projectSprintRepository.save(projectSprint);
-        if (savedProjectSprint == null || savedProjectSprint.getId() == null) {
-            throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
-        }
-        return savedProjectSprint;
-    }
-
-    @Transactional
-    public void save(String project, List<String> sprints) {
+  @Transactional
+  public void save(String project, List<String> sprints) {
 //        var projectSprintId = ProjectSprintId.builder();
 //        projectSprintId.projectId(project);
-        sprints.forEach(
-                sprintId -> {
+    sprints.forEach(
+      sprintId ->
+        {
 //                    projectSprintId.sprintId(sprintId);
 //                    ProjectSprint projectSprint = ProjectSprint.builder().id(projectSprintId.build()).build();
-                    projectSprintRepository.save(project, sprintId);
-                }
-        );
+        projectSprintRepository.save(project, sprintId);
+        }
+    );
 
-    }
+  }
 
-    //    @Transactional
-    public void save(List<String> projectIds, String sprintId) {
+  //    @Transactional
+  public void save(List<String> projectIds, String sprintId) {
 //        var projectSprintId = ProjectSprintId.builder();
 //        projectSprintId.sprintId(sprintId);
-        projectIds.forEach(
-                projectId -> {
+    projectIds.forEach(
+      projectId ->
+        {
 //                    projectSprintId.projectId(projectId);
 //                    ProjectSprint projectSprint = ProjectSprint.builder().id(projectSprintId.build()).build();
-                    projectSprintRepository.save(projectId, sprintId);
+        projectSprintRepository.save(projectId, sprintId);
 
-                }
-        );
-    }
+        }
+    );
+  }
 
-    public void delete(ProjectSprintId id) {
-        projectSprintRepository.deleteById(id);
-    }
+  public void delete(ProjectSprintId id) {
+    projectSprintRepository.deleteById(id);
+  }
+
+  public List<ProjectSprint> getProjectSprintBySprintId(String id) {
+    return projectSprintRepository.findBySprintId(id);
+  }
+
+  public List<ProjectSprint> getProjectSprintByProjectId(String id) {
+    return projectSprintRepository.findByProjectId(id);
+  }
 }

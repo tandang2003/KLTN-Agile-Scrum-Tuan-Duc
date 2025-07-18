@@ -1,0 +1,50 @@
+@startuml
+autonumber
+
+actor Teacher as SV
+participant "View\n(/manager/:id/summary)" as View
+participant "Workspace\nController" as Controller
+participant "Workspace\nService" as Service
+participant "Workspace\nRepository" as Repo
+participant "MySQL" as MySQL
+
+SV -> View : Teacher \n accesses
+activate SV
+
+activate View
+View --> View: show \n detail \n workspace
+SV -> View: update data & \n click "Update""
+View -> Controller : PUT \n /workspace/:id
+
+activate Controller
+Controller -> Service : update\nWorkspace\n(id, req)
+activate Service
+Service -> Repo: findById\n(id)
+activate Repo
+Repo -> MySQL: findById\n(id)
+activate MySQL
+MySQL --> Repo: workspace \n model
+deactivate MySQL
+Repo --> Service: workspace \n model
+deactivate Repo
+
+Service -> Service: set req to \n workspace \n model
+Service -> Repo: save(workspace)
+activate Repo
+Repo -> MySQL : save\n(workspace)
+activate MySQL
+MySQL --> Repo :  save\n(workspace)
+deactivate MySQL
+Repo --> Service :  workspace \n model
+deactivate Repo
+
+Service --> Controller :  workspace \n model
+deactivate Service
+
+Controller --> View : workspace \n model
+deactivate Controller
+View --> SV : notify "\nUpdate \n workspace \n success"
+
+deactivate View
+deactivate SV
+@enduml

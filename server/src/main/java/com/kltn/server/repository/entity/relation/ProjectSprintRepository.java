@@ -25,6 +25,12 @@ public interface ProjectSprintRepository extends JpaRepository<ProjectSprint, Pr
     @Query(value = "select project_id from project_sprint where sprint_id = :sprintId", nativeQuery = true)
     Optional<List<String>> findProjectIdBySprintId(String sprintId);
 
+  List<ProjectSprint> findBySprintId(String sprintId);
+
+  List<ProjectSprint> findByProjectId(String projectId);
+
+  ProjectSprint findFirstByProjectId(String projectId);
+
 
 //    Optional<List<String>> findProjectIdBySprintId(String sprintId);
 }
