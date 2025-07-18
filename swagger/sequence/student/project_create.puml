@@ -1,5 +1,6 @@
 @startuml
 autonumber
+scale 2
 actor "Student" as SV
 participant "View\n(/manager/:id)" as View
 participant "Project\nController" as Controller
@@ -7,56 +8,54 @@ participant "Project\nService" as Service
 participant "Workspaces\nUsersProjects\nRepository" as WUPRepo
 participant "Project\nRepository" as ProjectRepo
 participant "Project\nSprint\nService" as SprintService
-participant "Sprint\nScheduler" as Scheduler
-participant "Project\nMongoService" as MongoService
+participant "Mongo\nService" as MongoService
 participant "MySQL" as MySQL
 
 activate SV
-SV -> View : Student accesses the page
+SV -> View : Student \n accesses
 
 activate View
-    alt Student has not joined a project
-        View -> View : Show "Create Project" button
+    alt Student has not\njoined a project
+        View -> View : Show \n"Create Project" \n button
     else Student already has a project
-        View -> View : Show "Project" button
+        View -> View : Show "Project" \n button
     end
 
-SV -> View : Clicks "Create Project"
+SV -> View : Clicks \n "Create Project"
 
-View --> SV : Show project creation form
-SV -> View : Submit project creation form
-View -> Controller : POST /project (creationRequest)
+View --> View : Show project\ncreation form
+SV -> View : Submit project\ncreation form
+View -> Controller : POST /project
 
 activate Controller
-Controller -> Service : createProject(creationRequest)
+Controller -> Service : createProject\n(req)
 activate Service
 
-    Service -> WUPRepo : findById(workspaceId, userId)
+    Service -> WUPRepo : findById\n(workspaceId, \nuserId)
     activate WUPRepo
-    WUPRepo ->  MySQL : findById(workspaceId, userId)
+    WUPRepo ->  MySQL : findById\n(workspaceId, userId)
     activate MySQL
-    MySQL --> WUPRepo : return workspacesUsersProjects
+    MySQL --> WUPRepo : \nworkspacesUsersProjects
     deactivate MySQL
-    WUPRepo --> Service : return workspacesUsersProjects
+    WUPRepo --> Service : \nworkspaces\nUsersProjects
     deactivate WUPRepo
 
     alt Project already exists
-        Service -> Service : throw AppException(ALREADY_EXISTS)
+        Service -> Service : throw\nAppException\n(ALREADY_EXISTS)
     else No existing project
 
-        Service -> ProjectRepo : save(projectEntity)
+        Service -> ProjectRepo : save\n(projectEntity)
         activate ProjectRepo
-        ProjectRepo -> MySQL : save(projectEntity)
+        ProjectRepo -> MySQL :  save\n(projectEntity)
         activate MySQL
-        MySQL --> ProjectRepo:  save(projectEntity)
+        MySQL --> ProjectRepo:   save\n(projectEntity)
         deactivate MySQL
-        ProjectRepo --> Service : return savedProject
+        ProjectRepo --> Service : savedProject
         deactivate ProjectRepo
 
-        Service -> SprintService : save(projectId, sprintIds)
-        loop For each sprint with dtEnd
-            Service -> Scheduler : scheduleSprint\nWithProject\n(sprintId, projectId, dtEnd)
-
+        Service -> SprintService : save\n(projectId, sprintIds)
+        loop For each sprint \n with dtEnd
+            Service -> Scheduler : scheduleSprint\nWithProject\n(sprintId, projectId,\n dtEnd)
         end
 
         Service -> Service: setLeader(userId)
@@ -65,18 +64,18 @@ activate Service
         WUPRepo --> MySQL : save(project)
         deactivate WUPRepo
 
-        Service -> MongoService : save(projectMongo)
+        Service -> MongoService : save\n(projectMongo)
         activate MongoService
-        MongoService --> Service : projectMongo model
+        MongoService --> Service : projectMongo \nmodel
         deactivate MongoService
     end
 
-Service --> Controller : return project model
+Service --> Controller :  \nproject model
 deactivate Service
-Controller --> View : return project model
+Controller --> View :  project model
 deactivate Controller
 
-View --> SV : Show success message
+View --> SV : Show \n "Create Project \n success"
 deactivate View
 deactivate SV
 

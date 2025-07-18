@@ -9,56 +9,56 @@ participant "Course\nRepository" as CourseRepo
 participant "UserCourse\nRelation\nRepository" as UCRRepo
 participant "User\nService" as UService
 
-SV -> View : Student accesses
+SV -> View : Student\n accesses
 activate SV
 activate View
-View --> SV : Display list of courses and grades
-SV -> View : Click "Add Course"
-View --> SV : Show add course form
-SV -> View : Fill in course info and grade
-View -> Controller: POST /course
+View --> View : Display \n list of \n courses and \n grades
+SV -> View : Click \n "Add Course"
+View --> View : Show add \n course form
+SV -> View : Fill in course info \n and grade
+View -> Controller: POST \n /course
 activate Controller
-Controller -> Service : addCourse\nForUser(coursePoints)
+Controller -> Service : addCourse \n ForUser \n (coursePoints)
 activate Service
 
-Service -> UService: getCurrentUser
+Service -> UService: getCurrentUser()
 activate UService
-UService --> Service: return user
+UService --> Service:  user
 deactivate UService
 
-loop for each (courseName, point) in coursePoints
-    Service -> CourseRepo : getCourse(courseName)
+loop for each \n(courseName, point) \nin coursePoints
+    Service -> CourseRepo : getCourse\n(courseName)
     activate CourseRepo
-    CourseRepo --> Service : return Course
+    CourseRepo --> Service :  Course
     deactivate CourseRepo
-    Service -> CourseRepo : getDependentCourses(course)
+    Service -> CourseRepo : getDependent \n Courses \n (course)
     activate CourseRepo
     CourseRepo --> Service : List<Course>
     deactivate CourseRepo
 
-    loop for each dependentCourse
-        Service -> UCRRepo : existsById(userId, dependentCourseId)
+    loop for each \n dependentCourse
+        Service -> UCRRepo : existsById\n(userId, \n dependentCourseId)
         activate UCRRepo
-        UCRRepo --> Service: return boolean
+        UCRRepo --> Service:  boolean
         deactivate UCRRepo
         alt not exists
-            Service -> Service : throw MISSING_PREREQUISITE
+            Service -> Service : throw \n MISSING_PREREQUISITE
         end
     end
 
-    Service -> UCRRepo : save(userCourseRelation)
+    Service -> UCRRepo : save \n (userCourseRelation)
     activate UCRRepo
     UCRRepo --> Service : savedRelation
     deactivate UCRRepo
 end
 
-Service --> Controller : return courseModel
+Service --> Controller :  courseModel
 deactivate Service
 
-Controller --> View : return success
+Controller --> View :  success
 deactivate Controller
 
-View --> SV : notify "Course added successfully"
+View --> SV : notify \n "Course added \n successfully"
 deactivate SV
 
 @enduml

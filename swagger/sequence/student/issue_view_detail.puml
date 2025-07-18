@@ -14,36 +14,36 @@ SV -> View : Student accesses
 activate View
 View -> View : Display backlog\nand sprint list
 SV -> View : Select sprint
-View --> SV: Show list issue
+View --> View: Show list issue
 SV -> View: Select issue
-View -> Controller : GET /issue/:issueId/:sprintId
+View -> Controller : GET \n/issue/:issueId/:sprintId
 activate Controller
-Controller -> Service : getIssueDetailById(issueId, sprintId)
+Controller -> Service : getIssue\nDetailById\n(issueId, sprintId)
 activate Service
 alt Sprint is expired
-    Service -> SnapshotService : getByProjectIdAndSprintId\n(projectId, sprintId)
+    Service -> SnapshotService : getByProjectId\nAndSprintId\n(projectId, sprintId)
     activate SnapshotService
-    SnapshotService -> MongoDB: getByProjectIdAndSprintId\n(projectId, sprintId)
+    SnapshotService -> MongoDB: getByProjectId\nAndSprintId\n(projectId, sprintId)
     activate MongoDB
-    MongoDB --> SnapshotService: return list issue model
+    MongoDB --> SnapshotService:  list\nissue model
     deactivate MongoDB
-    SnapshotService --> Service: return list issue model
+    SnapshotService --> Service:  list issue model
     deactivate SnapshotService
-    Service -> Service: return issue model
+    Service -> Service:  issue model
 else
     Service -> Repo : getEntityById\n(projectId, sprintId)
     activate Repo
     Repo -> MySQL: findById\n(projectId, sprintId)
     activate MySQL
-    MySQL --> Repo: return issue model
+    MySQL --> Repo:  issue model
     deactivate MySQL
-    Repo --> Service: return issue model
+    Repo --> Service:  issue model
     deactivate Repo
 end
 
-Service --> Controller : return issueModel
+Service --> Controller :  issueModel
 deactivate Service
-Controller --> View : return issue Model
+Controller --> View :  issue Model
 deactivate Controller
 View --> SV : Hiển thị chi tiết issue
 deactivate View

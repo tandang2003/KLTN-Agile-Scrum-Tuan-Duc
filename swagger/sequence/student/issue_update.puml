@@ -16,23 +16,23 @@ activate View
 View -> View : Get list sprint
 
 SV -> View : Select issue editing
-View --> SV: Fill data issue in form
+View --> View: Fill data issue in form
 SV -> View: Change field
 
 View -> Controller : PUT /issue
 activate Controller
-Controller -> Service : updateTask(request)
+Controller -> Service : updateTask\n(request)
 activate Service
-Service -> Service : Get field change from request
+Service -> Service : Get field \n change \n from request
 
 opt If field in basic info
     note right
     Fields: name, description, complexOfDescription,
            priority, status, assignee, reviewer
     end note
-    Service -> Repo: update(fieldChange)
+    Service -> Repo: update\n(fieldChange)
     activate Repo
-    Repo -> MySQL: update(fieldChange)
+    Repo -> MySQL: update\n(fieldChange)
     activate MySQL
     MySQL --> Repo: issue model
     deactivate MySQL
@@ -42,11 +42,13 @@ end
 
 opt If field in detailed content
     note right
-    Fields: topics, subtasks,
-           complexOfDescription,
-           priority
+    Fields: topics,
+    subtasks,
+    complexOf
+    Description,
+    priority
     end note
-    Service -> IssueMongoService : update(fieldChange)
+    Service -> IssueMongoService : update\n(fieldChange)
     activate IssueMongoService
     IssueMongoService -> MongoDB: update()
     activate MongoDB
@@ -57,17 +59,17 @@ opt If field in detailed content
 end
 
 opt If field == start
-    Service -> SprintService: getSprintById(sprintIdReq)
+    Service -> SprintService: getSprintById\n(sprintIdReq)
     activate SprintService
     SprintService --> Service: sprint model
     deactivate SprintService
 
     alt "start < sprintModel.start"
-        Service -> Service: throw SprintException
+        Service -> Service: throw \n SprintException
     else
-        Service -> Repo: update(fieldChange)
+        Service -> Repo: update\n(fieldChange)
         activate Repo
-        Repo -> MySQL: update(fieldChange)
+        Repo -> MySQL: update\n(fieldChange)
         activate MySQL
         MySQL --> Repo: issue model
         deactivate MySQL
@@ -77,17 +79,17 @@ opt If field == start
 end
 
 opt If field == end
-    Service -> SprintService: getSprintById(sprintIdReq)
+    Service -> SprintService: getSprint\nById\n(sprintIdReq)
     activate SprintService
     SprintService --> Service: sprint model
     deactivate SprintService
 
     alt "end > sprintModel.end"
-        Service -> Service: throw SprintException
+        Service -> Service: throw \n SprintException
     else
-        Service -> Repo: update(fieldChange)
+        Service -> Repo: update\n(fieldChange)
         activate Repo
-        Repo -> MySQL: update(fieldChange)
+        Repo -> MySQL: update\n(fieldChange)
         activate MySQL
         MySQL --> Repo: issue model
         deactivate MySQL
@@ -97,17 +99,17 @@ opt If field == end
 end
 
 opt If field == sprint
-    Service -> SprintService: getSprintById(sprintIdReq)
+    Service -> SprintService: getSprint\nById\n(sprintIdReq)
     activate SprintService
-    SprintService --> Service: return sprint model
+    SprintService --> Service:  sprint model
     deactivate SprintService
 
     alt "sprint is expired"
-        Service -> Service: throw SprintException
+        Service -> Service: throw \n SprintException
     else
-        Service -> Repo: update(fieldChange)
+        Service -> Repo: update\n(fieldChange)
         activate Repo
-        Repo -> MySQL: update(fieldChange)
+        Repo -> MySQL: update\n(fieldChange)
         activate MySQL
         MySQL --> Repo: issue model
         deactivate MySQL
@@ -116,12 +118,12 @@ opt If field == sprint
     end
 end
 
-Service -> Service: updateChangelog via Kafka
+Service -> Service: update \n Changelog \n via Kafka
 
-Service --> Controller : return list issue
+Service --> Controller :  list issue
 deactivate Service
 
-Controller --> View : return list issue
+Controller --> View :  list issue
 deactivate Controller
 
 View --> SV : show list issue
