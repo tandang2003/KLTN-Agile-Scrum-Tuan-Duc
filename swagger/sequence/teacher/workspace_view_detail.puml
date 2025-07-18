@@ -1,0 +1,38 @@
+@startuml
+autonumber
+
+actor Teacher as SV
+participant "View\n(/manager/:id/summary)" as View
+participant "Workspace\nController" as Controller
+participant "Workspace\nService" as Service
+participant "Workspace\nRepository" as Repo
+participant "MySQL" as MySQL
+
+SV -> View : Teacher \n accesses
+activate SV
+
+activate View
+View -> Controller : GET \n /workspace/:id
+
+activate Controller
+Controller -> Service : getWorkspace\nResponseById\n(req)
+activate Service
+Service -> Repo: findById(id)
+activate Repo
+Repo -> MySQL: findById(id)
+activate MySQL
+MySQL --> Repo: workspace \n model
+deactivate MySQL
+Repo --> Service: workspace \n model
+deactivate Repo
+
+Service --> Controller :  workspace \n model
+deactivate Service
+
+Controller --> View : workspace \n model
+deactivate Controller
+View --> SV : show \n workspace \n in form
+
+deactivate View
+deactivate SV
+@enduml

@@ -1,0 +1,132 @@
+@startuml
+autonumber
+actor "Sinh viên" as SV
+participant "View\n(/manager/project/:projectId)" as View
+participant "IssueController" as Controller
+participant "Issue\nService" as Service
+participant "Sprint\nService" as SprintService
+participant "IssueRepository" as Repo
+participant "IssueMongo\nService" as IssueMongoService
+database "MySQL" as MySQL
+database "MongoDB" as MongoDB
+
+activate SV
+SV -> View : Student access
+activate View
+View -> View : Get list sprint
+
+SV -> View : Select issue editing
+View --> View: Fill data issue in form
+SV -> View: Change field
+
+View -> Controller : PUT /issue
+activate Controller
+Controller -> Service : updateTask\n(request)
+activate Service
+Service -> Service : Get field \n change \n from request
+
+opt If field in basic info
+    note right
+    Fields: name, description, complexOfDescription,
+           priority, status, assignee, reviewer
+    end note
+    Service -> Repo: update\n(fieldChange)
+    activate Repo
+    Repo -> MySQL: update\n(fieldChange)
+    activate MySQL
+    MySQL --> Repo: issue model
+    deactivate MySQL
+    Repo --> Service: issue model
+    deactivate Repo
+end
+
+opt If field in detailed content
+    note right
+    Fields: topics,
+    subtasks,
+    complexOf
+    Description,
+    priority
+    end note
+    Service -> IssueMongoService : update\n(fieldChange)
+    activate IssueMongoService
+    IssueMongoService -> MongoDB: update()
+    activate MongoDB
+    MongoDB --> IssueMongoService: issue model
+    deactivate MongoDB
+    IssueMongoService --> Service: issue model
+    deactivate IssueMongoService
+end
+
+opt If field == start
+    Service -> SprintService: getSprintById\n(sprintIdReq)
+    activate SprintService
+    SprintService --> Service: sprint model
+    deactivate SprintService
+
+    alt "start < sprintModel.start"
+        Service -> Service: throw \n SprintException
+    else
+        Service -> Repo: update\n(fieldChange)
+        activate Repo
+        Repo -> MySQL: update\n(fieldChange)
+        activate MySQL
+        MySQL --> Repo: issue model
+        deactivate MySQL
+        Repo --> Service: issue model
+        deactivate Repo
+    end
+end
+
+opt If field == end
+    Service -> SprintService: getSprint\nById\n(sprintIdReq)
+    activate SprintService
+    SprintService --> Service: sprint model
+    deactivate SprintService
+
+    alt "end > sprintModel.end"
+        Service -> Service: throw \n SprintException
+    else
+        Service -> Repo: update\n(fieldChange)
+        activate Repo
+        Repo -> MySQL: update\n(fieldChange)
+        activate MySQL
+        MySQL --> Repo: issue model
+        deactivate MySQL
+        Repo --> Service: issue model
+        deactivate Repo
+    end
+end
+
+opt If field == sprint
+    Service -> SprintService: getSprint\nById\n(sprintIdReq)
+    activate SprintService
+    SprintService --> Service:  sprint model
+    deactivate SprintService
+
+    alt "sprint is expired"
+        Service -> Service: throw \n SprintException
+    else
+        Service -> Repo: update\n(fieldChange)
+        activate Repo
+        Repo -> MySQL: update\n(fieldChange)
+        activate MySQL
+        MySQL --> Repo: issue model
+        deactivate MySQL
+        Repo --> Service: issue model
+        deactivate Repo
+    end
+end
+
+Service -> Service: update \n Changelog \n via Kafka
+
+Service --> Controller :  list issue
+deactivate Service
+
+Controller --> View :  list issue
+deactivate Controller
+
+View --> SV : show list issue
+deactivate View
+deactivate SV
+@enduml

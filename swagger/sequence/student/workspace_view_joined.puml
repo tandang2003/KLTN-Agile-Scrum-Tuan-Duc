@@ -1,0 +1,45 @@
+@startuml
+autonumber
+
+actor Student as SV
+participant "View" as View
+participant "Workspace\nController" as Controller
+participant "Workspace\nService" as Service
+participant "Workspace\nRepository" as Repo
+participant "User\nService" as UService
+participant "MySQL" as MySQL
+
+SV -> View : Student accesses\n/manager
+activate SV
+
+activate View
+View -> Controller : GET /workspace/list?\npage=1&size=5
+
+activate Controller
+Controller -> Service : getWorkspace\nByOwner\nIdPaging(req)
+
+activate Service
+Service -> UService : getCurrentUser()
+activate UService
+UService --> Service : return User
+deactivate UService
+
+Service -> Repo : findAllBy\nMembersId\n(userId, paging)
+activate Repo
+Repo -> MySQL : getWorkspaceBy\nOwnerIdPaging\n(page, size)
+activate MySQL
+MySQL --> Repo : return paged workspaces
+deactivate MySQL
+Repo --> Service : return page workspace
+deactivate Repo
+
+Service --> Controller : return page workspace
+deactivate Service
+
+Controller --> View : return page workspace
+deactivate Controller
+View --> SV : display \nworkspace list
+
+deactivate View
+deactivate SV
+@enduml

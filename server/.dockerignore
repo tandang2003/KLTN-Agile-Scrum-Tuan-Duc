@@ -1,0 +1,14 @@
+# Ignore hidden version control & IDE files
+.*
+*.iml
+
+# Ignore build outputs (but keep Docker context if needed)
+build/*
+!build/docker
+
+# Ignore node_modules or other temp dirs if relevant
+node_modules
+
+# Exclude Gradle cache & outputs but keep the wrapper
+.gradle/
+!gradle/wrapper/

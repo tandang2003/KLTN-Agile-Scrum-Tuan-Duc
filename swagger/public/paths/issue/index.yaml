@@ -1,0 +1,165 @@
+post:
+  summary: Create issue
+  description: create issue by student
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              description: issue name
+            sprintId:
+              type: string
+              description: sprint id
+            projectId:
+              type: string
+              description: project id
+            workspaceId:
+              type: string
+              description: workspace id
+            status:
+              allOf:
+                - $ref: "#/components/schemas/Status"
+              description: status
+            priority:
+              allOf:
+                - $ref: "#/components/schemas/Priority"
+              description: priority
+            description:
+              type: string
+              description: description
+            position:
+              type: number
+              description: "position of issue,
+                this is calculate in front-end and sent to server,
+                position = (prevPosition + nextPosition) / 2 = (2000 + 1000) /2"
+            assignerId:
+              type: string
+              description: uniId of assigner
+            reviewerId:
+              type: string
+              description: uniId of reviewer
+            start:
+              type: string
+              description: date time start
+            end:
+              type: string
+              description: date time end
+        example:
+          name: "Design database"
+          sprintId: "sprint-001"
+          projectId: "project-001"
+          workspaceId: "workspace-001"
+          status: "Backlog"
+          priority: "Major"
+          description: "Lorem"
+          position: 1200
+          assignerId: "uni-002"
+          reviewerId: "uni-001"
+          start: ""
+          end: ""
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+          example:
+            code: 200
+            message: "Create issue"
+put:
+  summary: Update issue
+  description: update issue by student
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - id
+            - name
+            - description
+            - storyPoint
+            - start
+            - end
+          properties:
+            id:
+              type: string
+              description: issue id
+            name:
+              type: string
+              description: issue name
+            description:
+              type: string
+              description: issue description
+            status:
+              $ref: "#/components/schemas/Status"
+            storyPoint:
+              type: integer
+              description: story point assigned to issue
+            priority:
+              type: string
+              description: value allow in Critical, Major, Minor, Trivial, Blocked
+              default: CRITICAL
+            start:
+              type: number
+              description: date time start issue
+            end:
+              type: number
+              description: date time end issue
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+
+          example:
+            code: 200
+            message: "Update Issue"
+            data:
+              id: "project-001"
+              name: "project-001"
+              description: "..."
+              storyPoint: 10
+              priority: Critical
+patch:
+  summary: Change status issue (move card)
+  operationId: changeStatusIssue
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - issueId
+          properties:
+            issueId:
+              type: string
+              description: issue id
+            status:
+              $ref: "#/components/schemas/Status"
+            position:
+              type: number
+              description: use to decide order in list issue same status, front-end wil calculate it
+          example:
+            issueId: "10"
+            status: "Todo"
+            position: 2000
+  responses:
+    200:
+      description: Success
+    400:
+      description: Not found issue with id

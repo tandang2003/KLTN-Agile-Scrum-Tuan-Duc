@@ -1,0 +1,175 @@
+#docker-compose -f docker-compose.yml --env-file .env up -d
+services:
+  app-be:
+    container_name: app-be
+    build:
+      context: ../../server
+    ports:
+      - "${BE_PORT}:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://app-mysql:3306/kltn?user=root&password=${MYSQL_ROOT_PASSWORD}
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@app-mongodb:27017/kltn?authSource=admin
+      - SPRING_DATA_REDIS_URL=redis://default:${REDIS_PASSWORD}@app-redis:6379
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=app-kafka1:29092
+      - VERIFY_INVITE_PROJECT_LINK=http://localhost:${FE_PORT}/project/invite?token=
+      - PYTHON_SERVER=http://app-ai:8080/aggregate
+      - KEY_BASE=/app/keys
+    volumes:
+      - ./keys:/app/keys
+    depends_on:
+      app-mysql:
+        condition: service_healthy
+      # app-mongodb:
+      #   condition: service_healthy
+      app-redis:
+        condition: service_healthy
+      app-kafka1:
+        condition: service_healthy
+
+  app-fe:
+    container_name: app-fe
+    build:
+      context: ../../client
+      args:
+        BACKEND_URL: ${BACKEND_URL}
+    ports:
+      - "${FE_PORT}:80"
+    depends_on:
+      - app-be
+
+  app-ai:
+    container_name: app-ai
+    build:
+      context: ../../AI
+    ports:
+      - "${AI_PORT}:8080"
+
+  app-redis:
+    image: redis:latest
+    container_name: app-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+  app-mongodb:
+    image: mongo:latest
+    container_name: app-mongodb
+    ports:
+      - "${MONGO_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+      - ./init/mongodb/dump:/dump
+      - ./init/mongodb/restore.sh:/docker-entrypoint-initdb.d/01-restore.sh
+    healthcheck:
+      test: >
+        CMD-SHELL mongo --username $${MONGO_INITDB_ROOT_USERNAME} --password $${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --eval "db.adminCommand('ping')"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-mysql:
+    image: mysql:latest
+    container_name: app-mysql
+    ports:
+      - "${MYSQL_PORT}:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init/mysql:/docker-entrypoint-initdb.d
+
+  app-zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: app-zookeeper
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "echo",
+          "ruok",
+          "|",
+          "nc",
+          "localhost",
+          "${ZOOKEEPER_CLIENT_PORT}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-kafka1:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: app-kafka1
+    depends_on:
+      - app-zookeeper
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-topics",
+          "--bootstrap-server",
+          "localhost:9092",
+          "--list",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_1_ID}
+      KAFKA_ZOOKEEPER_CONNECT: app-zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://app-kafka1:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+    volumes:
+      - kafka_data1:/kafka/kafka-logs
+
+volumes:
+  kafka_data1:
+    driver: local
+  redis_data:
+    driver: local
+  mongo_data:
+    driver: local
+  mysql_data:
+    driver: local
+  zookeeper_data:
+    driver: local

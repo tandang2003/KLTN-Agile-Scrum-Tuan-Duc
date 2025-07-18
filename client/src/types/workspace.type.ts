@@ -1,41 +1,60 @@
+import { dateRange, stringSchema } from '@/types/other.type'
 import { PageRequest } from '@/types/http.type'
+import { ProjectModel } from '@/types/model/project.model'
 import { UserModel } from '@/types/model/user.model'
 import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
+import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
+import { RoleType } from '@/types/auth.type'
+import { CourseResponseType, UserCourseResponseType } from '@/types/course.type'
 
 const CreateWorkspaceSchema = z.object({
-  name: z.string(),
+  name: stringSchema.min(1, 'Tên không được để trống'),
   description: z.string().optional(),
-  sprintNum: z.number().positive(),
-  timePerSprint: z.number().positive(),
-  date: z
-    .object({
-      from: z.date(),
-      to: z.date()
-    })
-    .refine((data) => data.from <= data.to, {
-      message: 'Date end need after date start',
-      path: ['end']
-    })
+  date: dateRange,
+  courseId: z.string().min(1, 'Khóa học không được để trống')
+})
+
+const UpdateWorkspaceSchema = z.object({
+  description: z.string().optional(),
+  date: dateRange
 })
 
 type CreateWorkspaceSchemaType = z.infer<typeof CreateWorkspaceSchema>
+
+type UpdateWorkspaceSchemaType = z.infer<typeof UpdateWorkspaceSchema>
 
 type CreateWorkspaceReqType = Omit<CreateWorkspaceSchemaType, 'date'> & {
   start: Date
   end: Date
 }
 
-type WorkspaceResponse = Pick<
-  WorkSpaceModel,
-  'id' | 'name' | 'description' | 'start' | 'end'
->
+type UpdateWorkspaceReqType = Omit<UpdateWorkspaceSchemaType, 'date'> & {
+  end: Date
+}
 
-type WorkspaceCardResponse = {
+type WorkspaceDetailResponse = Pick<
+  WorkSpaceModel,
+  'id' | 'name' | 'description' | 'start' | 'end' | 'sprintNum'
+> & {
+  prevSprint: SprintResponse | null
+  currentSprint: SprintResponse | null
+  nextSprint: SprintResponse | null
+  course: CourseResponseType
+  prerequisiteCourse: UserCourseResponseType[]
+}
+
+type WorkspaceResponse = {
   id: Id
   name: string
-  owner: string
+  owner: {
+    name: string
+  }
+  prevSprint: SprintResponse | null
+  currentSprint: SprintResponse | null
+  nextSprint: SprintResponse | null
+  sprintNum: number
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
@@ -46,20 +65,41 @@ type ListStudentWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
   page?: PageRequest
 }
 
+type ListProjectWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
+  page?: PageRequest
+}
+
 type StudentWorkspaceDataTable = Pick<
   UserModel,
-  'id' | 'name' | 'className' | 'role'
+  'id' | 'name' | 'className' | 'uniId'
+> & {
+  role: RoleType
+}
+
+type ProjectWorkspaceDataTable = Pick<
+  ProjectModel,
+  'id' | 'name' | 'description' | 'createdAt'
 >
+
+type InviteStudentWorkspaceReqType = {
+  workspaceId: Id
+  studentIds: Id[]
+}
 
 export type {
   CreateWorkspaceReqType,
   CreateWorkspaceSchemaType,
+  WorkspaceDetailResponse,
   WorkspaceResponse,
-  WorkspaceCardResponse,
   WorkspaceSideBar,
   ListWorkspaceReq,
   ListStudentWorkspaceReq,
-  StudentWorkspaceDataTable
+  StudentWorkspaceDataTable,
+  InviteStudentWorkspaceReqType,
+  UpdateWorkspaceSchemaType,
+  UpdateWorkspaceReqType,
+  ListProjectWorkspaceReq,
+  ProjectWorkspaceDataTable
 }
 
-export { CreateWorkspaceSchema }
+export { CreateWorkspaceSchema, UpdateWorkspaceSchema }

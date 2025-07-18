@@ -1,15 +1,17 @@
+import AlertHostProvider from '@/components/AlertHost'
+import Loading from '@/components/Loading'
 import AppGlobalState from '@/providers/AppGlobalState'
-import RestoreToken from '@/providers/RestoreToken'
+import StateLoader from '@/providers/StateLoader'
 import { ReactNode } from 'react'
 import { Toaster } from 'sonner'
 
 const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <AppGlobalState>
-      <RestoreToken>
-        <Toaster richColors position='bottom-right' />
-        {children}
-      </RestoreToken>
+      <StateLoader loading={<Loading />}>
+        <Toaster expand={true} richColors position='bottom-right' />
+        <AlertHostProvider>{children}</AlertHostProvider>
+      </StateLoader>
     </AppGlobalState>
   )
 }

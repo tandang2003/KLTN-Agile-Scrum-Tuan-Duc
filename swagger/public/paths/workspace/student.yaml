@@ -1,0 +1,80 @@
+get:
+  summary: Paging student (both leader) inside workspace
+  description: |
+    Used by: 
+    - Teacher, that is owner of this workspace
+    Sort by id
+  parameters:
+    - name: workspace_id
+      description: workspace_id
+      in: path
+      required: true
+    - name: page
+      required: false
+      allowEmptyValue: true
+      in: query
+    - name: size
+      required: false
+      allowEmptyValue: true
+      in: query
+  responses:
+    200:
+      description: success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/ApiPaging"
+                      - type: object
+                        properties:
+                          items:
+                            properties:
+                              id:
+                                type: string
+                                description: student id
+                              name:
+                                type: string
+                                description: student name
+                              role:
+                                type: string
+                                description: name role (student or leader)
+                              className:
+                                type: string
+                                description: student class
+                              project:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    description: project id in workspace user joined
+                                  name:
+                                    type: string
+                                    description: project id in workspace user join
+            example:
+              code: 200
+              message: "Create project success"
+              data:
+                items:
+                  - id: "user-001"
+                    name: Le Anh Duc
+                    className: "DH21DTB"
+                    role: "student"
+                    project:
+                      id: "project-001"
+                      name: "Sell clothes"
+                  - id: "user-002"
+                    name: Dang Minh Tan
+                    className: "DH21DTA"
+                    role: "leader"
+                    project:
+                      id: "project-002"
+                      name: "Sell estate"
+                currentPage: 1
+                totalPages: 2
+                totalItems: 4

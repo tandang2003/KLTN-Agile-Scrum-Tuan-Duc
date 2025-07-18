@@ -1,55 +1,20 @@
 import { cn } from '@/lib/utils'
-import {
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
-  CodeToggle,
-  linkPlugin,
-  markdownShortcutPlugin,
-  MDXEditor,
-  UndoRedo
-} from '@mdxeditor/editor'
-import {
-  headingsPlugin,
-  listsPlugin,
-  quotePlugin,
-  thematicBreakPlugin,
-  toolbarPlugin
-} from '@mdxeditor/editor'
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
+import { ComponentProps, forwardRef } from 'react'
 
-import '@mdxeditor/editor/style.css'
+type EditorProps = {
+  classNameContainer?: string
+} & ComponentProps<typeof ReactQuill>
 
-type EditorProps = { classNameContainer?: string } & React.ComponentProps<
-  typeof MDXEditor
->
-
-const Editor = ({ classNameContainer, ref, ...props }: EditorProps) => {
-  return (
-    <div className={cn('overflow-y-auto', classNameContainer)}>
-      <MDXEditor
-        ref={ref}
-        contentEditableClassName='prose'
-        plugins={[
-          headingsPlugin(),
-          listsPlugin(),
-          linkPlugin(),
-          quotePlugin(),
-          thematicBreakPlugin(),
-          markdownShortcutPlugin(),
-          toolbarPlugin({
-            toolbarContents: () => (
-              <>
-                <UndoRedo />
-                <BoldItalicUnderlineToggles />
-                <BlockTypeSelect />
-                <CodeToggle />
-              </>
-            )
-          })
-        ]}
-        {...props}
-      />
-    </div>
-  )
-}
+const Editor = forwardRef<ReactQuill, EditorProps>(
+  ({ value = '', onChange, classNameContainer, ...props }, ref) => {
+    return (
+      <div className={cn('max-w-full overflow-y-auto', classNameContainer)}>
+        <ReactQuill {...props} value={value} onChange={onChange} ref={ref} />
+      </div>
+    )
+  }
+)
 
 export default Editor

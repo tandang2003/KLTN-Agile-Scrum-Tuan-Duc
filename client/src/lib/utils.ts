@@ -1,61 +1,11 @@
-import { BaseCardProps, BoardProps } from '@/components/board/type'
-import {
-  Assigner,
-  BoardModelType,
-  CardModelType,
-  ColumnModelType
-} from '@/types/card.type'
 import { clsx, type ClassValue } from 'clsx'
 import { format } from 'date-fns'
+import { vi } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
 import { v4 as uuidv4 } from 'uuid'
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
-
-const convert = (boardModel: BoardModelType): BoardProps => {
-  const columns: ColumnModelType[] = Object.values(boardModel.process)
-  return {
-    columns: columns.map((column: ColumnModelType) => {
-      return {
-        id: column.id,
-        name: column.name,
-        itemsOrder: column.items.map((item) => item.id),
-        items: column.items.map((item: CardModelType) => ({
-          ...convertCardTypeToCardProps(item),
-          columnId: column.id
-        }))
-      }
-    })
-  }
-}
-
-const convertCardTypeToCardProps = (
-  cardType: CardModelType
-): Omit<BaseCardProps, 'columnId'> => {
-  let assigners: Assigner[]
-  if (cardType.assigners?.length ?? 0 < 3)
-    assigners =
-      cardType.assigners?.map((item) => {
-        return {
-          name: item.name,
-          avatar: item.avatar
-        }
-      }) ?? []
-  else
-    assigners =
-      cardType.assigners?.slice(0, 3).map((item) => {
-        return {
-          name: item.name,
-          avatar: item.avatar
-        }
-      }) ?? []
-
-  return {
-    assigners: assigners,
-    ...cardType
-  }
 }
 
 const uuid = (): string => {
@@ -73,10 +23,19 @@ type AnyObject = { [key: string]: any }
 
 const toQueryString = (obj: AnyObject) => {
   return Object.entries(obj)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
-    )
+    .flatMap(([key, value]) => {
+      if (value === undefined || value === null || value === '') {
+        return [] // skip empty values
+      }
+      if (Array.isArray(value)) {
+        // generate multiple key=value pairs for array items
+        return value.map(
+          (v) => `${encodeURIComponent(key)}=${encodeURIComponent(String(v))}`
+        )
+      }
+      // normal single value
+      return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
+    })
     .join('&')
 }
 
@@ -92,6 +51,39 @@ const formatDate = (
   const resolvedPattern =
     pattern === 'SHORT' || pattern === 'LONG' ? patterns[pattern] : pattern
 
-  return format(date, resolvedPattern)
+  return format(date, resolvedPattern, { locale: vi })
 }
-export { uuid, cn, toQueryString, invertColor, convert, formatDate }
+// Function overload signatures
+function loadSessionStorage<T>(key: string, fallback: T, isObj?: false): T // Case where not parsing JSON, returning raw value
+function loadSessionStorage<T>(
+  key: string,
+  fallback: T,
+  isObj: true
+): T extends object ? T : never // Case where parsing JSON, returning object
+function loadSessionStorage<T>(
+  key: string,
+  fallback: T,
+  isObj: boolean = false
+): T {
+  // Default function implementation
+  try {
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return fallback
+
+    if (isObj) {
+      try {
+        return JSON.parse(raw) as T
+      } catch (parseError) {
+        console.warn(`Failed to parse JSON for key "${key}"`, parseError)
+        return fallback
+      }
+    }
+
+    return raw as T
+  } catch (e) {
+    console.warn(`Failed to load key "${key}" from sessionStorage`, e)
+    return fallback
+  }
+}
+
+export { cn, formatDate, invertColor, toQueryString, uuid, loadSessionStorage }

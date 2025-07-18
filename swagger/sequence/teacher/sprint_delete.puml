@@ -1,0 +1,56 @@
+@startuml
+autonumber
+actor "Student" as SV
+
+participant "View\n(/manager/:id/template)" as View
+participant "Sprint\nController" as Controller
+participant "Sprint\nService" as SprintService
+participant "Sprint\nRepository" as SprintRepository
+participant "Project\nSprintService" as ProjectSprintService
+
+database "MySQL" as MySQL
+
+SV -> View : Teacher access
+activate SV
+activate View
+View --> View : Display sprint list
+SV -> View : Click delete sprint
+
+View -> Controller : DELETE /sprint/:id
+activate Controller
+
+Controller -> SprintService : deleteSprint\n(id)
+activate SprintService
+SprintService -> SprintRepository : findById(id)
+activate SprintRepository
+SprintRepository -> MySQL: findById(id)
+activate MySQL
+MySQL --> SprintRepository:  sprint model
+deactivate MySQL
+SprintRepository --> SprintService: sprint model
+deactivate SprintRepository
+
+alt check sprint is \n conflict time
+  SprintService --> Controller: throw \n SPRINT_ALREADY_START \n or \n SPRINT_ALREADY_END
+  Controller --> View: delete failed
+  View --> SV: notify "Delete \n sprint success"
+else
+  SprintService -> SprintService: get \n projects \n from \n workspace
+  loop  item in project
+    SprintService -> ProjectSprintService: delete(item)
+  end
+
+  SprintService -> SprintRepository : delete(sprint)
+  activate SprintRepository
+  SprintRepository -> MySQL: delete(sprint)
+  SprintRepository --> SprintService: delete success
+  deactivate SprintRepository
+  SprintService --> Controller :  success
+  deactivate SprintService
+
+  Controller --> View :  success
+  deactivate Controller
+  View --> SV : notify "Delete \n sprint success"
+  deactivate SV
+end
+@enduml

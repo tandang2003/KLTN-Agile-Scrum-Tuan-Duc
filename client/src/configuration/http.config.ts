@@ -10,12 +10,10 @@ import { toast } from 'sonner'
 
 const appAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
-  timeout: 1000,
   withCredentials: true
 })
 const manualAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
-  timeout: 1000,
   withCredentials: true
 })
 
@@ -23,6 +21,14 @@ const setAuthorization = (accessToken?: string) => {
   appAxios.defaults.headers.common.Authorization = accessToken
     ? `Bearer ${accessToken}`
     : undefined
+}
+
+const setProjectAuthorization = (token: string) => {
+  appAxios.defaults.headers.common['Project-Authorization'] = token ?? undefined
+}
+
+const getProjectAuthorization = () => {
+  return appAxios.defaults.headers.common['Project-Authorization']
 }
 
 const getAuthorization = () => {
@@ -49,13 +55,13 @@ appAxios.interceptors.response.use(
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     // extract data in response
-    console.info('Interceptor axios response: ', response)
+    // console.info('Interceptor axios response: ', response)
     return response
   },
   async (err: AxiosError) => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    console.info('Interceptor axios response error: ', err)
+    // console.info('Interceptor axios response error: ', err)
     const statusCode =
       err.response?.status ?? HttpStatusCode.InternalServerError
 
@@ -80,22 +86,46 @@ appAxios.interceptors.response.use(
       }
 
       case HttpStatusCode.Unauthorized: {
-        const response = await authService.refresh()
-        if (response.code >= 400) {
-          toast.error('Refresh token is expired')
-          return Promise.reject(err)
-        } else {
-          const newToken = response.data.access_token
-
-          if (!err.config) {
+        const error = err as AxiosError<
+          ResponseApiError & {
+            error: string
+          }
+        >
+        const messageBody: string =
+          (error.response?.data.error as string) ?? 'Server Error'
+        // prevent infinite loop
+        const originalRequest: any = err.config
+        toast.message(messageBody)
+        if (messageBody === 'Invalid credentials') {
+          toast.error('Invalid credentials. Please login again.')
+          if (originalRequest._retry) {
+            toast.error('Session expired. Please login again.')
+            originalRequest._retry = false
             return Promise.reject(err)
           }
+          originalRequest._retry = true
 
-          err.config.headers = err.config.headers || {}
-          err.config.headers['Authorization'] = `Bearer ${newToken}`
+          try {
+            toast.info('Refreshing token...')
+            const response = await authService.refresh()
 
-          return appAxios(err.config)
+            const newToken = response.data.access_token
+
+            if (!err.config) {
+              return Promise.reject(err)
+            }
+
+            err.config.headers = err.config.headers || {}
+            err.config.headers['Authorization'] = `Bearer ${newToken}`
+
+            return appAxios(err.config)
+          } catch (refreshErr) {
+            toast.error('Refresh token is expired')
+            return Promise.reject(refreshErr)
+          }
         }
+
+        return Promise.reject(err)
       }
 
       case HttpStatusCode.Forbidden: {
@@ -109,5 +139,11 @@ appAxios.interceptors.response.use(
   }
 )
 
-export { manualAxios, setAuthorization, getAuthorization }
+export {
+  manualAxios,
+  setAuthorization,
+  getAuthorization,
+  setProjectAuthorization,
+  getProjectAuthorization
+}
 export default appAxios

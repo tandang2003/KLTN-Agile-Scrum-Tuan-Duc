@@ -10,6 +10,7 @@ export default tseslint.config(
   {
     ignores: [
       'dist',
+      'node_modules/**',
       'vite.config.ts',
       'src/components/ui/**',
       'src/components/sidebar/**'
@@ -63,7 +64,22 @@ export default tseslint.config(
           plugins: ['prettier-plugin-tailwindcss']
         }
       ],
-      '@typescript-eslint/no-empty-object-type': 'error'
+      '@typescript-eslint/no-empty-object-type': 'error',
+      '@typescript-eslint/no-restricted-types': [
+        'error',
+        {
+          types: {
+            String: false,
+            Boolean: false,
+            Number: false,
+            Symbol: false,
+            '{}': false,
+            Object: false,
+            object: false,
+            Function: false
+          }
+        }
+      ]
     }
   }
 )

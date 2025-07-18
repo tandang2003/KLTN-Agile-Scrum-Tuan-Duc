@@ -1,15 +1,17 @@
 package com.kltn.server.service;
 
 import com.kltn.server.DTO.request.entity.auth.RegisterRequest;
-import com.kltn.server.DTO.response.AuthenticationResponse;
+import com.kltn.server.DTO.request.entity.auth.TeacherRegisterRequest;
+import com.kltn.server.DTO.response.auth.AuthenticationResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.mapper.UserMapper;
+import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.entity.Role;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.entity.RoleRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.util.token.TokenUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,68 +26,81 @@ import java.util.Map;
 
 @Service
 public class AuthenticationService {
-    private final PasswordEncoder pwEncoder;
-    private final UserMapper userMapper;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private TokenUtils tokenUtils;
-    private final JwtDecoder refreshTokenDecoder;
-    private final RedisTemplate<?, ?> redisTemplate;
+  private final PasswordEncoder pwEncoder;
+  private final UserMapper userMapper;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private TokenUtils tokenUtils;
+  private final JwtDecoder refreshTokenDecoder;
+  private final RedisTemplate<?, ?> redisTemplate;
 
-    @Autowired
-    public AuthenticationService(PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository,
-                                 RoleRepository roleRepository, TokenUtils tokenUtils, @Qualifier("refreshTokenDecoder") JwtDecoder refreshTokenDecoder, Map<String, RedisTemplate<?, ?>> redisTemplateMap) {
-        this.pwEncoder = pwEncoder;
-        this.userMapper = userMapper;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.tokenUtils = tokenUtils;
-        this.refreshTokenDecoder = refreshTokenDecoder;
-        this.redisTemplate = redisTemplateMap.get("refreshToken");
+  @Autowired
+  public AuthenticationService(PasswordEncoder pwEncoder, UserMapper userMapper, UserRepository userRepository,
+                               RoleRepository roleRepository, TokenUtils tokenUtils, @Qualifier("refreshTokenDecoder")
+                               JwtDecoder refreshTokenDecoder, Map<String, RedisTemplate<?, ?>> redisTemplateMap) {
+    this.pwEncoder = pwEncoder;
+    this.userMapper = userMapper;
+    this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
+    this.tokenUtils = tokenUtils;
+    this.refreshTokenDecoder = refreshTokenDecoder;
+    this.redisTemplate = redisTemplateMap.get("refreshToken");
+  }
+
+  public void register(RegisterRequest registerRequest) {
+    User user = userMapper.toUser(registerRequest);
+    user.setEmail(user.getUniId() + "@st.hcmuaf.edu.vn");
+    boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
+    if (!check) {
+      Role role = roleRepository.getByName("student")
+        .orElseThrow(() -> AppException.builder().error(Error.DB_SERVER_MISSING_DATA).build());
+      user.setPassword(pwEncoder.encode(user.getPassword()));
+      user.setRole(role);
+      userRepository.save(user);
+      return;
     }
+    throw AppException.builder()
+      .error(Error.EXISTED_DATA)
+      .build();
+  }
 
-    public void register(RegisterRequest registerRequest) {
-        User user = userMapper.toUser(registerRequest);
-        boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
-        if (!check) {
-            Role role = roleRepository.getByName("student")
-                    .orElseThrow(() -> AppException.builder().error(Error.SERVER_ERROR).build());
-            user.setPassword(pwEncoder.encode(user.getPassword()));
-            user.setRole(role);
-            userRepository.save(user);
-            return;
-        }
-        throw AppException.builder()
-                .error(Error.EXISTED_DATA)
-                .build();
-    }
+  public AuthenticationResponse login() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String accessToken = tokenUtils.generateAccessToken(authentication);
+    String refreshToken = tokenUtils.generateRefreshToken(authentication);
+    User user = (User) authentication.getPrincipal();
+    return AuthenticationResponse.builder()
+      .accessToken(accessToken)
+      .refreshToken(refreshToken)
+      .userResponse(userMapper.toUserDetailDTO(user))
+      .build();
+  }
 
-    public AuthenticationResponse login() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String accessToken = tokenUtils.generateAccessToken(authentication);
-        String refreshToken = tokenUtils.generateRefreshToken(authentication);
-        User user = (User) authentication.getPrincipal();
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .userResponse(userMapper.toUserDetailDTO(user))
-                .build();
-    }
-
-    public AuthenticationResponse refresh(String refreshToken) {
-        if (refreshToken == null || refreshToken.isEmpty()) {
-            throw AppException.builder()
-                    .error(Error.TOKEN_MISSING)
-                    .build();
-        }
-        Jwt jwt = refreshTokenDecoder.decode(refreshToken);
-        User user = userRepository.findByUniId(jwt.getClaim("uniId")).orElseThrow(() -> AppException.builder().error(Error.TOKEN_INVALID).build());
-        String accessToken = tokenUtils.generateAccessToken(user);
+  public AuthenticationResponse refresh(Jwt jwt) {
+    User user = userRepository.findByUniId(jwt.getClaim("uniId"))
+      .orElseThrow(() -> AppException.builder().error(Error.TOKEN_INVALID).build());
+    String accessToken = tokenUtils.generateAccessToken(user);
 //        User user = (User) authentication.getPrincipal();
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .userResponse(userMapper.toUserDetailDTO(user))
-                .build();
+    return AuthenticationResponse.builder()
+      .accessToken(accessToken)
+      .userResponse(userMapper.toUserDetailDTO(user))
+      .build();
 //        return null;
+  }
+
+  public void register(@Valid TeacherRegisterRequest registerRequest) {
+    User user = userMapper.toUser(registerRequest);
+    boolean check = userRepository.findAllByUniId(user.getUniId()).isPresent();
+    if (!check) {
+      Role role = roleRepository.getByName("teacher")
+        .orElseThrow(() -> AppException.builder().error(Error.DB_SERVER_MISSING_DATA).build());
+      user.setPassword(pwEncoder.encode(user.getPassword()));
+      user.setRole(role);
+      userRepository.save(user);
+      return;
     }
+    throw AppException.builder()
+      .error(Error.EXISTED_DATA)
+      .build();
+  }
 }

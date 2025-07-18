@@ -1,12 +1,8 @@
-import { go } from '@/configuration/component.config'
-import envConfig from '@/configuration/env.config'
-import { setAuthorization } from '@/configuration/http.config'
-import { HOME_PATH, StorageItem } from '@/lib/const'
+import { manualAxios } from '@/configuration/http.config'
 import httpService from '@/services/http.service'
+import tokenService from '@/services/token.service'
 import { LoginReq, LoginRes, LogoutReq, RegisterReq } from '@/types/auth.type'
 import { ResponseApi } from '@/types/http.type'
-import { UserInfoResponse } from '@/types/user.type'
-import { toast } from 'sonner'
 
 const authService = {
   // Handle Error in view
@@ -22,60 +18,25 @@ const authService = {
       '/auth',
       req
     )
-    setTokenLocal(res.data.data.access_token)
     return res.data
   },
   logout: async (req: LogoutReq) => {
-    removeTokenLocal()
     await httpService.post<ResponseApi<void>, LogoutReq>('auth/logout', req)
   },
   refresh: async (): Promise<ResponseApi<LoginRes>> => {
-    const response = await fetch(`${envConfig.BACKEND_URL}/auth/refresh`, {
-      method: 'POST'
-    })
-
-    if (!response.ok) {
-      removeTokenLocal()
-      go(HOME_PATH)
-      throw new Error('UnAuthorization')
-    }
-
-    const body: ResponseApi<LoginRes> = await response.json()
-    const { access_token } = body.data
-    setTokenLocal(access_token)
-    return body
-  },
-  getInfo: async (options?: object) => {
     try {
-      const response = await httpService.get<ResponseApi<UserInfoResponse>>(
-        '/user',
-        options
-      )
-      return response.data
+      const response =
+        await manualAxios.post<ResponseApi<LoginRes>>(`/auth/refresh`)
+
+      const body: ResponseApi<LoginRes> = response.data
+      const { access_token } = body.data
+      tokenService.setTokenLocal(access_token)
+      return body
     } catch (e) {
-      removeTokenLocal()
-      throw e
+      tokenService.removeTokenLocal()
+      throw new Error('UnAuthorization')
     }
   }
 }
 
-const setTokenLocal = (token: string) => {
-  sessionStorage.setItem(StorageItem.AccessToken, token)
-  setAuthorization(token)
-}
-
-const removeTokenLocal = () => {
-  sessionStorage.removeItem(StorageItem.AccessToken)
-  setAuthorization(undefined)
-  toast.error('Token expired')
-}
-
-const restoreTokenLocal = (): string | null => {
-  const accessToken = sessionStorage.getItem(StorageItem.AccessToken)
-  if (!accessToken) return null
-  setAuthorization(accessToken)
-  return accessToken
-}
-
-export { restoreTokenLocal }
 export default authService

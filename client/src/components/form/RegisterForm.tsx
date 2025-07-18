@@ -6,20 +6,21 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { RegisterSchema, RegisterSchemaType } from '@/types/schema/auth.schema'
-import authService from '@/services/auth.service'
-import { HttpStatusCode } from 'axios'
-import { ValidationError } from '@/types/http.type'
+import { Input } from '@/components/ui/input'
 import { handleErrorApi } from '@/lib/form'
+import { cn } from '@/lib/utils'
+import authService from '@/services/auth.service'
+import { ValidationError } from '@/types/http.type'
+import { RegisterSchema, RegisterSchemaType } from '@/types/schema/auth.schema'
+import { HttpStatusCode } from 'axios'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { NavLink, redirect } from 'react-router-dom'
+import messages from '@/constant/message.const'
 
 const RegisterForm = ({
   className,
@@ -28,6 +29,7 @@ const RegisterForm = ({
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema)
   })
+  const navigate = useNavigate()
 
   const onSubmit = async (value: RegisterSchemaType) => {
     try {
@@ -37,16 +39,12 @@ const RegisterForm = ({
         password: value.password
       })
       if (data) {
-        toast.success('Register success, please login', {
-          action: {
-            label: 'Success',
-            onClick: () => {
-              redirect('/auth/login')
-            }
-          }
+        toast.success(messages.auth.register.success)
+        navigate('/auth/login', {
+          replace: true
         })
+        return
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e instanceof ValidationError) {
         handleErrorApi({
@@ -61,7 +59,7 @@ const RegisterForm = ({
             error: [
               {
                 field: 'uniId',
-                message: 'Account with university id exits'
+                message: messages.auth.register.idExist
               }
             ]
           }),
@@ -69,7 +67,7 @@ const RegisterForm = ({
         })
         return
       }
-      toast.warning('Error but not handle')
+      toast.warning(messages.other.notHandle)
     }
   }
 
@@ -85,7 +83,7 @@ const RegisterForm = ({
             name='uniId'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>University Id</FormLabel>
+                <FormLabel>Mã sinh viên</FormLabel>
                 <FormControl>
                   <Input type='text' placeholder='2113xxxx' {...field} />
                 </FormControl>
@@ -98,7 +96,7 @@ const RegisterForm = ({
             name='name'
             render={({ field }) => (
               <FormItem className='mt-4'>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel>Họ và tên</FormLabel>
                 <FormControl>
                   <Input type='text' placeholder='Nguyen Van A' {...field} />
                 </FormControl>
@@ -111,7 +109,7 @@ const RegisterForm = ({
             name='password'
             render={({ field }) => (
               <FormItem className='mt-4'>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
                   <Input type='password' {...field} />
                 </FormControl>
@@ -125,7 +123,7 @@ const RegisterForm = ({
             name='confirm-password'
             render={({ field }) => (
               <FormItem className='mt-4'>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Nhập lại mật khẩu</FormLabel>
                 <FormControl>
                   <Input type='password' {...field} />
                 </FormControl>
@@ -135,13 +133,13 @@ const RegisterForm = ({
             )}
           />
           <Button className='mt-4 w-full' type='submit'>
-            Submit
+            Đáng ký
           </Button>
 
           <div className='mt-4 text-center text-sm'>
-            Already have an account?{' '}
+            Nếu bạn đã có tài khoản?{' '}
             <NavLink to='/auth/login' className='underline underline-offset-4'>
-              Login
+              Đăng nhập
             </NavLink>
           </div>
         </form>

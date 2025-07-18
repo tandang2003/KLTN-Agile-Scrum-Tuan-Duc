@@ -1,30 +1,17 @@
 const express = require("express");
-const swaggerUi = require("swagger-ui-express");
-const yaml = require("yamljs");
 const path = require("path");
-require("dotenv").config();
-
-const SwaggerParser = require("swagger-parser");
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 
-const swaggerFilePath = path.join(__dirname, "swagger", "swagger.yml");
+// Serve all files from /public
+app.use(express.static(path.join(__dirname, "public")));
 
-// Use Swagger-Parser to resolve the references
-SwaggerParser.dereference(swaggerFilePath)
-  .then((swaggerDocument) => {
-    // Serve Swagger UI
-    app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Root URL loads index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
 
-    // Serve static files (Swagger YAML and components) if needed
-    app.use("/swagger", express.static(path.join(__dirname, "swagger")));
-
-    // Start the server
-    app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}/api-docs`);
-    });
-  })
-  .catch((err) => {
-    console.error("Error resolving Swagger file:", err);
-  });
+app.listen(port, () => {
+  console.log(`Full docs:   http://localhost:${port}`);
+});

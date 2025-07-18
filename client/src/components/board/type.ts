@@ -1,19 +1,21 @@
+import { CardModelType } from '@/types/card.type'
+import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import { TagColorTypeOf } from '@/types/tag.type'
 
-export type BoardProps = {
+type BoardProps = {
   columns: ColumnProps[]
 }
 
-export type ColumnProps = {
+type ColumnProps = {
   id: Id
   name: string
   itemsOrder: Id[]
-  items: BaseCardProps[]
+  items: CardModelType[]
 }
 
 // Override here
-export type BaseCardProps = {
+type BaseCardProps = {
   id: Id
   columnId: Id
   name: string
@@ -22,7 +24,7 @@ export type BaseCardProps = {
   numAttach?: number
   assigners?: CardAssignerProps[]
   numAssigner?: number
-  category: string
+  status: IssueStatus
   tags?: CardTagProps[]
 }
 
@@ -36,8 +38,41 @@ type CardTagProps = {
   color: TagColorTypeOf
 }
 
-export type ButtonCreateCardProps = {
-  index: number
-  isOpenCard: boolean
-  setOpenCard: (index: number | null) => void
+type DataOnMoveType = {
+  active: Id
+  columnTo: Id | null
+  indexTo: number | null
+}
+
+type FilterSprintBoard = Partial<{
+  sprintId: Id
+}>
+
+type NewPositionReq = {
+  projectId: Id
+  sprintId: Id
+  issueId: Id
+  status: IssueStatus
+}
+
+type PositionReq = {
+  projectId: Id
+  sprintId: Id
+  position: Position
+}
+
+type Position = Record<IssueStatus, Id[]>
+
+type PositionSprint = Record<Id, Record<IssueStatus, Id[]>>
+
+export type {
+  Position,
+  BaseCardProps,
+  BoardProps,
+  ColumnProps,
+  DataOnMoveType,
+  PositionSprint,
+  PositionReq,
+  NewPositionReq,
+  FilterSprintBoard
 }

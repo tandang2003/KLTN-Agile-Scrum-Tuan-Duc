@@ -2,8 +2,11 @@ package com.kltn.server.config.security;
 
 import com.kltn.server.config.properties.ApplicationProps;
 import com.kltn.server.config.security.filter.CustomAuthenticationFilter;
+import com.kltn.server.config.security.filter.ProjectRoleAuthorizationFilter;
 import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
+import com.kltn.server.config.security.provider.ProjectAuthorizationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -28,7 +32,9 @@ import java.util.List;
 public class SecurityConfig {
     @Autowired
     private JwtDecoder accessTokenDecoder;
-
+    @Qualifier("verifyTokenDecoder")
+    @Autowired
+    private JwtDecoder verifyTokenDecoder;
     @Autowired
     private BasicAuthenticationProvider basicAuthenticationProvider;
 
@@ -37,6 +43,10 @@ public class SecurityConfig {
 
     @Autowired
     private CustomAccessDenyHandler customAccessDenyHandler;
+
+    @Autowired
+    private ProjectAuthorizationProvider projectAuthorizationProvider;
+
 
     @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
@@ -56,11 +66,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter = projectRoleAuthorizationFilter();
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
         http.securityContext(contextConfig -> {
-            contextConfig.requireExplicitSave(false);
-        })
+                    contextConfig.requireExplicitSave(false);
+                })
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logoutConfig -> {
@@ -71,20 +82,20 @@ public class SecurityConfig {
                             .deleteCookies("refresh_token");
                 })
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(projectRoleAuthorizationFilter, BearerTokenAuthenticationFilter.class)
                 .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests
-                            .requestMatchers((applicationProps.getWhitelist().toArray(new String[0])))
+                    authorizeRequests.requestMatchers(applicationProps.getWhitelist().toArray(String[]::new))
                             .permitAll();
                     authorizeRequests.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> {
-                        jwt.decoder(accessTokenDecoder);
-                        jwt.jwtAuthenticationConverter(customConverterJwtToUser);
-                    })
+                                jwt.decoder(accessTokenDecoder);
+                                jwt.jwtAuthenticationConverter(customConverterJwtToUser);
+                            })
                             .authenticationEntryPoint(customAuthenticationEntryPoint);
                 })
                 .exceptionHandling(exc -> {
@@ -107,5 +118,14 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    @Bean
+    ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter() {
+        ProjectRoleAuthorizationFilter filter = new ProjectRoleAuthorizationFilter(verifyTokenDecoder);
+        filter.setAuthenticationManager(new ProviderManager(List.of(projectAuthorizationProvider)));
+        filter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+        return filter;
+    }
+
 
 }

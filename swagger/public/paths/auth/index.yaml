@@ -1,0 +1,79 @@
+post:
+  summary: Authenticate user
+  description: Authenticates a user and returns a JWT token.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            uniId:
+              type: string
+            password:
+              type: string
+        example:
+          uniId: 21130320
+          password: 123456Duc@.
+  responses:
+    200:
+      description: Successful authentication
+      headers:
+        Set-Cookie:
+          description: >
+            Sets the `refresh-token` cookie with `HttpOnly` and `Max-Age` attributes.  
+            Example: `refresh-token=abc.def.ghi; HttpOnly; Max-Age=432000 ; Path=/refresh`
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties:
+                  data:
+                    properties:
+                      access-token:
+                        type: string
+                        description: The JWT token for authentication
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: The user ID storing in the database
+                          uniId:
+                            type: string
+                            description: The university ID student or teacher of the user
+                          name:
+                            type: string
+                            description: The name of the user
+                          email:
+                            type: string
+                            description: The email student or teacher of the user
+                          role:
+                            type: string
+                            description: "the user role name, has 4 role: admin, teacher, team leader and student"
+          example:
+            code: 200
+            message: "Login"
+            data:
+              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+              user:
+                id: "user-001"
+                uniId: "21130320"
+                name: "Le Anh Duc"
+                email: "21139329@st.hcmuaf.edu.vn"
+                role: "student"
+    422:
+      description: Email or password invalid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+            default:
+              code: 422
+              message: "Email or password invalid"

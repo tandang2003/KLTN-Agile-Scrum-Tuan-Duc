@@ -1,32 +1,25 @@
-import { TagColorTypeOf as TagColorKey } from '@/types/tag.type'
+import { IssueStatus } from '@/types/model/typeOf'
+import { Id } from '@/types/other.type'
+
+type ColumnModelType = {
+  name: string
+  cardIds: Id[]
+}
 
 type CardModelType = {
-  id: string
+  id: Id
   name: string
-  category: 'LT' | 'TH'
-  point: number
-  thumbnail?: string
   numComment?: number
   numAttach?: number
   numAssigner?: number
-  assigners?: Assigner[]
-  tags?: { name: string; color: TagColorKey }[]
+  status: IssueStatus
 }
 
-type ColumnModelType = {
-  id: string
-  name: string
-  items: CardModelType[]
-}
+type ColumnsType = Record<Id, ColumnModelType>
 
 type BoardModelType = {
-  process: {
-    backlog: ColumnModelType
-    todo: ColumnModelType
-    doing: ColumnModelType
-    review: ColumnModelType
-    done: ColumnModelType
-  }
+  columns: ColumnsType
+  cards: CardModelType[]
 }
 
 type Assigner = {
@@ -45,5 +38,6 @@ export type {
   ColumnModelType,
   BoardModelType,
   Assigner,
-  CreateCardReqType
+  CreateCardReqType,
+  ColumnsType
 }

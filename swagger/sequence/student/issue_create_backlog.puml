@@ -1,0 +1,63 @@
+@startuml
+autonumber
+actor "Student" as SV
+
+participant "View\n(/manager/project/:id)" as View
+participant "Issue\nController" as Controller
+participant "Issue\nService" as IssueService
+participant "Project\nService" as ProjectService
+participant "Issue\nRepository" as IssueRepository
+participant "IssueMongo\nService" as IssueMongoService
+database "MySQL" as DB
+database "MongoDB" as Mongo
+
+SV -> View : Access project\nbacklog
+activate SV
+activate View
+View --> View : Display backlog\nand sprint list
+SV -> View : Select backlog\nand add task
+View --> View : Show task \n creation form
+SV -> View : Fill in \n issue details
+
+View -> Controller : POST /issue
+activate Controller
+
+Controller -> IssueService : create\nTaskBacklog\n(request)
+activate IssueService
+IssueService -> IssueService : Map request → entity
+
+IssueService -> ProjectService : getProject\nById\n(projectId)
+activate ProjectService
+ProjectService --> IssueService :  Project
+deactivate ProjectService
+IssueService -> IssueRepository : save(task)
+activate IssueRepository
+IssueRepository -> DB : save(task)
+activate DB
+DB --> IssueRepository :  task
+deactivate DB
+IssueRepository --> IssueService :  task
+deactivate IssueRepository
+
+IssueService -> IssueService : Map task → Mongo
+IssueService -> IssueMongoService : save\n(taskMongo)
+activate IssueMongoService
+IssueMongoService -> Mongo : save(taskMongo)
+activate Mongo
+Mongo --> IssueMongoService :  taskMongo
+deactivate Mongo
+IssueMongoService --> IssueService :  taskMongo
+deactivate "IssueMongoService"
+
+IssueService -> IssueService : Generate \n change log
+
+IssueService --> Controller :  issue \n response
+deactivate IssueService
+
+Controller --> View :  success result
+deactivate Controller
+
+View --> SV : Notify success
+deactivate SV
+
+@enduml
