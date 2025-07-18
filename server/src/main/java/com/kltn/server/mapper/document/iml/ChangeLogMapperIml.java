@@ -86,16 +86,16 @@ public class ChangeLogMapperIml implements ChangeLogMapper {
     return changeLogBuilder.build();
   }
 
-//    @Override
-//    public ChangeLog TaskToUpdate(Issue curEntity, Issue newEntity, com.kltn.server.model.collection.Issue curDocument, com.kltn.server.model.collection.Issue newDocument) {
-//        ChangeLog.ChangeLogBuilder changeLogBuilder = ChangeLog.builder();
-////        changeLogBuilder.type(LogType.UPDATE)
-////                .idRef(curEntity.getId())
-////                .entityTarget(EntityTarget.PROJECT.name())
-////                .
-////                .change();
-//
-//
-//        return null;
-//    }
+  @Override
+  public ChangeLogRequest taskToDeleteLogRequest(Issue task, com.kltn.server.model.collection.Issue issueMongo) {
+    ChangeLogRequest.ChangeLogRequestBuilder changeLogBuilder = ChangeLogRequest.builder();
+    changeLogBuilder.type(LogType.DELETE)
+      .idRef(task.getId())
+      .entityTarget(EntityTarget.TASK.name())
+      .projectId(task.getProject().getId())
+      .change(logTaskMapper.entityToLogDomain(task, issueMongo))
+
+    ;
+    return changeLogBuilder.build();
+  }
 }
