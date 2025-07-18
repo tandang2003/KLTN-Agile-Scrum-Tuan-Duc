@@ -15,54 +15,54 @@ participant "MySql" as MySQL
 activate SV
 SV -> View : Student access
 activate View
-View --> SV : Check if student is in a project\nShow "Add student" button if not
-SV -> View : Click "Add student" button
-View --> SV : Display form to add student(s)
-SV -> View : Enter student ID(s) and submit
-View -> Controller : POST /project/invite
+View --> View : Check if student \n is in a project\nShow "Add student" \n button if not
+SV -> View : Click "Add \n student" button
+View --> View : Display form \n to add student(s)
+SV -> View : Enter student \n ID(s) and submit
+View -> Controller : POST \n /project/invite
 activate Controller
-Controller -> Service : inviteUserToProject(request)
+Controller -> Service : inviteUser\nToProject\n(request)
 
 activate Service
-Service -> UserService : getCurrentUser()
+Service -> UserService : getCurrent\nUser()
 activate UserService
-UserService --> Service : return userInvite
+UserService --> Service :  \n userInvite
 deactivate UserService
-Service -> ProjectRepo : findById(projectId)
+Service -> ProjectRepo : findById\n(projectId)
 activate ProjectRepo
 ProjectRepo -> MySQL: findById(projectId)
 activate MySQL
-MySQL --> ProjectRepo: return project model
+MySQL --> ProjectRepo:  project model
 deactivate MySQL
-ProjectRepo --> Service : return project model
+ProjectRepo --> Service :  project model
 deactivate ProjectRepo
 alt Project not found
-    Service -> Service : throw AppException(NOT_FOUND)
+    Service -> Service : throw \nNOT_FOUND
 end
 
-Service -> Service : create MailRequest\n(template = "invite-student")
+Service -> Service : create \n MailRequest\n(template = \n "invite-student")
 
 loop for each userId in request.userId
-    Service -> UserService : getUserByUniId(userId)
+    Service -> UserService : getUser\nByUniId\n(userId)
     activate UserService
-    UserService --> Service : return user
+    UserService --> Service :  user
     deactivate UserService
     Service -> RoleInit : getRole("MEMBER")
     activate RoleInit
-    RoleInit --> Service : return role
+    RoleInit --> Service :  role
     deactivate RoleInit
-    Service -> WUPRepo : save(WorkspacesUsersProjects)
+    Service -> WUPRepo : save\n(Workspaces\nUsers\nProjects)
     activate WUPRepo
-    WUPRepo -> MySQL: save(WorkspacesUsersProjects)
+    WUPRepo -> MySQL: save\n(Workspaces\nUsers\nProjects)
 
     deactivate WUPRepo
-    Service -> MailService : inviteToProject\n(email, token, params)
+    Service -> MailService : inviteTo\nProject\n(email, \ntoken, params)
 end
-Service --> Controller : return success
+Service --> Controller :  success
 deactivate Service
-Controller --> View : return success
+Controller --> View :  success
 deactivate Controller
-View --> SV: Show notify invite success
+View --> SV: Show notify \n invite success
 deactivate View
 deactivate SV
 @enduml

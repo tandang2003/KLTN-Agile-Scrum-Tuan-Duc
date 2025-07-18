@@ -11,66 +11,66 @@ participant "MySQL" as MySQL
 activate SV
 SV -> View : Student accesses
 activate View
-View --> SV : Show list sprint
+View --> View : Show list sprint
 SV -> View: Select sprint
-View --> SV: Open Sheet Report\n& show status report
+View --> View: Open Sheet Report\n& show status report
 SV -> View: Upload file\nDaily1 or Daily2
 activate Controller
-View -> Controller : POST /resource/signature
-Controller --> View: return signature upload
+View -> Controller : POST \n /resource/signature
+Controller --> View:  signature upload
 deactivate Controller
 activate Cloud
-View -> Cloud: upload file with signature
-Cloud --> View: file upload success response
+View -> Cloud: upload file \n with signature
+Cloud --> View: file upload \n success response
 deactivate Cloud
 
-View -> Controller: POST /resource/issue
+View -> Controller: POST \n /resource/issue
 activate Controller
-Controller -> Service: uploadFileToTask(req)
+Controller -> Service: uploadFile\nToTask(req)
 activate Service
-Service -> Repo: save(resource)
+Service -> Repo: save\n(resource)
 activate Repo
-Repo -> MySQL: save(resource)
+Repo -> MySQL: save\n(resource)
 activate MySQL
-MySQL --> Repo: return resource model
+MySQL --> Repo: resource \nmodel
 deactivate MySQL
-Repo --> Service: return resource model
+Repo --> Service:  resource \nmodel
 deactivate Repo
-Service --> Controller: return resource model
+Service --> Controller:  resource \nmodel
 deactivate Service
-Controller --> View: return resource model
+Controller --> View:  resource \nmodel
 deactivate Controller
-View --> SV: notify create file success
+View --> SV: notify \ncreate file success
 
-View -> Controller: POST /resource/backlog
+View -> Controller: POST \n /resource/backlog
 activate Controller
-Controller -> Service : uploadFileToBacklogSprint(req)
+Controller -> Service : uploadFile\nToBacklogSprint\n(req)
 activate Service
-Service -> PSS: getProjectSprintById\n(projectSprintId)
+Service -> PSS: getProject\nSprintById\n(projectSprintId)
 activate PSS
-PSS --> Service: return projectSprint model
+PSS --> Service:  \nprojectSprint \nmodel
 deactivate PSS
-Service -> Service: get resource backlog
+Service -> Service: get \nresource backlog
 
 alt Backlog exist
-  Service --> Controller: throw\nBACKLOG_FILE_ALREADY_UPLOAD
-  Controller --> View: return failed
+  Service --> Controller: throw\nBACKLOG_FILE_\nALREADY_UPLOAD
+  Controller --> View:  failed
   View --> SV: notify upload\nbacklog failed
 else
-  Service -> Service: projectSprint.\nsetBacklog(resource)
+  Service -> Service: projectSprint.\nsetBacklog\n(resource)
   Service -> PSS: save(projectSprint)
   activate PSS
-  PSS -> MySQL: save(projectSprint)
+  PSS -> MySQL: save\n(projectSprint)
   activate MySQL
-  MySQL --> PSS: return projectSprint model
+  MySQL --> PSS:  \nprojectSprint \nmodel
   deactivate MySQL
-  PSS --> Service: return projectSprint model
+  PSS --> Service:  projectSprint \nmodel
   deactivate PSS
 
-  Service --> Controller : return success
+  Service --> Controller :  success
   deactivate Service
 
-  Controller --> View : return success
+  Controller --> View :  success
   deactivate Controller
 
   View -> SV : notify upload\nbacklog success

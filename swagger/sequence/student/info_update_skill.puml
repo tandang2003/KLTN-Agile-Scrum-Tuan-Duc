@@ -11,54 +11,53 @@ participant "Skill\nRepository" as SkillRepository
 participant "PersonalSkill\nRepository" as PKR
 
 activate SV
-SV -> View : student accesses skill page
+SV -> View : student accesses
 activate View
-View --> SV : display list of skills and proficiency levels
-
+View --> View : display list \n of skills
 SV -> View : click "Add Skill"
-View --> SV : show add skill form
-SV -> View : enter skill name and proficiency level
+View --> View : show add \n skill form
+SV -> View : enter skill name & \n proficiency level
 
 View -> Controller : POST /skill
 activate Controller
 
-Controller -> SkillService : createSkill(skillName, proficiency)
+Controller -> SkillService : createSkill\n(skillName, \n proficiency)
 activate SkillService
 
 SkillService -> UserService : getCurrentUser
 activate UserService
-UserService --> SkillService : return currentUser
+UserService --> SkillService :  user
 deactivate UserService
 
-SkillService -> SkillRepository : existsByName(skillName)
+SkillService -> SkillRepository : existsByName\n(skillName)
 activate SkillRepository
-SkillRepository --> SkillService : return boolean
+SkillRepository --> SkillService :  boolean
 deactivate SkillRepository
 
 alt Skill does not exist
     SkillService -> SkillRepository : save(skillModel)
     activate SkillRepository
-    SkillRepository --> SkillService : return savedSkill
+    SkillRepository --> SkillService :  savedSkill
     deactivate SkillRepository
 else Skill already exists
-    SkillService -> SkillRepository : findByName(skillName)
+    SkillService -> SkillRepository : findByName\n(skillName)
     activate SkillRepository
-    SkillRepository --> SkillService : return existingSkill
+    SkillRepository --> SkillService :  existingSkill
     deactivate SkillRepository
 end
 
-SkillService -> PKR : save(personalSkillModel)
+SkillService -> PKR : save\n(personalSkillModel)
 activate PKR
-PKR --> SkillService : return void
+PKR --> SkillService :  success
 deactivate PKR
 
-SkillService --> Controller : return void
+SkillService --> Controller :  void
 deactivate SkillService
 
-Controller --> View : return success
+Controller --> View :  success
 deactivate Controller
 
-View --> SV : notify "Skill added successfully"
+View --> SV : notify "Skill \n added \n successfully"
 deactivate View
 deactivate SV
 @enduml

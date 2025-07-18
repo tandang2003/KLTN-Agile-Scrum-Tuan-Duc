@@ -13,24 +13,24 @@ activate View
 View -> Controller : GET /sprints/list\n?workspace_id=workspaceId
 activate Controller
 
-Controller -> Service : getListSprintByWorkspaceId(workspaceId)
+Controller -> Service : getListSprint\nByWorkspaceId\n(workspaceId)
 activate Service
-Service -> Repo : findAllByWorkspaceId(workspaceId)
+Service -> Repo : findAll\nByWorkspaceId\n(workspaceId)
 activate Repo
-Repo -> MySQL : findAllByWorkspaceId(workspaceId)
+Repo -> MySQL : findAll\nByWorkspaceId\n(workspaceId)
 activate MySQL
-MySQL --> Repo : return list sprint model
+MySQL --> Repo : return list\nsprint model
 deactivate MySQL
-Repo --> Service : return list sprint model
+Repo --> Service : return list\nsprint model
 deactivate Repo
 
 Service --> Controller : return list sprint model
 deactivate Service
 
-Controller --> View : return list sprint model
+Controller --> View : return list\nsprint model
 deactivate Controller
 
-View -> SV : Show list sprint
+View --> SV : Show list sprint
 deactivate View
 deactivate SV
 @enduml

@@ -1,34 +1,67 @@
 @startuml
-'https://plantuml.com/component-diagram
+autonumber
 
+actor Teacher as SV
+participant "View\n(/manager/:id)" as View
+participant "Workspace\nController" as Controller
+participant "Workspace\nService" as Service
+participant "Workspace\nRepository" as Repo
+participant "User\nRepository" as UserRepo
+participant "MySQL" as MySQL
 
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
+SV -> View : Teacher \n accesses
+activate SV
 
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
+activate View
+View --> View: show list project
+SV -> View: click \n dropdown & \n select add student
+View --> View: show form \n add \n student
+SV -> View : fill form & \n  click "add"
+View -> Controller : POST \n /workspace/student
 
-cloud {
-  [Example 1]
-}
+activate Controller
+Controller -> Service : addStudent\nToWorkspace\n(req)
 
+activate Service
+Service -> Repo: findById(id)
+activate Repo
+Repo -> MySQL: findById(id)
+activate MySQL
+MySQL --> Repo: workspace \n model
+deactivate MySQL
+Repo --> Service: workspace \n model
+deactivate Repo
 
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
+loop users
+Service -> UserRepo: findByUniId\n(userId)
+activate UserRepo
+UserRepo -> MySQL : findByUniId\n(userId)
+activate MySQL
+MySQL --> UserRepo: user model
+deactivate MySQL
+UserRepo --> Service: user model
+deactivate UserRepo
+Service -> Service: workspace\n.setMember(user)
+Service -> Repo: save(workspace)
+Repo -> MySQL: save (workspace))
+end
 
+Service -> Repo: save(workspace)
+activate Repo
+Repo -> MySQL : save(workspace)
+activate MySQL
+MySQL --> Repo :  save(workspace)
+deactivate MySQL
+Repo --> Service :  workspace \n model
+deactivate Repo
 
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
+Service --> Controller :  workspace \n model
+deactivate Service
 
+Controller --> View : workspace \n model
+deactivate Controller
+View --> SV : notify \n "Add student \n success"
+
+deactivate View
+deactivate SV
 @enduml

@@ -9,14 +9,14 @@ participant "Workspace\nRepository" as Repo
 participant "User\nService" as UService
 participant "MySQL" as MySQL
 
-activate SV
 SV -> View : Student accesses\n/manager
+activate SV
 
 activate View
 View -> Controller : GET /workspace/list?\npage=1&size=5
 
 activate Controller
-Controller -> Service : getWorkspaceByOwnerIdPaging(req)
+Controller -> Service : getWorkspace\nByOwner\nIdPaging(req)
 
 activate Service
 Service -> UService : getCurrentUser()
@@ -24,22 +24,22 @@ activate UService
 UService --> Service : return User
 deactivate UService
 
-Service -> Repo : findAllByMembersId(userId, paging)
+Service -> Repo : findAllBy\nMembersId\n(userId, paging)
 activate Repo
-Repo -> MySQL : getWorkspaceByOwnerIdPaging\n(page, size)
+Repo -> MySQL : getWorkspaceBy\nOwnerIdPaging\n(page, size)
 activate MySQL
 MySQL --> Repo : return paged workspaces
 deactivate MySQL
-Repo --> Service : return paged workspaces
+Repo --> Service : return page workspace
 deactivate Repo
 
-Service --> Controller : return paged workspaces
+Service --> Controller : return page workspace
 deactivate Service
 
-Controller --> View : return paged workspaces
-View --> SV : display workspace list
-
+Controller --> View : return page workspace
 deactivate Controller
+View --> SV : display \nworkspace list
+
 deactivate View
 deactivate SV
 @enduml

@@ -20,9 +20,9 @@ SV -> View : Select sprint
 View -> Controller : GET /issue/list\n?project_id=projectId\n&sprint_id=sprintId
 
 activate Controller
-Controller -> Service : get\nIssueById\n(issueId, sprintId)
+Controller -> Service : get\nIssueById\n(issueId, \n sprintId)
 activate Service
-Service -> SprintService: getSprintById\n(sprintId)
+Service -> SprintService: getSprint\nById\n(sprintId)
 activate SprintService
 SprintService --> Service :  Sprint
 deactivate SprintService
