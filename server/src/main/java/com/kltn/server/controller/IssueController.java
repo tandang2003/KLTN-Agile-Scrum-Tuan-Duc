@@ -139,4 +139,9 @@ public class IssueController {
                          .body(task);
   }
 
+  @DeleteMapping("{id}")
+  public ResponseEntity<ApiResponse<Void>> deleteIssue(@PathVariable String id) {
+    var response = taskService.delete(id);
+    return ResponseEntity.ok(response);
+  }
 }
