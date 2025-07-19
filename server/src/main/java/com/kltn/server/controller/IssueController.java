@@ -146,9 +146,9 @@ public class IssueController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("{id}/suitable")
-  public ResponseEntity<ApiResponse<List<UserSuitableResponse>>> getUserSuitable(@RequestParam String id) {
+  @GetMapping("/{id}/suitable")
+  public ResponseEntity<ApiResponse<List<UserSuitableResponse>>> getUserSuitable(@PathVariable String id) {
     var response = taskService.getUserSuitable(id);
-    return null;
+    return ResponseEntity.ok(response);
   }
 }
