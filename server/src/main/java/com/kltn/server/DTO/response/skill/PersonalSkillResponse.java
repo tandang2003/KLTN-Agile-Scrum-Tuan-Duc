@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record PersonalSkillResponse(String skillName,
                                     int proficiency) {
-  public PersonalSkillResponseBuilder builder() {
+  public static PersonalSkillResponseBuilder builder() {
     return new PersonalSkillResponseBuilder();
   }
 
