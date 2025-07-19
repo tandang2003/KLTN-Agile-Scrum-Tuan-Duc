@@ -184,13 +184,13 @@ public class Sprint extends BaseEntity {
     this.storyPoint = storyPoint;
   }
 
-  public Instant getDtPredict() {
-    return dtPredict;
-  }
-
-  public void setDtPredict(Instant dtPredict) {
-    this.dtPredict = dtPredict;
-  }
+//  public Instant getDtPredict() {
+//    return dtPredict;
+//  }
+//
+//  public void setDtPredict(Instant dtPredict) {
+//    this.dtPredict = dtPredict;
+//  }
 
   public Workspace getWorkspace() {
     return workspace;
@@ -222,6 +222,14 @@ public class Sprint extends BaseEntity {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Instant getDtPredict() {
+    return dtPredict;
+  }
+
+  public void setDtPredict(Instant dtPredict) {
+    this.dtPredict = dtPredict;
   }
 }
 
