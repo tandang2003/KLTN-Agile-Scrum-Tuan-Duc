@@ -64,7 +64,14 @@ const ListIssueInSprint = ({
         </div>
       }
       render={(item, index) => {
-        return <SprintCardInSprint key={item.id} item={item} index={index} />
+        return (
+          <SprintCardInSprint
+            key={item.id}
+            sprint={{ id: sprintId, start, end }}
+            item={item}
+            index={index}
+          />
+        )
       }}
       append={
         getStatusSprint({
