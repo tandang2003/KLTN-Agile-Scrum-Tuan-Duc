@@ -7,6 +7,7 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
+import com.kltn.server.DTO.response.skill.UserSuitableResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
@@ -16,17 +17,21 @@ import com.kltn.server.mapper.base.SubTaskMapper;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.IssueMapper;
+import com.kltn.server.mapper.entity.SkillMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.base.BaseEntity;
-import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
 import com.kltn.server.model.entity.embeddedKey.IssueRelationId;
+import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.IssueRelation;
 import com.kltn.server.model.entity.relationship.PersonalSkill;
-import com.kltn.server.model.type.task.*;
-import com.kltn.server.repository.document.ChangeLogRepository;
+import com.kltn.server.model.entity.relationship.ProjectSprint;
+import com.kltn.server.model.type.task.IssuePriority;
+import com.kltn.server.model.type.task.IssueRelationType;
+import com.kltn.server.model.type.task.IssueStatus;
+import com.kltn.server.model.type.task.IssueTag;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.relation.IssueRelationRepository;
 import com.kltn.server.repository.entity.relation.PersonalSkillRepository;
@@ -47,6 +52,7 @@ public class IssueService {
   private final SprintService sprintService;
   private final UserMapper userMapper;
   private final PersonalSkillRepository personalSkillRepository;
+  private final SkillMapper skillMapper;
   private IssueMapper taskMapper;
   private ProjectSprintService projectSprintService;
   private IssueRepository taskRepository;
@@ -61,12 +67,7 @@ public class IssueService {
   private IssueRelationRepository issueRelationRepository;
 
   @Autowired
-  public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
-                      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
-                      ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService,
-                      UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
-                      IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
-                      PersonalSkillRepository personalSkillRepository) {
+  public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService, TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService, ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService, UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper, IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper, PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -82,6 +83,7 @@ public class IssueService {
     this.subTaskMapper = subTaskMapper;
     this.userMapper = userMapper;
     this.personalSkillRepository = personalSkillRepository;
+    this.skillMapper = skillMapper;
   }
 
   @SendKafkaEvent(topic = "task-log")
@@ -636,10 +638,7 @@ public class IssueService {
       ;
 
     IssueRelation relation = issueRelationRepository.findById(relationId)
-      .orElseThrow(() -> AppException.builder()
-        .error(Error.NOT_FOUND)
-        .message("Issue relation doesn't found")
-        .build());
+      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).message("Issue relation doesn't found").build());
     Issue issue = getEntityById(request.getIssueId());
     boolean removed = issue.getAffectTo().remove(relation);
 
@@ -657,30 +656,18 @@ public class IssueService {
 
   private IssueRelation reverse(IssueRelation relation) {
     IssueRelation.IssueRelationBuilder builder = switch (relation.getTypeRelation()) {
-      case BLOCKS -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.IS_BLOCKED_BY);
-      case IssueRelationType.IS_BLOCKED_BY -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.BLOCKS)
-      ;
-      case RELATES_TO -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.IS_RELATED_TO);
-      case IS_RELATED_TO -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.RELATES_TO);
-      case DEPENDS_ON -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.IS_DEPENDED_ON_BY);
-      case IS_DEPENDED_ON_BY -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.DEPENDS_ON);
-      case SUPERSEDES -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.IS_SUPERSEDED_BY);
-      case IS_SUPERSEDED_BY -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.SUPERSEDES);
-      case DUPLICATES -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.IS_DUPLICATED_BY);
-      case IS_DUPLICATED_BY -> IssueRelation.builder()
-        .typeRelation(IssueRelationType.DUPLICATES);
+      case BLOCKS -> IssueRelation.builder().typeRelation(IssueRelationType.IS_BLOCKED_BY);
+      case IssueRelationType.IS_BLOCKED_BY -> IssueRelation.builder().typeRelation(IssueRelationType.BLOCKS);
+      case RELATES_TO -> IssueRelation.builder().typeRelation(IssueRelationType.IS_RELATED_TO);
+      case IS_RELATED_TO -> IssueRelation.builder().typeRelation(IssueRelationType.RELATES_TO);
+      case DEPENDS_ON -> IssueRelation.builder().typeRelation(IssueRelationType.IS_DEPENDED_ON_BY);
+      case IS_DEPENDED_ON_BY -> IssueRelation.builder().typeRelation(IssueRelationType.DEPENDS_ON);
+      case SUPERSEDES -> IssueRelation.builder().typeRelation(IssueRelationType.IS_SUPERSEDED_BY);
+      case IS_SUPERSEDED_BY -> IssueRelation.builder().typeRelation(IssueRelationType.SUPERSEDES);
+      case DUPLICATES -> IssueRelation.builder().typeRelation(IssueRelationType.IS_DUPLICATED_BY);
+      case IS_DUPLICATED_BY -> IssueRelation.builder().typeRelation(IssueRelationType.DUPLICATES);
     };
-    return builder.issue(relation.getIssueRelated())
-      .issueRelated(relation.getIssue()).build();
+    return builder.issue(relation.getIssueRelated()).issueRelated(relation.getIssue()).build();
   }
 
   public ApiResponse<List<IssueRelationResponse>> getRelations(String id) {
@@ -718,18 +705,15 @@ public class IssueService {
   }
 
   public int getNumberOfIssuesAtStart(Project project, Sprint sprint) {
-    return taskRepository.countByProjectIdAndSprintIdAndDtAppendLessThanEqual(project.getId(), sprint.getId(),
-      sprint.getDtStart());
+    return taskRepository.countByProjectIdAndSprintIdAndDtAppendLessThanEqual(project.getId(), sprint.getId(), sprint.getDtStart());
   }
 
   public int getNumberOfIssuesAdded(Project project, Sprint sprint) {
-    return taskRepository.countByProjectIdAndSprintIdAndDtAppendGreaterThan(project.getId(), sprint.getId(),
-      sprint.getDtStart());
+    return taskRepository.countByProjectIdAndSprintIdAndDtAppendGreaterThan(project.getId(), sprint.getId(), sprint.getDtStart());
   }
 
   public int getNumberOfIssuesRemoved(Project project, Sprint sprint) {
-    return taskRepository.countByProjectIdAndSprintIdAndDtEndBeforeAndStatus(project.getId(), sprint.getId(),
-      ClockSimulator.now(), IssueStatus.DONE);
+    return taskRepository.countByProjectIdAndSprintIdAndDtEndBeforeAndStatus(project.getId(), sprint.getId(), ClockSimulator.now(), IssueStatus.DONE);
   }
 
   public int getNumberOfIssuesByStatus(Project project, Sprint sprint, IssueStatus status) {
@@ -801,8 +785,7 @@ public class IssueService {
 
   // số lượng issue mà issue này block lại
   public int getNumberOfBlock(String id) {
-    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.IS_BLOCKED_BY,
-      id);
+    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.IS_BLOCKED_BY, id);
   }
 
   public int getNumberOfComments(String id) {
@@ -827,8 +810,7 @@ public class IssueService {
     for (Sprint sprint : finishedSprints) {
       List<IssueSnapshot> snapshots = snapshotService.getByProjectIdAndSprintId(project.getId(), sprint.getId());
       if (snapshots.stream()
-        .anyMatch(
-          s -> s.getNkTaskId().equals(id) && IssueStatus.fromString(s.getStatus()).equals(IssueStatus.DONE))) {
+        .anyMatch(s -> s.getNkTaskId().equals(id) && IssueStatus.fromString(s.getStatus()).equals(IssueStatus.DONE))) {
         result++;
       }
     }
@@ -859,15 +841,33 @@ public class IssueService {
   public ApiResponse<Void> delete(String id) {
     Issue issue = getEntityById(id);
     User curUser = userService.getCurrentUser();
+
     if (issue.getProject().getMembers().stream().anyMatch(member -> member.getId().equals(curUser.getId()))) {
       ChangeLogRequest changeLog = changeLogMapper.taskToDeleteLogRequest(issue, issueMongoService.getById(id));
       issueMongoService.delete(issue.getId());
       issueRelationRepository.deleteAll(issue.getAffectTo());
       issueRelationRepository.deleteAll(issue.getAffectBy());
-      taskRepository.delete(issue);
+      Sprint sprint = issue.getSprint();
+      if (sprint != null) {
+        Instant now = ClockSimulator.now();
+        if (sprint.getDtEnd().isBefore(now)) {
+          throw AppException.builder()
+            .error(Error.INVALID_PARAMETER_REQUEST)
+            .message("Sprint đã kết thúc bạn không thể thay đổi thông tin trong Sprint")
+            .build();
+        } else if (sprint.getDtStart().isBefore(now)) {
+          ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+            .sprintId(sprint.getId())
+            .projectId(issue.getProject().getId())
+            .build());
+          projectSprint.setRemovedIssue(projectSprint.getRemovedIssue() + 1);
+          projectSprintService.save(projectSprint);
+        }
+        taskRepository.delete(issue);
+      }
       return ApiResponse.<Void>builder()
         .code(HttpStatus.OK.value())
-        .message("Successfully deleted")
+        .message("Xóa Issue thành công")
         .data(null)
         .logData(changeLog)
         .build();
@@ -875,6 +875,37 @@ public class IssueService {
     throw AppException.builder()
       .error(Error.FORBIDDEN)
       .message("Chỉ có thành viên nhóm mới được xóa nhiệm vụ của nhóm")
+      .build();
+  }
+
+  public ApiResponse<List<UserSuitableResponse>> getUserSuitable(String id) {
+    Issue issue = getEntityById(id);
+    var issueMongo = issueMongoService.getById(id);
+    List<User> members = issue.getProject().getMembers();
+    List<UserSuitableResponse> suitableResponses = new ArrayList<>();
+    List<String> topics = issueMongo.getTopics().stream().map(Topic::getName).map(String::toLowerCase).toList();
+    if (topics.isEmpty()) {
+      return ApiResponse.<List<UserSuitableResponse>>builder()
+        .code(HttpStatus.OK.value())
+        .message("Nhiệm vụ hiện tại vẫn chưa có yêu cầu")
+        .data(members.stream()
+          .map(u -> UserSuitableResponse.builder().id(u.getId()).name(u.getName()).build())
+          .toList())
+        .build();
+    }
+    for (User member : members) {
+      UserSuitableResponse.Builder builder = UserSuitableResponse.builder();
+      builder.id(member.getId());
+      builder.name(member.getName());
+      List<PersonalSkill> skills = member.getSkills();
+      skills = skills.stream().filter(p -> !topics.contains(p.getSkill().getName().toLowerCase())).toList();
+      builder.skills(skillMapper.toListPersonalSkillResponse(skills));
+      suitableResponses.add(builder.build());
+    }
+    return ApiResponse.<List<UserSuitableResponse>>builder()
+      .code(HttpStatus.OK.value())
+      .message("Successfully retrieved")
+      .data(suitableResponses)
       .build();
   }
 }
