@@ -18,25 +18,30 @@ public class ProjectSprint {
   @MapsId("projectId")
   @ManyToOne(optional = false)
   @JoinColumn(name = "project_id",
-              insertable = false)
+    insertable = false)
   private Project project;
   @MapsId("sprintId")
   @ManyToOne()
   @JoinColumn(name = "sprint_id",
-              nullable = false)
+    nullable = false)
   private Sprint sprint;
   @OneToOne
   @JoinColumn(name = "file_backlog_id",
-              referencedColumnName = "id")
+    referencedColumnName = "id")
   private Resource fileBackLog;
   @ManyToMany
   @JoinTable(name = "sprint_resource",
-             joinColumns = {@JoinColumn(name = "project_id",
-                                        referencedColumnName = "project_id"),
-                            @JoinColumn(name = "sprint_id",
-                                        referencedColumnName = "sprint_id")},
-             inverseJoinColumns = @JoinColumn(name = "resource_id"))
+    joinColumns = {
+      @JoinColumn(name = "project_id",
+        referencedColumnName = "project_id"),
+      @JoinColumn(name = "sprint_id",
+        referencedColumnName = "sprint_id")},
+    inverseJoinColumns = @JoinColumn(name = "resource_id"))
   private List<Resource> dailyFiles;
+//  private Instant dtPreview;
+  private int removedIssue;
+private boolean predictedResult;
+private Instant dtLastPredicted;
 
   public ProjectSprint() {
   }
@@ -51,7 +56,7 @@ public class ProjectSprint {
     this.sprint = builder.sprint;
 //        this.issues = builder.issues;
 //        this.dtPlanning = builder.DTPlanning;
-//        this.dtPreview = builder.DTPreview;
+//    this.dtPreview = builder.dtPreview;
   }
 
   public static class ProjectSprintBuilder {
@@ -60,7 +65,7 @@ public class ProjectSprint {
     private Sprint sprint;
     private List<Issue> issues;
 //        private Instant DTPlanning;
-//        private Instant DTPreview;
+//        private Instant dtPreview;
 
     public ProjectSprintBuilder id(ProjectSprintId id) {
       this.id = id;
@@ -81,6 +86,10 @@ public class ProjectSprint {
       this.issues = issues;
       return this;
     }
+//    public ProjectSprintBuilder dtPreview(Instant dtPreview) {
+//      this.dtPreview = dtPreview;
+//      return this;
+//    }
 
     public ProjectSprint build() {
       return new ProjectSprint(this);
@@ -125,5 +134,29 @@ public class ProjectSprint {
 
   public void setDailyFiles(List<Resource> dailyFiles) {
     this.dailyFiles = dailyFiles;
+  }
+
+  public int getRemovedIssue() {
+    return removedIssue;
+  }
+
+  public void setRemovedIssue(int removedIssue) {
+    this.removedIssue = removedIssue;
+  }
+
+  public boolean isPredictedResult() {
+    return predictedResult;
+  }
+
+  public void setPredictedResult(boolean predictedResult) {
+    this.predictedResult = predictedResult;
+  }
+
+  public Instant getDtLastPredicted() {
+    return dtLastPredicted;
+  }
+
+  public void setDtLastPredicted(Instant dtLastPredicted) {
+    this.dtLastPredicted = dtLastPredicted;
   }
 }

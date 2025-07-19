@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface ChangeLogMapper {
   ChangeLogRequest taskToCreateLogRequest(com.kltn.server.model.entity.Issue task, Issue issueMongo);
+  ChangeLogRequest taskToDeleteLogRequest(com.kltn.server.model.entity.Issue task, Issue issueMongo);
 
   ChangeLogRequest projectToCreateLog(Project project, com.kltn.server.model.collection.Project projectMongo);
 

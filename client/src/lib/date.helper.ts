@@ -1,4 +1,11 @@
-import { addDays, differenceInDays, format, startOfDay } from 'date-fns'
+import {
+  addDays,
+  addMilliseconds,
+  differenceInDays,
+  differenceInMilliseconds,
+  format,
+  startOfDay
+} from 'date-fns'
 
 const formatDateToString = (
   date: Date,
@@ -32,10 +39,16 @@ function getDateByPercent(start: Date, end: Date, percent: number): Date {
   return startOfDay(addDays(start, targetDay))
 }
 
+const getMiddleDate = (start: Date, end: Date): Date => {
+  const diff = differenceInMilliseconds(end, start)
+  return addMilliseconds(start, diff / 2)
+}
+
 export {
   formatDateToString,
   formatDateRange,
   parseStringToDate,
   toISODateString,
-  getDateByPercent
+  getDateByPercent,
+  getMiddleDate
 }
