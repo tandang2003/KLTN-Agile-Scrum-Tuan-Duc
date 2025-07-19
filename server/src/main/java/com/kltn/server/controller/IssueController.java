@@ -5,6 +5,7 @@ import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.issue.IssueDetailResponse;
 import com.kltn.server.DTO.response.issue.IssueRelationResponse;
 import com.kltn.server.DTO.response.issue.IssueResponse;
+import com.kltn.server.DTO.response.skill.UserSuitableResponse;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.service.entity.IssueService;
@@ -33,7 +34,7 @@ public class IssueController {
     @Valid @RequestBody IssueCreateRequest taskResponse) {
     var task = taskService.createTaskBacklog(taskResponse);
     return ResponseEntity.ok()
-                         .body(task);
+      .body(task);
   }
 
 
@@ -42,7 +43,7 @@ public class IssueController {
   public ResponseEntity<ApiResponse<IssueResponse>> createTask(@Valid @RequestBody IssueCreateRequest taskResponse) {
     var task = taskService.createTask(taskResponse);
     return ResponseEntity.ok()
-                         .body(task);
+      .body(task);
   }
 
   @GetMapping("{issueId}/{sprintId}")
@@ -50,7 +51,7 @@ public class IssueController {
                                                                              @PathVariable String sprintId) {
     ApiResponse<IssueDetailResponse> task = taskService.getIssueDetailById(new IssueDetailRequest(issueId, sprintId));
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
 
   }
 
@@ -59,7 +60,7 @@ public class IssueController {
     @PathVariable String issueId) {
     ApiResponse<IssueDetailResponse> task = taskService.getCurrentIssueDetailById(issueId);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @PutMapping
@@ -67,7 +68,7 @@ public class IssueController {
   public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateRequest taskResponse) {
     var task = taskService.updateTask(taskResponse);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @PutMapping("/update-status")
@@ -75,7 +76,7 @@ public class IssueController {
   public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateStatusRequest request) {
     var task = taskService.updateTask(request);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @PutMapping("{id}/reopen")
@@ -83,60 +84,71 @@ public class IssueController {
   public ResponseEntity<ApiResponse<Boolean>> updateTask(@PathVariable String id) {
     var task = taskService.reopen(id);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @GetMapping("/list")
   public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssues(@RequestParam("project_id") String projectId,
                                                                     @RequestParam(value = "sprint_id",
-                                                                                  required = false) String sprintId) {
+                                                                      required = false) String sprintId) {
     var issues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(sprintId, projectId));
     return ResponseEntity.status(issues.getCode())
-                         .body(issues);
+      .body(issues);
   }
 
   @PostMapping("/relation")
   public ResponseEntity<ApiResponse<IssueRelationResponse>> relationShipIssue(
     @Valid @RequestBody IssueAssignRelationRequest request) {
     if (request.getIssueId()
-               .equals(request.getIssueRelatedId())) {
+      .equals(request.getIssueRelatedId())) {
       throw AppException.builder()
-                        .error(Error.INVALID_PARAMETER_REQUEST)
-                        .message("Cannot create relation with itself")
-                        .build();
+        .error(Error.INVALID_PARAMETER_REQUEST)
+        .message("Cannot create relation with itself")
+        .build();
     }
     var task = taskService.createRelation(request);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @DeleteMapping("/relation")
   public ResponseEntity<ApiResponse<Void>> relationShipIssue(@Valid @RequestBody IssueRemoveRelationRequest request) {
     if (request.getIssueId()
-               .equals(request.getIssueRelatedId())) {
+      .equals(request.getIssueRelatedId())) {
       throw AppException.builder()
-                        .error(Error.INVALID_PARAMETER_REQUEST)
-                        .build();
+        .error(Error.INVALID_PARAMETER_REQUEST)
+        .build();
     }
     var task = taskService.deleteRelation(request);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @GetMapping("{id}/relations")
   public ResponseEntity<ApiResponse<List<IssueRelationResponse>>> getRelations(@PathVariable String id) {
     var task = taskService.getRelations(id);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
   @GetMapping("{id}/checking-relations")
   public ResponseEntity<ApiResponse<List<IssueResponse>>> getIssueRelations(@PathVariable String id,
                                                                             @RequestParam(value = "type",
-                                                                                          required = false) String type) {
+                                                                              required = false) String type) {
     var task = taskService.getIssueWithTypeRelation(id, type);
     return ResponseEntity.status(task.getCode())
-                         .body(task);
+      .body(task);
   }
 
+  @DeleteMapping("{id}")
+  public ResponseEntity<ApiResponse<Void>> deleteIssue(@PathVariable String id) {
+    var response = taskService.delete(id);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{id}/suitable")
+  public ResponseEntity<ApiResponse<List<UserSuitableResponse>>> getUserSuitable(@PathVariable String id) {
+    var response = taskService.getUserSuitable(id);
+    return ResponseEntity.ok(response);
+  }
 }
