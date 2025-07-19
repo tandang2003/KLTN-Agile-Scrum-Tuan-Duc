@@ -61,4 +61,5 @@ public class SkillController {
     return ResponseEntity.ok()
         .body(response);
   }
+
 }
