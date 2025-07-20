@@ -86,8 +86,9 @@ paths:
     $ref: "./paths/issue/index.yaml"
   /dashboard/project:
     $ref: "./paths/dashboard/project.yaml"
-  # /dashboard/workspace:
-  #   $ref: "./paths/dashboard/workspace.yaml"
+  /dashboard/workspace:
+    $ref: "./paths/dashboard/workspace.yaml"
+
 components:
   schemas:
     TagObject:

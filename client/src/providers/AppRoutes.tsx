@@ -9,6 +9,7 @@ import HomePage from '@/pages/home/page'
 import RootLayout from '@/pages/layout'
 import ManagerLayout from '@/pages/manager/layout'
 import ManagerPage from '@/pages/manager/page'
+import WorkspaceDashboardPage from '@/pages/manager/workspace/[:id]/dashboard/page'
 import WorkspaceDetailLayout from '@/pages/manager/workspace/[:id]/layout'
 import WorkspaceDetailPage from '@/pages/manager/workspace/[:id]/page'
 import WorkspaceProjectPage from '@/pages/manager/workspace/[:id]/project/page'
@@ -95,6 +96,10 @@ const AppRoutes = () => {
                     element={<WorkspaceSprintTemplatePage />}
                   />
                   <Route path='report' element={<WorkspaceReportPage />} />
+                  <Route
+                    path='dashboard'
+                    element={<WorkspaceDashboardPage />}
+                  />
                 </Route>
               </Route>
               <Route path='project'>
