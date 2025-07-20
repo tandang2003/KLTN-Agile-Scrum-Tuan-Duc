@@ -79,6 +79,17 @@ const WorkspaceNavigate = ({ id }: WorkspaceNavigateProps) => {
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className='data-[active=true]:active-tag'
+              asChild
+              data-active={pathname.includes('/dashboard')}
+            >
+              <Link to={`/manager/workspace/${id}/dashboard`}>
+                {messages.manager.workspace.detail.navigate.dashboard}
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
         </RequiredAuth>
       </NavigationMenuList>
     </NavigationMenu>
