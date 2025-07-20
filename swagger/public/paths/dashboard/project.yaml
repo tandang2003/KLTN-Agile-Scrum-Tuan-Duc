@@ -1,5 +1,7 @@
 get:
   summary: Dashboard project
+  tags:
+    - Dashboard
   description: Get Dashboard for project
   parameters:
     - in: query
