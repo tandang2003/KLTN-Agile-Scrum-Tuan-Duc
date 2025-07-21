@@ -36,8 +36,8 @@ public class PredictScheduler {
 
   @Autowired
   public PredictScheduler(ClockSimulator clockSimulator, ProjectSprintRepository projectSprintRepository,
-                          @Qualifier("predictThreadScheduler")
-                          TaskScheduler predictScheduler, KafkaTemplate<String, Object> kafkaTemplate) {
+      @Qualifier("predictThreadScheduler") TaskScheduler predictScheduler,
+      KafkaTemplate<String, Object> kafkaTemplate) {
     this.clockSimulator = clockSimulator;
     this.predictScheduler = predictScheduler;
     this.kafkaTemplate = kafkaTemplate;

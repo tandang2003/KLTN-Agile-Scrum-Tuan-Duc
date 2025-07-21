@@ -1,4 +1,7 @@
 import Icon from '@/components/Icon'
+import Message from '@/components/Message'
+import DeleteDropdownItem from '@/components/sprint/action/DeleteDropdownItem'
+import UpdateDropdownItem from '@/components/sprint/action/UpdateDropdownItem'
 import ToolTip from '@/components/Tooltip'
 import {
   DropdownMenu,
@@ -11,18 +14,16 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { HttpStatusCode } from '@/constant/app.const'
+import messages from '@/constant/message.const'
 import { useMoveIssueToSprintMutation } from '@/feature/issue/issue.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
-import useOpenIssueUpdate from '@/hooks/use-issue-update'
-import { HttpStatusCode } from '@/constant/app.const'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
-import messages from '@/constant/message.const'
-import Message from '@/components/Message'
-import useSprintCurrent from '@/hooks/use-sprint-current'
 type SprintCardInProductBacklogProps = {
   data: IssueResponse
 }
@@ -39,7 +40,7 @@ const SprintCardInProductBacklog = ({
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
-  const { action } = useOpenIssueUpdate()
+
   const handleUpdateSprint = (sprintId: Id) => {
     moveToSprint({
       id: item.id,
@@ -93,13 +94,7 @@ const SprintCardInProductBacklog = ({
             <Icon icon={'ri:more-fill'} className='mr-3 ml-auto' />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuItem
-              onClick={() => {
-                action(item.id)
-              }}
-            >
-              {message.dropdown.edit}
-            </DropdownMenuItem>
+            <UpdateDropdownItem id={item.id} />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 {message.dropdown.moveToSprint}
@@ -128,6 +123,7 @@ const SprintCardInProductBacklog = ({
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
+            <DeleteDropdownItem id={item.id} name={item.name} />
           </DropdownMenuContent>
         </DropdownMenu>
       </RequiredAuth>
