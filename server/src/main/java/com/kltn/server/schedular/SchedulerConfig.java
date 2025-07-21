@@ -20,8 +20,8 @@ public class SchedulerConfig {
   }
 
   @Bean
-  @Qualifier("predictScheduler")
-  public TaskScheduler predictScheduler() {
+  @Qualifier("predictThreadScheduler")
+  public TaskScheduler predictThreadScheduler() {
     ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
     scheduler.setPoolSize(10);
     scheduler.setThreadNamePrefix("DynamicScheduler-");

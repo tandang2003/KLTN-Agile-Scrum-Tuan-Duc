@@ -38,10 +38,10 @@ public class ProjectSprint {
         referencedColumnName = "sprint_id")},
     inverseJoinColumns = @JoinColumn(name = "resource_id"))
   private List<Resource> dailyFiles;
-//  private Instant dtPreview;
+  //  private Instant dtPreview;
   private int removedIssue;
-private boolean predictedResult;
-private Instant dtLastPredicted;
+  private int predictedResult = -2; // -2: not predicted, -1: predicted result is fail, 0: predicted result is success
+  private Instant dtLastPredicted;
 
   public ProjectSprint() {
   }
@@ -144,11 +144,11 @@ private Instant dtLastPredicted;
     this.removedIssue = removedIssue;
   }
 
-  public boolean isPredictedResult() {
+  public int isPredictedResult() {
     return predictedResult;
   }
 
-  public void setPredictedResult(boolean predictedResult) {
+  public void setPredictedResult(int predictedResult) {
     this.predictedResult = predictedResult;
   }
 
