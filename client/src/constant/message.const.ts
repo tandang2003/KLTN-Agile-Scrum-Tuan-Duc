@@ -114,6 +114,24 @@ const messages = {
             y: 'Thành viên'
           }
         }
+      },
+      teacher: {
+        tasksByStatusPerStudentBarChart: {
+          title: 'Phân loại trạng thái của các issue theo sinh viên',
+          dataset: {
+            labelIssueTodo: 'Issue chuẩn bị thực hiện',
+            labelIssueInProcess: 'Issue đang thực hiện',
+            labelIssueReview: 'Issue đang đợi review',
+            labelIssueDone: 'Issue đã hoàn thành'
+          },
+          scales: {
+            x: 'Số lượng issue',
+            y: 'Thành viên'
+          }
+        },
+        tasksByStatusPerProjectBarChart: {
+          title: 'Phân loại trạng thái của các issue theo nhóm'
+        }
       }
     },
     dataTable: {
@@ -635,7 +653,8 @@ const messages = {
           student: 'Sinh viên',
           project: 'Nhóm',
           template: 'Mẫu Sprint',
-          report: 'Báo cáo'
+          report: 'Báo cáo',
+          dashboard: 'Thống kê'
         },
         template: {
           list: {

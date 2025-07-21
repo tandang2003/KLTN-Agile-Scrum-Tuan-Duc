@@ -1,4 +1,5 @@
 import { IssuePriority, IssueStatus } from '@/types/model/typeOf'
+import { Id } from '@/types/other.type'
 
 type DashboardRes = {
   issueCreated: number
@@ -9,6 +10,33 @@ type DashboardRes = {
   priority: Record<IssuePriority, number>
   issueTrend?: IssueTrendItem[]
   issueStatusTrend?: IssueStatusTrendItem[]
+}
+
+type DashboardTeacherRes = {
+  issueCreated: number
+  issueDone: number
+  issueFailed: number
+  projects: number
+  avgMember: number
+  byStatusPerStudent: {
+    assignee: {
+      uniId: Id
+      name: string
+    }
+    total: number
+    done: number
+    failed: number
+  }[]
+  byStatusPerProject: {
+    id: Id
+    name: string
+    status: {
+      todo: number
+      inProcess: number
+      review: number
+      done: number
+    }
+  }[]
 }
 
 type IssueTrendItem = {
@@ -27,6 +55,17 @@ type WorkloadDataItem = {
   failed: number
 }
 
+type WorkloadDataItemDetail = {
+  assignee: {
+    uniId: string
+    name: string
+  }
+  todo: number
+  inProcess: number
+  review: number
+  done: number
+}
+
 type IssueStatusTrendItem = {
   process: string
   issuesTodo: number
@@ -38,5 +77,6 @@ export type {
   DashboardRes,
   WorkloadDataItem,
   IssueTrendItem,
-  IssueStatusTrendItem
+  IssueStatusTrendItem,
+  WorkloadDataItemDetail
 }

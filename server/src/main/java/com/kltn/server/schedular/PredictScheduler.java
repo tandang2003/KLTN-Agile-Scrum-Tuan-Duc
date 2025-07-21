@@ -46,23 +46,21 @@ public class PredictScheduler {
     this.taskEndTimes = new ConcurrentHashMap<>();
   }
 
-
   public synchronized void scheduleSprint(String sprintId, LocalDateTime dtPredict) {
     cancelSprintTask(sprintId);
-    Runnable task = () ->
-      {
+    Runnable task = () -> {
       sendMessage(sprintId);
-      };
+    };
     Instant end = dtPredict.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
-      .toInstant();
+        .toInstant();
     if (clockSimulator.now()
-      .isAfter(end)) {
+        .isAfter(end)) {
       sendMessage(sprintId);
       return;
     }
 
     long delay = Duration.between(clockSimulator.now(), end)
-      .getSeconds();
+        .getSeconds();
     delay = Math.max(0, delay);
     long timeSpeech = clockSimulator.getTimeSpeech();
     Instant now = clockSimulator.now();
@@ -76,7 +74,7 @@ public class PredictScheduler {
   public synchronized void scheduleSprintEnd(String sprintId, LocalDateTime endTime) {
     try {
       List<String> projectIds = projectSprintRepository.findProjectIdBySprintId(sprintId)
-        .orElseThrow(() -> new RuntimeException("Sprint not found"));
+          .orElseThrow(() -> new RuntimeException("Sprint not found"));
 
       for (String projectId : projectIds) {
         scheduleSprint(sprintId, endTime);
@@ -106,7 +104,7 @@ public class PredictScheduler {
 
     for (Map.Entry<String, LocalDateTime> entry : savedTasks.entrySet()) {
       String[] ids = entry.getKey()
-        .split(":");
+          .split(":");
       String sprintId = ids[0];
       scheduleSprint(sprintId, entry.getValue());
     }
@@ -121,10 +119,9 @@ public class PredictScheduler {
     for (ProjectSprint projectSprint : projectSprints) {
       String curUser = "21130171";
       SprintPredictRequest payload = SprintPredictRequest.builder()
-        .projectId(projectSprint.getProject().getId())
-        .sprintId(projectSprint.getSprint().getId())
-        .build()
-        ;
+          .projectId(projectSprint.getProject().getId())
+          .sprintId(projectSprint.getSprint().getId())
+          .build();
 
       ProducerRecord<String, Object> record = new ProducerRecord<>("predict", payload);
       record.headers().add("X-Auth-User", curUser.getBytes(StandardCharsets.UTF_8));
