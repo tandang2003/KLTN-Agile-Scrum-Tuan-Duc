@@ -6,7 +6,8 @@ import {
   IssueDetailResponse,
   IssueResponse,
   UpdateIssueRequest,
-  UpdatePositionIssueRequest
+  UpdatePositionIssueRequest,
+  UserSuitableResponse
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
@@ -53,7 +54,6 @@ const issueService = {
     >(`/issue/update-status`, req)
     return res.data.data
   },
-
   reopenIssue: async (issueId: Id): Promise<boolean> => {
     const res = await httpService.put<ResponseApi<boolean>, void>(
       `/issue/${issueId}/reopen`,
@@ -64,6 +64,13 @@ const issueService = {
   deleteIssue: async (issueId: Id): Promise<void> => {
     const res = await httpService.delete<ResponseApi<void>>(
       `/issue/${issueId}`,
+      undefined
+    )
+    return res.data.data
+  },
+  getMembers: async (issueId: Id): Promise<UserSuitableResponse[]> => {
+    const res = await httpService.get<ResponseApi<UserSuitableResponse[]>>(
+      `/issue/${issueId}/suitable`,
       undefined
     )
     return res.data.data
