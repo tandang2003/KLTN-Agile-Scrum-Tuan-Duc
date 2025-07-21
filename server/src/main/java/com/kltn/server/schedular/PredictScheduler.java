@@ -1,20 +1,14 @@
 package com.kltn.server.schedular;
 
-import com.kltn.server.DTO.request.kafka.SnapshotRequest;
 import com.kltn.server.DTO.request.kafka.SprintPredictRequest;
 import com.kltn.server.config.init.ClockSimulator;
-import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;

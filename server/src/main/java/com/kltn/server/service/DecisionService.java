@@ -64,15 +64,15 @@ public class DecisionService {
     iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
     iterationModelBuilder.issueModelList(getIssuesInSprint(project, sprint));
     IterationModel iterationModel = iterationModelBuilder.build();
-    boolean b = sendToPython(iterationModel);
+    int r = sendToPython(iterationModel);
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
       .sprintId(sprint.getId())
       .projectId(project.getId())
       .build());
-    projectSprint.setPredictedResult(b);
+    projectSprint.setPredictedResult(r);
     projectSprint.setDtLastPredicted(ClockSimulator.now());
     projectSprintService.save(projectSprint);
-    return b;
+    return r == 0;
   }
 
   private List<IssueModel> getIssuesInSprint(Project project, Sprint sprint) {
@@ -112,7 +112,7 @@ public class DecisionService {
   }
 
 
-  private boolean sendToPython(IterationModel data) {
+  private int sendToPython(IterationModel data) {
     RestTemplate restTemplate = new RestTemplate();
 
     HttpHeaders headers = new HttpHeaders();
@@ -123,7 +123,6 @@ public class DecisionService {
     ResponseEntity<Integer[]> response = restTemplate.postForEntity(pythonServer, request, Integer[].class);
     System.out.println("Python Response: ");
     assert response.getBody() != null;
-    int result = response.getBody()[0];
-    return result == 0;
+    return response.getBody()[0];
   }
 }
