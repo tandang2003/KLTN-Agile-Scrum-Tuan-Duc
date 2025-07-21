@@ -152,6 +152,15 @@ type UpdatePositionIssueRequest = {
   status: IssueStatus
 }
 
+type UserSuitableResponse = {
+  id: Id
+  name: string
+  skills: {
+    skillName: string
+    proficiency: number
+  }[]
+}
+
 export {
   BaseIssueSchema,
   CreateIssueSchema,
@@ -168,5 +177,6 @@ export type {
   TopicModelType,
   UpdateIssueRequest,
   UpdateIssueType,
-  UpdatePositionIssueRequest
+  UpdatePositionIssueRequest,
+  UserSuitableResponse
 }

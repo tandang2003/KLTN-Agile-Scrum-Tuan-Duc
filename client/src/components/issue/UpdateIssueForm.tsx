@@ -2,7 +2,6 @@ import SectionComment from '@/components/issue/comment/SectionComment'
 import { UpdateAttachmentIssue } from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
-import UpdateDropDownMenu from '@/components/issue/updateFields/UpdateDropdownMenu'
 import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'
 import UpdateNameIssue from '@/components/issue/updateFields/UpdateNameIssue'
 import UpdatePriorityIssue from '@/components/issue/updateFields/UpdatePriorityIssue'
@@ -20,7 +19,7 @@ import {
   UpdateIssueType
 } from '@/types/issue.type'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 type UpdateIssueFormProps = {
   data: IssueDetailResponse
@@ -29,8 +28,6 @@ type UpdateIssueFormProps = {
 const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
   const message = messages.component.issue
 
-  const [isAddRelationship, setIsAddRelationship] = useState<boolean>(false)
-  const [isAddSubTask, setIsAddSubTask] = useState<boolean>(false)
   const form = useForm<UpdateIssueType>({
     resolver: zodResolver(UpdateIssueSchema),
     defaultValues: {
@@ -82,12 +79,7 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <div className='my-3'>
               <UpdateNameIssue />
             </div>
-            <div className='my-3'>
-              <UpdateDropDownMenu
-                onClickAddRelationship={() => setIsAddRelationship(true)}
-                onClickAddSubTask={() => setIsAddSubTask(true)}
-              />
-            </div>
+
             <div className='my-3'>
               <Label className='mb-2 text-xl'>{message.description}</Label>
               <UpdateDescriptionIssue />
@@ -105,15 +97,10 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
                 })}
               />
             </div>
-            <UpdateSubTaskForm
-              open={isAddSubTask}
-              cancel={() => setIsAddSubTask(false)}
-            />
+            <UpdateSubTaskForm />
             <UpdateRelationship
               issueId={data.id}
               initialData={data.relations}
-              open={isAddRelationship}
-              cancel={() => setIsAddRelationship(false)}
             />
             <Tabs defaultValue='comment' className='mt-3'>
               <TabsList>

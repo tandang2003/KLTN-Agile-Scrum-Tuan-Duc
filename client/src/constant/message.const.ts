@@ -444,7 +444,14 @@ const messages = {
       sprintCardInBacklog: {
         dropdown: {
           moveToSprint: 'Chuyển sang sprint',
-          edit: 'Chỉnh sửa issue'
+          edit: 'Chỉnh sửa issue',
+          delete: 'Xóa issue'
+        },
+        alert: {
+          delete: {
+            title: 'Xóa issue',
+            message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
+          }
         },
         toast: {
           moveToSprint: {
@@ -465,10 +472,6 @@ const messages = {
           reopen: 'Mở lại issue'
         },
         alert: {
-          delete: {
-            title: 'Xóa issue',
-            message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
-          },
           moveToSprint: {
             title: 'Chuyển issue sang sprint',
             message:
@@ -492,13 +495,27 @@ const messages = {
             success: 'Mở lại issue thành công',
             conflict: 'Issue không ở trạng thái DONE, không thể mở lại',
             failed: 'Mở lại issue thất bại, vui lòng thử lại sau'
-          },
-          delete: {
-            success: 'Xóa issue thành công',
-            failed: 'Xóa issue thất bại, vui lòng thử lại sau'
           }
         },
         create: 'Tạo issue'
+      },
+      deleteDropdownItem: {
+        dropdown: {
+          delete: 'Xóa issue'
+        },
+        alert: {
+          title: 'Xóa issue',
+          message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
+        },
+        toast: {
+          success: 'Xóa issue thành công',
+          failed: 'Xóa issue thất bại, vui lòng thử lại sau'
+        }
+      },
+      updateDropdownItem: {
+        dropdown: {
+          edit: 'Chỉnh sửa issue'
+        }
       }
     },
     issue: {

@@ -15,7 +15,6 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
 import { DEFAULT_STATUS } from '@/constant/app.const'
 import boardService from '@/services/board.service'
@@ -35,6 +34,7 @@ import messages, {
 } from '@/constant/message.const'
 import Message from '@/components/Message'
 import { getComplexityBilingual } from '@/lib/issue.helper'
+import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
