@@ -94,4 +94,6 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndAssigneeIdAndSprintId(String projectId, String assigneeId, String sprintId);
 
   int countByProjectIdAndAssigneeIdAndStatusAndSprintId(String projectId, String assigneeId, IssueStatus status, String sprintId);
+
+  int countByProjectIdAndStatusAndSprintId(String projectId, IssueStatus status, String sprintId);
 }

@@ -77,8 +77,8 @@ public class DecisionService {
 
   private List<IssueModel> getIssuesInSprint(Project project, Sprint sprint) {
     List<Issue> issues = issueService.getIssuesBySprintId(project.getId(), sprint.getId());
-    if (issues == null || issues.isEmpty()) {
-      throw AppException.builder().error(Error.NOT_FOUND).message("No issues found in the sprint").build();
+    if (issues == null || issues.isEmpty()) {return  new ArrayList<>();
+//      throw AppException.builder().error(Error.NOT_FOUND).message("No issues found in the sprint").build();
     }
     List<IssueModel> issueModels = new ArrayList<>();
     for (Issue issue : issues) {

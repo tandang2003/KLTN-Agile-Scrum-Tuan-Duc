@@ -46,11 +46,11 @@ public class DashboardController {
     var response = dashBoardService.getWorkloadForTeacher(workspaceId, sprintId, page, size);
     return ResponseEntity.ok(response);
   }
-//  @GetMapping("/workspace/project")
-//  public ResponseEntity<ApiResponse<ApiPaging<ProjectLoad>>> getProjectLoadPaging(
-//    @RequestParam String workspaceId,
-//    @RequestParam(required = false) String sprintId, @RequestParam int page, @RequestParam(defaultValue = "10") int size) {
-//    var response = dashBoardService.getProjectLoadForTeacher(workspaceId, sprintId, page, size);
-//    return ResponseEntity.ok(response);
-//  }
+  @GetMapping("/workspace/project")
+  public ResponseEntity<ApiResponse<ApiPaging<ProjectLoad>>> getProjectLoadPaging(
+    @RequestParam String workspaceId,
+    @RequestParam(required = false) String sprintId, @RequestParam int page, @RequestParam(defaultValue = "10") int size) {
+    var response = dashBoardService.getProjectLoadForTeacher(workspaceId, sprintId, page, size);
+    return ResponseEntity.ok(response);
+  }
 }

@@ -32,6 +32,8 @@ public class DashboardWorkspaceResponse {
     this.numOfProject = builder.numOfProject;
     this.maxNumMember = builder.maxNumMember;
     this.minNumMember = builder.minNumMember;
+    this.assigneeRate = builder.assigneeRate;
+    this.taskFinishRate = builder.taskFinishRate;
 //    this.students = builder.students;
 //    this.projects = builder.projects;
   }
@@ -132,5 +134,20 @@ public class DashboardWorkspaceResponse {
 
   // ------------ Nested Class: ProjectLoad -------------
 
+  public double getAssigneeRate() {
+    return assigneeRate;
+  }
+
+  public void setAssigneeRate(double assigneeRate) {
+    this.assigneeRate = assigneeRate;
+  }
+
+  public double getTaskFinishRate() {
+    return taskFinishRate;
+  }
+
+  public void setTaskFinishRate(double taskFinishRate) {
+    this.taskFinishRate = taskFinishRate;
+  }
 }
 
