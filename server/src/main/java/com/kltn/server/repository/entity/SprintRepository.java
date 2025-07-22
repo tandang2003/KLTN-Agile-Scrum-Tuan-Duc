@@ -22,4 +22,6 @@ public interface SprintRepository extends JpaRepository<Sprint, String> {
     boolean findByIdAndDtEndAfter(String id, Instant dtEndAfter);
 
   boolean existsByIdAndDtEndAfter(String id, Instant dtEndAfter);
+
+  Sprint getSprintsById(String id);
 }
