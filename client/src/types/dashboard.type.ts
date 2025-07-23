@@ -8,35 +8,14 @@ type DashboardRes = {
   status: Record<IssueStatus, number>
   workload: WorkloadDataItem[]
   priority: Record<IssuePriority, number>
-  issueTrend?: IssueTrendItem[]
-  issueStatusTrend?: IssueStatusTrendItem[]
 }
 
-type DashboardTeacherRes = {
-  issueCreated: number
-  issueDone: number
-  issueFailed: number
-  projects: number
-  avgMember: number
-  byStatusPerStudent: {
-    assignee: {
-      uniId: Id
-      name: string
-    }
-    total: number
-    done: number
-    failed: number
-  }[]
-  byStatusPerProject: {
-    id: Id
-    name: string
-    status: {
-      todo: number
-      inProcess: number
-      review: number
-      done: number
-    }
-  }[]
+type DashboardWorkspaceResponse = {
+  numOfProject: number
+  maxNumMember: number
+  minNumMember: number
+  assigneeRate: number
+  taskFinishRate: number
 }
 
 type IssueTrendItem = {
@@ -52,7 +31,7 @@ type WorkloadDataItem = {
   }
   total: number
   done: number
-  failed: number
+  notComplete: number
 }
 
 type WorkloadDataItemDetail = {
@@ -73,11 +52,22 @@ type IssueStatusTrendItem = {
   issuesReview: number
 }
 
+type ProjectWorkloadRes = {
+  id: Id
+  name: string
+  status: Record<IssueStatus, number>
+  total: number
+  done: number
+  notComplete: number
+  taskBalance: number
+}
+
 export type {
   DashboardRes,
   WorkloadDataItem,
   IssueTrendItem,
   IssueStatusTrendItem,
   WorkloadDataItemDetail,
-  DashboardTeacherRes
+  DashboardWorkspaceResponse,
+  ProjectWorkloadRes
 }

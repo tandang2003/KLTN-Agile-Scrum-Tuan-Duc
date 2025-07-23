@@ -1,7 +1,7 @@
 package com.kltn.server.DTO.response.dashboard;
 
 public class Workload {
-  private Assignee  assignee;
+  private Assignee assignee;
   private int total;
   private int done;
   private int notComplete;
@@ -20,7 +20,7 @@ public class Workload {
     return new WorkloadBuilder();
   }
 
-  public void setAssignee(Assignee  assignee) {
+  public void setAssignee(Assignee assignee) {
     this.assignee = assignee;
   }
 
@@ -32,17 +32,17 @@ public class Workload {
     this.done = done;
   }
 
-  public void setFailed(int notComplete) {
+  public void setNotComplete(int notComplete) {
     this.notComplete = notComplete;
   }
 
   public static class WorkloadBuilder {
-    private Assignee  assignee;
+    private Assignee assignee;
     private int total;
     private int done;
     private int notComplete;
 
-    public WorkloadBuilder assignee(Assignee  assignee) {
+    public WorkloadBuilder assignee(Assignee assignee) {
       this.assignee = assignee;
       return this;
     }
@@ -83,7 +83,7 @@ public class Workload {
     return done;
   }
 
-  public int getFailed() {
+  public int getNotComplete() {
     return notComplete;
   }
 }

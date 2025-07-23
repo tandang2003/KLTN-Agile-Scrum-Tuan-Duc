@@ -42,7 +42,7 @@ const MultiWorkloadBarChart = ({
       },
       {
         label: message.dataset.labelIssueFailed,
-        data: data.map((item) => item.failed),
+        data: data.map((item) => item.notComplete),
         backgroundColor: '#FF6384'
       }
     ]
