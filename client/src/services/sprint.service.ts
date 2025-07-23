@@ -4,6 +4,7 @@ import { Id } from '@/types/other.type'
 import {
   CreateSprintRequest,
   SprintResponse,
+  UpdateSprintForStudentRequest,
   UpdateSprintRequest
 } from '@/types/sprint.type'
 
@@ -26,6 +27,15 @@ const sprintService = {
       ResponseApi<SprintResponse>,
       UpdateSprintRequest
     >(`/sprint/teacher/update`, req)
+    return response.data.data
+  },
+  updateSprintForStudent: async (
+    req: UpdateSprintForStudentRequest
+  ): Promise<SprintResponse> => {
+    const response = await httpService.put<
+      ResponseApi<SprintResponse>,
+      UpdateSprintForStudentRequest
+    >(`/sprint/student/update`, req)
     return response.data.data
   },
   deleteSprint: async (sprintId: Id): Promise<void> => {

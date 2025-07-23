@@ -1,0 +1,109 @@
+# openapi.yaml (main file)
+openapi: 3.0.1
+info:
+  title: My API
+  description: |
+    # Overview 
+
+    API documentation for Spring Boot application
+    ## Structure api response format
+
+    ### Base Api
+
+    When a request sent to server, it always return a response has body like:
+
+    ```json
+    {
+      "code": 401,
+      "message": "Login"
+      "data": Object
+    }
+    ```
+    - `error`: status code
+    - `message`: description about api
+    - `data`: data will return for client, data structure is general
+
+    ### Validation Api
+    When a request failed because some field in body is missing, empty or not valid,
+    API will return a response with **status: 422 (Unprocessable entity)**
+
+    ```json
+    {
+      "code": 422,
+      "message": "Validation Error",
+      "error": [
+        {
+          "field": "field target"
+          "message": "message"
+        },
+       {
+          "field": "field target"
+          "message": "message"
+        }
+      ]
+    }
+    ```
+    - `code`: 422 (status code)
+    - `message`: description about api
+    - `error`: contain array present field and message error
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /auth:
+    $ref: "./paths/auth/index.yaml"
+  /auth/register:
+    $ref: "./paths/auth/register.yaml" # Assuming you'll create this for /auth/register
+  /user:
+    $ref: "./paths/user/index.yaml"
+  /user/check:
+    $ref: "./paths/user/check.yaml"
+  /user/workspace:
+    $ref: "./paths/user/workspace.yaml"
+  /workspace:
+    $ref: "./paths/workspace/index.yaml"
+  /workspace/{id}:
+    $ref: "./paths/workspace/id.yaml"
+  /workspace/list:
+    $ref: "./paths/workspace/list.yaml" # Renamed from previous /workspace post
+  /workspace/{workspace_id}/student:
+    $ref: "./paths/workspace/student.yaml"
+  /workspace/{workspace_id}/project:
+    $ref: "./paths/workspace/project.yaml"
+  /project/{id}:
+    $ref: "./paths/project/id.yaml"
+  /project:
+    $ref: "./paths/project/index.yaml"
+  /project/invite:
+    $ref: "./paths/project/invite.yaml"
+  /project/{project_id}/sprint:
+    $ref: "./paths/project/sprint.yaml"
+  /sprint:
+    $ref: "./paths/sprint/index.yaml"
+  /issue:
+    $ref: "./paths/issue/index.yaml"
+  /dashboard/project:
+    $ref: "./paths/dashboard/project.yaml"
+  /dashboard/workspace:
+    $ref: "./paths/dashboard/workspace.yaml"
+
+components:
+  schemas:
+    TagObject:
+      $ref: "./components/schemas/tag-object.yaml"
+    ResponseApi:
+      $ref: "./components/schemas/response-api.yaml"
+    ValidationErrorApi:
+      $ref: "./components/schemas/validation-error.yaml"
+    UnauthorizedErrorApi:
+      $ref: "./components/schemas/unauthenticated-error-api.yaml"
+    Status:
+      $ref: "./components/schemas/status.yaml"
+    Priority:
+      $ref: "./components/schemas/priority.yaml"
+    ApiPaging:
+      $ref: "./components/schemas/api-paging.yaml"
+  securitySchemes:
+    $ref: "./components/securitySchemes.yaml" # Optional: if you want to split security schemes

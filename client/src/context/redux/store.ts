@@ -4,6 +4,9 @@ import {
   sprintActiveMiddleware
 } from '@/context/redux/middleware'
 import rootReducer from '@/context/redux/reducer'
+import aggregateApi from '@/feature/aggregate/aggregate.api'
+import courseApi from '@/feature/course/course.api'
+import dashboardApi from '@/feature/dashboard/dashboard.api'
 import issueApi from '@/feature/issue/issue.api'
 import notificationApi from '@/feature/notification/notification.api'
 import projectApi from '@/feature/project/project.api'
@@ -42,6 +45,9 @@ export const store = configureStore({
       .concat(userApi.middleware)
       .concat(relationshipApi.middleware)
       .concat(notificationApi.middleware)
+      .concat(courseApi.middleware)
+      .concat(aggregateApi.middleware)
+      .concat(dashboardApi.middleware)
 })
 
 setupListeners(store.dispatch)

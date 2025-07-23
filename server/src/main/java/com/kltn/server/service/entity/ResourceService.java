@@ -5,9 +5,7 @@ import com.kltn.server.DTO.request.entity.resource.ResourceSignatureRequest;
 import com.kltn.server.DTO.request.entity.resource.ResourceTaskStoringRequest;
 import com.kltn.server.DTO.request.entity.resource.StoringAvatarSignatureRequest;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.resource.ResourcePathResponse;
-import com.kltn.server.DTO.response.resource.ResourceResponse;
-import com.kltn.server.DTO.response.resource.ResourceSignatureResponse;
+import com.kltn.server.DTO.response.resource.*;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.entity.ResourceMapper;
@@ -147,13 +145,13 @@ public class ResourceService {
     List<Resource> dailyFiles = projectSprint.getDailyFiles();
     if (dailyFiles != null && dailyFiles.size() >= 2) {
       throw AppException.builder()
-                        .error(Error.DAILY_FILE_ALREADY_UPLOAD)
-                        .build();
+          .error(Error.DAILY_FILE_ALREADY_UPLOAD)
+          .build();
     }
     Resource resource = resourceMapper.toResource(request);
     resource.setUser(userService.getCurrentUser());
     repository.save(resource);
-//    Sprint sprint = sprintService.getSprintById(request.getSprintId());
+    // Sprint sprint = sprintService.getSprintById(request.getSprintId());
 
     if (projectSprint.getDailyFiles() == null) {
       dailyFiles = new ArrayList<>();
@@ -195,7 +193,6 @@ public class ResourceService {
 
   }
 
-
   public ApiResponse<ResourceResponse> uploadAvatar(StoringAvatarSignatureRequest request) {
     Resource resource = resourceMapper.toResource(request);
     User user = userService.getCurrentUser();
@@ -204,10 +201,10 @@ public class ResourceService {
     user.setAvatar(resource);
     userService.save(user);
     return ApiResponse.<ResourceResponse>builder()
-                      .code(HttpStatus.CREATED.value())
-                      .message("Upload avatar successfully")
-                      .data(resourceMapper.toResourceResponse(resource))
-                      .build();
+        .code(HttpStatus.CREATED.value())
+        .message("Upload avatar successfully")
+        .data(resourceMapper.toResourceResponse(resource))
+        .build();
 
   }
 
@@ -233,6 +230,44 @@ public class ResourceService {
     return ApiResponse.<Void>builder()
         .code(HttpStatus.OK.value())
         .message("Delete file successfully")
+        .build();
+  }
+
+  public ApiResponse<List<ResourceSprintAcrossProjectResponse>> getResourceAcrossSprint(String id) {
+    List<ProjectSprint> projectsSprints = projectSprintService.getProjectSprintBySprintId(id);
+    projectsSprints.sort((p1, p2) -> p2.getSprint().getDtStart().isAfter(p1.getSprint().getDtStart()) ? -1 : 1);
+    List<ResourceSprintAcrossProjectResponse> dataResult = new ArrayList<>();
+    for (ProjectSprint projectSprint : projectsSprints) {
+      var builder = ResourceSprintAcrossProjectResponse.builder()
+          .id(projectSprint.getProject().getId())
+          .title(projectSprint.getProject().getName())
+          .daily(resourceMapper.toResourceResponseList(projectSprint.getDailyFiles()))
+          .backlog(resourceMapper.toResourceResponse(projectSprint.getFileBackLog())).build();
+      dataResult.add(builder);
+    }
+    return ApiResponse.<List<ResourceSprintAcrossProjectResponse>>builder()
+        .code(200)
+        .message("Danh sách các báo cáo của project")
+        .data(dataResult)
+        .build();
+  }
+
+  public ApiResponse<List<ResourceProjectAcrossSprintResponse>> getResourceAcrossProject(String id) {
+    List<ProjectSprint> projectsSprints = projectSprintService.getProjectSprintByProjectId(id);
+    projectsSprints.sort((p1, p2) -> p2.getProject().getName().compareTo(p1.getProject().getName()));
+    List<ResourceProjectAcrossSprintResponse> dataResult = new ArrayList<>();
+    for (ProjectSprint projectSprint : projectsSprints) {
+      var builder = ResourceProjectAcrossSprintResponse.builder()
+          .id(projectSprint.getSprint().getId())
+          .name(projectSprint.getSprint().getTitle())
+          .daily(resourceMapper.toResourceResponseList(projectSprint.getDailyFiles()))
+          .backlog(resourceMapper.toResourceResponse(projectSprint.getFileBackLog())).build();
+      dataResult.add(builder);
+    }
+    return ApiResponse.<List<ResourceProjectAcrossSprintResponse>>builder()
+        .code(200)
+        .message("Danh sách các báo cáo của project")
+        .data(dataResult)
         .build();
   }
 }

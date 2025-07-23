@@ -1,10 +1,5 @@
-import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
-import { Page, ResponseApi } from '@/types/http.type'
-import {
-  NotificationResponse,
-  ProjectNotificationRequest
-} from '@/types/notification.type'
+import { ResponseApi } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import {
   CreateProjectRequest,
@@ -46,9 +41,9 @@ const projectService = {
 
     return response.data.data
   },
-  inviteStudentToWProject: async (req: InviteStudentProjectRequestType) => {
+  inviteStudentToProject: async (req: InviteStudentProjectRequestType) => {
     const response = await httpService.post<
-      ResponseApi<ResourceOfSprintResponseType>,
+      ResponseApi<void>,
       InviteStudentProjectRequestType
     >(`/project/invite`, req)
 

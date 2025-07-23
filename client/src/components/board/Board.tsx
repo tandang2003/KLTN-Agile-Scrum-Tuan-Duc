@@ -32,7 +32,7 @@ type BoardProps = {
   onMove?: (data: DataOnMoveType) => void
 }
 
-const Board = ({ data: board, onMove }: BoardProps) => {
+const Board = ({ data: board, onMove, disabled }: BoardProps) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10
@@ -301,6 +301,7 @@ const Board = ({ data: board, onMove }: BoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      disabled={disabled}
     >
       <div className='flex bg-transparent'>
         {Object.entries(data.columns).map(([columnId, column]) => {

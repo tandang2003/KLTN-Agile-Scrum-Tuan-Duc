@@ -1,0 +1,53 @@
+@startuml
+autonumber
+
+actor Teacher as SV
+participant "View\n(/manager/:id/report)" as View
+participant "Resource\nController" as Controller
+participant "Resource\nService" as Service
+participant "Resource\nRepository" as Repo
+participant "Project\nSprint\nService" as ProjectSprintService
+participant "Project\nSprint\Repository" as ProjectSprintRepository
+participant "MySQL" as MySQL
+
+SV -> View : Teacher \n accesses
+activate SV
+
+activate View
+View --> View: Display list sprint
+SV -> View: Select sprint
+View -> Controller : GET \n /resource/:id/sprint
+
+activate Controller
+Controller -> Service : getResource\nAcrossSprint\n(req)
+activate Service
+Service -> ProjectSprintService: getProject\nSprintBy\nSprintId\n(id)
+activate ProjectSprintService
+ProjectSprintService -> ProjectSprintRepository: findBy\nSprintId(id)
+activate ProjectSprintRepository
+ProjectSprintRepository -> MySQL: findBy\nSprintId(id)
+activate MySQL
+MySQL --> ProjectSprintRepository: projectSprint
+deactivate MySQL
+ProjectSprintRepository --> ProjectSprintService: projectSprint
+deactivate ProjectSprintRepository
+ProjectSprintService --> Service: projectSprint
+deactivate Repo
+
+deactivate ProjectSprintService
+loop  items in sprintProject
+  Service -> Service: create \n resource\nfrom item
+  Service -> Service: set daily file
+  Service -> Service: set backlog file
+end
+
+Service --> Controller :  resource
+deactivate Service
+
+Controller --> View : resource
+deactivate Controller
+View --> SV : show resource
+
+deactivate View
+deactivate SV
+@enduml

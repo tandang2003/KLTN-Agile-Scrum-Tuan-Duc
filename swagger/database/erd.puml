@@ -1,0 +1,99 @@
+erDiagram
+    course ||--o{ course_relation : "prerequisite"
+    course_relation }o--|| course : "dependent"
+    issues ||--o{ issue_relation : "relates to"
+    issues ||--o{ issue_resources : "has"
+    issues ||--o{ sprints : "assigned to"
+    issues ||--o{ users : "assigned to"
+    issues ||--o{ projects : "belongs to"
+    issues ||--o{ users : "reviewed by"
+    permissions ||--o{ roles_permissions : "granted to"
+    roles ||--o{ roles_permissions : "has"
+    skills ||--o{ personal_skill : "acquired by"
+    users ||--o{ personal_skill : "has"
+    projects ||--o{ project_sprint : "has"
+    sprints ||--o{ project_sprint : "has"
+    resources ||--o{ project_sprint : "file backlog for"
+    resources ||--o{ issue_resources : "linked to"
+    resources ||--o{ sprint_resource : "linked to"
+    resources ||--o{ users : "avatar for"
+    sprints ||--o{ sprint_resource : "has"
+    course ||--o{ user_course_relation : "taken by"
+    users ||--o{ user_course_relation : "takes"
+    roles ||--o{ users : "assigned"
+    workspaces ||--o{ sprints : "contains"
+    users ||--o{ workspaces : "owns"
+    course ||--o{ workspaces : "associated with"
+    users ||--o{ workspaces_users_projects : "member of"
+    workspaces ||--o{ workspaces_users_projects : "contains"
+    projects ||--o{ workspaces_users_projects : "part of"
+    roles ||--o{ workspaces_users_projects : "role in"
+
+
+    course {
+        string id PK
+    }
+    course_relation {
+        string dependent_course_id PK
+        string prerequisite_course_id PK
+    }
+    issue_relation {
+        string issue_id PK
+        string issue_related_id PK
+    }
+    issue_resources {
+        string issue_id PK
+        string resource_id PK
+    }
+    issues {
+        string id PK
+    }
+    permissions {
+        string id PK
+    }
+    personal_skill {
+        string user_id PK
+        string skill_id PK
+    }
+    project_sprint {
+        string project_id PK
+        string sprint_id PK
+    }
+    projects {
+        string id PK
+    }
+    resources {
+        string id PK
+    }
+    roles {
+        string id PK
+    }
+    roles_permissions {
+        string role_id PK
+        string permission_id PK
+    }
+    skills {
+        string id PK
+    }
+    sprint_resource {
+        string project_id PK
+        string sprint_id PK
+        string resource_id PK
+    }
+    sprints {
+        string id PK
+    }
+    user_course_relation {
+        string course_id PK
+        string user_id PK
+    }
+    users {
+        string id PK
+    }
+    workspaces {
+        string id PK
+    }
+    workspaces_users_projects {
+        string user_id PK
+        string workspace_id PK
+    }

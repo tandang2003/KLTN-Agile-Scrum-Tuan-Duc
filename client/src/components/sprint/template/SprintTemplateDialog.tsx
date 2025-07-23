@@ -1,6 +1,7 @@
 import DialogController, {
   DialogControllerProps
 } from '@/components/dialog/DialogController'
+import Message from '@/components/Message'
 import SprintTemplateBaseForm from '@/components/sprint/template/SprintTemplateBaseForm'
 import {
   DialogContent,
@@ -8,6 +9,8 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
+import { HttpStatusCode, WEIGHT_POSITION } from '@/constant/app.const'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import {
   useCreateSprintMutation,
@@ -15,7 +18,6 @@ import {
   useUpdateSprintMutation
 } from '@/feature/sprint/sprint.api'
 import { closeDialogCreateSprint } from '@/feature/sprint/sprint.slice'
-import { HttpStatusCode, WEIGHT_POSITION } from '@/lib/const'
 import { handleErrorApi } from '@/lib/form'
 import { Id } from '@/types/other.type'
 import { BaseSprintFormType } from '@/types/sprint.type'
@@ -48,9 +50,21 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
     })
       .unwrap()
       .then(({ id, title }) => {
-        toast.success('Create sprint success', {
-          description: `Sprint #${id} - ${title}`
-        })
+        toast.success(
+          messages.component.sprint.template.dialog.toast.create.success
+            .description,
+          {
+            description: (
+              <Message
+                template={
+                  messages.component.sprint.template.dialog.toast.create.success
+                    .description
+                }
+                values={{ title: title, id: id }}
+              />
+            )
+          }
+        )
       })
       .then(() => {
         form.reset()
@@ -65,10 +79,14 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
           return
         }
         if (error.status === HttpStatusCode.Conflict) {
-          toast.error('Has sprint already exists in this time')
+          toast.error(
+            messages.component.sprint.template.dialog.toast.create.conflict
+          )
           return
         }
-        toast.error('Create sprint failed')
+        toast.error(
+          messages.component.sprint.template.dialog.toast.create.failed
+        )
       })
   }
 
@@ -84,9 +102,21 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
     })
       .unwrap()
       .then(({ id, title }) => {
-        toast.success('Update sprint success', {
-          description: `Sprint #${id} - ${title}`
-        })
+        toast.success(
+          messages.component.sprint.template.dialog.toast.update.success
+            .message,
+          {
+            description: (
+              <Message
+                template={
+                  messages.component.sprint.template.dialog.toast.update.success
+                    .description
+                }
+                values={{ title: title, id: id }}
+              />
+            )
+          }
+        )
       })
       .then(() => {
         dispatch(closeDialogCreateSprint())
@@ -96,20 +126,27 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
           error: error,
           setError: form.setError
         })
-        toast.error('Update sprint failed')
+        toast.error(
+          messages.component.sprint.template.dialog.toast.update.failed
+        )
       })
   }
   return (
     <DialogController open={open} onOpen={onOpen}>
       <DialogContent aria-describedby={undefined} className='sm:max-w-[50vw]'>
         <DialogHeader>
-          <DialogTitle>Sprint</DialogTitle>
+          <DialogTitle>
+            {messages.component.sprint.template.dialog.title}
+          </DialogTitle>
         </DialogHeader>
         {mode === 'create' && (
           <SprintTemplateBaseForm
             onSubmit={(values, form) => {
               handleCreateSprint(values, form)
             }}
+            submitText={
+              messages.component.sprint.template.baseForm.submit.create
+            }
           />
         )}
         {mode === 'update' && !dataSprint && (
@@ -122,12 +159,15 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
               start: new Date(dataSprint.start),
               predict: new Date(dataSprint.predict),
               end: new Date(dataSprint.end),
+              description: dataSprint.description,
               storyPoint: dataSprint.storyPoint
             }}
             onSubmit={(values, form) => {
               handleUpdateSprint(values, form)
             }}
-            submitText='Update Sprint'
+            submitText={
+              messages.component.sprint.template.baseForm.submit.update
+            }
           />
         )}
       </DialogContent>

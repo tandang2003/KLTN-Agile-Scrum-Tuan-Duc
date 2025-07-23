@@ -1,9 +1,8 @@
-import { FilterSprintBoard } from '@/components/board/type'
 import {
   setAuthorization,
   setProjectAuthorization
 } from '@/configuration/http.config'
-import { StorageItem } from '@/lib/const'
+import { StorageItem } from '@/constant/app.const'
 import { loadSessionStorage, toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'

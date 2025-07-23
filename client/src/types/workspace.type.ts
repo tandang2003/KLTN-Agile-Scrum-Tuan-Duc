@@ -1,4 +1,4 @@
-import { dateRange } from '@/types/common.type'
+import { dateRange, stringSchema } from '@/types/other.type'
 import { PageRequest } from '@/types/http.type'
 import { ProjectModel } from '@/types/model/project.model'
 import { UserModel } from '@/types/model/user.model'
@@ -6,27 +6,20 @@ import { WorkSpaceModel } from '@/types/model/workspace.model'
 import { Id } from '@/types/other.type'
 import { SprintResponse } from '@/types/sprint.type'
 import { z } from 'zod'
+import { RoleType } from '@/types/auth.type'
+import { CourseResponseType, UserCourseResponseType } from '@/types/course.type'
 
 const CreateWorkspaceSchema = z.object({
-  name: z.string(),
+  name: stringSchema.min(1, 'Tên không được để trống'),
   description: z.string().optional(),
-  date: dateRange.refine((data) => data.from <= data.to, {
-    message: 'Date end need after date start',
-    path: ['to']
-  })
+  date: dateRange,
+  courseId: z.string().min(1, 'Khóa học không được để trống')
 })
 
 const UpdateWorkspaceSchema = z.object({
   description: z.string().optional(),
-  date: z
-    .object({
-      from: z.date(),
-      to: z.date()
-    })
-    .refine((data) => data.from <= data.to, {
-      message: 'Date end need after date start',
-      path: ['to']
-    })
+  date: dateRange,
+  courseId: z.string().min(1, 'Khóa học không được để trống')
 })
 
 type CreateWorkspaceSchemaType = z.infer<typeof CreateWorkspaceSchema>
@@ -44,15 +37,13 @@ type UpdateWorkspaceReqType = Omit<UpdateWorkspaceSchemaType, 'date'> & {
 
 type WorkspaceDetailResponse = Pick<
   WorkSpaceModel,
-  | 'id'
-  | 'name'
-  | 'description'
-  | 'start'
-  | 'end'
-  | 'timePerSprint'
-  | 'sprintNum'
+  'id' | 'name' | 'description' | 'start' | 'end' | 'sprintNum'
 > & {
-  currentSprint: SprintResponse
+  prevSprint: SprintResponse | null
+  currentSprint: SprintResponse | null
+  nextSprint: SprintResponse | null
+  course: CourseResponseType
+  prerequisiteCourse: UserCourseResponseType[]
 }
 
 type WorkspaceResponse = {
@@ -61,10 +52,10 @@ type WorkspaceResponse = {
   owner: {
     name: string
   }
-  description: string
-  currentSprint: SprintResponse
-  start: Date
-  end: Date
+  prevSprint: SprintResponse | null
+  currentSprint: SprintResponse | null
+  nextSprint: SprintResponse | null
+  sprintNum: number
 }
 
 type WorkspaceSideBar = Pick<WorkSpaceModel, 'id' | 'name'>
@@ -81,8 +72,10 @@ type ListProjectWorkspaceReq = Pick<WorkSpaceModel, 'id'> & {
 
 type StudentWorkspaceDataTable = Pick<
   UserModel,
-  'id' | 'name' | 'className' | 'role' | 'uniId'
->
+  'id' | 'name' | 'className' | 'uniId'
+> & {
+  role: RoleType
+}
 
 type ProjectWorkspaceDataTable = Pick<
   ProjectModel,

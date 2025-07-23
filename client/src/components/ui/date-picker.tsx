@@ -1,4 +1,4 @@
-import { addDays, format, isAfter, isBefore, isWithinInterval } from 'date-fns'
+import { isAfter, isBefore, isWithinInterval } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { DateRange } from 'react-day-picker'
@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 
 type DatePickerWithRangeProps = {
   date?: DateRange
@@ -40,14 +40,13 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, 'LLL dd, y')} -{' '}
-                  {format(date.to, 'LLL dd, y')}
+                  {formatDate(date.from)} - {formatDate(date.to)}
                 </>
               ) : (
-                format(date.from, 'LLL dd, y')
+                formatDate(date.from)
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{messages.component.ui.datePicker.placeholder}</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -66,13 +65,7 @@ export function DatePickerWithRange({
   )
 }
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import messages from '@/constant/message.const'
 
 type DatePickerWithPresetsProps = {
   date?: Date
@@ -119,35 +112,29 @@ export function DatePickerWithPresets({
           )}
         >
           <CalendarIcon />
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          {date ? (
+            formatDate(date, 'SHORT')
+          ) : (
+            <span>{messages.component.ui.datePicker.placeholder}</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent
         align='start'
         className='flex w-auto flex-col space-y-2 p-2'
       >
-        <Select
-          onValueChange={(value) =>
-            setDate && setDate(addDays(new Date(), parseInt(value)))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Select' />
-          </SelectTrigger>
-          <SelectContent position='popper'>
-            <SelectItem value='0'>Today</SelectItem>
-            <SelectItem value='1'>Tomorrow</SelectItem>
-            <SelectItem value='3'>In 3 days</SelectItem>
-            <SelectItem value='7'>In a week</SelectItem>
-          </SelectContent>
-        </Select>
         <div className='rounded-md border'>
           <Calendar
             mode='single'
             selected={date}
-            onSelect={setDate}
+            onSelect={(date) => {
+              if (date && setDate) {
+                setDate(date)
+              }
+            }}
             disabled={(date) => isDisable(date)}
             onDayBlur={onDayBlur}
+            defaultMonth={date ?? new Date()}
           />
         </div>
       </PopoverContent>

@@ -4,6 +4,7 @@ import com.kltn.server.model.type.task.IssuePriority;
 import com.kltn.server.model.type.task.IssueTag;
 
 public class IssueModel {
+  private String sprint_id;
   private IssueTag type;
   private IssuePriority priority;
   private int numOfAffectVersions;
@@ -39,9 +40,11 @@ public class IssueModel {
     this.numOfChangeOfDescription = builder.numOfChangeOfDescription;
     this.complexityOfDescription = builder.complexityOfDescription;
     this.complatibleOfAssignee = builder.complatibleOfAssignee;
+    this.sprint_id= builder.sprint_id;
   }
 
   public static class IssueModelBuilder {
+    private String sprint_id;
     private IssueTag type;
     private IssuePriority priority;
     private int numOfAffectVersions;
@@ -55,6 +58,11 @@ public class IssueModel {
     private int numOfChangeOfDescription;
     private int complexityOfDescription;
     private double complatibleOfAssignee;
+
+    public IssueModelBuilder sprint_id(String sprint_id) {
+      this.sprint_id = sprint_id;
+      return this;
+    }
 
     public IssueModelBuilder type(IssueTag type) {
       this.type = type;
@@ -228,5 +236,13 @@ public class IssueModel {
 
   public void setComplatibleOfAssignee(double complatibleOfAssignee) {
     this.complatibleOfAssignee = complatibleOfAssignee;
+  }
+
+  public String getSprint_id() {
+    return sprint_id;
+  }
+
+  public void setSprint_id(String sprint_id) {
+    this.sprint_id = sprint_id;
   }
 }

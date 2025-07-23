@@ -1,20 +1,18 @@
+import { Id } from '@/types/other.type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-type AlertType = 'success' | 'error' | 'info' | 'warning'
-
-interface AlertState {
-  title: string
-  message: string
-  type: AlertType
-}
 
 type TriggerState = {
   isCreateProject: boolean
   isCreateIssue: boolean
   isUpdateIssue: boolean
+  isOpenDialogCourse: boolean
   isOpenDialogSkill: boolean
-  alert: AlertState & {
-    visible: boolean
-  }
+  isSprintUpdateTime: {
+    projectId: Id
+    sprintId: Id
+    start: string
+    end: string
+  } | null
 }
 
 const initialState: TriggerState = {
@@ -22,12 +20,8 @@ const initialState: TriggerState = {
   isCreateIssue: false,
   isUpdateIssue: false,
   isOpenDialogSkill: false,
-  alert: {
-    title: '',
-    message: '',
-    type: 'info',
-    visible: false
-  }
+  isOpenDialogCourse: false,
+  isSprintUpdateTime: null
 }
 
 const triggerSlice = createSlice({
@@ -58,16 +52,25 @@ const triggerSlice = createSlice({
     disableDialogSkill: (state: TriggerState) => {
       state.isOpenDialogSkill = false
     },
-    showAlert: (
-      state,
-      action: PayloadAction<{ title: string; message: string; type: AlertType }>
-    ) => {
-      state.alert.message = action.payload.message
-      state.alert.type = action.payload.type
-      state.alert.visible = true
+    enableDialogCourse: (state: TriggerState) => {
+      state.isOpenDialogCourse = true
     },
-    hideAlert: (state) => {
-      state.alert.visible = false
+    disableDialogCourse: (state: TriggerState) => {
+      state.isOpenDialogCourse = false
+    },
+    enableSprintUpdateTime: (
+      state: TriggerState,
+      action: PayloadAction<{
+        projectId: Id
+        sprintId: Id
+        start: string
+        end: string
+      }>
+    ) => {
+      state.isSprintUpdateTime = action.payload
+    },
+    disableSprintUpdateTime: (state: TriggerState) => {
+      state.isSprintUpdateTime = null
     }
   }
 })
@@ -83,7 +86,9 @@ export const {
   disableUpdateIssue,
   enableDialogSkill,
   disableDialogSkill,
-  showAlert,
-  hideAlert
+  enableDialogCourse,
+  disableDialogCourse,
+  disableSprintUpdateTime,
+  enableSprintUpdateTime
 } = triggerSlice.actions
 export default triggerSlice

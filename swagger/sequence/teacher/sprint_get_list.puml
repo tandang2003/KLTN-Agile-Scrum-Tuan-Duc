@@ -1,0 +1,36 @@
+@startuml
+actor "Teacher" as SV
+participant "View\n(/manager/:id/template)" as View
+participant "Issue\nController" as Controller
+participant "Issue\nService" as Service
+participant "Issue\nRepository" as Repo
+participant "MySQL" as MySQL
+
+activate SV
+SV -> View : Teacher accesses
+activate View
+
+View -> Controller : GET /sprints/list\n?workspace_id=workspaceId
+activate Controller
+
+Controller -> Service : getListSprint\nByWorkspaceId\n(workspaceId)
+activate Service
+Service -> Repo : findAll\nByWorkspaceId\n(workspaceId)
+activate Repo
+Repo -> MySQL : findAll\nByWorkspaceId\n(workspaceId)
+activate MySQL
+MySQL --> Repo : return list\nsprint model
+deactivate MySQL
+Repo --> Service : return list\nsprint model
+deactivate Repo
+
+Service --> Controller : return list sprint model
+deactivate Service
+
+Controller --> View : return list\nsprint model
+deactivate Controller
+
+View -> SV : Show list sprint
+deactivate View
+deactivate SV
+@enduml

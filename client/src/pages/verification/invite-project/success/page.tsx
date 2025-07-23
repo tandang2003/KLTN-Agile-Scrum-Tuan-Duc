@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { HOME_PATH } from '@/lib/const'
+import { HOME_PATH } from '@/constant/app.const'
 import { NavLink } from 'react-router-dom'
 
 const VerificationSuccessPage = () => {

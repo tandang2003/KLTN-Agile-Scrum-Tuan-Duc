@@ -15,9 +15,8 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
-import { DEFAULT_STATUS } from '@/lib/const'
+import { DEFAULT_STATUS } from '@/constant/app.const'
 import boardService from '@/services/board.service'
 import {
   CreateIssueRequest,
@@ -29,18 +28,28 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import messages, {
+  getPriorityDisplayName,
+  getTagDisplayName
+} from '@/constant/message.const'
+import Message from '@/components/Message'
+import { getComplexityBilingual } from '@/lib/issue.helper'
+import { useCreateIssueMutation } from '@/feature/issue/issue.api'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
 }
 
 const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
+  const message = messages.component.issue
   const { projectId } = useAppId()
   const [create] = useCreateIssueMutation()
 
   const form = useForm<CreateIssueType>({
     resolver: zodResolver(CreateIssueSchema),
     defaultValues: {
+      name: '',
+      description: '',
       priority: 'CRITICAL',
       tag: 'THEORY',
       date: undefined,
@@ -66,13 +75,22 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
     const req: CreateIssueRequest = {
       projectId: projectId,
       ...values,
-      status: DEFAULT_STATUS
+      status: DEFAULT_STATUS,
+      complexOfDescription: getComplexityBilingual(values.description ?? '')
     }
     create(req)
       .unwrap()
       .then((response) => {
-        toast.success('Create issue success', {
-          description: `Issue - ${response.name}`
+        toast.success(message.create.toast.success.message, {
+          description: (
+            <Message
+              template={message.create.toast.success.description}
+              values={{
+                name: response.name,
+                issue: response.id
+              }}
+            />
+          )
         })
         // Update position if available
         if (req.sprintId) {
@@ -84,7 +102,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           })
         }
       })
-      .catch(() => toast.error('Create issue failed'))
+      .catch(() => toast.error(message.create.toast.failed))
       .finally(() => {
         onSubmit?.()
       })
@@ -99,7 +117,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>{message.create.form.name}</FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Solve Problem' {...field} />
                   </FormControl>
@@ -112,7 +130,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               name='description'
               render={({ field }) => (
                 <FormItem className='mt-4'>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{message.description}</FormLabel>
 
                   <FormControl>
                     <Editor
@@ -135,24 +153,28 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               <SelectEnum
                 control={form.control}
                 name='priority'
-                label='Priority'
+                label={message.priority}
+                renderItem={(item) => (
+                  <span>{getPriorityDisplayName(item)}</span>
+                )}
                 data={issuePriorityList}
               />
               <SelectEnum
                 control={form.control}
                 name='tag'
-                label='Tag'
+                label={message.create.form.tag}
+                renderItem={(item) => <span>{getTagDisplayName(item)}</span>}
                 data={issueTagList}
               />
               <SelectMember
                 control={form.control}
                 name='assigneeId'
-                label='Assignee'
+                label={message.assignee}
               />
               <SelectMember
                 control={form.control}
                 name='reviewerId'
-                label='Reviewer'
+                label={message.reviewer}
               />
             </div>
 
@@ -165,7 +187,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           type='submit'
           loading={form.formState.isSubmitting}
         >
-          Create
+          {message.create.form.submit}
         </Button>
       </form>
     </Form>

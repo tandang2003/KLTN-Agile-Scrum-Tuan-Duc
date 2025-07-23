@@ -12,12 +12,21 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useGetMembersQuery } from '@/feature/project/project.api'
+import messages from '@/constant/message.const'
+import { useAppSelector } from '@/context/redux/hook'
+import { useGetMembersQuery } from '@/feature/issue/issue.api'
 import useAppId from '@/hooks/use-app-id'
+import { Progress } from '@/components/ui/progress'
+
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
-import { UpdateIssueRequest, UpdateIssueType } from '@/types/issue.type'
+import {
+  UpdateIssueRequest,
+  UpdateIssueType,
+  UserSuitableResponse
+} from '@/types/issue.type'
 import { Id } from '@/types/other.type'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { UseFormReturn, Path, PathValue } from 'react-hook-form'
 
 type FieldKey = Path<UpdateIssueType>
@@ -32,19 +41,20 @@ type SelectMemberProps = {
 }
 
 const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
-  const { projectId } = useAppId()
-  const { data } = useGetMembersQuery(projectId as Id, {
-    skip: !projectId
+  const id = useAppSelector((state) => state.issueSlice.current?.id)
+  const message = messages.component.issue
+  const { data } = useGetMembersQuery(id as Id, {
+    skip: !id
   })
 
   const { getValues, control } = form
+  const totalTopic = getValues('topics')?.length || 0
 
   const callApi: (
     field: FieldName,
     value: PathValue<UpdateIssueType, FieldName>
   ) => Promise<any> | undefined = (field, value) => {
     let selectedValue = value !== 'null' ? value : undefined
-    console.log('selectedValue', selectedValue)
     let req: UpdateIssueRequest
     if (field == 'assigneeId')
       req = {
@@ -77,24 +87,57 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select a member' />
+                <SelectValue placeholder={message.select.placeholder} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value='null'>Not assign</SelectItem>
-              {data?.map((item) => {
-                return (
-                  <SelectItem key={item.id} value={item.uniId}>
-                    {item.name}
-                  </SelectItem>
-                )
-              })}
+              <SelectItem value='null'>{message.select.null}</SelectItem>
+              {data?.map((item) => (
+                <SelectItemWithValue
+                  key={item.id}
+                  data={item}
+                  totalTopic={totalTopic}
+                />
+              ))}
             </SelectContent>
           </Select>
           <FormMessage />
         </FormItem>
       )}
     />
+  )
+}
+type SelectItemWithValueProps = {
+  data: UserSuitableResponse
+  totalTopic: number
+}
+
+const SelectItemWithValue = ({
+  data,
+  totalTopic
+}: SelectItemWithValueProps) => {
+  const { id, name, skills } = data
+
+  const [progress, setProgress] = useState(0)
+  useEffect(() => {
+    const matcher = skills.reduce<number>(
+      (prev, current) => prev + current.proficiency,
+      0
+    )
+    const total = totalTopic * 5
+    const result = Math.round((matcher / total) * 100) ?? 0
+
+    const timer = setTimeout(() => setProgress(result), 500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  return (
+    <SelectItem key={id} value={id}>
+      <div>
+        <div>{name}</div>
+        <Progress value={progress} className='mt-2' />
+      </div>
+    </SelectItem>
   )
 }
 

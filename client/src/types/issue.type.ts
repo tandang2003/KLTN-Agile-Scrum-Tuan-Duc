@@ -1,4 +1,4 @@
-import { dateRange, string } from '@/types/common.type'
+import { dateRange, dateRangeOptional, stringSchema } from '@/types/other.type'
 import {
   IssuePriority,
   issuePriorityList,
@@ -66,7 +66,9 @@ type ResourceResponse = {
 }
 
 const SubTaskModelSchema = z.object({
-  name: string,
+  name: stringSchema.min(1, {
+    message: 'Tên công việc không được để trống'
+  }),
   order: z.number(),
   checked: z.boolean()
 })
@@ -80,36 +82,40 @@ type TopicModelType = z.infer<typeof TopicModelSchema>
 
 const BaseIssueSchema = z
   .object({
-    description: string,
+    description: stringSchema.min(1, { message: 'Mô tả không được để trống' }),
     sprintId: z.string().optional(),
-    status: string,
-    priority: z.enum(issuePriorityList),
-    tag: z.enum(issueTagList),
-    topics: z.array(TopicModelSchema),
+    status: stringSchema.min(1, 'Trạng thái là bắt buộc'),
+    priority: z.enum(issuePriorityList, {
+      errorMap: () => ({ message: 'Vui lòng chọn độ ưu tiên' })
+    }),
+    tag: z.enum(issueTagList, {
+      errorMap: () => ({ message: 'Vui lòng chọn thẻ' })
+    }),
+    topics: z.array(TopicModelSchema).optional(),
     assigneeId: z.string().optional(),
     reviewerId: z.string().optional(),
     subtasks: z.array(SubTaskModelSchema).optional(),
-    date: dateRange.optional()
+    date: dateRange.optional(),
+    complexOfDescription: z.number().optional()
   })
   .partial()
-  .extend({
-    name: string
-  })
 
 const CreateIssueSchema = BaseIssueSchema.extend({
+  name: stringSchema.min(1, { message: 'Tên không được để trống' }),
   sprint: z
     .object({
-      id: z.string(),
+      id: stringSchema.min(1, { message: 'Sprint là bắt buộc' }),
       start: z.coerce.date().optional(),
       end: z.coerce.date().optional()
     })
     .optional(),
-  position: z.string().nullable().optional()
+  position: z.string().nullable().optional(),
+  date: dateRangeOptional
 })
 
 const UpdateIssueSchema = BaseIssueSchema.extend({
-  id: string,
-  name: string.optional(),
+  id: stringSchema,
+  name: stringSchema.optional(),
   subtasks: z.array(SubTaskModelSchema).optional()
 })
 
@@ -146,6 +152,15 @@ type UpdatePositionIssueRequest = {
   status: IssueStatus
 }
 
+type UserSuitableResponse = {
+  id: Id
+  name: string
+  skills: {
+    skillName: string
+    proficiency: number
+  }[]
+}
+
 export {
   BaseIssueSchema,
   CreateIssueSchema,
@@ -162,5 +177,6 @@ export type {
   TopicModelType,
   UpdateIssueRequest,
   UpdateIssueType,
-  UpdatePositionIssueRequest
+  UpdatePositionIssueRequest,
+  UserSuitableResponse
 }

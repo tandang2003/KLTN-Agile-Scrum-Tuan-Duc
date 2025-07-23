@@ -1,3 +1,4 @@
+import Icon from '@/components/Icon'
 import LogoutButton from '@/components/LogoutButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -12,9 +13,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { SidebarMenuButton } from '@/components/ui/sidebar'
+import messages from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook'
 import { cn } from '@/lib/utils'
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard } from 'lucide-react'
+import { ChevronsUpDown } from 'lucide-react'
 import { ComponentProps } from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -43,7 +45,7 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
               {user.name.charAt(0) ?? ''}
             </AvatarFallback>
           </Avatar>
-          <div className='grid flex-1 text-left text-sm leading-tight'>
+          <div className='text-md grid flex-1 text-left leading-tight'>
             <span className='truncate font-medium'>{user.name ?? ''}</span>
             <span className='truncate text-xs'>#{user.uniId ?? ''}</span>
           </div>
@@ -76,29 +78,24 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <NavLink to={'/manager/workspace'}>Workspaces</NavLink>
+            <NavLink to={'/manager/workspace'} className='hover-opacity'>
+              <Icon icon={'carbon:workspace'} />
+              {messages.component.userDropdown.workspace}
+            </NavLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <NavLink to={'/user'} className='w-full'>
-              <BadgeCheck />
-              Account
+            <NavLink to={'/user'} className='hover-opacity'>
+              <Icon icon={'line-md:account'} />
+              {messages.component.userDropdown.account}
             </NavLink>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard />
-            Billing
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Bell />
-            Notifications
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <LogoutButton className='w-full' />
+          <LogoutButton className='cancel w-full' />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

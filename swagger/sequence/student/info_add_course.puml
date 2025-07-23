@@ -1,0 +1,64 @@
+@startuml
+autonumber
+actor Student as SV
+
+participant "View\n(/user/course)" as View
+participant "Course\nController" as Controller
+participant "Course\nService" as Service
+participant "Course\nRepository" as CourseRepo
+participant "UserCourse\nRelation\nRepository" as UCRRepo
+participant "User\nService" as UService
+
+SV -> View : Student\n accesses
+activate SV
+activate View
+View --> View : Display \n list of \n courses and \n grades
+SV -> View : Click \n "Add Course"
+View --> View : Show add \n course form
+SV -> View : Fill in course info \n and grade
+View -> Controller: POST \n /course
+activate Controller
+Controller -> Service : addCourse \n ForUser \n (coursePoints)
+activate Service
+
+Service -> UService: getCurrentUser()
+activate UService
+UService --> Service:  user
+deactivate UService
+
+loop for each \n(courseName, point) \nin coursePoints
+    Service -> CourseRepo : getCourse\n(courseName)
+    activate CourseRepo
+    CourseRepo --> Service :  Course
+    deactivate CourseRepo
+    Service -> CourseRepo : getDependent \n Courses \n (course)
+    activate CourseRepo
+    CourseRepo --> Service : List<Course>
+    deactivate CourseRepo
+
+    loop for each \n dependentCourse
+        Service -> UCRRepo : existsById\n(userId, \n dependentCourseId)
+        activate UCRRepo
+        UCRRepo --> Service:  boolean
+        deactivate UCRRepo
+        alt not exists
+            Service -> Service : throw \n MISSING_PREREQUISITE
+        end
+    end
+
+    Service -> UCRRepo : save \n (userCourseRelation)
+    activate UCRRepo
+    UCRRepo --> Service : savedRelation
+    deactivate UCRRepo
+end
+
+Service --> Controller :  courseModel
+deactivate Service
+
+Controller --> View :  success
+deactivate Controller
+
+View --> SV : notify \n "Course added \n successfully"
+deactivate SV
+
+@enduml

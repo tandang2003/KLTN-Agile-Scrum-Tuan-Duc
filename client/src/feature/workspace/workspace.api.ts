@@ -1,7 +1,9 @@
 import { addWorkspaceItems } from '@/feature/workspace/workspace.slice'
+import resourceService from '@/services/resource.service'
 import workspaceService from '@/services/workspace.service'
 import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
+import { ProjectResourceResponseType } from '@/types/resource.type'
 import {
   CreateWorkspaceReqType,
   InviteStudentWorkspaceReqType,
@@ -11,6 +13,7 @@ import {
   ProjectWorkspaceDataTable,
   StudentWorkspaceDataTable,
   UpdateWorkspaceReqType,
+  WorkspaceDetailResponse,
   WorkspaceResponse
 } from '@/types/workspace.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -63,7 +66,7 @@ const workspaceApi = createApi({
           )
       }
     }),
-    getWorkspace: builder.query<WorkspaceResponse, Id>({
+    getWorkspace: builder.query<WorkspaceDetailResponse, Id>({
       async queryFn(arg) {
         try {
           const data = await workspaceService.getWorkSpace(arg)
@@ -73,6 +76,12 @@ const workspaceApi = createApi({
         }
       },
       providesTags: (_, __, id) => [{ type: 'Workspaces', id }]
+    }),
+    clearGetWorkspace: builder.mutation<void, Id>({
+      queryFn: () => {
+        return { data: undefined }
+      },
+      invalidatesTags: (_, __, id) => [{ type: 'Workspaces', id }]
     }),
     createWorkspace: builder.mutation<
       WorkspaceResponse,
@@ -182,6 +191,26 @@ const workspaceApi = createApi({
           return { error }
         }
       }
+    }),
+    getAllResourceBySprint: builder.query<ProjectResourceResponseType, Id>({
+      async queryFn(args) {
+        try {
+          const data = await resourceService.getAllResourceBySprint(args)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
+    }),
+    getAllResourceByProject: builder.query<ProjectResourceResponseType, Id>({
+      async queryFn(args) {
+        try {
+          const data = await resourceService.getAllResourceByProject(args)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -195,5 +224,8 @@ export const {
   useGetListStudentWorkspaceQuery,
   useUpdateWorkspaceMutation,
   useGetListProjectWorkspaceQuery,
-  useInviteStudentWorkspaceMutation
+  useInviteStudentWorkspaceMutation,
+  useClearGetWorkspaceMutation,
+  useGetAllResourceByProjectQuery,
+  useGetAllResourceBySprintQuery
 } = workspaceApi

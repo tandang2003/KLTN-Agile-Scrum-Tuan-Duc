@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import { useAlertHost } from '@/components/AlertHost'
+import Icon from '@/components/Icon'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
@@ -9,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import messages, { getRelationshipDisplayName } from '@/constant/message.const'
 import {
   useCreateRelationshipMutation,
   useDeleteRelationshipMutation,
@@ -17,7 +26,6 @@ import {
 } from '@/feature/relationship/relationship.api'
 import { IssueResponse } from '@/types/issue.type'
 import {
-  IssueRelationLabels,
   issueRelationOptions,
   IssueRelationShip
 } from '@/types/model/relationship'
@@ -28,35 +36,33 @@ import {
   RelationshipResponse
 } from '@/types/relationship.type'
 import { toast } from 'sonner'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import Icon from '@/components/Icon'
-import { useAlertHost } from '@/components/AleartHost'
+import Message from '@/components/Message'
+import _ from 'lodash'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
-  open?: boolean
-  cancel?: () => void
 }
 
-const UpdateRelationship = ({
-  issueId,
-  open,
-  cancel
-}: UpdateRelationshipProps) => {
-  const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>()
+const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
+  const message = messages.component.issue.update.form.relationship
+  const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>({
+    typeRelation: 'BLOCKS'
+  })
   const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
   const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
   const [createIssue] = useCreateRelationshipMutation()
+  const [open, setOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    trigger({
+      issueId: issueId,
+      type: form?.typeRelation as IssueRelationShip
+    })
+  }, [])
 
   const handleSubmit = async () => {
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)
     if (!dataParser.success) {
-      toast.error('Invalid data')
       return
     }
     const data = dataParser.data
@@ -67,7 +73,15 @@ const UpdateRelationship = ({
     })
       .unwrap()
       .then(() => {
-        toast.message('Create relationship success')
+        toast.message(message.success)
+        setForm({
+          typeRelation: 'BLOCKS'
+        })
+      })
+      .catch((err) => {
+        toast.error(message.failed, {
+          description: err.data?.message || 'An error occurred.'
+        })
       })
   }
 
@@ -83,17 +97,21 @@ const UpdateRelationship = ({
 
   return (
     <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <span className='text-lg'>Linked issue</span>
+      <span className='text-lg'>{message.title}</span>
       <LoadingBoundary<RelationshipResponse[]>
         loading='Loading relationships...'
-        fallback='No relationships found'
+        fallback={message.fallback}
         data={relationships}
         isLoading={isLoading}
       >
         {(data) => <RelationshipList items={data} issueId={issueId} />}
       </LoadingBoundary>
 
-      {open && (
+      {open === false ? (
+        <Button variant='outline' onClick={() => setOpen(true)}>
+          <Icon icon={'ic:baseline-plus'} />
+        </Button>
+      ) : (
         <>
           <div className='flex gap-2'>
             <Select
@@ -111,7 +129,7 @@ const UpdateRelationship = ({
               <SelectContent>
                 {issueRelationOptions.map(({ label, value }) => (
                   <SelectItem key={label} value={value}>
-                    {label}
+                    {getRelationshipDisplayName(value)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -130,7 +148,7 @@ const UpdateRelationship = ({
                 <SelectValue placeholder='Relation' />
               </SelectTrigger>
               <SelectContent>
-                {issues?.map((item) => (
+                {_.orderBy(issues, ['name'])?.map((item) => (
                   <SelectItem key={item.id} value={item.id}>
                     {item.name}
                   </SelectItem>
@@ -143,16 +161,16 @@ const UpdateRelationship = ({
             <Button
               type='button'
               className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
-              onClick={() => cancel?.()}
+              onClick={() => setOpen(false)}
             >
-              Cancel
+              {message.cancel}
             </Button>
             <Button
               type='button'
               onClick={handleSubmit}
               className='bg-green-500 text-white hover:cursor-pointer hover:opacity-60'
             >
-              Create
+              {message.add}
             </Button>
           </div>
         </>
@@ -192,8 +210,8 @@ const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
         if (value.length === 0) return null
         return (
           <div key={key}>
-            <span className='mt-4 mb-2 inline-block text-base'>
-              {IssueRelationLabels[key as IssueRelationShip]}
+            <span className='mt-2 mb-2 inline-block text-base font-bold'>
+              {getRelationshipDisplayName(key as IssueRelationShip)}
             </span>
             <div className='mt-2 flex flex-col gap-1'>
               {value.map((item) => {
@@ -218,22 +236,30 @@ type RelationshipItemProps = Pick<RelationshipResponse, 'issueRelated'> & {
 }
 
 const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
+  const message = messages.component.issue.update.form.relationship
   const [deleteRelationship] = useDeleteRelationshipMutation()
   const { showAlert } = useAlertHost()
   const handleDelete = () => {
     showAlert({
-      title: 'Delete relationship',
+      title: message.delete.title,
       type: 'warning',
-      message: `Are you sure you want to delete the relationship with ${issueRelated.name}?`,
+      message: (
+        <Message
+          template={message.delete.message}
+          values={{
+            name: issueRelated.name
+          }}
+        />
+      ),
       onConfirm: async () => {
         try {
           await deleteRelationship({
             issueId: issueId,
             issueRelatedId: issueRelated.id
           }).unwrap()
-          toast.message('Delete relationship success')
+          toast.message(message.delete.success)
         } catch {
-          toast.error('Delete relationship failed')
+          toast.error(message.delete.failed)
         }
       }
     })
@@ -247,7 +273,7 @@ const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuItem className='cancel' onClick={handleDelete}>
-            Delete
+            Xóa
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

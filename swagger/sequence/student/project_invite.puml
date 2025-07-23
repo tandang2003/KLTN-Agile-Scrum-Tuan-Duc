@@ -1,0 +1,68 @@
+@startuml
+autonumber
+
+actor "Student" as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Project\nController" as Controller
+participant "Project\nService" as Service
+participant "User\nService" as UserService
+participant "Project\nRepository" as ProjectRepo
+participant "Mail\nService" as MailService
+participant "Role\nInit" as RoleInit
+participant "Workspace\nUserProject\nRepository" as WUPRepo
+participant "MySql" as MySQL
+
+activate SV
+SV -> View : Student access
+activate View
+View --> View : Check if student \n is in a project\nShow "Add student" \n button if not
+SV -> View : Click "Add \n student" button
+View --> View : Display form \n to add student(s)
+SV -> View : Enter student \n ID(s) and submit
+View -> Controller : POST \n /project/invite
+activate Controller
+Controller -> Service : inviteUser\nToProject\n(request)
+
+activate Service
+Service -> UserService : getCurrent\nUser()
+activate UserService
+UserService --> Service :  \n userInvite
+deactivate UserService
+Service -> ProjectRepo : findById\n(projectId)
+activate ProjectRepo
+ProjectRepo -> MySQL: findById(projectId)
+activate MySQL
+MySQL --> ProjectRepo:  project model
+deactivate MySQL
+ProjectRepo --> Service :  project model
+deactivate ProjectRepo
+alt Project not found
+    Service -> Service : throw \nNOT_FOUND
+end
+
+Service -> Service : create \n MailRequest\n(template = \n "invite-student")
+
+loop for each userId in request.userId
+    Service -> UserService : getUser\nByUniId\n(userId)
+    activate UserService
+    UserService --> Service :  user
+    deactivate UserService
+    Service -> RoleInit : getRole("MEMBER")
+    activate RoleInit
+    RoleInit --> Service :  role
+    deactivate RoleInit
+    Service -> WUPRepo : save\n(Workspaces\nUsers\nProjects)
+    activate WUPRepo
+    WUPRepo -> MySQL: save\n(Workspaces\nUsers\nProjects)
+
+    deactivate WUPRepo
+    Service -> MailService : inviteTo\nProject\n(email, \ntoken, params)
+end
+Service --> Controller :  success
+deactivate Service
+Controller --> View :  success
+deactivate Controller
+View --> SV: Show notify \n invite success
+deactivate View
+deactivate SV
+@enduml

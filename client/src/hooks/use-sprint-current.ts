@@ -15,15 +15,6 @@ type useSprintCurrentReturnType = {
 
 const useSprintCurrent = (): useSprintCurrentReturnType => {
   const sprintCurrent = useAppSelector((state) => state.sprintSlice.current)
-  if (!sprintCurrent) {
-    return {
-      sprint: undefined,
-      util: {
-        getStatusSprint: () => 'PENDING'
-      }
-    }
-  }
-  const { end, id, start } = sprintCurrent
 
   const getStatusSprint = useCallback(
     (sprint: Sprint): SprintStatusType => {
@@ -33,6 +24,16 @@ const useSprintCurrent = (): useSprintCurrentReturnType => {
     },
     [sprintCurrent]
   )
+
+  if (!sprintCurrent) {
+    return {
+      sprint: undefined,
+      util: {
+        getStatusSprint: () => 'PENDING'
+      }
+    }
+  }
+  const { end, id, start } = sprintCurrent
 
   return {
     sprint: {

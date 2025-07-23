@@ -1,0 +1,216 @@
+get:
+  summary: Dashboard project
+  tags:
+    - Dashboard
+  description: Get Dashboard for project
+  parameters:
+    - in: query
+      name: project_id
+      schema:
+        type: string
+      required: true
+      description: project id
+    - in: query
+      name: sprint_id
+      schema:
+        type: string
+      required: false
+      description: sprint id. Nếu không có thì sẽ lấy thông tin của toàn bộ project
+
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseApi"
+              - type: object
+                properties: # <-- This 'properties' block was indented too far
+                  data: # This 'data' property holds your DashboardRes content
+                    type: object
+                    description: The main dashboard statistics data.
+                    properties:
+                      issueCreated:
+                        type: integer
+                        description: Tổng sô issue được tạo
+                        example: 100
+                      issueDone:
+                        type: integer
+                        description: Tổng số issue đã hoàn thành (Done)
+                        example: 75
+                      issueFailed:
+                        type: integer
+                        description: Tổng số issue không hoàn thành (!= Done)
+                        example: 10
+                      status:
+                        type: object
+                        description: Số lượng các issue phân theo trạng thái
+                        additionalProperties:
+                          type: integer
+                          format: int32
+                        example:
+                          Backlog: 20
+                          Todo: 15
+                          "In Progress": 30
+                          Done: 25
+                          Canceled: 5
+                          Blocked: 5
+                      workload:
+                        type: array
+                        description: Danh sách tiến độ công việc của các thành viên
+                        items: # Define WorkloadDataItem directly here
+                          type: object
+                          properties:
+                            assignee:
+                              type: object
+                              properties:
+                                uniId:
+                                  type: string
+                                  description: Uni Id người làm.
+                                  example: "uni-001"
+                                name:
+                                  type: string
+                                  description: Tên người làm
+                                  example: "Le Anh Duc"
+                            total:
+                              type: integer
+                              description: Tổng số issue được gán.
+                              example: 15
+                            done:
+                              type: integer
+                              description: Tổng số issue được gán đã hoàn thành.
+                              example: 10
+                            failed:
+                              type: integer
+                              description: Tổng số issue được gán đã không hoàn thành.
+                              example: 2
+                          required:
+                            - assignee
+                            - total
+                            - done
+                            - failed
+                      priority:
+                        type: object
+                        description: Số lượng các issue phân theo độ ưu tiên .
+                        additionalProperties:
+                          type: integer
+                        example:
+                          Medium: 40
+                          Low: 25
+                          Lowest: 10
+                          Critical: 5
+                          Major: 10
+                          Minor: 5
+                      issueTrend:
+                        type: array
+                        description: Danh sách xu hướng issue theo thời gian.
+                        items:
+                          type: object
+                          properties:
+                            process:
+                              type: string
+                              description: Tên giai đoạn.
+                              example: "30%, 50%, 70%"
+                            issuesAdded:
+                              type: integer
+                              description: Số lượng issue được thêm vào.
+                              example: 10
+                            issuesRemoved:
+                              type: integer
+                              description: Số lượng issue được bỏ ra.
+                              example: 5
+
+                      issueStatusTrend:
+                        type: array
+                        description: Danh sách xu hướng trang thái issue theo thời gian.
+                        items:
+                          type: object
+                          properties:
+                            process:
+                              type: string
+                              description: Tên giai đoạn.
+                              example: "30%, 50%, 70%"
+                            issuesTodo:
+                              type: integer
+                              description: Số lượng issue ở trạng thái Todo.
+                              example: 10
+                            issuesInProcess:
+                              type: integer
+                              description: Số lượng issue ở trạng thái In Process.
+                              example: 5
+                            issueReview:
+                              type: integer
+                              description: Số lượng issue ở trạng thái Review.
+                              example: 5
+                    required:
+                      - issueCreated
+                      - issueDone
+                      - issueFailed
+                      - status
+                      - workload
+                      - priority
+            # Example for the *entire* 200 response body, including ResponseApi fields
+            example:
+              code: 200
+              message: "Dashboard statistics retrieved successfully."
+              data:
+                issueCreated: 100
+                issueDone: 75
+                issueFailed: 10
+                status:
+                  Backlog: 20
+                  Todo: 15
+                  "In Process": 30
+                  Done: 25
+                  Canceled: 5
+                  Blocked: 5
+                workload:
+                  - assignee:
+                      uniId: "uni-001"
+                      name: "Le Anh Duc"
+                    total: 15
+                    done: 10
+                    failed: 2
+                  - assignee:
+                      uniId: "uni-002"
+                      name: "Dang Minh Tan"
+                    total: 12
+                    done: 8
+                    failed: 1
+                priority:
+                  Critical: 5
+                  Major: 10
+                  Minor: 5
+                  Trivial: 10
+                  Blocked: 5
+                issueTrend:
+                  - process: "30%"
+                    issuesTodo: 10
+                    issuesInProcess: 5
+                    issueReview: 5
+                  - process: "50%"
+                    issuesTodo: 15
+                    issuesInProcess: 10
+                    issueReview: 5
+                  - process: "80%"
+                    issuesTodo: 20
+                    issuesInProcess: 15
+                    issueReview: 5
+                issueStatusTrend:
+                  - process: 30%
+                    issuesTodo: 4
+                    issuesInProcess: 3
+                    issuesReview: 2
+                    count: 20
+                  - process: 50%
+                    issuesTodo: 6
+                    issuesInProcess: 5
+                    issuesReview: 4
+                    count: 30
+                  - process: 80%
+                    issuesTodo: 8
+                    issuesInProcess: 7
+                    issuesReview: 6
+                    count: 50

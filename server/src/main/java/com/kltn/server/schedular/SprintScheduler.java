@@ -38,7 +38,7 @@ public class SprintScheduler {
 
   @Autowired
   public SprintScheduler(ClockSimulator clockSimulator, ProjectSprintRepository projectSprintRepository,
-      TaskScheduler taskScheduler, KafkaTemplate<String, Object> kafkaTemplate) {
+                         TaskScheduler taskScheduler, KafkaTemplate<String, Object> kafkaTemplate) {
     this.clockSimulator = clockSimulator;
     this.taskScheduler = taskScheduler;
     this.kafkaTemplate = kafkaTemplate;
@@ -51,24 +51,20 @@ public class SprintScheduler {
     String key = sprintId + ":" + projectId;
     cancelSprintTask(key);
 
-    Runnable task = () -> {
-      System.out.println("send messeage");
+    Runnable task = () ->
+      {
       sendMessage(sprintId, projectId);
-    };
+      };
     Instant end = endTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
-        .toInstant();
+      .toInstant();
     if (clockSimulator.now()
-        .isAfter(end)) {
-      // kafkaTemplate.send("snapshot", SnapshotRequest.builder()
-      // .projectId(projectId)
-      // .sprintId(sprintId)
-      // .build());
+      .isAfter(end)) {
       sendMessage(projectId, sprintId);
       return;
     }
 
     long delay = Duration.between(clockSimulator.now(), end)
-        .getSeconds();
+      .getSeconds();
     delay = Math.max(0, delay);
     long timeSpeech = clockSimulator.getTimeSpeech();
     Instant now = clockSimulator.now();
@@ -82,7 +78,7 @@ public class SprintScheduler {
   public synchronized void scheduleSprintEnd(String sprintId, LocalDateTime endTime) {
     try {
       List<String> projectIds = projectSprintRepository.findProjectIdBySprintId(sprintId)
-          .orElseThrow(() -> new RuntimeException("Sprint not found"));
+        .orElseThrow(() -> new RuntimeException("Sprint not found"));
 
       for (String projectId : projectIds) {
         scheduleSprintWithProject(sprintId, projectId, endTime);
@@ -112,7 +108,7 @@ public class SprintScheduler {
 
     for (Map.Entry<String, LocalDateTime> entry : savedTasks.entrySet()) {
       String[] ids = entry.getKey()
-          .split(":");
+        .split(":");
       String sprintId = ids[0];
       String projectId = ids[1];
       scheduleSprintWithProject(sprintId, projectId, entry.getValue());
@@ -124,15 +120,17 @@ public class SprintScheduler {
   }
 
   private void sendMessage(String projectId, String sprintId) {
-    String curUser = SecurityContextHolder.getContext()
-        .getAuthentication()
-        .getPrincipal()
-        .toString();
+    String curUser = "21130171";
+//      SecurityContextHolder.getContext()
+//        .getAuthentication()
+//        .getPrincipal()
+//        .toString();
 
     SnapshotRequest payload = SnapshotRequest.builder()
-        .projectId(projectId)
-        .sprintId(sprintId)
-        .build();
+      .projectId(projectId)
+      .sprintId(sprintId)
+      .build()
+      ;
 
     ProducerRecord<String, Object> record = new ProducerRecord<>("snapshot", payload);
     record.headers().add("X-Auth-User", curUser.getBytes(StandardCharsets.UTF_8));

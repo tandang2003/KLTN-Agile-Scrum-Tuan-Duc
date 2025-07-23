@@ -5,6 +5,7 @@ import { Id } from '@/types/other.type'
 import {
   CreateSprintRequest,
   SprintResponse,
+  UpdateSprintForStudentRequest,
   UpdateSprintRequest
 } from '@/types/sprint.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -59,6 +60,24 @@ const sprintApi = createApi({
         return [{ type: 'Sprints', id: 'LIST' }]
       }
     }),
+    updateSprintForStudent: builder.mutation<
+      SprintResponse,
+      UpdateSprintForStudentRequest
+    >({
+      async queryFn(arg) {
+        try {
+          const data = await sprintService.updateSprintForStudent(arg)
+          return { data: data }
+        } catch (error) {
+          return {
+            error: normalizeError(error)
+          }
+        }
+      },
+      invalidatesTags: (_, __, { sprintId }) => {
+        return [{ type: 'Sprints', id: sprintId }]
+      }
+    }),
     updateSprint: builder.mutation<SprintResponse, UpdateSprintRequest>({
       async queryFn(arg) {
         try {
@@ -83,10 +102,13 @@ const sprintApi = createApi({
           return { error }
         }
       },
-      invalidatesTags: (_, __, id) => [
-        { type: 'Sprints', id },
-        { type: 'Sprints', id: 'LIST' }
-      ]
+      invalidatesTags: (_, error, id) =>
+        error
+          ? []
+          : [
+              { type: 'Sprints', id },
+              { type: 'Sprints', id: 'LIST' }
+            ]
     })
   })
 })
@@ -97,5 +119,6 @@ export const {
   useGetListSprintQuery,
   useCreateSprintMutation,
   useUpdateSprintMutation,
-  useDeleteSprintMutation
+  useDeleteSprintMutation,
+  useUpdateSprintForStudentMutation
 } = sprintApi

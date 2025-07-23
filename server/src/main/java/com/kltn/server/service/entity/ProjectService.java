@@ -66,13 +66,7 @@ public class ProjectService {
   private final SprintScheduler sprintScheduler;
 
   @Autowired
-  public ProjectService(SprintScheduler sprintScheduler, ProjectSprintService projectSprintService,
-                        WorkspacesUsersProjectsService workspacesUsersProjectsService,
-                        ProjectMongoService projectMongoService, EmailService emailService, RoleService roleInit,
-                        UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper,
-                        WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
-                        com.kltn.server.repository.entity.ProjectRepository projectRepository,
-                        SprintService sprintService, ChangeLogMapper changeLogMapper, ResourceMapper resourceMapper) {
+  public ProjectService(SprintScheduler sprintScheduler, ProjectSprintService projectSprintService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMongoService projectMongoService, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService, ChangeLogMapper changeLogMapper, ResourceMapper resourceMapper) {
     this.projectMongoService = projectMongoService;
     this.sprintScheduler = sprintScheduler;
     this.roleInit = roleInit;
@@ -89,20 +83,16 @@ public class ProjectService {
     this.resourceMapper = resourceMapper;
   }
 
-  //  @SendKafkaEvent(topic = "project-log")
   @Transactional
   public ApiResponse<ProjectResponse> createProject(ProjectCreationRequest creationRequest) {
     WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder()
-      .workspaceId(creationRequest.workspaceId())
-      .userId(creationRequest.userId())
-      .build();
+        .workspaceId(creationRequest.workspaceId())
+        .userId(creationRequest.userId())
+        .build();
 
     WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository.findById(workspacesUsersId)
-      .orElseThrow(
-        () -> AppException.builder()
-          .error(
-            Error.NOT_FOUND)
-          .build());
+      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+
 
     if (workspacesUsersProjects.getProject() != null) {
       throw AppException.builder()
@@ -140,13 +130,14 @@ public class ProjectService {
       .build();
     projectMongoService.save(projectMongo);
 
-//    ChangeLogRequest log = changeLogMapper.projectToCreateLog(project, projectMongo);
+    // ChangeLogRequest log = changeLogMapper.projectToCreateLog(project,
+    // projectMongo);
 
     return ApiResponse.<ProjectResponse>builder()
-      .message("Create project success")
-      .data(projectMapper.toCreationResponse(savedProject, topics))
-//        .logData(log)
-      .build();
+        .message("Create project success")
+        .data(projectMapper.toCreationResponse(savedProject, topics))
+        // .logData(log)
+        .build();
   }
 
   public ApiResponse<Void> inviteUserToProject(ProjectInvitationRequest invitationRequest) {
@@ -251,9 +242,9 @@ public class ProjectService {
 
   public ApiResponse<ResourceOfSprintResponse> getResourceByProjectAndSprint(String projectId, String sprintId) {
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
-      .projectId(projectId)
-      .sprintId(sprintId)
-      .build());
+        .projectId(projectId)
+        .sprintId(sprintId)
+        .build());
     List<ResourceResponse> dailyResources = projectSprint.getDailyFiles() != null && !projectSprint.getDailyFiles()
       .isEmpty() ? resourceMapper.toResourceResponseList(
       projectSprint.getDailyFiles()) : new ArrayList<>();
@@ -274,23 +265,23 @@ public class ProjectService {
     long daysPrev = 0, daysNext = Long.MAX_VALUE;
 
     if (sprints != null && !sprints.isEmpty()) {
-      //      Sprint nextSprint = sprints.getFirst();
+      // Sprint nextSprint = sprints.getFirst();
       for (Sprint sprint : sprints) {
         Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.DAYS);
         Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.DAYS);
-        //previous sprint section
-        if (end.isBefore(now) && daysPrev > end.until(now, ChronoUnit.DAYS)) {
+        // previous sprint section
+        if (end.isBefore(now) && daysPrev < end.until(now, ChronoUnit.DAYS)) {
           previous = sprint;
           daysPrev = end.until(now, ChronoUnit.DAYS);
           continue;
         }
-        //next sprint section
+        // next sprint section
         if (start.isAfter(now) && daysNext > start.until(now, ChronoUnit.DAYS)) {
           next = sprint;
           daysNext = end.until(now, ChronoUnit.DAYS);
           continue;
         }
-        //current sprint section
+        // current sprint section
         if ((start.isBefore(now) || start.equals(now)) && (end.isAfter(now) || end.equals(now))) {
           current = sprint;
           continue;

@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IssueRelationRepository extends JpaRepository<IssueRelation, IssueRelationId> {
 
-
   int countIssueRelationByTypeRelationAndIssue(IssueRelationType typeRelation, Issue issue);
 
   int countIssueRelationByTypeRelationAndIssueId(IssueRelationType typeRelation, String issueId);
+
+  int countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType typeRelation, String issueId);
 }

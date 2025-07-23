@@ -17,13 +17,14 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/context/redux/hook'
 import projectApi from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
-import { HttpStatusCode } from '@/lib/const'
+import { HttpStatusCode } from '@/constant/app.const'
 import { cn } from '@/lib/utils'
 import projectService from '@/services/project.service'
 import userService from '@/services/user.service'
 import axios from 'axios'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import messages from '@/constant/message.const'
 
 type DialogInviteStudentProjectProps = {} & DialogControllerProps
 
@@ -31,18 +32,21 @@ const DialogInviteStudentProject = ({
   open,
   onOpen
 }: DialogInviteStudentProjectProps) => {
+  const validation = messages.validation
+  const message = messages.component.project.invite
   const uniId = useAppSelector((state) => state.authSlice.user?.uniId)
   const [input, setInput] = useState<string>('')
   const [ids, setIds] = useState<string[]>([])
   const { projectId, workspaceId } = useAppId()
+
   const handleAddId = async () => {
     if (!input) return
     if (input.length != 8) {
-      toast.error('ID Student need 8 character')
+      toast.error(validation.uniId)
       return
     }
     if (uniId && uniId === input) {
-      toast.error('You can not invite your self')
+      toast.error(validation.inviteSelf)
       return
     }
     try {
@@ -77,7 +81,7 @@ const DialogInviteStudentProject = ({
   const handleInvite = async () => {
     if (!projectId || !workspaceId) return
     try {
-      await projectService.inviteStudentToWProject({
+      await projectService.inviteStudentToProject({
         workspaceId,
         projectId: projectId,
         userId: ids
@@ -129,14 +133,12 @@ const DialogInviteStudentProject = ({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Invite students</DialogTitle>
-          <DialogDescription>
-            Student will add to workspace immediately
-          </DialogDescription>
+          <DialogTitle>{message.title}</DialogTitle>
+          <DialogDescription>{message.description}</DialogDescription>
         </DialogHeader>
         <div className='h-16'>
           <Input
-            placeholder='ID Student'
+            placeholder={message.form.uniId.placeholder}
             className='peer'
             value={input}
             onChange={(e) => {
@@ -166,17 +168,17 @@ const DialogInviteStudentProject = ({
         </ScrollArea>
         <DialogFooter>
           <DialogClose asChild>
-            <Button className='bg-red-600'>Cancel</Button>
+            <Button className='cancel'>{message.form.cancel}</Button>
           </DialogClose>
           <Button
             className={cn(
-              'bg-yellow-400',
+              'success',
               ids.length === 0 && 'hover:cursor-not-allowed'
             )}
             disabled={ids.length === 0}
             onClick={handleInvite}
           >
-            Invite
+            {message.form.submit}
           </Button>
         </DialogFooter>
       </DialogContent>

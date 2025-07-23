@@ -2,7 +2,6 @@ import SectionComment from '@/components/issue/comment/SectionComment'
 import { UpdateAttachmentIssue } from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
-import UpdateDropDownMenu from '@/components/issue/updateFields/UpdateDropdownMenu'
 import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'
 import UpdateNameIssue from '@/components/issue/updateFields/UpdateNameIssue'
 import UpdatePriorityIssue from '@/components/issue/updateFields/UpdatePriorityIssue'
@@ -13,21 +12,22 @@ import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import messages from '@/constant/message.const'
 import {
   IssueDetailResponse,
   UpdateIssueSchema,
   UpdateIssueType
 } from '@/types/issue.type'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 type UpdateIssueFormProps = {
   data: IssueDetailResponse
 }
 
 const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
-  const [isAddRelationship, setIsAddRelationship] = useState<boolean>(false)
-  const [isAddSubTask, setIsAddSubTask] = useState<boolean>(false)
+  const message = messages.component.issue
+
   const form = useForm<UpdateIssueType>({
     resolver: zodResolver(UpdateIssueSchema),
     defaultValues: {
@@ -79,14 +79,9 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
             <div className='my-3'>
               <UpdateNameIssue />
             </div>
+
             <div className='my-3'>
-              <UpdateDropDownMenu
-                onClickAddRelationship={() => setIsAddRelationship(true)}
-                onClickAddSubTask={() => setIsAddSubTask(true)}
-              />
-            </div>
-            <div className='my-3'>
-              <Label className='mb-2 text-xl font-bold'>Description</Label>
+              <Label className='mb-2 text-xl'>{message.description}</Label>
               <UpdateDescriptionIssue />
             </div>
             <div>
@@ -102,19 +97,16 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
                 })}
               />
             </div>
-            <UpdateSubTaskForm
-              open={isAddSubTask}
-              cancel={() => setIsAddSubTask(false)}
-            />
+            <UpdateSubTaskForm />
             <UpdateRelationship
               issueId={data.id}
               initialData={data.relations}
-              open={isAddRelationship}
-              cancel={() => setIsAddRelationship(false)}
             />
             <Tabs defaultValue='comment' className='mt-3'>
               <TabsList>
-                <TabsTrigger value='comment'>Comment</TabsTrigger>
+                <TabsTrigger value='comment'>
+                  {message.update.form.comment}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value='comment'>
                 <SectionComment />
@@ -124,17 +116,17 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
           <ScrollBar />
         </ScrollArea>
         <ScrollArea className='h-inherit basis-[550px] rounded-md border-2 px-4 py-2 [&>*:not(:first-child)]:mt-3'>
-          <p className='text-xl'> Detail</p>
+          <p className='text-xl'>{message.update.form.detail}</p>
 
           <div className='grid grid-cols-2 items-center gap-x-2 gap-y-3'>
-            <div>Assignee</div>
+            <div>{message.assignee}</div>
             <UpdateMemberIssue form={form} name='assigneeId' />
-            <div>Reviewer</div>
+            <div>{message.reviewer}</div>
             <UpdateMemberIssue form={form} name='reviewerId' />
 
-            <div>Duration</div>
+            <div>{message.update.form.duration}</div>
             <UpdateDateIssue />
-            <div>Priority</div>
+            <div>{message.priority}</div>
             <UpdatePriorityIssue />
           </div>
           <div className='mt-4 flex items-center gap-2'>

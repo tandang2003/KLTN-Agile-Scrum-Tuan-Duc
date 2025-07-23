@@ -1,0 +1,38 @@
+@startuml
+autonumber
+
+actor Student as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Project\nController" as Controller
+participant "Project\nService" as Service
+participant "Project\nRepository" as Repo
+participant "MySQL" as MySQL
+
+SV -> View : Student accesses
+activate SV
+activate View
+SV -> View: Click dropdown &\nClick button "member"
+View -> Controller : /project/:id/members
+
+activate Controller
+Controller -> Service : getMembersOfProject(req)
+
+activate Service
+Service -> Repo : getProjectById\n(projectId)
+activate Repo
+Repo -> MySQL : getProjectById\n(projectId)
+activate MySQL
+MySQL --> Repo : return project model
+deactivate MySQL
+Repo --> Service : return project model
+deactivate Repo
+
+Service --> Controller : return member in project
+deactivate Service
+
+Controller --> View : return member in project
+deactivate Controller
+View --> SV : Display member
+deactivate View
+deactivate SV
+@enduml

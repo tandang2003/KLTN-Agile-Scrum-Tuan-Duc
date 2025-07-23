@@ -1,5 +1,6 @@
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
+import { Id } from '@/types/other.type'
 import {
   CloudinaryUploadResultType,
   CreateResourceAvatarRequestType,
@@ -7,7 +8,9 @@ import {
   CreateResourceRequestType,
   GetSignatureRequestType,
   GetSignatureResponseType,
-  ResourceResponseType
+  ProjectResourceResponseType,
+  ResourceResponseType,
+  SprintResourceResponseType
 } from '@/types/resource.type'
 
 const resourceService = {
@@ -120,6 +123,24 @@ const resourceService = {
     })
 
     return await res.json()
+  },
+
+  getAllResourceByProject: async (
+    projectId: Id
+  ): Promise<ProjectResourceResponseType> => {
+    const res = await httpService.get<ResponseApi<ProjectResourceResponseType>>(
+      `/resource/${projectId}/sprint`
+    )
+    return res.data.data
+  },
+
+  getAllResourceBySprint: async (
+    sprintId: Id
+  ): Promise<SprintResourceResponseType> => {
+    const res = await httpService.get<ResponseApi<SprintResourceResponseType>>(
+      `/resource/${sprintId}/project`
+    )
+    return res.data.data
   }
 }
 

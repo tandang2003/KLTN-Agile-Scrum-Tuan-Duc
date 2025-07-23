@@ -3,7 +3,8 @@ import {
   CreateIssueRequest,
   IssueDetailResponse,
   IssueResponse,
-  UpdateIssueRequest
+  UpdateIssueRequest,
+  UserSuitableResponse
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -192,6 +193,16 @@ const issueApi = createApi({
       invalidatesTags: (_, error, id) => {
         return error ? [] : [{ type: 'Issues', id: id }]
       }
+    }),
+    getMembers: builder.query<UserSuitableResponse[], Id>({
+      async queryFn(arg) {
+        try {
+          const data = await issueService.getMembers(arg)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -207,5 +218,6 @@ export const {
   useMoveIssueToSprintMutation,
   useMoveIssueToBacklogMutation,
   useReopenIssueMutation,
-  useDeleteIssueMutation
+  useDeleteIssueMutation,
+  useGetMembersQuery
 } = issueApi

@@ -43,6 +43,7 @@ public interface IssueMapper {
       @Mapping(target = "tag", source = "tag", defaultValue = "THEORY"),
       @Mapping(target = "position", source = "position"),
       @Mapping(target = "description", source = "description"),
+      @Mapping(target = "complexOfDescription", source = "complexOfDescription"),
       @Mapping(target = "dtStart", source = "start"),
       @Mapping(target = "dtEnd", source = "end"), })
   @BeanMapping(ignoreByDefault = true)

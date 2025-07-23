@@ -9,20 +9,49 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
-
-import { getStatusSprint, sortSprintsByDateStart } from '@/lib/sprint.helper'
+import Icon from '@/components/Icon'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useRef, useState } from 'react'
+import { getSprintStatusDisplayName } from '@/constant/message.const'
+import useSprintCurrent from '@/hooks/use-sprint-current'
+import HtmlViewer from '@/components/HtmlViewer'
+import SprintUpdateTimeDialog from '@/components/sprint/SprintUpdateTime'
+import { useAppDispatch } from '@/context/redux/hook'
+import { enableSprintUpdateTime } from '@/feature/trigger/trigger.slice'
+import useAppId from '@/hooks/use-app-id'
+import { toISODateString } from '@/lib/date.helper'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
 
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
+  const {
+    util: { getStatusSprint }
+  } = useSprintCurrent()
   const refContent = useRef<HTMLDivElement>(null)
   const [sprintId, setSprintId] = useState<Id | null>(null)
-
+  const { projectId } = useAppId()
+  const dispatch = useAppDispatch()
+  const handleOpenUpdate = (sprintId: Id, start: Date, end: Date) => {
+    if (!projectId || !sprintId) return
+    dispatch(
+      enableSprintUpdateTime({
+        projectId: projectId,
+        sprintId: sprintId,
+        start: toISODateString(start),
+        end: toISODateString(end)
+      })
+    )
+  }
   return (
     <div>
       {/* Sprint backlog */}
@@ -40,6 +69,8 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
       </Accordion>
 
       {sortSprintsByDateStart(sprints).map((item, index) => {
+        const canUpdateTime = getStatusSprint(item) !== 'COMPLETE'
+
         return (
           <Accordion
             key={item.id}
@@ -70,13 +101,41 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   statusSprint={getStatusSprint(item)}
                   className='ml-auto basis-[100px]'
                 >
-                  {getStatusSprint(item)}
+                  {getSprintStatusDisplayName(getStatusSprint(item))}
                 </Badge>
                 <span className='mr-3 basis-[200px]'>
                   {formatDate(item.start)} - {formatDate(item.end)}
                 </span>
               </AccordionTrigger>
               <AccordionContent ref={refContent}>
+                <div className='mb-2 flex items-start justify-between gap-2'>
+                  <div>
+                    <span className='text-xl font-bold'>
+                      Nội dung thực hiện
+                    </span>
+                    <HtmlViewer value={item.description} />
+                  </div>
+                  {canUpdateTime && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Icon icon={'lucide:more-horizontal'} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align='end'>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleOpenUpdate(item.id, item.start, item.end)
+                          }}
+                        >
+                          <div className='flex items-center gap-2'>
+                            <Icon icon={'lucide:edit'} />
+                            Cài đặt thời gian
+                          </div>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+
                 {sprintId && (
                   <ListIssueInSprint
                     sprintId={item.id}
@@ -89,6 +148,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           </Accordion>
         )
       })}
+      <SprintUpdateTimeDialog />
     </div>
   )
 }

@@ -1,0 +1,63 @@
+@startuml
+autonumber
+
+actor Student as SV
+
+participant "View\n(/user/skill)" as View
+participant "Skill\nController" as Controller
+participant "Skill\nService" as SkillService
+participant "User\nService" as UserService
+participant "Skill\nRepository" as SkillRepository
+participant "PersonalSkill\nRepository" as PKR
+
+activate SV
+SV -> View : student accesses
+activate View
+View --> View : display list \n of skills
+SV -> View : click "Add Skill"
+View --> View : show add \n skill form
+SV -> View : enter skill name & \n proficiency level
+
+View -> Controller : POST /skill
+activate Controller
+
+Controller -> SkillService : createSkill\n(skillName, \n proficiency)
+activate SkillService
+
+SkillService -> UserService : getCurrentUser
+activate UserService
+UserService --> SkillService :  user
+deactivate UserService
+
+SkillService -> SkillRepository : existsByName\n(skillName)
+activate SkillRepository
+SkillRepository --> SkillService :  boolean
+deactivate SkillRepository
+
+alt Skill does not exist
+    SkillService -> SkillRepository : save(skillModel)
+    activate SkillRepository
+    SkillRepository --> SkillService :  savedSkill
+    deactivate SkillRepository
+else Skill already exists
+    SkillService -> SkillRepository : findByName\n(skillName)
+    activate SkillRepository
+    SkillRepository --> SkillService :  existingSkill
+    deactivate SkillRepository
+end
+
+SkillService -> PKR : save\n(personalSkillModel)
+activate PKR
+PKR --> SkillService :  success
+deactivate PKR
+
+SkillService --> Controller :  void
+deactivate SkillService
+
+Controller --> View :  success
+deactivate Controller
+
+View --> SV : notify "Skill \n added \n successfully"
+deactivate View
+deactivate SV
+@enduml

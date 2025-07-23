@@ -37,10 +37,10 @@ public class UserCourseService {
       .build();
   }
 
-  public UserCourseRelation save(UserCourseUpdateRequest userCourse) {
+  public UserCourseRelation save(String userId, String courseId, double point) {
     UserCourseRelationId id = UserCourseRelationId.builder()
-      .userId(userCourse.getUserId())
-      .courseId(userCourse.getCourseId())
+      .userId(userId)
+      .courseId(courseId)
       .build()
       ;
     UserCourseRelation relation;
@@ -48,10 +48,10 @@ public class UserCourseService {
       relation = userCourseRepository.getReferenceById(id);
     } else relation = UserCourseRelation.builder()
       .id(id)
-      .course(courseService.getCourse(userCourse.getCourseId()))
-      .user(userService.getUserById(userCourse.getUserId()))
+      .course(courseService.getCourse(courseId))
+      .user(userService.getUserById(userId))
       .build();
-    relation.setPoint(userCourse.getPoint());
+    relation.setPoint(point);
     return userCourseRepository.save(relation);
   }
 
