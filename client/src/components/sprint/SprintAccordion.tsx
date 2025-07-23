@@ -24,7 +24,6 @@ import { useRef, useState } from 'react'
 import { getSprintStatusDisplayName } from '@/constant/message.const'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import HtmlViewer from '@/components/HtmlViewer'
-import SprintUpdateTimeDialog from '@/components/sprint/SprintUpdateTime'
 import { useAppDispatch } from '@/context/redux/hook'
 import { enableSprintUpdateTime } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
@@ -148,7 +147,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           </Accordion>
         )
       })}
-      <SprintUpdateTimeDialog />
     </div>
   )
 }
