@@ -1,0 +1,106 @@
+get:
+  summary: Dashboard workspace
+  tags:
+    - Dashboard
+  parameters:
+    - in: query
+      name: workspace_id
+      schema:
+        type: string
+      required: true
+      description: ID của không gian làm việc
+    - in: query
+      name: sprint_id
+      schema:
+        type: string
+      required: false
+      description: ID của sprint. Nếu không truyền thì sẽ lấy thông tin của toàn bộ workspace
+  responses:
+    "200":
+      description: Dữ liệu thống kê cho giáo viên
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              issueCreated:
+                type: integer
+                description: Tổng số task đã tạo
+                example: 40
+              issueDone:
+                type: integer
+                description: Tổng số task đã hoàn thành
+                example: 25
+              issueFailed:
+                type: integer
+                description: Tổng số task bị thất bại (quá hạn, không đạt yêu cầu, v.v.)
+                example: 5
+              projects:
+                type: integer
+                description: Tổng số dự án trong workspace
+                example: 4
+              avgMember:
+                type: number
+                format: float
+                description: Số lượng thành viên trung bình mỗi dự án
+                example: 2.75
+              byStatusPerStudent:
+                type: array
+                description: Thống kê task theo sinh viên
+                items:
+                  type: object
+                  properties:
+                    assignee:
+                      type: object
+                      description: Thông tin sinh viên
+                      properties:
+                        uniId:
+                          type: string
+                          description: Mã sinh viên
+                          example: "u1001"
+                        name:
+                          type: string
+                          description: Tên sinh viên
+                          example: "Nguyễn Văn A"
+                    total:
+                      type: integer
+                      description: Tổng số task được giao
+                      example: 10
+                    done:
+                      type: integer
+                      description: Số task đã hoàn thành
+                      example: 7
+                    failed:
+                      type: integer
+                      description: Số task đã trễ
+                      example: 2
+              byStatusPerProject:
+                type: array
+                description: Thống kê task theo từng dự án
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID dự án
+                      example: "proj-123"
+                    name:
+                      type: string
+                      description: Tên dự án
+                      example: "Nền tảng học AI"
+                    status:
+                      type: object
+                      description: thống kê số lượng trạng thái của issue
+                      properties:
+                        todo:
+                          type: integer
+                          example: 5
+                        inProcess:
+                          type: integer
+                          example: 3
+                        review:
+                          type: integer
+                          example: 2
+                        done:
+                          type: integer
+                          example: 6

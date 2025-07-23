@@ -1,3 +1,4 @@
+import SelectCourse from '@/components/course/SelectCourse'
 import Editor from '@/components/Editor'
 import Message from '@/components/Message'
 import { Button } from '@/components/ui/button'
@@ -29,12 +30,13 @@ type UpdateWorkspaceForm = {
 }
 
 const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
-  const [updateWorkspace] = useUpdateWorkspaceMutation()
+  const [update] = useUpdateWorkspaceMutation()
   const navigate = useNavigate()
   const form = useForm<UpdateWorkspaceSchemaType>({
     resolver: zodResolver(UpdateWorkspaceSchema),
     defaultValues: {
       description: data.description,
+      courseId: data.course.id,
       date: {
         from: new Date(data.start),
         to: new Date(data.end)
@@ -43,9 +45,10 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
   })
 
   const handleSubmit = (values: UpdateWorkspaceSchemaType) => {
-    updateWorkspace({
+    update({
       workspaceId: data.id,
       payload: {
+        courseId: values.courseId,
         description: values.description,
         end: values.date.to
       }
@@ -94,15 +97,26 @@ const UpdateWorkspaceForm = ({ data }: UpdateWorkspaceForm) => {
                 </FormControl>
                 <FormMessage />
               </FormItem>
-              <FormItem>
-                <FormLabel>
-                  {messages.component.updateWorkspace.form.course}
-                </FormLabel>
-                <FormControl>
-                  <Input type='text' disabled value={data?.course.name} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+              <FormField
+                control={form.control}
+                name='courseId'
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {messages.component.updateWorkspace.form.course}
+                      </FormLabel>
+                      <FormControl>
+                        <SelectCourse
+                          setValue={field.onChange}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
+              />
             </div>
             <div className='flex gap-5 [&>*]:flex-1'>
               <FormItem className='mt-4'>

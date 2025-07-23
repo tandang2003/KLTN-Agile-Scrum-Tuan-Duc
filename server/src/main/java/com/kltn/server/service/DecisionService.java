@@ -9,9 +9,12 @@ import com.kltn.server.model.aggregate.IterationModel;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Sprint;
+import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
+import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.service.entity.IssueService;
 import com.kltn.server.service.entity.ProjectService;
+import com.kltn.server.service.entity.ProjectSprintService;
 import com.kltn.server.service.entity.SprintService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,16 +29,18 @@ import java.util.List;
 
 @Service
 public class DecisionService {
+  private final ProjectSprintService projectSprintService;
   @Value("${python.server}")
   private String pythonServer;
   private final ProjectService projectService;
   private final SprintService sprintService;
   private final IssueService issueService;
 
-  public DecisionService(ProjectService projectService, SprintService sprintService, IssueService issueService) {
+  public DecisionService(ProjectService projectService, SprintService sprintService, IssueService issueService, ProjectSprintService projectSprintService) {
     this.projectService = projectService;
     this.sprintService = sprintService;
     this.issueService = issueService;
+    this.projectSprintService = projectSprintService;
   }
 
   @Transactional
@@ -59,13 +64,21 @@ public class DecisionService {
     iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
     iterationModelBuilder.issueModelList(getIssuesInSprint(project, sprint));
     IterationModel iterationModel = iterationModelBuilder.build();
-    return sendToPython(iterationModel);
+    int r = sendToPython(iterationModel);
+    ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+      .sprintId(sprint.getId())
+      .projectId(project.getId())
+      .build());
+    projectSprint.setPredictedResult(r);
+    projectSprint.setDtLastPredicted(ClockSimulator.now());
+    projectSprintService.save(projectSprint);
+    return r == 0;
   }
 
   private List<IssueModel> getIssuesInSprint(Project project, Sprint sprint) {
     List<Issue> issues = issueService.getIssuesBySprintId(project.getId(), sprint.getId());
-    if (issues == null || issues.isEmpty()) {
-      throw AppException.builder().error(Error.NOT_FOUND).message("No issues found in the sprint").build();
+    if (issues == null || issues.isEmpty()) {return  new ArrayList<>();
+//      throw AppException.builder().error(Error.NOT_FOUND).message("No issues found in the sprint").build();
     }
     List<IssueModel> issueModels = new ArrayList<>();
     for (Issue issue : issues) {
@@ -84,7 +97,8 @@ public class DecisionService {
         .numOfChangeOfDescription(issue.getNumChangeOfDescription())
         .complexityOfDescription(issue.getComplexOfDescription())
         .complatibleOfAssignee(issueService.calculateCompatibleOfAssignee(issue))
-        .build();
+        .build()
+        ;
       issueModels.add(issueModel);
     }
     return issueModels;
@@ -98,7 +112,7 @@ public class DecisionService {
   }
 
 
-  private boolean sendToPython(IterationModel data) {
+  private int sendToPython(IterationModel data) {
     RestTemplate restTemplate = new RestTemplate();
 
     HttpHeaders headers = new HttpHeaders();
@@ -109,7 +123,6 @@ public class DecisionService {
     ResponseEntity<Integer[]> response = restTemplate.postForEntity(pythonServer, request, Integer[].class);
     System.out.println("Python Response: ");
     assert response.getBody() != null;
-    int result = response.getBody()[0];
-    return result == 0;
+    return response.getBody()[0];
   }
 }

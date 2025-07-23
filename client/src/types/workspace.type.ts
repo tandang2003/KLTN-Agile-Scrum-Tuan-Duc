@@ -18,7 +18,8 @@ const CreateWorkspaceSchema = z.object({
 
 const UpdateWorkspaceSchema = z.object({
   description: z.string().optional(),
-  date: dateRange
+  date: dateRange,
+  courseId: z.string().min(1, 'Khóa học không được để trống')
 })
 
 type CreateWorkspaceSchemaType = z.infer<typeof CreateWorkspaceSchema>

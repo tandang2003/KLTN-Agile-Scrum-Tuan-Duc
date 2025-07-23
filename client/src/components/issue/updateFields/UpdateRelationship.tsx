@@ -41,15 +41,9 @@ import _ from 'lodash'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
-  open?: boolean
-  cancel?: () => void
 }
 
-const UpdateRelationship = ({
-  issueId,
-  open,
-  cancel
-}: UpdateRelationshipProps) => {
+const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
   const message = messages.component.issue.update.form.relationship
   const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>({
     typeRelation: 'BLOCKS'
@@ -57,6 +51,7 @@ const UpdateRelationship = ({
   const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
   const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
   const [createIssue] = useCreateRelationshipMutation()
+  const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
     trigger({
@@ -66,7 +61,6 @@ const UpdateRelationship = ({
   }, [])
 
   const handleSubmit = async () => {
-    console.log('issueId', issueId)
     const dataParser = CreateRelationshipIssueSchema.safeParse(form)
     if (!dataParser.success) {
       return
@@ -113,7 +107,11 @@ const UpdateRelationship = ({
         {(data) => <RelationshipList items={data} issueId={issueId} />}
       </LoadingBoundary>
 
-      {open && (
+      {open === false ? (
+        <Button variant='outline' onClick={() => setOpen(true)}>
+          <Icon icon={'ic:baseline-plus'} />
+        </Button>
+      ) : (
         <>
           <div className='flex gap-2'>
             <Select
@@ -163,7 +161,7 @@ const UpdateRelationship = ({
             <Button
               type='button'
               className='bg-red-500 text-white hover:cursor-pointer hover:opacity-60'
-              onClick={() => cancel?.()}
+              onClick={() => setOpen(false)}
             >
               {message.cancel}
             </Button>
@@ -212,7 +210,7 @@ const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
         if (value.length === 0) return null
         return (
           <div key={key}>
-            <span className='mt-4 mb-2 inline-block text-base'>
+            <span className='mt-2 mb-2 inline-block text-base font-bold'>
               {getRelationshipDisplayName(key as IssueRelationShip)}
             </span>
             <div className='mt-2 flex flex-col gap-1'>
