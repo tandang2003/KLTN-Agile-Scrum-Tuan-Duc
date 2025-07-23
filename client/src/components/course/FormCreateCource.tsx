@@ -1,42 +1,24 @@
+import Icon from '@/components/Icon'
+import SelectCourse from '@/components/course/SelectCourse'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList
-} from '@/components/ui/command'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover'
 import { useAppDispatch } from '@/context/redux/hook'
-import {
-  useCreateCourseMutation,
-  useGetAllCourseQuery
-} from '@/feature/course/course.api'
+import { useCreateCourseMutation } from '@/feature/course/course.api'
 import { disableDialogCourse } from '@/feature/trigger/trigger.slice'
-import { cn } from '@/lib/utils'
 import {
   CreateCourseSchema,
   CreateCourseSchemaType,
   CreateCourseSchemeParse
 } from '@/types/course.type'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, ChevronsUpDown } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import Icon from '@/components/Icon'
 
 type FormCreateCourseProps = {}
 
 const FormCreateCourse = ({}: FormCreateCourseProps) => {
-  const { data: courses } = useGetAllCourseQuery()
   const dispatch = useAppDispatch()
   const [create, { error, isError }] = useCreateCourseMutation()
   const form = useForm<CreateCourseSchemaType>({
@@ -83,59 +65,13 @@ const FormCreateCourse = ({}: FormCreateCourseProps) => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className='flex-1'>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant='outline'
-                          role='combobox'
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value
-                            ? courses?.find((item) => item.id === field.value)
-                                ?.name
-                            : 'Chọn môn học'}
-                          <ChevronsUpDown className='opacity-50' />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className='p-0'>
-                        <Command>
-                          <CommandInput
-                            placeholder='Chọn môn học...'
-                            className='h-9'
-                          />
-                          <CommandList>
-                            <CommandEmpty>Không tìm thấy môn học</CommandEmpty>
-                            <CommandGroup>
-                              {courses?.map((course) => (
-                                <CommandItem
-                                  value={course.name}
-                                  key={course.id}
-                                  onSelect={() => {
-                                    form.setValue(
-                                      `courses.${index}.courseId`,
-                                      course.id
-                                    )
-                                  }}
-                                >
-                                  {course.name}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      course.name === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <SelectCourse
+                      value={field.value}
+                      setValue={(value) => {
+                        form.setValue(`courses.${index}.courseId`, value)
+                      }}
+                    />
+
                     <div className='h-[20px]'>
                       <FormMessage />
                     </div>

@@ -1,6 +1,6 @@
 import messages from '@/constant/message.const'
 import { SprintModel } from '@/types/model/sprint.model'
-import { dateRange, Id, stringSchema } from '@/types/other.type'
+import { Id, stringSchema } from '@/types/other.type'
 import { z } from 'zod'
 
 const isRichTextEmpty = (html: string) => {

@@ -28,7 +28,7 @@ public class SchedularRunInit implements CommandLineRunner {
         List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(ClockSimulator.now());
         sprints.forEach(sprint -> {
             sprintScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtEnd().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
-            predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
+//            predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
         });
     }
 }
