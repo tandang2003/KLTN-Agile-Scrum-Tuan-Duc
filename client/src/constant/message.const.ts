@@ -631,7 +631,7 @@ const messages = {
         cancel: 'Hủy'
       },
       toast: {
-        success: 'Dự đoán Sprint thành công',
+        success: 'Dự đoán Sprint có khả năng thành công',
         failed: 'Dự đoán Sprint thất bại, vui lòng thử lại sau'
       }
     }

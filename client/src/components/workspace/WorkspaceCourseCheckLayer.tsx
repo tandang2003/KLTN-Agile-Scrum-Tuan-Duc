@@ -57,9 +57,9 @@ const WorkspaceCourseCheckLayer = ({
     if (!hasInitialized) {
       const pass = prerequisiteCourseOfUser.every((item) => item.point != 0)
       if (pass) {
-        setIsOpen(true)
-      } else {
         setIsOpen(false)
+      } else {
+        setIsOpen(true)
       }
       setHasInitialized(true)
     }

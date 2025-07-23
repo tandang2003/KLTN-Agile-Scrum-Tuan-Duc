@@ -68,8 +68,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
       </Accordion>
 
       {sortSprintsByDateStart(sprints).map((item, index) => {
-        const canUpdateTime = getStatusSprint(item) !== 'COMPLETE'
-
         return (
           <Accordion
             key={item.id}
@@ -114,25 +112,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                     </span>
                     <HtmlViewer value={item.description} />
                   </div>
-                  {canUpdateTime && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <Icon icon={'lucide:more-horizontal'} />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end'>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            handleOpenUpdate(item.id, item.start, item.end)
-                          }}
-                        >
-                          <div className='flex items-center gap-2'>
-                            <Icon icon={'lucide:edit'} />
-                            Cài đặt thời gian
-                          </div>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
                 </div>
 
                 {sprintId && (

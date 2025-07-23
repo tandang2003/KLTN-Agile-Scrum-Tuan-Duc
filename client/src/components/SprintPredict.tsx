@@ -13,6 +13,7 @@ import {
 import messages from '@/constant/message.const'
 import aggregateService from '@/services/aggregate.service'
 import { Id } from '@/types/other.type'
+import { isAxiosError } from 'axios'
 import { useEffect, useState } from 'react'
 
 import { toast } from 'sonner'
@@ -46,6 +47,10 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
       if (res) toast.success(message.toast.success)
       else toast.warning(message.toast.failed)
     } catch (err) {
+      if (isAxiosError(err)) {
+        toast.error(err.message)
+        return
+      }
       toast.error(messages.other.serverError)
     } finally {
       setLoading(false)
