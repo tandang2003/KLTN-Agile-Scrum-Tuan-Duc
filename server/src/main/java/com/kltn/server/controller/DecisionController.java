@@ -80,15 +80,12 @@ public class DecisionController {
   }
 
   @GetMapping("{projectId}/{sprintId}/predict")
-  public ResponseEntity<ApiResponse<Boolean>> makePredict(@PathVariable String projectId, @PathVariable String sprintId) {
-    boolean response = decisionService.makePredict(projectId, sprintId);
+  public ResponseEntity<ApiResponse<Boolean>> makePredict(
+    @PathVariable String projectId, @PathVariable String sprintId) {
+    var response = decisionService.makePredict(projectId, sprintId);
 
     // Placeholder for decision logic
-    return ResponseEntity.ok(ApiResponse.<Boolean>builder()
-      .code(200)
-      .message("Decision retrieved successfully")
-      .data(response)
-      .build());
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("store-data")

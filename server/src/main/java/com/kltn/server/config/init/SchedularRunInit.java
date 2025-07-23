@@ -15,20 +15,30 @@ import java.util.List;
 
 @Configuration
 public class SchedularRunInit implements CommandLineRunner {
-    @Autowired
-    private SprintScheduler sprintScheduler;
-    @Autowired
-    private SprintRepository sprintRepository;
+  @Autowired
+  private SprintScheduler sprintScheduler;
+  @Autowired
+  private SprintRepository sprintRepository;
   @Autowired
   private PredictScheduler predictScheduler;
 
 
   @Override
-    public void run(String... args) throws Exception {
-        List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(ClockSimulator.now());
-        sprints.forEach(sprint -> {
-            sprintScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtEnd().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
+  public void run(String... args) throws Exception {
+    List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(ClockSimulator.now());
+    sprints.forEach(sprint ->
+      {
+      sprintScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtEnd()
+        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+        .toLocalDateTime());
 //            predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
-        });
-    }
+      });
+    List<Sprint> predictSprints = sprintRepository.findALlByDtPredictAfter(ClockSimulator.now());
+    predictSprints.forEach(sprint ->
+      {
+      predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict()
+        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+        .toLocalDateTime());
+      });
+  }
 }
