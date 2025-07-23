@@ -143,6 +143,15 @@ const ReportSprintSheet = ({
       })
   }
 
+  const validationDaily = (file: File): string | null => {
+    const uploadedSize = file.size
+    if (uploadedSize <= 11130) {
+      return 'Dung lượng file không khớp, vui lòng nộp đúng file'
+    }
+
+    return null
+  }
+
   useEffect(() => {
     if (data) {
       if (data.daily?.[0]) {
@@ -189,11 +198,15 @@ const ReportSprintSheet = ({
             </h4>
             <MediaProvider
               thumbnail={daily1 ?? undefined}
-              type={{
-                label: 'PDF Document',
-                mime: 'application/pdf'
-              }}
+              type={
+                ({
+                  label: 'PDF Document',
+                  mime: 'application/pdf'
+                },
+                {})
+              }
               disabled={disabled}
+              onFileValidate={validationDaily}
               signatureFn={handleSignatureFn}
               createFn={(data) => handleUploadDaily(data, 'daily1')}
               onDelete={() => handleDelete('daily1')}
