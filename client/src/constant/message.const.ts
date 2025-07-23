@@ -119,9 +119,8 @@ const messages = {
         tasksByStatusPerStudentBarChart: {
           title: 'Phân loại trạng thái của các issue theo sinh viên',
           dataset: {
-            labelIssueTodo: 'Issue chuẩn bị thực hiện',
-            labelIssueInProcess: 'Issue đang thực hiện',
-            labelIssueReview: 'Issue đang đợi review',
+            labelIssueFailed: 'Issue chưa hoàn thành',
+            labelIssueTotal: 'Tổng issue',
             labelIssueDone: 'Issue đã hoàn thành'
           },
           scales: {

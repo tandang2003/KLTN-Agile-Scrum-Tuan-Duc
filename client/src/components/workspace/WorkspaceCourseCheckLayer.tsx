@@ -50,43 +50,20 @@ const WorkspaceCourseCheckLayer = ({
 }: WorkspaceCourseCheckLayerProps) => {
   const message = messages.component.workspaceCourseLayerCheck
 
-  const { data: prerequisiteCourse, isLoading } = useGetPrerequisiteCourseQuery(
-    course.id as Id,
-    {
-      skip: !course.id
-    }
-  )
-
-  // Calculate unmet prerequisites only when data is ready
-  const courseNeedField = useMemo(() => {
-    if (!prerequisiteCourse) return []
-    const allPrerequisiteCourseCompleted = prerequisiteCourseOfUser.every(
-      (userCourse) =>
-        userCourse.point !== -1.0 &&
-        prerequisiteCourse.some((item) => item.id === userCourse.course.id)
-    )
-    if (allPrerequisiteCourseCompleted) return []
-
-    return prerequisiteCourse.filter(
-      (item) =>
-        !prerequisiteCourseOfUser.some(
-          (userCourse) =>
-            userCourse.course.id === item.id && userCourse.point !== -1.0
-        )
-    )
-  }, [prerequisiteCourse, prerequisiteCourseOfUser])
-
   const [open, setIsOpen] = useState(false)
   const [hasInitialized, setHasInitialized] = useState(false)
 
   useEffect(() => {
-    if (!isLoading && !hasInitialized) {
-      if (courseNeedField.length > 0) {
+    if (!hasInitialized) {
+      const pass = prerequisiteCourseOfUser.every((item) => item.point != 0)
+      if (pass) {
         setIsOpen(true)
+      } else {
+        setIsOpen(false)
       }
       setHasInitialized(true)
     }
-  }, [isLoading, courseNeedField, hasInitialized])
+  }, [hasInitialized])
 
   const [clear] = useClearGetWorkspaceMutation()
   const [create, { error, isError }] = useCreateCourseMutation()
@@ -94,23 +71,23 @@ const WorkspaceCourseCheckLayer = ({
   const form = useForm<CreateCourseSchemaType>({
     resolver: zodResolver(CreateCourseSchema),
     defaultValues: {
-      courses: courseNeedField.map((item) => ({
-        courseId: item.id,
+      courses: prerequisiteCourseOfUser.map((item) => ({
+        courseId: item.course.id,
         point: undefined
       }))
     }
   })
 
   useEffect(() => {
-    if (courseNeedField.length > 0) {
+    if (prerequisiteCourseOfUser.length > 0) {
       form.reset({
-        courses: courseNeedField.map((item) => ({
-          courseId: item.id,
+        courses: prerequisiteCourseOfUser.map((item) => ({
+          courseId: item.course.id,
           point: undefined
         }))
       })
     }
-  }, [courseNeedField])
+  }, [prerequisiteCourseOfUser])
 
   const handleSubmit = (data: CreateCourseSchemaType) => {
     const dataParse = CreateCourseSchemeParse.parse(data)
@@ -159,13 +136,13 @@ const WorkspaceCourseCheckLayer = ({
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
-            {courseNeedField.map((item, index) => (
+            {prerequisiteCourseOfUser.map((item, index) => (
               <FormField
-                key={item.id}
+                key={item.course.id}
                 name={`courses.${index}.point`}
                 render={({ field }) => (
                   <FormItem className='mt-2 flex flex-col gap-2'>
-                    <Label>{item.name}</Label>
+                    <Label>{item.course.name}</Label>
                     <FormControl>
                       <Input
                         type='number'
