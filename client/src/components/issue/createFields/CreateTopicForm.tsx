@@ -15,7 +15,6 @@ import {
   CommandList
 } from '@/components/ui/command'
 import { cn, uuid } from '@/lib/utils'
-import { TopicModel } from '@/types/model/common.model'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { BaseIssueFormType, TopicModelType } from '@/types/issue.type'
 import messages from '@/constant/message.const'

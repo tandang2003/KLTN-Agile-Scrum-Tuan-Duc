@@ -47,7 +47,7 @@ const ProjectHeader = ({ data }: ProjectHeaderProps) => {
                 className='hover-opacity'
                 onClick={() => setOpenDialogMember(true)}
               >
-                <Icon icon={'fluent-mdl2:add-friend'} />
+                <Icon icon={'material-symbols:info'} />
                 {messages.component.project.header.dropdown.members}
               </DropdownMenuItem>
             </DropdownMenuContent>

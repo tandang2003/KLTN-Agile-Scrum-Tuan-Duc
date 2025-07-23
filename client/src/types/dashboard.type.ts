@@ -78,5 +78,6 @@ export type {
   WorkloadDataItem,
   IssueTrendItem,
   IssueStatusTrendItem,
-  WorkloadDataItemDetail
+  WorkloadDataItemDetail,
+  DashboardTeacherRes
 }

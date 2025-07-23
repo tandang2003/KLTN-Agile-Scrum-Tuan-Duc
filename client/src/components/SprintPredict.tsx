@@ -11,11 +11,9 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import messages from '@/constant/message.const'
-import useAppId from '@/hooks/use-app-id'
-import useSprintCurrent from '@/hooks/use-sprint-current'
 import aggregateService from '@/services/aggregate.service'
 import { Id } from '@/types/other.type'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { toast } from 'sonner'
 

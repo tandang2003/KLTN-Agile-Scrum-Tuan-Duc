@@ -1,8 +1,6 @@
 import Container from '@/components/Container'
 import Header from '@/components/Header'
 import Logo from '@/components/Logo'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { Button } from '@/components/ui/button'
 import { NavLink } from 'react-router-dom'
 const HomePage = () => {
   return (

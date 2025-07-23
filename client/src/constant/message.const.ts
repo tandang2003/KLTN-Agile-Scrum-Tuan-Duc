@@ -18,7 +18,7 @@ const messages = {
         storyPoint: 'Số điểm sprint phải là số dương',
         startDate: 'Ngày bắt đầu phải trước ngày kết thúc',
         endDate: 'Ngày kết thúc phải sau ngày bắt đầu',
-        predict: 'Dự đoán kết thúc phải nằm trong khoảng thời gian của sprint',
+        predict: 'Thời gian dự đoán phải nằm trong khoảng thời gian của sprint',
         description: 'Mô tả sprint không được để trống'
       }
     }
@@ -169,7 +169,7 @@ const messages = {
           status: 'Trạng thái',
           start: 'Ngày bắt đầu',
           end: 'Ngày kết thúc',
-          predict: 'Dự đoán kết thúc',
+          predict: 'Thời gian dự đoán',
           predictStatus: 'Trạng thái dự đoán',
           detail: 'Chi tiết'
         },
@@ -319,7 +319,7 @@ const messages = {
       header: {
         dropdown: {
           invite: 'Mời sinh viên',
-          members: 'Danh sách thành viên'
+          members: 'Thông tin'
         }
       },
       dialog: {
@@ -402,7 +402,7 @@ const messages = {
           duration: 'Thời gian Sprint',
           startDate: 'Ngày bắt đầu',
           endDate: 'Ngày kết thúc',
-          predict: 'Dự đoán kết thúc',
+          predict: 'Thời gian dự đoán',
           customDuration: 'Tùy chỉnh',
           week: 'tuần',
           submit: {

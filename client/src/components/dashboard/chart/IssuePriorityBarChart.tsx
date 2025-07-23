@@ -46,6 +46,7 @@ const IssuePriorityBarChart = ({
 
   const options: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false
@@ -89,7 +90,9 @@ const IssuePriorityBarChart = ({
       <h2 className='mb-4 text-center text-2xl font-bold text-gray-800'>
         {message.title}
       </h2>
-      <Bar className={className} data={chartData} options={options} />
+      <div className='h-[400px] w-full'>
+        <Bar className={className} data={chartData} options={options} />
+      </div>
     </div>
   )
 }

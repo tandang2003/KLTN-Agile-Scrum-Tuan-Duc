@@ -1,5 +1,4 @@
 import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
-import DashboardFilter from '@/components/dashboard/DashboardFilter'
 import Icon from '@/components/Icon'
 type DashboardHeaderProps = {
   issueDone: number
