@@ -9,7 +9,7 @@ public class ProjectLoad {
   private int total;
   private int done;
   private int notComplete;
-  private double taskBalance;
+  // private double taskBalance;
 
   public ProjectLoad() {
   }
@@ -21,7 +21,7 @@ public class ProjectLoad {
     this.total = builder.total;
     this.done = builder.done;
     this.notComplete = builder.notComplete;
-    this.taskBalance = builder.taskBalance;
+    // this.taskBalance = builder.taskBalance;
   }
 
   public static ProjectLoadBuilder builder() {
@@ -126,11 +126,11 @@ public class ProjectLoad {
     this.notComplete = notComplete;
   }
 
-  public double getTaskBalance() {
-    return taskBalance;
-  }
-
-  public void setTaskBalance(double taskBalance) {
-    this.taskBalance = taskBalance;
-  }
+  // public double getTaskBalance() {
+  // return taskBalance;
+  // }
+  //
+  // public void setTaskBalance(double taskBalance) {
+  // this.taskBalance = taskBalance;
+  // }
 }
