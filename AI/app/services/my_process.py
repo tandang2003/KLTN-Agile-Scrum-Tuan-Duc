@@ -46,18 +46,16 @@ class My_Process():
     return cls(None, None, None)
 
   def process(self):
-    statistic = self.calculate_issue_statistics(self.issue_data)
+    # statistic = self.calculate_issue_statistics(self.issue_data)
     bow = self.bow(self.issue_data, self.k)
-    data = self.merge(self.sprint_data, statistic, bow)
+    data = self.merge(self.sprint_data, None, bow)
     data = data.drop(columns=["sprint_id"])
-    print(data.columns)
+    # print(data.columns)
     y_pred = self.model.predict(data)
-    print(y_pred)
+    # print(y_pred)
     return y_pred.tolist()
 
   def calculate_issue_statistics(self,df):
-
-
     df = df.copy(deep=True)
     df = df.drop(columns=["issue_name"], errors="ignore")
 
