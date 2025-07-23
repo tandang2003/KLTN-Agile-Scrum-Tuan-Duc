@@ -1,12 +1,15 @@
-import IssueStatusDoughnutChart from '@/components/dashboard/teacher/ProjectStatusDoughnutChart.teacher'
+import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
 import DashboardHeader from '@/components/dashboard/teacher/DashboardHeader'
 import TasksByStatusPerProjectBarChart from '@/components/dashboard/teacher/TasksByStatusPerProjectBarChart.teacher'
-import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
-import TasksCompletedOverTime from '@/components/dashboard/teacher/TasksCompletedOverTime.teacher'
 import TasksByStatusPerStudentBarChart from '@/components/dashboard/teacher/TasksByStatusPerStudentBarChart.teacher'
-import { useMemo } from 'react'
+import { ProjectDashBoardProvider } from '@/pages/manager/workspace/[:id]/dashboard/context'
+import { Id } from '@/types/other.type'
+import { useMemo, useState } from 'react'
 
 const WorkspaceDashboardPage = () => {
+  const [sprint, setSprint] = useState<{
+    id?: Id
+  }>({})
   const dataTaskByStatusPerStudent = useMemo(() => {
     return [
       {
@@ -106,39 +109,21 @@ const WorkspaceDashboardPage = () => {
   }, [])
   return (
     <section className='relative'>
-      <DashboardHeader
-        issueCreated={10}
-        issueDone={9}
-        issueFailed={1}
-        projects={4}
-        avgNumber={3}
-      />
-      <div className='mt-4 flex basis-[500px] gap-4'>
-        <ContainerDashboard>
-          <IssueStatusDoughnutChart
-            data={{
-              DONE: 9,
-              INPROCESS: 0,
-              REVIEW: 0,
-              TODO: 1
-            }}
-            width='500'
-            height='500'
-          />
-        </ContainerDashboard>
-        <ContainerDashboard className={'flex-1'}>
-          <TasksByStatusPerProjectBarChart
-            data={dataTasksByStatusPerProjectBarChart}
-          />
-        </ContainerDashboard>
-      </div>
-      <ContainerDashboard className='mt-2'>
-        <TasksByStatusPerStudentBarChart data={dataTaskByStatusPerStudent} />
-      </ContainerDashboard>
+      <ProjectDashBoardProvider
+        value={{
+          sprint: sprint,
+          setSprint: setSprint
+        }}
+      >
+        <DashboardHeader />
 
-      <ContainerDashboard className={'mt-2'}>
-        <TasksCompletedOverTime />
-      </ContainerDashboard>
+        <ContainerDashboard className={'mt-2'}>
+          <TasksByStatusPerProjectBarChart />
+        </ContainerDashboard>
+        <ContainerDashboard className='mt-2'>
+          <TasksByStatusPerStudentBarChart />
+        </ContainerDashboard>
+      </ProjectDashBoardProvider>
     </section>
   )
 }

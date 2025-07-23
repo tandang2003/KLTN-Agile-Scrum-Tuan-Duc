@@ -46,9 +46,9 @@ const SprintDashboardTab = ({}: SprintDashboardTabProps) => {
             <ContainerDashboard>
               <MultiWorkloadBarChart
                 data={[
-                  { assignee: 'Alice', total: 20, done: 15, failed: 5 },
-                  { assignee: 'Bob', total: 10, done: 7, failed: 3 },
-                  { assignee: 'Charlie', total: 12, done: 12, failed: 0 }
+                  { assignee: 'Alice', total: 20, done: 15, notComplete: 5 },
+                  { assignee: 'Bob', total: 10, done: 7, notComplete: 3 },
+                  { assignee: 'Charlie', total: 12, done: 12, notComplete: 0 }
                 ]}
               />
             </ContainerDashboard>

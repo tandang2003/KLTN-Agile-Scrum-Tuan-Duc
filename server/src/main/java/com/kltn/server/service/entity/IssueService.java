@@ -575,7 +575,6 @@ public class IssueService {
   }
 
   private ApiResponse<List<IssueResponse>> buildResponseFromIssues(List<Issue> issues) {
-
     if (issues.isEmpty()) {
       return ApiResponse.<List<IssueResponse>>builder()
           .code(HttpStatus.OK.value())
