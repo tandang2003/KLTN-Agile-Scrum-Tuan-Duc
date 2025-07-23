@@ -2,13 +2,7 @@ import { cn } from '@/lib/utils'
 import { CardModelType } from '@/types/card.type'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import {
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Card as CardUI
-} from '@/components/ui/card'
+import { CardHeader, CardTitle, Card as CardUI } from '@/components/ui/card'
 import Icon from '@/components/Icon'
 import { memo } from 'react'
 import useKanbanContext from '@/components/kanban/useKanbanContext'

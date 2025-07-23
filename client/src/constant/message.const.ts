@@ -18,7 +18,7 @@ const messages = {
         storyPoint: 'Số điểm sprint phải là số dương',
         startDate: 'Ngày bắt đầu phải trước ngày kết thúc',
         endDate: 'Ngày kết thúc phải sau ngày bắt đầu',
-        predict: 'Dự đoán kết thúc phải nằm trong khoảng thời gian của sprint',
+        predict: 'Thời gian dự đoán phải nằm trong khoảng thời gian của sprint',
         description: 'Mô tả sprint không được để trống'
       }
     }
@@ -114,6 +114,24 @@ const messages = {
             y: 'Thành viên'
           }
         }
+      },
+      teacher: {
+        tasksByStatusPerStudentBarChart: {
+          title: 'Phân loại trạng thái của các issue theo sinh viên',
+          dataset: {
+            labelIssueTodo: 'Issue chuẩn bị thực hiện',
+            labelIssueInProcess: 'Issue đang thực hiện',
+            labelIssueReview: 'Issue đang đợi review',
+            labelIssueDone: 'Issue đã hoàn thành'
+          },
+          scales: {
+            x: 'Số lượng issue',
+            y: 'Thành viên'
+          }
+        },
+        tasksByStatusPerProjectBarChart: {
+          title: 'Phân loại trạng thái của các issue theo nhóm'
+        }
       }
     },
     dataTable: {
@@ -151,7 +169,7 @@ const messages = {
           status: 'Trạng thái',
           start: 'Ngày bắt đầu',
           end: 'Ngày kết thúc',
-          predict: 'Dự đoán kết thúc',
+          predict: 'Thời gian dự đoán',
           predictStatus: 'Trạng thái dự đoán',
           detail: 'Chi tiết'
         },
@@ -301,7 +319,7 @@ const messages = {
       header: {
         dropdown: {
           invite: 'Mời sinh viên',
-          members: 'Danh sách thành viên'
+          members: 'Thông tin'
         }
       },
       dialog: {
@@ -384,7 +402,7 @@ const messages = {
           duration: 'Thời gian Sprint',
           startDate: 'Ngày bắt đầu',
           endDate: 'Ngày kết thúc',
-          predict: 'Dự đoán kết thúc',
+          predict: 'Thời gian dự đoán',
           customDuration: 'Tùy chỉnh',
           week: 'tuần',
           submit: {
@@ -426,7 +444,14 @@ const messages = {
       sprintCardInBacklog: {
         dropdown: {
           moveToSprint: 'Chuyển sang sprint',
-          edit: 'Chỉnh sửa issue'
+          edit: 'Chỉnh sửa issue',
+          delete: 'Xóa issue'
+        },
+        alert: {
+          delete: {
+            title: 'Xóa issue',
+            message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
+          }
         },
         toast: {
           moveToSprint: {
@@ -447,10 +472,6 @@ const messages = {
           reopen: 'Mở lại issue'
         },
         alert: {
-          delete: {
-            title: 'Xóa issue',
-            message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
-          },
           moveToSprint: {
             title: 'Chuyển issue sang sprint',
             message:
@@ -474,13 +495,27 @@ const messages = {
             success: 'Mở lại issue thành công',
             conflict: 'Issue không ở trạng thái DONE, không thể mở lại',
             failed: 'Mở lại issue thất bại, vui lòng thử lại sau'
-          },
-          delete: {
-            success: 'Xóa issue thành công',
-            failed: 'Xóa issue thất bại, vui lòng thử lại sau'
           }
         },
         create: 'Tạo issue'
+      },
+      deleteDropdownItem: {
+        dropdown: {
+          delete: 'Xóa issue'
+        },
+        alert: {
+          title: 'Xóa issue',
+          message: 'Bạn có chắc chắn muốn xóa issue "{{name}}" không?'
+        },
+        toast: {
+          success: 'Xóa issue thành công',
+          failed: 'Xóa issue thất bại, vui lòng thử lại sau'
+        }
+      },
+      updateDropdownItem: {
+        dropdown: {
+          edit: 'Chỉnh sửa issue'
+        }
       }
     },
     issue: {
@@ -635,7 +670,8 @@ const messages = {
           student: 'Sinh viên',
           project: 'Nhóm',
           template: 'Mẫu Sprint',
-          report: 'Báo cáo'
+          report: 'Báo cáo',
+          dashboard: 'Thống kê'
         },
         template: {
           list: {

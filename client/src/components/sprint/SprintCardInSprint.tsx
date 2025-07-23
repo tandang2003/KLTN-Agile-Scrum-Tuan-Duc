@@ -1,6 +1,8 @@
 import { useAlertHost } from '@/components/AlertHost'
 import Icon from '@/components/Icon'
 import Message from '@/components/Message'
+import DeleteDropdownItem from '@/components/sprint/action/DeleteDropdownItem'
+import UpdateDropdownItem from '@/components/sprint/action/UpdateDropdownItem'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -9,15 +11,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { HttpStatusCode } from '@/constant/app.const'
 import messages from '@/constant/message.const'
 import {
-  useDeleteIssueMutation,
   useMoveIssueToBacklogMutation,
   useReopenIssueMutation
 } from '@/feature/issue/issue.api'
-import useOpenIssueUpdate from '@/hooks/use-issue-update'
+import useAuthGuard from '@/hooks/use-auth'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
@@ -25,20 +25,29 @@ import { toast } from 'sonner'
 
 type SprintCardInSprintProps = {
   item: IssueResponse
+  sprint: {
+    id: string
+    start: Date
+    end: Date
+  }
   index: number
 }
 
-const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
+const SprintCardInSprint = ({
+  index,
+  item,
+  sprint
+}: SprintCardInSprintProps) => {
   const message = messages.component.sprint.sprintCardInSprint
-  const { start, end, sprintId, id } = item
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
-  const { action } = useOpenIssueUpdate()
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
-  const [deleteIssue] = useDeleteIssueMutation()
   const { showAlert } = useAlertHost()
   const [reopen] = useReopenIssueMutation()
+  const { id, name } = item
+  const { id: sprintId, start, end } = sprint
+  const { hasRequiredRole } = useAuthGuard({ roles: ['student'] })
 
   const handleMoveToBacklog = () => {
     moveToBacklog({
@@ -101,31 +110,6 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
     })
   }
 
-  const handleDelete = () => {
-    showAlert({
-      title: message.alert.delete.title,
-      type: 'warning',
-      message: (
-        <Message
-          template={message.alert.delete.message}
-          values={{
-            name: item.name
-          }}
-        />
-      ),
-      onConfirm: () => {
-        return deleteIssue(id)
-          .unwrap()
-          .then(() => {
-            toast.success(message.toast.delete.success)
-          })
-          .catch(() => {
-            toast.error(message.toast.delete.failed)
-          })
-      }
-    })
-  }
-
   const canMoveToBacklog =
     start &&
     end &&
@@ -133,7 +117,17 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
       id: sprintId,
       start: start,
       end: end
-    }) === 'PENDING'
+    }) === 'PENDING' &&
+    hasRequiredRole
+  const canDelete =
+    start &&
+    end &&
+    getStatusSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    }) !== 'COMPLETE' &&
+    hasRequiredRole
 
   const canEdit =
     start &&
@@ -142,7 +136,19 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
       id: sprintId,
       start: start,
       end: end
-    }) !== 'COMPLETE'
+    }) !== 'COMPLETE' &&
+    hasRequiredRole
+
+  const canReopen =
+    start &&
+    end &&
+    getStatusSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    }) === 'COMPLETE' &&
+    item.status === 'DONE' &&
+    hasRequiredRole
 
   return (
     <div className='flex rounded-sm border-2 bg-white px-4 py-2' key={item.id}>
@@ -163,33 +169,18 @@ const SprintCardInSprint = ({ index, item }: SprintCardInSprintProps) => {
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          {canEdit && (
-            <RequiredAuth roles={['student']}>
-              <DropdownMenuItem
-                onClick={() => {
-                  action(item.id)
-                }}
-              >
-                {message.dropdown.edit}
-              </DropdownMenuItem>
-            </RequiredAuth>
-          )}
-
-          {canMoveToBacklog && (
-            <RequiredAuth roles={['student']}>
-              <DropdownMenuItem onClick={handleMoveToBacklog}>
-                {message.dropdown.moveToBacklog}
-              </DropdownMenuItem>
-              <DropdownMenuItem className='cancel' onClick={handleDelete}>
-                {message.dropdown.delete}
-              </DropdownMenuItem>
-            </RequiredAuth>
-          )}
-          {item.status === 'DONE' && (
+          {canEdit && <UpdateDropdownItem id={id} />}
+          {canReopen && (
             <DropdownMenuItem onClick={handleReopen}>
               {message.dropdown.reopen}
             </DropdownMenuItem>
           )}
+          {canMoveToBacklog && (
+            <DropdownMenuItem onClick={handleMoveToBacklog}>
+              {message.dropdown.moveToBacklog}
+            </DropdownMenuItem>
+          )}
+          {canDelete && <DeleteDropdownItem id={id} name={name} />}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

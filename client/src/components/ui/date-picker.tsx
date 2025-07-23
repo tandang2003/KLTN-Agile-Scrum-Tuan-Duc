@@ -1,8 +1,7 @@
-import { addDays, format, isAfter, isBefore, isWithinInterval } from 'date-fns'
+import { isAfter, isBefore, isWithinInterval } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { DateRange } from 'react-day-picker'
-import { vi } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import { Calendar, CalendarProps } from '@/components/ui/calendar'
@@ -66,13 +65,6 @@ export function DatePickerWithRange({
   )
 }
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import messages from '@/constant/message.const'
 
 type DatePickerWithPresetsProps = {
@@ -131,21 +123,6 @@ export function DatePickerWithPresets({
         align='start'
         className='flex w-auto flex-col space-y-2 p-2'
       >
-        <Select
-          onValueChange={(value) =>
-            setDate && setDate(addDays(new Date(), parseInt(value)))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Chọn' />
-          </SelectTrigger>
-          <SelectContent position='popper'>
-            <SelectItem value='0'>Hôm nay</SelectItem>
-            <SelectItem value='1'>Hôm qua</SelectItem>
-            <SelectItem value='3'>3 ngày trước</SelectItem>
-            <SelectItem value='7'>1 tuần</SelectItem>
-          </SelectContent>
-        </Select>
         <div className='rounded-md border'>
           <Calendar
             mode='single'

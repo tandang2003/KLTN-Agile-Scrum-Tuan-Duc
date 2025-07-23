@@ -38,9 +38,10 @@ public class ProjectSprint {
         referencedColumnName = "sprint_id")},
     inverseJoinColumns = @JoinColumn(name = "resource_id"))
   private List<Resource> dailyFiles;
-  private Instant dtPreview;
+  //  private Instant dtPreview;
   private int removedIssue;
-
+  private int predictedResult = -2; // -2: not predicted, -1: predicted result is fail, 0: predicted result is success
+  private Instant dtLastPredicted;
 
   public ProjectSprint() {
   }
@@ -55,7 +56,7 @@ public class ProjectSprint {
     this.sprint = builder.sprint;
 //        this.issues = builder.issues;
 //        this.dtPlanning = builder.DTPlanning;
-    this.dtPreview = builder.dtPreview;
+//    this.dtPreview = builder.dtPreview;
   }
 
   public static class ProjectSprintBuilder {
@@ -64,7 +65,7 @@ public class ProjectSprint {
     private Sprint sprint;
     private List<Issue> issues;
 //        private Instant DTPlanning;
-        private Instant dtPreview;
+//        private Instant dtPreview;
 
     public ProjectSprintBuilder id(ProjectSprintId id) {
       this.id = id;
@@ -85,10 +86,10 @@ public class ProjectSprint {
       this.issues = issues;
       return this;
     }
-    public ProjectSprintBuilder dtPreview(Instant dtPreview) {
-      this.dtPreview = dtPreview;
-      return this;
-    }
+//    public ProjectSprintBuilder dtPreview(Instant dtPreview) {
+//      this.dtPreview = dtPreview;
+//      return this;
+//    }
 
     public ProjectSprint build() {
       return new ProjectSprint(this);
@@ -135,19 +136,27 @@ public class ProjectSprint {
     this.dailyFiles = dailyFiles;
   }
 
-  public Instant getDtPreview() {
-    return dtPreview;
-  }
-
-  public void setDtPreview(Instant dtPreview) {
-    this.dtPreview = dtPreview;
-  }
-
   public int getRemovedIssue() {
     return removedIssue;
   }
 
   public void setRemovedIssue(int removedIssue) {
     this.removedIssue = removedIssue;
+  }
+
+  public int isPredictedResult() {
+    return predictedResult;
+  }
+
+  public void setPredictedResult(int predictedResult) {
+    this.predictedResult = predictedResult;
+  }
+
+  public Instant getDtLastPredicted() {
+    return dtLastPredicted;
+  }
+
+  public void setDtLastPredicted(Instant dtLastPredicted) {
+    this.dtLastPredicted = dtLastPredicted;
   }
 }

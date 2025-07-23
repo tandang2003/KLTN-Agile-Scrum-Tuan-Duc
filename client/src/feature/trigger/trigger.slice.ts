@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { Id } from '@/types/other.type'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type TriggerState = {
   isCreateProject: boolean
@@ -6,6 +7,12 @@ type TriggerState = {
   isUpdateIssue: boolean
   isOpenDialogCourse: boolean
   isOpenDialogSkill: boolean
+  isSprintUpdateTime: {
+    projectId: Id
+    sprintId: Id
+    start: string
+    end: string
+  } | null
 }
 
 const initialState: TriggerState = {
@@ -13,7 +20,8 @@ const initialState: TriggerState = {
   isCreateIssue: false,
   isUpdateIssue: false,
   isOpenDialogSkill: false,
-  isOpenDialogCourse: false
+  isOpenDialogCourse: false,
+  isSprintUpdateTime: null
 }
 
 const triggerSlice = createSlice({
@@ -49,6 +57,20 @@ const triggerSlice = createSlice({
     },
     disableDialogCourse: (state: TriggerState) => {
       state.isOpenDialogCourse = false
+    },
+    enableSprintUpdateTime: (
+      state: TriggerState,
+      action: PayloadAction<{
+        projectId: Id
+        sprintId: Id
+        start: string
+        end: string
+      }>
+    ) => {
+      state.isSprintUpdateTime = action.payload
+    },
+    disableSprintUpdateTime: (state: TriggerState) => {
+      state.isSprintUpdateTime = null
     }
   }
 })
@@ -65,6 +87,8 @@ export const {
   enableDialogSkill,
   disableDialogSkill,
   enableDialogCourse,
-  disableDialogCourse
+  disableDialogCourse,
+  disableSprintUpdateTime,
+  enableSprintUpdateTime
 } = triggerSlice.actions
 export default triggerSlice

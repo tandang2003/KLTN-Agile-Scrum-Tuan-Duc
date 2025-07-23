@@ -27,17 +27,16 @@ import {
   useSortable,
   verticalListSortingStrategy
 } from '@dnd-kit/sortable'
-import { forwardRef, useRef } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import messages from '@/constant/message.const'
 
-type UpdateSubTaskFormProp = {
-  open?: boolean
-  cancel?: () => void
-}
+type UpdateSubTaskFormProp = {}
 
-const UpdateSubTaskForm = ({ open, cancel }: UpdateSubTaskFormProp) => {
+const UpdateSubTaskForm = ({}: UpdateSubTaskFormProp) => {
   const orderRef = useRef<number>(0)
+  const [open, setOpen] = useState<boolean>(false)
+
   const message = messages.component.issue.subTasks
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -127,11 +126,15 @@ const UpdateSubTaskForm = ({ open, cancel }: UpdateSubTaskFormProp) => {
           ))}
         </SortableContext>
       </DndContext>
-      {open && (
+      {open == false ? (
+        <Button variant='outline' onClick={() => setOpen(true)}>
+          <Icon icon={'ic:baseline-plus'} />
+        </Button>
+      ) : (
         <div className='mt-3 flex flex-col gap-2'>
           <SubTaskItemForm
             cancel={() => {
-              cancel?.()
+              setOpen(false)
             }}
             handleAppend={handleAppend}
             ref={inputRef}

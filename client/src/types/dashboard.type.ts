@@ -1,4 +1,5 @@
 import { IssuePriority, IssueStatus } from '@/types/model/typeOf'
+import { Id } from '@/types/other.type'
 
 type DashboardRes = {
   issueCreated: number
@@ -7,8 +8,14 @@ type DashboardRes = {
   status: Record<IssueStatus, number>
   workload: WorkloadDataItem[]
   priority: Record<IssuePriority, number>
-  issueTrend?: IssueTrendItem[]
-  issueStatusTrend?: IssueStatusTrendItem[]
+}
+
+type DashboardWorkspaceResponse = {
+  numOfProject: number
+  maxNumMember: number
+  minNumMember: number
+  assigneeRate: number
+  taskFinishRate: number
 }
 
 type IssueTrendItem = {
@@ -24,7 +31,18 @@ type WorkloadDataItem = {
   }
   total: number
   done: number
-  failed: number
+  notComplete: number
+}
+
+type WorkloadDataItemDetail = {
+  assignee: {
+    uniId: string
+    name: string
+  }
+  todo: number
+  inProcess: number
+  review: number
+  done: number
 }
 
 type IssueStatusTrendItem = {
@@ -34,9 +52,22 @@ type IssueStatusTrendItem = {
   issuesReview: number
 }
 
+type ProjectWorkloadRes = {
+  id: Id
+  name: string
+  status: Record<IssueStatus, number>
+  total: number
+  done: number
+  notComplete: number
+  taskBalance: number
+}
+
 export type {
   DashboardRes,
   WorkloadDataItem,
   IssueTrendItem,
-  IssueStatusTrendItem
+  IssueStatusTrendItem,
+  WorkloadDataItemDetail,
+  DashboardWorkspaceResponse,
+  ProjectWorkloadRes
 }

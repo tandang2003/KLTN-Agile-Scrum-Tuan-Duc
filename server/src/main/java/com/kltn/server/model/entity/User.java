@@ -48,7 +48,7 @@ public class User extends BaseEntity implements UserDetails {
   private boolean alive;
   @OneToMany(mappedBy = "user")
   private List<UserCourseRelation> courses;
-  @OneToMany
+  @OneToMany(mappedBy = "user")
   private List<PersonalSkill> skills;
 
   public User() {
