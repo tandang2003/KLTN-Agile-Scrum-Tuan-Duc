@@ -11,6 +11,10 @@ export const DEFAULT_ALLOWED_FILE_TYPES = {
   docx: {
     mime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     label: 'Word Document (.docx)'
+  },
+  xlsx: {
+    mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    label: 'Excel Spreadsheet (.xlsx)'
   }
 } as const
 

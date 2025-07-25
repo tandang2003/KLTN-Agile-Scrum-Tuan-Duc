@@ -1,7 +1,12 @@
 import { Position } from '@/components/board/type'
-import { BoardModelType, ColumnsType } from '@/types/card.type'
+import {
+  BoardModelType,
+  BoardModelType_V2,
+  ColumnsType
+} from '@/types/card.type'
 import { IssueResponse } from '@/types/issue.type'
-import { issueStatusList } from '@/types/model/typeOf'
+import { IssueStatus, issueStatusList } from '@/types/model/typeOf'
+import { Id } from '@/types/other.type'
 
 const DEFAULT_POSITION: Position = {
   TODO: [],
@@ -27,6 +32,29 @@ const toBoardModel = (
   }
 
   return result
+}
+
+const toBoardModel_V2 = (
+  issues: IssueResponse[],
+  position: Position
+): BoardModelType_V2 => {
+  // Step 1: Create a map of issues by ID
+  const issueMap = new Map<Id, IssueResponse>()
+  for (const issue of issues) {
+    issueMap.set(issue.id, issue)
+  }
+
+  // Step 2: Build the board model
+  const board: BoardModelType_V2 = {} as BoardModelType_V2
+
+  for (const status in position) {
+    const ids = position[status as IssueStatus]
+    board[status as IssueStatus] = ids
+      .map((id) => issueMap.get(id))
+      .filter((issue): issue is IssueResponse => issue !== undefined)
+  }
+
+  return board
 }
 
 // function sortLinkedList<T>(
@@ -75,4 +103,4 @@ const toBoardModel = (
 //   return sorted
 // }
 
-export { toBoardModel, DEFAULT_POSITION }
+export { toBoardModel, DEFAULT_POSITION, toBoardModel_V2 }

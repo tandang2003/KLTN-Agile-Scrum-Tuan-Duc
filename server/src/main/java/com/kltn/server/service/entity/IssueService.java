@@ -167,36 +167,40 @@ public class IssueService {
       User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
       task.setReviewer(reviewer);
     }
-//    if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
-//      Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
-//      Instant now = ClockSimulator.now();
-//      if (now.isAfter(sprint.getDtStart())) {
-//        throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
-//      }
-//      if (now.isAfter(sprint.getDtEnd())) {
-//        throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
-//      }
-//      if (task.getDtStart() == null) {
-//        task.setDtStart(sprint.getDtStart());
-//      } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
-//        Map<String, String> error = new HashMap<>();
-//        error.put("start", "Start date cannot be before sprint start date");
-//        List<Map<String, String>> errors = new ArrayList<>();
-//        errors.add(error);
-//        throw AppMethodArgumentNotValidException.builder().error(errors).build();
-//      }
-//      if (task.getDtEnd() == null) {
-//        task.setDtEnd(sprint.getDtEnd());
-//      } else if (task.getDtEnd() != null && task.getDtEnd().isAfter(sprint.getDtEnd())) {
-//        Map<String, String> error = new HashMap<>();
-//        error.put("end", "End date cannot be after sprint end date");
-//        List<Map<String, String>> errors = new ArrayList<>();
-//        errors.add(error);
-//        throw AppMethodArgumentNotValidException.builder().error(errors).build();
-//      }
-//      task.setSprint(sprint);
-//      task.setDtAppend(ClockSimulator.now());
-//    }
+    // if (issueCreateRequest.getSprintId() != null &&
+    // !issueCreateRequest.getSprintId().isEmpty()) {
+    // Sprint sprint =
+    // sprintService.getSprintById(issueCreateRequest.getSprintId());
+    // Instant now = ClockSimulator.now();
+    // if (now.isAfter(sprint.getDtStart())) {
+    // throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+    // }
+    // if (now.isAfter(sprint.getDtEnd())) {
+    // throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+    // }
+    // if (task.getDtStart() == null) {
+    // task.setDtStart(sprint.getDtStart());
+    // } else if (task.getDtStart() != null &&
+    // task.getDtStart().isBefore(sprint.getDtStart())) {
+    // Map<String, String> error = new HashMap<>();
+    // error.put("start", "Start date cannot be before sprint start date");
+    // List<Map<String, String>> errors = new ArrayList<>();
+    // errors.add(error);
+    // throw AppMethodArgumentNotValidException.builder().error(errors).build();
+    // }
+    // if (task.getDtEnd() == null) {
+    // task.setDtEnd(sprint.getDtEnd());
+    // } else if (task.getDtEnd() != null &&
+    // task.getDtEnd().isAfter(sprint.getDtEnd())) {
+    // Map<String, String> error = new HashMap<>();
+    // error.put("end", "End date cannot be after sprint end date");
+    // List<Map<String, String>> errors = new ArrayList<>();
+    // errors.add(error);
+    // throw AppMethodArgumentNotValidException.builder().error(errors).build();
+    // }
+    // task.setSprint(sprint);
+    // task.setDtAppend(ClockSimulator.now());
+    // }
     if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
       List<Resource> resources = issueCreateRequest.getAttachments()
           .stream()
@@ -509,6 +513,19 @@ public class IssueService {
     var task = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
+
+    String assigneeId = task.getAssignee().getUniId();
+    long commentCount = taskMongo.getComments().stream()
+        .filter(n -> n.getFrom().equals(
+            assigneeId))
+        .count();
+
+    if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() == IssueStatus.DONE)
+        && commentCount < 1) {
+      throw AppException.builder().error(Error.COMMENT_CONFLICT_STATUS_ISSUE).build();
+    }
+
+    // TODO
     if (request.getStatus().equals(IssueStatus.DONE)) {
       task.setOpen(false);
       task.setDtEnd(ClockSimulator.now());

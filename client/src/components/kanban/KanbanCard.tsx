@@ -5,7 +5,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { CardHeader, CardTitle, Card as CardUI } from '@/components/ui/card'
 import Icon from '@/components/Icon'
 import { memo } from 'react'
-import useKanbanContext from '@/components/kanban/useKanbanContext'
+import useKanbanContext from '@/components/kanban/context'
 type KanbanCardProps = {
   data: CardModelType
   container?: string

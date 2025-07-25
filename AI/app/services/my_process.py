@@ -50,6 +50,7 @@ class My_Process():
     bow = self.bow(self.issue_data, self.k)
     data = self.merge(self.sprint_data, None, bow)
     data = data.drop(columns=["sprint_id"])
+    data.columns = data.columns.astype(str)
     # print(data.columns)
     y_pred = self.model.predict(data)
     # print(y_pred)

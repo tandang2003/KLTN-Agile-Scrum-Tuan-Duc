@@ -17,7 +17,7 @@ import {
   Tooltip
 } from 'chart.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Bar } from 'react-chartjs-2'
+import { Doughnut } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
@@ -29,7 +29,7 @@ const TasksByStatusPerStudentBarChart =
       messages.component.dashboard.teacher.tasksByStatusPerStudentBarChart
     const [page, setPage] = useState<PageRequest>({
       page: 0,
-      size: 5
+      size: 3
     })
     const { workspaceId } = useAppId()
     const { data, isFetching } = useGetWorkloadWorkspaceQuery(
@@ -91,26 +91,26 @@ const TasksByStatusPerStudentBarChart =
                 }}
               </LoadingBoundary>
             </div>
-            <LoadingBoundary data={data} isLoading={isFetching}>
-              {(data) => (
-                <Paging
-                  page={{
-                    currentPage: data.currentPage,
-                    totalPages: data.totalPages,
-                    totalItems: data.totalItems
-                  }}
-                  onPageChange={(page) => {
-                    setPage((prev) => {
-                      return {
-                        ...prev,
-                        page: page
-                      }
-                    })
-                  }}
-                />
-              )}
-            </LoadingBoundary>
           </div>
+          <LoadingBoundary data={data} isLoading={isFetching}>
+            {(data) => (
+              <Paging
+                page={{
+                  currentPage: data.currentPage,
+                  totalPages: data.totalPages,
+                  totalItems: data.totalItems
+                }}
+                onPageChange={(page) => {
+                  setPage((prev) => {
+                    return {
+                      ...prev,
+                      page: page
+                    }
+                  })
+                }}
+              />
+            )}
+          </LoadingBoundary>
         </div>
       </>
     )
@@ -124,61 +124,88 @@ const Chart = ({ data: student }: ChartProps) => {
   const message =
     messages.component.dashboard.teacher.tasksByStatusPerStudentBarChart
 
-  const labels = useMemo(
-    () => student.map((item) => item.assignee.name),
-    [student]
-  )
+  return (
+    <>
+      {/* Unified Legend */}
+      <div className='mb-4 flex justify-center gap-6 text-sm text-gray-700'>
+        <div className='flex items-center gap-2'>
+          <span className='block h-3 w-3 rounded-full bg-green-500'></span>
+          {message.dataset.labelIssueDone}
+        </div>
+        <div className='flex items-center gap-2'>
+          <span className='block h-3 w-3 rounded-full bg-red-500'></span>
+          {message.dataset.labelIssueFailed}
+        </div>
+      </div>
 
-  const chartData = useMemo(
-    () => ({
-      labels,
-      datasets: [
-        {
-          label: message.dataset.labelIssueInProcess,
-          data: student.map((item) => item.total),
-          backgroundColor: '#3b82f6'
-        },
-        {
-          label: message.dataset.labelIssueDone,
-          data: student.map((item) => item.done),
-          backgroundColor: '#10b981'
-        },
-        {
-          label: message.dataset.labelIssueReview,
-          data: student.map((item) => item.notComplete),
-          backgroundColor: '#ef4444'
-        }
-      ]
-    }),
-    [labels, student]
-  )
+      {/* Chart Grid */}
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        {student.map((item) => {
+          const remaining = item.total - item.done - item.notComplete
+          const isAllZero =
+            item.done === 0 && item.notComplete === 0 && remaining === 0
 
-  const options = useMemo<ChartOptions<'bar'>>(
-    () => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top' },
-        title: {
-          display: true,
-          text: message.title
-        }
-      },
-      scales: {
-        x: {
-          stacked: true,
-          ticks: {
-            maxRotation: 45,
-            minRotation: 30
+          if (isAllZero) {
+            return (
+              <div
+                key={item.assignee.uniId}
+                className='flex h-[230px] flex-col items-center justify-center rounded border p-4 text-gray-500'
+              >
+                <h3 className='mb-2 text-center font-semibold text-gray-700'>
+                  {item.assignee.name}
+                </h3>
+                <p className='text-sm italic'>Chưa ghi nhận được dữ liệu</p>
+              </div>
+            )
           }
-        },
-        y: { stacked: true, beginAtZero: true }
-      }
-    }),
-    [message.title]
-  )
 
-  return <Bar options={options} data={chartData} />
+          const chartData = {
+            labels: [],
+            datasets: [
+              {
+                data: [item.done, item.notComplete, remaining],
+                backgroundColor: ['#10b981', '#ef4444', '#facc15']
+              }
+            ]
+          }
+
+          return (
+            <div
+              key={item.assignee.uniId}
+              className='flex flex-col items-center'
+            >
+              <h3 className='mb-2 text-center font-semibold text-gray-700'>
+                {item.assignee.name}
+              </h3>
+              <div style={{ width: 180, height: 180 }}>
+                <Doughnut
+                  data={chartData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false },
+                      tooltip: {
+                        callbacks: {
+                          label: (tooltipItem) => {
+                            const value = tooltipItem.raw
+                            const label = ['Done', 'Failed', 'Remaining'][
+                              tooltipItem.dataIndex
+                            ]
+                            return `${label}: ${value}`
+                          }
+                        }
+                      }
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </>
+  )
 }
 
 export default TasksByStatusPerStudentBarChart

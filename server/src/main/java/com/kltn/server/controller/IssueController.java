@@ -26,6 +26,7 @@ public class IssueController {
   @Autowired
   public IssueController(IssueService taskService) {
     this.taskService = taskService;
+
   }
 
   @PostMapping("/backlog")
@@ -92,6 +93,7 @@ public class IssueController {
                                                                     @RequestParam(value = "sprint_id",
                                                                       required = false) String sprintId) {
     var issues = taskService.getIssuesBySprintId(new IssueOfSprintRequest(sprintId, projectId));
+
     return ResponseEntity.status(issues.getCode())
       .body(issues);
   }

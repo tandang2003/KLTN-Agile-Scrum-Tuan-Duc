@@ -124,7 +124,7 @@ public class SprintService {
     if (!sprint.getDtPredict()
       .truncatedTo(ChronoUnit.DAYS)
       .equals(updateRequest.predict().truncatedTo(ChronoUnit.DAYS))) {
-      predictScheduler1.scheduleSprint(sprint.getId(), LocalDateTime.from(updateRequest.predict()));
+      predictScheduler1.scheduleSprint(sprint.getId(), LocalDateTime.ofInstant(updateRequest.predict(), ZoneId.of("Asia/Ho_Chi_Minh")));
     }
     sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
     List<Sprint> sprintList = sprintRepository.findAllByWorkspaceId(sprint.getWorkspace()

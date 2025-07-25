@@ -26,7 +26,7 @@ public class CommentController {
   }
 
   @MessageMapping("/issue/{issueId}")
-  @SendTo("/topic/room/{issueId}")
+  @SendTo("/topic/issue/room/{issueId}")
   public CommentResponse sendToGroup(@DestinationVariable("issueId") String issueId,
       @Payload CommentCreateRequest message, Principal principal) {
 

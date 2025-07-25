@@ -119,9 +119,8 @@ const messages = {
         tasksByStatusPerStudentBarChart: {
           title: 'Phân loại trạng thái của các issue theo sinh viên',
           dataset: {
-            labelIssueTodo: 'Issue chuẩn bị thực hiện',
-            labelIssueInProcess: 'Issue đang thực hiện',
-            labelIssueReview: 'Issue đang đợi review',
+            labelIssueFailed: 'Issue chưa hoàn thành',
+            labelIssueTotal: 'Tổng issue',
             labelIssueDone: 'Issue đã hoàn thành'
           },
           scales: {
@@ -632,7 +631,7 @@ const messages = {
         cancel: 'Hủy'
       },
       toast: {
-        success: 'Dự đoán Sprint thành công',
+        success: 'Dự đoán Sprint có khả năng thành công',
         failed: 'Dự đoán Sprint thất bại, vui lòng thử lại sau'
       }
     }

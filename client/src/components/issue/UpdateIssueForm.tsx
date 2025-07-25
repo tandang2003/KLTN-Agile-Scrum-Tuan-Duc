@@ -21,6 +21,12 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup
+} from '@/components/ui/resizable'
+
 type UpdateIssueFormProps = {
   data: IssueDetailResponse
 }
@@ -73,68 +79,75 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
 
   return (
     <Form {...form}>
-      <form className='flex h-[60vh] gap-3'>
-        <ScrollArea className='h-inherit flex-1 [&>*:not(:first-element)]:mt-3'>
-          <div className='mr-3'>
-            <div className='my-3'>
-              <UpdateNameIssue />
-            </div>
+      <form>
+        <ResizablePanelGroup direction='horizontal'>
+          <ResizablePanel defaultSize={60} minSize={30}>
+            <ScrollArea className='h-inherit h-[60vh] flex-1 [&>*:not(:first-element)]:mt-3'>
+              <div className='mr-3'>
+                <div className='my-3'>
+                  <UpdateNameIssue />
+                </div>
 
-            <div className='my-3'>
-              <Label className='mb-2 text-xl'>{message.description}</Label>
-              <UpdateDescriptionIssue />
-            </div>
-            <div>
-              <UpdateAttachmentIssue
-                issueId={data.id}
-                data={data.resources?.map((item) => {
-                  return {
-                    filename: item.name,
-                    url: item.url,
-                    id: item.id,
-                    extension: item.extension
-                  }
-                })}
-              />
-            </div>
-            <UpdateSubTaskForm />
-            <UpdateRelationship
-              issueId={data.id}
-              initialData={data.relations}
-            />
-            <Tabs defaultValue='comment' className='mt-3'>
-              <TabsList>
-                <TabsTrigger value='comment'>
-                  {message.update.form.comment}
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value='comment'>
-                <SectionComment />
-              </TabsContent>
-            </Tabs>
-          </div>
-          <ScrollBar />
-        </ScrollArea>
-        <ScrollArea className='h-inherit basis-[550px] rounded-md border-2 px-4 py-2 [&>*:not(:first-child)]:mt-3'>
-          <p className='text-xl'>{message.update.form.detail}</p>
+                <div className='my-3'>
+                  <Label className='mb-2 text-xl'>{message.description}</Label>
+                  <UpdateDescriptionIssue />
+                </div>
+                <div>
+                  <UpdateAttachmentIssue
+                    issueId={data.id}
+                    data={data.resources?.map((item) => {
+                      return {
+                        filename: item.name,
+                        url: item.url,
+                        id: item.id,
+                        extension: item.extension
+                      }
+                    })}
+                  />
+                </div>
+                <UpdateSubTaskForm />
+                <UpdateRelationship
+                  issueId={data.id}
+                  initialData={data.relations}
+                />
+                <Tabs defaultValue='comment' className='mt-3'>
+                  <TabsList>
+                    <TabsTrigger value='comment'>
+                      {message.update.form.comment}
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value='comment'>
+                    <SectionComment />
+                  </TabsContent>
+                </Tabs>
+              </div>
+              <ScrollBar />
+            </ScrollArea>
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel minSize={35}>
+            <ScrollArea className='h-inherit basis-[550px] rounded-md px-4 py-2 [&>*:not(:first-child)]:mt-3'>
+              <p className='text-xl'>{message.update.form.detail}</p>
 
-          <div className='grid grid-cols-2 items-center gap-x-2 gap-y-3'>
-            <div>{message.assignee}</div>
-            <UpdateMemberIssue form={form} name='assigneeId' />
-            <div>{message.reviewer}</div>
-            <UpdateMemberIssue form={form} name='reviewerId' />
+              <div className='grid grid-cols-2 items-center gap-x-2 gap-y-3'>
+                <div>{message.assignee}</div>
+                <UpdateMemberIssue form={form} name='assigneeId' />
+                <div>{message.reviewer}</div>
+                <UpdateMemberIssue form={form} name='reviewerId' />
 
-            <div>{message.update.form.duration}</div>
-            <UpdateDateIssue />
-            <div>{message.priority}</div>
-            <UpdatePriorityIssue />
-          </div>
-          <div className='mt-4 flex items-center gap-2'>
-            <UpdateTopicForm />
-          </div>
+                <div>{message.update.form.duration}</div>
+                <UpdateDateIssue />
+                <div>{message.priority}</div>
+                <UpdatePriorityIssue />
+              </div>
+              <div className='mt-4 flex items-center gap-2'>
+                <UpdateTopicForm />
+              </div>
 
-          <ScrollBar />
-        </ScrollArea>
+              <ScrollBar />
+            </ScrollArea>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </form>
     </Form>
   )

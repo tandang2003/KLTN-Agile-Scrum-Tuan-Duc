@@ -30,10 +30,9 @@ const notificationApi = createApi({
       providesTags: ['Notifications']
     }),
     clearNotifications: builder.mutation<void, void>({
-      query: () => ({
-        url: '/notifications/clear',
-        method: 'POST'
-      }),
+      queryFn: () => {
+        return { data: undefined }
+      },
       invalidatesTags: ['Notifications']
     })
   })

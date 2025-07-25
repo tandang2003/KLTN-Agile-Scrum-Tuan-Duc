@@ -16,9 +16,9 @@ public class ClockPrinter {
     this.clockSimulator = clockSimulator;
   }
 
-  @Scheduled(fixedRate = 1000) // every 2 seconds
-  public void printSimulatedTime() {
-     System.out.println("Simulated Server Time: " +
-     clockSimulator.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh")));
-  }
+  // @Scheduled(fixedRate = 1000) // every 2 seconds
+  // public void printSimulatedTime() {
+  // System.out.println("Simulated Server Time: " +
+  // clockSimulator.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh")));
+  // }
 }
