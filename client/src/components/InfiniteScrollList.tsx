@@ -55,20 +55,16 @@ export default function InfiniteScrollList<T>({
   }, [hasMore])
 
   useEffect(() => {
-    console.log(isLoading)
-  }, [isLoading])
-
-  useEffect(() => {
     const loadData = async () => {
-      console.log('Calling loadFunc for page:', page)
+      // console.log('Calling loadFunc for page:', page)
       setIsLoading(true)
       try {
         const { data, more } = await loadFunc(page)
-        console.log('Fetched data:', data, 'Has more:', more)
+        // console.log('Fetched data:', data, 'Has more:', more)
         setItems((prev) => [...prev, ...data])
         setHasMore(more)
       } catch (err) {
-        console.error('Error loading data:', err)
+        // console.error('Error loading data:', err)
       } finally {
         setIsLoading(false)
       }

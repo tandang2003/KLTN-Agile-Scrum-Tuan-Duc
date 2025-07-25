@@ -13,6 +13,7 @@ type TriggerState = {
     start: string
     end: string
   } | null
+  isNotify: boolean
 }
 
 const initialState: TriggerState = {
@@ -21,7 +22,8 @@ const initialState: TriggerState = {
   isUpdateIssue: false,
   isOpenDialogSkill: false,
   isOpenDialogCourse: false,
-  isSprintUpdateTime: null
+  isSprintUpdateTime: null,
+  isNotify: false
 }
 
 const triggerSlice = createSlice({
@@ -71,6 +73,12 @@ const triggerSlice = createSlice({
     },
     disableSprintUpdateTime: (state: TriggerState) => {
       state.isSprintUpdateTime = null
+    },
+    enableNotification: (state: TriggerState) => {
+      state.isNotify = true
+    },
+    disableNotification: (state: TriggerState) => {
+      state.isNotify = false
     }
   }
 })
@@ -89,6 +97,8 @@ export const {
   enableDialogCourse,
   disableDialogCourse,
   disableSprintUpdateTime,
-  enableSprintUpdateTime
+  enableSprintUpdateTime,
+  enableNotification,
+  disableNotification
 } = triggerSlice.actions
 export default triggerSlice
