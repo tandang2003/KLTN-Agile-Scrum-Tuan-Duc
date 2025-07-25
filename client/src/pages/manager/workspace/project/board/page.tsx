@@ -2,6 +2,7 @@ import FilterBoard from '@/components/board/FilterBoard'
 import RenderBoard from '@/components/board/RenderBoard'
 import { DataOnMoveType, Position } from '@/components/board/type'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
+import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppSelector } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
@@ -16,7 +17,6 @@ import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { toast } from 'sonner'
 
 const BoardPage = () => {
   const { projectId } = useOutletContext<ProjectParams>()
@@ -33,7 +33,6 @@ const BoardPage = () => {
       skip: !projectId || !sprintId
     }
   )
-
   useEffect(() => {
     if (projectId && sprintId) {
       boardService
@@ -55,24 +54,34 @@ const BoardPage = () => {
   }, [projectId, sprintId, currentSprint])
 
   const handleOnChangeAPI = useCallback(
-    (issue: DataOnMoveType, mode: 'same' | 'diff', position: Position) => {
-      if (projectId && sprintId) {
-        const promises = Promise.all([
-          mode === 'same'
-            ? Promise.resolve()
-            : issueService.updateStatus({
-                id: issue.active,
-                status: issue.columnTo as IssueStatus,
-                position: ''
-              }),
-          boardService.savePosition({
-            projectId: projectId,
-            sprintId: sprintId,
-            position: position
-          })
-        ])
+    async (
+      issue: DataOnMoveType,
+      mode: 'same' | 'diff',
+      position: Position
+    ) => {
+      if (!projectId || !sprintId) return
 
-        return promises
+      try {
+        // If mode is different column, update status first
+        if (mode === 'diff') {
+          await issueService.updateStatus({
+            id: issue.active,
+            status: issue.columnTo as IssueStatus,
+            position: ''
+          })
+          // Rollback
+          // await Promise.reject(new Error('Simulated failure'))
+        }
+
+        // If updateStatus succeeded or mode is same, update position
+        await boardService.savePosition({
+          projectId,
+          sprintId,
+          position
+        })
+      } catch (error) {
+        console.error('Update failed, rolling back:', error)
+        return Promise.reject(error) // 🔥 KEY FIX HERE
       }
     },
     [projectId, sprintId]
@@ -104,7 +113,7 @@ const BoardPage = () => {
     [columns]
   )
 
-  const handleOnMove = (data: DataOnMoveType) => {
+  const handleOnMove = async (data: DataOnMoveType): Promise<void> => {
     // // console.log('handleOnMove', active, columnTo, indexTo)
     const { active, columnTo, indexTo } = data
     const oldActiveIndex = findIndex(active)
@@ -130,9 +139,8 @@ const BoardPage = () => {
         ...(columns ?? {}),
         [oldColumn]: itemsNewColumn
       }
-      handleOnChangeAPI(data, 'same', position)?.then(() => {
+      return handleOnChangeAPI(data, 'same', position)?.then(() => {
         setColumns(position)
-        toast.message('Position saved successfully')
       })
     }
 
@@ -151,9 +159,8 @@ const BoardPage = () => {
         [oldColumn]: itemsOldColumn,
         [newColumn]: itemsNewColumn
       }
-      handleOnChangeAPI(data, 'diff', position)?.then(() => {
+      return handleOnChangeAPI(data, 'diff', position)?.then(() => {
         setColumns(position)
-        toast.message('Position saved successfully')
       })
     }
   }
@@ -161,23 +168,31 @@ const BoardPage = () => {
   return (
     <div>
       <FilterBoard />
-      {isFetching && <Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
-      {!isFetching && columns && (
-        <RenderBoard
-          data={{
-            columns: columns,
-            items: data || []
-          }}
-          handleOnMove={(data) => {
-            handleOnMove({
-              active: data.active,
-              columnTo: data.columnTo,
-              indexTo: data.indexTo
-            })
-          }}
-          disabled={isDisabled}
-        />
-      )}
+      <LoadingBoundary
+        data={data}
+        isLoading={isFetching}
+        loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
+      >
+        {(data) => {
+          return (
+            <RenderBoard
+              data={{
+                columns: columns,
+                items: data || []
+              }}
+              handleOnMove={(data) => {
+                return handleOnMove({
+                  active: data.active,
+                  columnTo: data.columnTo,
+                  indexTo: data.indexTo
+                })
+              }}
+              disabled={isDisabled}
+            />
+          )
+        }}
+      </LoadingBoundary>
+
       <DialogUpdateIssue />
     </div>
   )

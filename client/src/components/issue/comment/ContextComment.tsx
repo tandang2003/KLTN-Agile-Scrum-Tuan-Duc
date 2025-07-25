@@ -11,6 +11,8 @@ import envConfig from '@/configuration/env.config.ts'
 import { Client, CompatClient, Stomp } from '@stomp/stompjs'
 import { useAppSelector } from '@/context/redux/hook.ts'
 import { CommentResType } from '@/types/comment.type.ts'
+import { useStompClient } from '@/hooks/use-stomp-client'
+import { useAuth } from '@/hooks/use-auth'
 
 type CommentContextType = {
   isReady: boolean
@@ -40,58 +42,31 @@ export const CommentProvider = ({
   children,
   initValue = []
 }: CommentProviderProps) => {
-  const accessToken = useAppSelector((state) => state.authSlice.accessToken)
-  const [isReady, setIsReady] = useState<boolean>(false)
-  const ws = useRef<CompatClient>(null)
+  const auth = useAuth()
   const [comment, setComment] = useState<CommentResType[]>(initValue)
   useEffect(() => {
     if (initValue) {
       setComment(initValue)
     }
   }, [initValue])
-  useEffect(() => {
-    const connectWebSocket = () => {
-      const headers = {
-        Authorization: `Bearer ${accessToken}`
-      }
-
-      const stompClient = Stomp.over(
-        () => new SockJS(`${envConfig.BACKEND_URL}/ws`)
-      )
-      stompClient.connectHeaders = headers
-      stompClient.reconnectDelay = 5000
-      stompClient.debug = () => {}
-
-      stompClient.onConnect = () => {
-        ws.current = stompClient
-        setIsReady(true)
-      }
-
-      stompClient.onStompError = () => {
-        console.error('WebSocket error')
-      }
-
-      stompClient.onDisconnect = () => {
-        setIsReady(false)
-      }
-
-      stompClient.activate()
+  const { ws, isReady } = useStompClient({
+    accessToken: auth.accessToken,
+    onConnect: (client) => {
+      console.log('✅ WebSocket connected')
+      // You can subscribe here if needed
+    },
+    onDisconnect: () => {
+      console.log('🔌 Disconnected')
+    },
+    onError: (error) => {
+      console.error('WebSocket error', error)
     }
-
-    connectWebSocket()
-
-    // Cleanup on component unmount
-    return () => {
-      if (ws.current?.connected) {
-        ws.current.deactivate()
-      }
-    }
-  }, [])
+  })
   return (
     <CommentContext.Provider
       value={{
         isReady: isReady,
-        ws: ws.current || undefined,
+        ws: ws || undefined,
         comment: comment,
         setComment: setComment
       }}

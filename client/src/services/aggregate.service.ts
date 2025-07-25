@@ -47,7 +47,7 @@ const aggregateService = {
     const res = await httpService.get<ResponseApi<boolean>>(
       `/decision/${projectId}/${sprintId}/predict`
     )
-    return res.data.data
+    return res.data
   }
 }
 

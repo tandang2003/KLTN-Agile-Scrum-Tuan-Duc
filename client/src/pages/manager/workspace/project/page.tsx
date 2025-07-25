@@ -1,5 +1,6 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
+import ProjectSocket from '@/components/project/ProjectSocket'
 import SprintPredict from '@/components/SprintPredict'
 
 import { Skeleton } from '@/components/ui/skeleton'
@@ -62,7 +63,7 @@ const ProjectPage = () => {
         {(data) => (
           <>
             <ProjectHeader data={data} />
-
+            {projectId && <ProjectSocket projectId={projectId} />}
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
               <SprintPredict

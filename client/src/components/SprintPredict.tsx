@@ -32,6 +32,7 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
   const message = messages.component.sprintPredict
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [messagePredict, setMessagePredict] = useState<string>('')
 
   useEffect(() => {
     if (!isOpen) setLoading(false)
@@ -44,11 +45,16 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
       const res = await aggregateService.createPredict(project.id, sprint.id)
-      if (res) toast.success(message.toast.success)
-      else toast.warning(message.toast.failed)
+      if (res.code === 200) {
+        setMessagePredict(message.toast.success)
+        toast.success(message.toast.success)
+      } else {
+        setMessagePredict(res.message)
+        toast.warning(message.toast.failed)
+      }
     } catch (err) {
       if (isAxiosError(err)) {
-        toast.error(err.message)
+        setMessagePredict(err.message)
         return
       }
       toast.error(messages.other.serverError)
@@ -86,6 +92,10 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
                 <ToolTip trigger={<span>{sprint.name}</span>}>
                   {sprint.id}
                 </ToolTip>
+              </div>
+              <div className='mt-3 flex gap-2'>
+                <strong>Thông báo:</strong>
+                <span>{messagePredict}</span>
               </div>
             </>
           )}

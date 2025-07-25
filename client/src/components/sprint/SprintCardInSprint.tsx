@@ -45,7 +45,7 @@ const SprintCardInSprint = ({
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const { showAlert } = useAlertHost()
   const [reopen] = useReopenIssueMutation()
-  const { id, name } = item
+  const { id, name, status, projectId } = item
   const { id: sprintId, start, end } = sprint
   const { hasRequiredRole } = useAuthGuard({ roles: ['student'] })
 
@@ -180,7 +180,15 @@ const SprintCardInSprint = ({
               {message.dropdown.moveToBacklog}
             </DropdownMenuItem>
           )}
-          {canDelete && <DeleteDropdownItem id={id} name={name} />}
+          {canDelete && (
+            <DeleteDropdownItem
+              id={id}
+              name={name}
+              projectId={projectId}
+              sprintId={sprintId}
+              status={status}
+            />
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
