@@ -30,10 +30,10 @@ const badgeVariants = cva<{
           'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground'
       },
       status: {
-        TODO: 'text-white bg-yellow-600 font-semibold',
-        INPROCESS: 'text-black bg-blue-300 font-semibold',
-        REVIEW: 'text-white bg-red-500 font-semibold',
-        DONE: 'text-black bg-green-300 font-semibold'
+        TODO: 'text-white todo font-semibold',
+        INPROCESS: 'text-white in-progress font-semibold',
+        REVIEW: 'text-white review font-semibold',
+        DONE: 'text-white done font-semibold'
       },
       statusSprint: {
         PENDING: 'text-black bg-gray-400 font-semibold',
@@ -50,36 +50,45 @@ const badgeVariants = cva<{
     },
 
     defaultVariants: {
-      variant: 'default',
-      status: 'TODO'
+      variant: 'default'
     }
   }
 )
+const Badge = React.forwardRef<
+  HTMLSpanElement,
+  React.ComponentProps<'span'> &
+    VariantProps<typeof badgeVariants> & {
+      asChild?: boolean
+    }
+>(
+  (
+    {
+      className,
+      variant,
+      status,
+      statusSprint,
+      skillLevel,
+      asChild = false,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : 'span'
 
-function Badge({
-  className,
-  variant,
-  status,
-  statusSprint,
-  skillLevel,
-  asChild = false,
-  ...props
-}: React.ComponentProps<'span'> &
-  VariantProps<typeof badgeVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : 'span'
+    return (
+      <Comp
+        ref={ref}
+        data-slot='badge'
+        className={cn(
+          badgeVariants({ variant, status, statusSprint, skillLevel }),
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
 
-  return (
-    <Comp
-      data-slot='badge'
-      className={cn(
-        badgeVariants({ variant, status, statusSprint, skillLevel }),
-        className
-      )}
-      {...props}
-    />
-  )
-}
+Badge.displayName = 'Badge'
 
 export { Badge, badgeVariants }

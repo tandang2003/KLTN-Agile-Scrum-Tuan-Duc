@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import WorkspaceCourseCheckLayer from '@/components/workspace/WorkspaceCourseCheckLayer'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import messages from '@/constant/message.const'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
@@ -98,14 +99,13 @@ const WorkspaceDetailPage = () => {
         open={openDialogCreateProject}
         onOpen={setOpenDialogCreateProject}
       />
-
-      {/* <RequiredAuth roles={['student']} mode='hide'>
+      <RequiredAuth roles={['student']} mode='hide'>
         <WorkspaceCourseCheckLayer
           workspaceId={workspaceId}
           course={data.course}
           prerequisiteCourse={data.prerequisiteCourse}
         />
-      </RequiredAuth> */}
+      </RequiredAuth>
     </div>
   )
 }

@@ -1,42 +1,15 @@
-import { CardModelType } from '@/types/card.type'
-import { IssueStatus } from '@/types/model/typeOf'
+import { IssuePriority, IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
-import { TagColorTypeOf } from '@/types/tag.type'
-
-type BoardProps = {
-  columns: ColumnProps[]
-}
-
-type ColumnProps = {
-  id: Id
-  name: string
-  itemsOrder: Id[]
-  items: CardModelType[]
-}
 
 // Override here
-type BaseCardProps = {
+type Task = {
   id: Id
-  columnId: Id
   name: string
-  thumbnail?: string
-  numComment?: number
-  numAttach?: number
-  assigners?: CardAssignerProps[]
-  numAssigner?: number
   status: IssueStatus
-  tags?: CardTagProps[]
+  priority: IssuePriority
 }
 
-type CardAssignerProps = {
-  name: string
-  avatar?: string
-}
-
-type CardTagProps = {
-  name: string
-  color: TagColorTypeOf
-}
+type ActionDragEnd = (data: DataOnMoveType) => Promise<void>
 
 type DataOnMoveType = {
   active: Id
@@ -67,12 +40,11 @@ type PositionSprint = Record<Id, Record<IssueStatus, Id[]>>
 
 export type {
   Position,
-  BaseCardProps,
-  BoardProps,
-  ColumnProps,
+  Task,
   DataOnMoveType,
   PositionSprint,
   PositionReq,
   NewPositionReq,
-  FilterSprintBoard
+  FilterSprintBoard,
+  ActionDragEnd
 }

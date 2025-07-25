@@ -46,7 +46,7 @@ public enum Error {
   SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi máy chủ"),
   DB_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi máy chủ cơ sở dữ liệu"),
   SERVER_SNAPSHOT_SERVICE_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-    "Lỗi máy chủ khi xử lý snapshot"),
+      "Lỗi máy chủ khi xử lý snapshot"),
   DB_SERVER_MISSING_DATA(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Máy chủ cơ sở dữ liệu thiếu dữ liệu"),
   INTERNAL_SERVER_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi nội bộ máy chủ"),
   NOT_IMPLEMENTED(HttpServletResponse.SC_NOT_IMPLEMENTED, "Tính năng chưa được hỗ trợ"),
@@ -61,7 +61,8 @@ public enum Error {
 
   SKILL_NOT_FOUND(404, "Không tìm thấy kỹ năng"),
   PERSONAL_SKILL_NOT_FOUND(404, "Không tìm thấy kỹ năng cá nhân"),
-  DAILY_FILE_ALREADY_UPLOAD(HttpServletResponse.SC_CONFLICT, "Tập tin daily đã được tải lên");
+  DAILY_FILE_ALREADY_UPLOAD(HttpServletResponse.SC_CONFLICT, "Tập tin daily đã được tải lên"),
+  COMMENT_CONFLICT_STATUS_ISSUE(HttpServletResponse.SC_CONFLICT, "Số lượng comment không đủ");
 
   private int code;
   private String message;

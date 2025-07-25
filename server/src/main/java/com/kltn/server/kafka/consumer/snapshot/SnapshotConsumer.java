@@ -16,11 +16,14 @@ import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import com.kltn.server.service.entity.UserService;
+import com.kltn.server.service.message.ProjectRoomService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,16 +40,19 @@ public class SnapshotConsumer {
   private SnapshotRepository snapshotRepository;
   private SnapshotMapper snapshotMapper;
 
+
   @Autowired
   public SnapshotConsumer(IssueLogRepository issueLogRepository, SnapshotRepository snapshotRepository,
                           SnapshotMapper snapshotMapper, IssueRepository issueRepository,
-                          ProjectSprintRepository projectSprintRepository, UserRepository userRepository) {
+                          ProjectSprintRepository projectSprintRepository, UserRepository userRepository
+                  ) {
     this.issueLogRepository = issueLogRepository;
     this.projectSprintRepository = projectSprintRepository;
     this.issueRepository = issueRepository;
     this.snapshotRepository = snapshotRepository;
     this.snapshotMapper = snapshotMapper;
     this.userRepository = userRepository;
+
   }
 
   @KafkaListener(topics = "snapshot", groupId = "snapshot-1")
@@ -95,7 +101,6 @@ public class SnapshotConsumer {
                       "Issue not found")))),
           mapResources, relationships);
         projectSnapshot = snapshotRepository.save(projectSnapshot);
-
       }
     }
   }

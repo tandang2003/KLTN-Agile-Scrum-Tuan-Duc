@@ -8,6 +8,7 @@ import {
   useLazyGetProjectNotificationsQuery
 } from '@/feature/notification/notification.api'
 import useAppId from '@/hooks/use-app-id'
+import { uuid } from '@/lib/utils'
 import { NotificationResponse } from '@/types/notification.type'
 import { Id } from '@/types/other.type'
 
@@ -50,17 +51,15 @@ const NotificationList = ({}: NotificationListProps) => {
           onClick={handleClearNotification}
         />
       </div>
-      <ScrollArea className='h-[20vh]'>
+      <ScrollArea className='h-[30vh]'>
         <InfiniteScrollList<NotificationResponse>
           loadFunc={loadFunc}
-          className='flex flex-col gap-2'
+          className='mr-3 flex flex-col gap-3'
           render={(item) => {
-            return <NotificationItem data={item} />
+            return <NotificationItem key={uuid()} data={item} />
           }}
           loading={<div style={{ color: 'red' }}>Loading...</div>}
-          fallback={
-            <span className='text-gray-500'>No notifications found</span>
-          }
+          fallback={<span className='text-gray-500'>Không có thông báo</span>}
         />
       </ScrollArea>
     </>

@@ -37,7 +37,8 @@ const ListIssueInSprint = ({
       sprintId
     },
     {
-      skip: !sprintId || !projectId
+      skip: !sprintId || !projectId,
+      refetchOnMountOrArgChange: true
     }
   )
 

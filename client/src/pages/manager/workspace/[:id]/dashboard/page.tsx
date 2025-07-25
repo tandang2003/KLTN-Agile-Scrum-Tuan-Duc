@@ -118,10 +118,10 @@ const WorkspaceDashboardPage = () => {
         <DashboardHeader />
 
         <ContainerDashboard className={'mt-2'}>
-          <TasksByStatusPerProjectBarChart />
+          <TasksByStatusPerStudentBarChart />
         </ContainerDashboard>
         <ContainerDashboard className='mt-2'>
-          <TasksByStatusPerStudentBarChart />
+          <TasksByStatusPerProjectBarChart />
         </ContainerDashboard>
       </ProjectDashBoardProvider>
     </section>

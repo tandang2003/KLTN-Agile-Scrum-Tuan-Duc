@@ -203,6 +203,19 @@ const issueApi = createApi({
           return { error }
         }
       }
+    }),
+    clearGetListIssue: builder.mutation<
+      void,
+      {
+        sprintId: Id
+      }
+    >({
+      queryFn: () => {
+        return { data: undefined }
+      },
+      invalidatesTags: (_, __, { sprintId }) => {
+        return [{ type: 'SprintIssue', id: sprintId }]
+      }
     })
   })
 })
@@ -219,5 +232,6 @@ export const {
   useMoveIssueToBacklogMutation,
   useReopenIssueMutation,
   useDeleteIssueMutation,
-  useGetMembersQuery
+  useGetMembersQuery,
+  useClearGetListIssueMutation
 } = issueApi

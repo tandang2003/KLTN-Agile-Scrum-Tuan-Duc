@@ -1,12 +1,8 @@
 import httpService from '@/services/http.service'
 import { CommentReqType, CommentResType } from '@/types/comment.type.ts'
-import { Client, IMessage } from '@stomp/stompjs'
-
-type AppIMessage<T> = IMessage & {
-  bodyParse: T
-}
-
-type AppMessageCallbackType<T> = (message: AppIMessage<T>) => void
+import { Id } from '@/types/other.type'
+import { AppMessageCallbackType } from '@/types/socket.type'
+import { Client } from '@stomp/stompjs'
 
 const commentService = {
   sendComment: (ws: Client, issueId: string, req: CommentReqType) => {
@@ -17,10 +13,10 @@ const commentService = {
   },
   receiveComment: (
     ws: Client,
-    issueId: string,
+    issueId: Id,
     callback: AppMessageCallbackType<CommentResType>
   ) => {
-    return ws.subscribe(`/topic/room/${issueId}`, (value) => {
+    return ws.subscribe(`/topic/issue/room/${issueId}`, (value) => {
       const body: CommentResType = JSON.parse(value.body)
       callback({
         ...value,

@@ -11,7 +11,6 @@ const SectionComment = () => {
   const [comment, setComment] = useState<CommentResType[]>()
   useEffect(() => {
     if (id) {
-      console.log('fetch comment for issue', id)
       commentService.getComment(id).then((res) => {
         setComment(res)
       })

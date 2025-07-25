@@ -145,7 +145,8 @@ const ReportSprintSheet = ({
 
   const validationDaily = (file: File): string | null => {
     const uploadedSize = file.size
-    if (uploadedSize <= 11130) {
+    console.log(uploadedSize)
+    if (uploadedSize != 11130) {
       return 'Dung lượng file không khớp, vui lòng nộp đúng file'
     }
 
@@ -198,13 +199,10 @@ const ReportSprintSheet = ({
             </h4>
             <MediaProvider
               thumbnail={daily1 ?? undefined}
-              type={
-                ({
-                  label: 'PDF Document',
-                  mime: 'application/pdf'
-                },
-                {})
-              }
+              type={{
+                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                label: 'Excel Spreadsheet (.xlsx)'
+              }}
               disabled={disabled}
               onFileValidate={validationDaily}
               signatureFn={handleSignatureFn}

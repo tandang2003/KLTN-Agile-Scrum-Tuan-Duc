@@ -1,23 +1,32 @@
 package com.kltn.server.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.kltn.server.DTO.request.entity.comment.CommentCreateRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
+import com.kltn.server.DTO.response.base.CommentResponse;
 import com.kltn.server.DTO.response.notification.NotificationResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.resource.ResourceOfSprintResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
+import com.kltn.server.config.init.ClockSimulator;
+import com.kltn.server.config.websocket.UserPrinciple;
 import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.mongo.ProjectMongoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController

@@ -180,6 +180,40 @@
   @apply hover:cursor-pointer hover:bg-none hover:opacity-65;
 }
 
+@layer utilities {
+  .todo {
+    @apply bg-blue-500;
+  }
+
+  .blur-todo {
+    @apply bg-blue-200;
+  }
+
+  .in-progress {
+    @apply bg-yellow-500;
+  }
+
+  .blur-in-progress {
+    @apply bg-yellow-200;
+  }
+
+  .review {
+    @apply bg-red-500;
+  }
+
+  .blur-review {
+    @apply bg-red-200;
+  }
+
+  .done {
+    @apply bg-green-500;
+  }
+
+  .blur-done {
+    @apply bg-green-200;
+  }
+}
+
 .container {
   @apply mx-auto max-w-[1440px];
 }

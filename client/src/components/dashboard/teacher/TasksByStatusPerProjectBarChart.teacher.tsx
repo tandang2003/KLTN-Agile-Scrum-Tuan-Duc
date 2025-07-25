@@ -16,7 +16,7 @@ import {
   Title,
   Tooltip
 } from 'chart.js'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Bar } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -41,40 +41,75 @@ const TasksByStatusPerProjectBarChart =
         skip: !workspaceId
       }
     )
-    // Example project names
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [containerWidth, setContainerWidth] = useState(0)
+
+    const BAR_WIDTH = 80 // px per bar max
+
+    useEffect(() => {
+      const update = () => {
+        if (containerRef.current) {
+          setContainerWidth(containerRef.current.offsetWidth)
+        }
+      }
+
+      update()
+      window.addEventListener('resize', update)
+      return () => window.removeEventListener('resize', update)
+    }, [])
+
+    const chartWidth = Math.max(
+      containerWidth,
+      (data?.items?.length || 0) * BAR_WIDTH
+    )
+
     return (
       <>
         <h2 className='mb-4 text-center text-2xl font-bold text-gray-800'>
           {message.title}
         </h2>
-        <div className='flex h-full w-full flex-col items-center justify-center'>
-          <LoadingBoundary
-            data={data}
-            isLoading={isFetching}
-            fallback={<p>Lỗi</p>}
-          >
-            {(data) => {
-              return <Chart data={data.items} />
+        <div ref={containerRef} style={{ width: '100%' }}>
+          <div
+            style={{
+              overflowX: chartWidth > containerWidth ? 'auto' : 'hidden'
             }}
-          </LoadingBoundary>
+          >
+            <div
+              style={{
+                minWidth: '100%',
+                width: `${chartWidth}px`,
+                height: '300px'
+              }}
+            >
+              <LoadingBoundary
+                data={data}
+                isLoading={isFetching}
+                fallback={<p>Lỗi</p>}
+              >
+                {(data) => {
+                  return <Chart data={data.items} />
+                }}
+              </LoadingBoundary>
+            </div>
+            <LoadingBoundary data={data} isLoading={isFetching}>
+              {(data) => (
+                <Paging
+                  page={{
+                    currentPage: data.currentPage,
+                    totalPages: data.totalPages,
+                    totalItems: data.totalItems
+                  }}
+                  onPageChange={(page) => {
+                    setPage({
+                      page: page,
+                      size: 10
+                    })
+                  }}
+                />
+              )}
+            </LoadingBoundary>
+          </div>
         </div>
-        <LoadingBoundary data={data} isLoading={isFetching}>
-          {(data) => (
-            <Paging
-              page={{
-                currentPage: data.currentPage,
-                totalPages: data.totalPages,
-                totalItems: data.totalItems
-              }}
-              onPageChange={(page) => {
-                setPage({
-                  page: page,
-                  size: 10
-                })
-              }}
-            />
-          )}
-        </LoadingBoundary>
       </>
     )
   }
@@ -118,11 +153,12 @@ const Chart = ({ data }: ChartProps) => {
       }
     },
     scales: {
-      x: {
-        stacked: true
-      },
+      x: {},
       y: {
-        stacked: true,
+        title: {
+          display: true,
+          text: 'Issue'
+        },
         beginAtZero: true
       }
     }

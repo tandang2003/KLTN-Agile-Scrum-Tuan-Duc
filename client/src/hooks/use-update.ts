@@ -72,7 +72,7 @@ export function useAutoUpdateField<K extends FieldKey>({
         previousValue.current = watched
 
         if (onSuccess) onSuccess?.(watched)
-        else toast.success(`${field} updated success`)
+        // else toast.success(`${field} updated success`)
       } catch (err) {
         isRollingBack.current = true
         setValue(field, previousValue.current as any)

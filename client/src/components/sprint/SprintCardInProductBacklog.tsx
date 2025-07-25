@@ -123,7 +123,12 @@ const SprintCardInProductBacklog = ({
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-            <DeleteDropdownItem id={item.id} name={item.name} />
+            <DeleteDropdownItem
+              id={item.id}
+              name={item.name}
+              projectId={item.projectId}
+              status={item.status}
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       </RequiredAuth>
