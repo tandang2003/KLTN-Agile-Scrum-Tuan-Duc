@@ -1,6 +1,7 @@
 import { RoleType } from '@/types/auth.type'
 import { IssueRelationShip } from '@/types/model/relationship'
 import {
+  ComplexOfDescription,
   IssuePriority,
   issuePriorityList,
   IssueTag,
@@ -498,6 +499,11 @@ const messages = {
         },
         create: 'Tạo issue'
       },
+      viewDropdownItem: {
+        dropdown: {
+          view: 'Xem issue'
+        }
+      },
       deleteDropdownItem: {
         dropdown: {
           delete: 'Xóa issue'
@@ -558,6 +564,7 @@ const messages = {
         form: {
           comment: 'Bình luận',
           detail: 'Mô tả chi tiết',
+          info: 'Thông tin',
           priority: 'Mức độ ưu tiên',
           duration: 'Thời gian',
           descriptionFallback: 'Chưa có mô tả nào cho issue này',
@@ -724,6 +731,15 @@ const getProficiencyDisplayName = (proficiency: number): string => {
   return map[proficiency as SkillLevel] ?? 'Không xác định'
 }
 
+const getComplexOfDescriptionName = (proficiency: number): string => {
+  const map: Record<ComplexOfDescription, string> = {
+    [ComplexOfDescription.Easy]: 'Dễ',
+    [ComplexOfDescription.Medium]: 'Trung bình',
+    [ComplexOfDescription.Hard]: 'Khó'
+  }
+  return map[proficiency as ComplexOfDescription] ?? 'Không xác định'
+}
+
 const getSprintStatusDisplayName = (status: SprintStatusType): string => {
   const map: Record<SprintStatusType, string> = {
     PENDING: 'Chưa bắt đầu',
@@ -776,5 +792,6 @@ export {
   getSprintStatusDisplayName,
   getTagDisplayName,
   getPriorityDisplayName,
-  getRelationshipDisplayName
+  getRelationshipDisplayName,
+  getComplexOfDescriptionName
 }

@@ -2,7 +2,9 @@ import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
 import {
   NotificationResponse,
-  ProjectMessageResponse
+  ProjectMessagePredictResponse,
+  ProjectMessageResponse,
+  ProjectMessageUpdateResponse
 } from '@/types/notification.type'
 import { Id } from '@/types/other.type'
 import {
@@ -70,4 +72,17 @@ const projectService = {
     })
   }
 }
+function isUpdateResponse(
+  res: ProjectMessageResponse
+): res is { type: 'UPDATE'; message: ProjectMessageUpdateResponse } {
+  return res.type === 'UPDATE'
+}
+
+function isPredictResponse(
+  res: ProjectMessageResponse
+): res is { type: 'PREDICT'; message: ProjectMessagePredictResponse } {
+  return res.type === 'PREDICT'
+}
+
+export { isUpdateResponse, isPredictResponse }
 export default projectService

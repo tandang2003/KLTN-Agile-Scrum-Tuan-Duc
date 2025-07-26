@@ -1,6 +1,7 @@
 package com.kltn.server.service.message;
 
 import com.kltn.server.DTO.response.project.ProjectMessageResponse;
+import com.kltn.server.DTO.response.project.ProjectMessageUpdateResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 

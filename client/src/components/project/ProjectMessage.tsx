@@ -1,9 +1,9 @@
 import { MessageTitle } from '@/components/notification/NotificationItem'
-import { ProjectMessageResponse } from '@/types/notification.type'
+import { ProjectMessageUpdateResponse } from '@/types/notification.type'
 import { formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 type ProjectMessageProps = {
-  data: ProjectMessageResponse
+  data: ProjectMessageUpdateResponse
 }
 
 const ProjectMessage = ({ data }: ProjectMessageProps) => {

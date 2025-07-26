@@ -20,6 +20,9 @@ const EditorComment = () => {
 
   const handlePushComment = (val: string) => {
     if (issueId && isReady && ws) {
+      if (comment.trim() === '') {
+        return
+      }
       commentService.sendComment(ws, issueId, {
         content: val
       })

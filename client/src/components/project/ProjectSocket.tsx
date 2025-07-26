@@ -1,12 +1,14 @@
-import NotificationItem from '@/components/notification/NotificationItem'
 import ProjectMessage from '@/components/project/ProjectMessage'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { enableNotification } from '@/feature/trigger/trigger.slice'
 import { useAuth } from '@/hooks/use-auth'
 import { useStompClient } from '@/hooks/use-stomp-client'
-import projectService from '@/services/project.service'
+import projectService, {
+  isPredictResponse,
+  isUpdateResponse
+} from '@/services/project.service'
 import { Id } from '@/types/other.type'
-import { ReactNode, useEffect } from 'react'
+import { useEffect } from 'react'
 import { toast } from 'sonner'
 type ProjectSocketProps = {
   projectId: Id
@@ -32,10 +34,16 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
   useEffect(() => {
     if (!ws || !isReady || !ws.connected) return
     const wsInstant = projectService.receiveUpdate(ws, projectId, (value) => {
-      if (!isNotify) {
-        dispatch(enableNotification())
+      console.log(value)
+      if (isUpdateResponse(value.bodyParse)) {
+        if (!isNotify) {
+          dispatch(enableNotification())
+          toast(<ProjectMessage data={value.bodyParse.message} />)
+        }
       }
-      toast(<ProjectMessage data={value.bodyParse} />)
+      if (isPredictResponse(value.bodyParse)) {
+        toast(value.bodyParse.message.message)
+      }
     })
     return () => {
       wsInstant.unsubscribe()

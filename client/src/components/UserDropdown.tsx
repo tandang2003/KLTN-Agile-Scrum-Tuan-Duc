@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { SidebarMenuButton } from '@/components/ui/sidebar'
-import messages from '@/constant/message.const'
+import messages, { getRoleDisplayName } from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook'
 import { cn } from '@/lib/utils'
 import { ChevronsUpDown } from 'lucide-react'
@@ -72,7 +72,7 @@ const UserDropdown = ({ className, ...props }: UserDropdownProps) => {
             </div>
           </div>
           <div className='px-2'>
-            <Badge className='w-full'>{user.role}</Badge>
+            <Badge className='w-full'>{getRoleDisplayName(user.role)}</Badge>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

@@ -1,3 +1,4 @@
+import TitleLevel from '@/components/issue/TitleLevel'
 import {
   FormControl,
   FormField,
@@ -34,7 +35,11 @@ const SelectMember = ({ control, name, label }: SelectMemberProps) => {
       name={name}
       render={({ field }) => (
         <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+          {label && (
+            <FormLabel>
+              <TitleLevel level={'lv-4'}>{label}</TitleLevel>
+            </FormLabel>
+          )}
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>

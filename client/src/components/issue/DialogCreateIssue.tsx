@@ -1,6 +1,10 @@
 import DialogController from '@/components/dialog/DialogController'
 import CreateIssueForm from '@/components/issue/CreateIssueForm'
 import {
+  SprintSelectProvider,
+  useSprintSelect
+} from '@/components/issue/IssueSelectSprintContext'
+import {
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -10,13 +14,12 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { disableCreateIssue } from '@/feature/trigger/trigger.slice'
-import { parseStringToDate } from '@/lib/date.helper'
 
 type DialogCreateIssueProps = {}
 
 const DialogCreateIssue = ({}: DialogCreateIssueProps) => {
   const { isCreateIssue } = useAppSelector((state) => state.triggerSlice)
-  const sprint = useAppSelector((state) => state.sprintSlice.active)
+  const { sprint } = useSprintSelect()
   const dispatch = useAppDispatch()
 
   return (
@@ -31,15 +34,7 @@ const DialogCreateIssue = ({}: DialogCreateIssueProps) => {
         <DialogDescription />
         <ScrollArea className='h-[65vh] py-4'>
           <CreateIssueForm
-            sprint={
-              sprint
-                ? {
-                    id: sprint.id,
-                    start: parseStringToDate(sprint.start),
-                    end: parseStringToDate(sprint.end)
-                  }
-                : undefined
-            }
+            sprint={sprint ?? undefined}
             onSubmit={() => dispatch(disableCreateIssue())}
           />
         </ScrollArea>

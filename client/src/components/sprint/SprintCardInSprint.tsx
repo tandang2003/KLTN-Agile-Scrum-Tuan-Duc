@@ -3,6 +3,7 @@ import Icon from '@/components/Icon'
 import Message from '@/components/Message'
 import DeleteDropdownItem from '@/components/sprint/action/DeleteDropdownItem'
 import UpdateDropdownItem from '@/components/sprint/action/UpdateDropdownItem'
+import ViewDropdownItem from '@/components/sprint/action/ViewDropdownItem'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -169,7 +170,11 @@ const SprintCardInSprint = ({
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          {canEdit && <UpdateDropdownItem id={id} />}
+          {canEdit ? (
+            <UpdateDropdownItem id={id} />
+          ) : (
+            <ViewDropdownItem id={id} />
+          )}
           {canReopen && (
             <DropdownMenuItem onClick={handleReopen}>
               {message.dropdown.reopen}

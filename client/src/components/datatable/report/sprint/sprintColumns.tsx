@@ -1,3 +1,4 @@
+import BadgeSprint from '@/components/badge/BadgeSprint'
 import ReportColumnsAction from '@/components/datatable/report/sprint/sprintColumnsAction'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
@@ -48,11 +49,7 @@ const columns: ColumnDef<SprintColumns>[] = [
         start,
         end
       })
-      return (
-        <Badge statusSprint={status}>
-          {getSprintStatusDisplayName(status)}
-        </Badge>
-      )
+      return <BadgeSprint status={status} />
     }
   },
 

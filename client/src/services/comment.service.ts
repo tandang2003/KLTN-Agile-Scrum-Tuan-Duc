@@ -24,7 +24,7 @@ const commentService = {
       })
     })
   },
-  getComment: async (issueId: string) => {
+  getComment: async (issueId: Id) => {
     const res = await httpService.get<CommentResType[]>(`/comments/${issueId}`)
     return res.data
   }

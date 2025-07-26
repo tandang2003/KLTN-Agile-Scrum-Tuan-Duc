@@ -1,3 +1,4 @@
+import TitleLevel from '@/components/issue/TitleLevel'
 import {
   FormControl,
   FormField,
@@ -43,7 +44,9 @@ const SelectEnum = <
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label || name}</FormLabel>
+          <FormLabel>
+            <TitleLevel level={'lv-4'}>{label || name}</TitleLevel>
+          </FormLabel>
           <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
               <SelectTrigger className='w-full'>

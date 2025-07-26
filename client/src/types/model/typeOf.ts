@@ -30,8 +30,18 @@ enum SkillLevel {
   Expert = 5
 }
 
+enum ComplexOfDescription {
+  Easy = 1,
+  Medium = 2,
+  Hard = 3
+}
+
 const skillLevelList = Object.keys(SkillLevel).filter(
   (key): key is keyof typeof SkillLevel => isNaN(Number(key))
+)
+
+const complexOfDescriptionList = Object.keys(ComplexOfDescription).filter(
+  (key): key is keyof typeof ComplexOfDescription => isNaN(Number(key))
 )
 
 export type { IssueStatus, IssuePriority, IssueTag, SprintStatusType }
@@ -42,5 +52,7 @@ export {
   issuePriorityList,
   sprintStatusList,
   skillLevelList,
-  SkillLevel
+  complexOfDescriptionList,
+  SkillLevel,
+  ComplexOfDescription
 }

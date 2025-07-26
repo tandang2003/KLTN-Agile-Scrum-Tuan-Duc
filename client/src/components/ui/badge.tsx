@@ -4,6 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 import { IssueStatus, SkillLevel, SprintStatusType } from '@/types/model/typeOf'
+import Icon from '@/components/Icon'
 
 const badgeVariants = cva<{
   variant: {

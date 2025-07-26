@@ -16,27 +16,27 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
 import { useGetIssueQuery } from '@/feature/issue/issue.api'
-import { disableUpdateIssue } from '@/feature/trigger/trigger.slice'
+import { disableViewIssue } from '@/feature/trigger/trigger.slice'
 import { IssueDetailResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
 
-const DialogUpdateIssue = () => {
+const DialogViewIssue = () => {
   const id = useAppSelector((state: RootState) => state.issueSlice.current?.id)
-  const { isUpdateIssue } = useAppSelector((state) => state.triggerSlice)
+  const { isViewIssue } = useAppSelector((state) => state.triggerSlice)
   const dispatch = useAppDispatch()
   const { data, isFetching } = useGetIssueQuery(
     {
       issueId: id as Id
     },
     {
-      skip: !isUpdateIssue || !id
+      skip: !isViewIssue || !id
     }
   )
   return (
     <DialogController
-      open={isUpdateIssue}
+      open={isViewIssue}
       onOpen={() => {
-        dispatch(disableUpdateIssue())
+        dispatch(disableViewIssue())
       }}
     >
       <LoadingBoundary<IssueDetailResponse>
@@ -73,7 +73,7 @@ const DialogUpdateIssue = () => {
                 </DialogClose>
               </DialogTitle>
             </DialogHeader>
-            <UpdateIssueForm data={data} />
+            <ViewIssue data={data} />
           </DialogContent>
         )}
       </LoadingBoundary>
@@ -81,4 +81,4 @@ const DialogUpdateIssue = () => {
   )
 }
 
-export default DialogUpdateIssue
+export default DialogViewIssue
