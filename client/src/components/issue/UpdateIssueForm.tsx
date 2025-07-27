@@ -113,7 +113,6 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
                   issueId={data.id}
                   initialData={data.relations}
                 />
-
                 <Tabs defaultValue='comment' className='mt-3'>
                   <TabsList>
                     <TabsTrigger value='comment'>
