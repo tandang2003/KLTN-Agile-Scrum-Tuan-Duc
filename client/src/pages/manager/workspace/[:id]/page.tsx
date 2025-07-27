@@ -37,7 +37,7 @@ const WorkspaceDetailPage = () => {
   return (
     <div className='container-sidebar'>
       <div className='relative mt-1 mb-4 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 px-4 py-2 text-gray-100'>
-        <span className='text-sm font-semibold'># {data.id}</span>
+        <span className='text-sm font-semibold'>#{data.id}</span>
         <h1 className='h1 pb-2'>
           <strong>{data.name}</strong>
         </h1>
@@ -72,7 +72,12 @@ const WorkspaceDetailPage = () => {
         <WorkspaceNavigate id={workspaceId} />
         <RequiredAuth mode='hide' roles={['student']}>
           {projectId ? (
-            <Button variant='default' size='sm' asChild>
+            <Button
+              variant='default'
+              size='lg'
+              className='active-bg text-md'
+              asChild
+            >
               <NavLink to={`/manager/workspace/project/${projectId}`}>
                 {messages.manager.workspace.detail.project.me}
               </NavLink>

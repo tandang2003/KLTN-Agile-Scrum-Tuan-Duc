@@ -41,6 +41,7 @@ const ListComment = () => {
   return (
     <ListView
       data={_.orderBy(comment, ['createdAt'], ['asc'])}
+      emptyComponent={null}
       render={(item) => {
         return (
           <ItemComment
@@ -51,7 +52,7 @@ const ListComment = () => {
           />
         )
       }}
-    ></ListView>
+    />
   )
 }
 

@@ -51,7 +51,7 @@ const NotificationList = ({}: NotificationListProps) => {
           onClick={handleClearNotification}
         />
       </div>
-      <ScrollArea className='h-[30vh]'>
+      <ScrollArea className='h-[30vh] min-w-[100px]'>
         <InfiniteScrollList<NotificationResponse>
           loadFunc={loadFunc}
           className='mr-3 flex flex-col gap-3'

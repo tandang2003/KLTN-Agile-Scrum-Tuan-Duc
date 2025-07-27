@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { formatInTimeZone } from 'date-fns-tz'
 import {
   Form,
   FormControl,
@@ -31,10 +32,24 @@ import {
 } from '@/types/simulator.type'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { isBefore } from 'date-fns'
+import { format, isBefore } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+
+import {
+  RelativeTime,
+  RelativeTimeZone,
+  RelativeTimeZoneDate,
+  RelativeTimeZoneDisplay,
+  RelativeTimeZoneLabel
+} from '@/components/ui/kibo-ui/relative-time'
+import { Badge } from '@/components/ui/badge'
+
+const timezones = [
+  { label: 'GMT', zone: 'Europe/London' },
+  { label: 'VN', zone: 'Asia/Ho_Chi_Minh' }
+]
 
 const ClockSimulator = () => {
   const [open, setOpen] = useState(false)
@@ -62,7 +77,20 @@ const ClockSimulator = () => {
     () => (
       <div className='border-accent flex items-center gap-3 rounded-md border-2 bg-white px-4 py-2 shadow-md hover:cursor-pointer'>
         <Icon icon={'mdi:clock'} size={30} />
-        <p>{formatDate(simulatedTime, 'HH:mm:ss dd/MM/yyyy')}</p>
+        <div className='flex gap-2'>
+          <Badge>UTC</Badge>
+          <p>{formatInTimeZone(simulatedTime, 'UTC', 'HH:mm:ss dd/MM/yyyy')}</p>
+        </div>
+        <div className='flex gap-2'>
+          <Badge>GMT +8</Badge>
+          <p>
+            {formatInTimeZone(
+              simulatedTime,
+              'Asia/Ho_Chi_Minh',
+              'HH:mm:ss dd/MM/yyyy'
+            )}
+          </p>
+        </div>
       </div>
     ),
     [simulatedTime]

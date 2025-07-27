@@ -7,6 +7,7 @@ import { BaseIssueFormType } from '@/types/issue.type'
 import { RefreshCcw, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import TitleLevel from '@/components/TitleLevel'
 type CreateTopicProps = {}
 
 const CreateTopicForm = ({}: CreateTopicProps) => {
@@ -52,7 +53,7 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
               editable
             >
               <TagsInput.Label className='text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-                {message.topic}
+                <TitleLevel level={'lv-4'}>{message.topic}</TitleLevel>
               </TagsInput.Label>
               <div className='border-input bg-background flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-within:ring-zinc-400'>
                 {topics.map((topic) => (
@@ -68,7 +69,7 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
                   </TagsInput.Item>
                 ))}
                 <TagsInput.Input
-                  placeholder='Add trick...'
+                  placeholder={message.topic}
                   className='flex-1 bg-transparent outline-hidden placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400'
                 />
               </div>

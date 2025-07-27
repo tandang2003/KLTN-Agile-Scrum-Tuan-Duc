@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 
 export type ListViewProps<T> = {
   data?: T[]
@@ -41,6 +41,9 @@ const ListView = <T,>({
       <Skeleton className='h-[300px] w-full' />
     )
   }
+  const isEmpty = useMemo(() => {
+    return !loading && (!data || data.length === 0)
+  }, [loading, data])
   return (
     <>
       <div
@@ -48,7 +51,7 @@ const ListView = <T,>({
         className={cn(
           display,
           orientation && orientation === 'horizontal' ? 'flex' : 'flex-col',
-          className
+          !isEmpty && className
         )}
       >
         {loading &&
@@ -62,7 +65,7 @@ const ListView = <T,>({
           )}
         {data && data.map((item, index) => render(item, index))}
       </div>
-      {!loading && (!data || data.length === 0) && emptyComponent}
+      {isEmpty && emptyComponent}
       {append && append}
     </>
   )

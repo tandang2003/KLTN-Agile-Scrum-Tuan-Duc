@@ -1,4 +1,5 @@
 import AlertHostProvider from '@/components/AlertHost'
+import { SprintSelectProvider } from '@/components/issue/IssueSelectSprintContext'
 import Loading from '@/components/Loading'
 import AppGlobalState from '@/providers/AppGlobalState'
 import StateLoader from '@/providers/StateLoader'
@@ -10,7 +11,9 @@ const Providers = ({ children }: { children: ReactNode }) => {
     <AppGlobalState>
       <StateLoader loading={<Loading />}>
         <Toaster expand={true} richColors position='bottom-right' />
-        <AlertHostProvider>{children}</AlertHostProvider>
+        <AlertHostProvider>
+          <SprintSelectProvider>{children}</SprintSelectProvider>
+        </AlertHostProvider>
       </StateLoader>
     </AppGlobalState>
   )

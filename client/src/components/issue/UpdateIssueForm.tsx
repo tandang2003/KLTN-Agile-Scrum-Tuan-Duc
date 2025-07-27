@@ -26,6 +26,10 @@ import {
   ResizablePanel,
   ResizablePanelGroup
 } from '@/components/ui/resizable'
+import { Separator } from '@/components/ui/separator'
+import { useAuth } from '@/hooks/use-auth'
+import TitleLevel from '@/components/TitleLevel'
+import RoundedLabel from '@/components/issue/RoundedLabel'
 
 type UpdateIssueFormProps = {
   data: IssueDetailResponse
@@ -33,7 +37,8 @@ type UpdateIssueFormProps = {
 
 const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
   const message = messages.component.issue
-
+  const { user } = useAuth()
+  const isLeader = user?.uniId === data.leader
   const form = useForm<UpdateIssueType>({
     resolver: zodResolver(UpdateIssueSchema),
     defaultValues: {
@@ -84,28 +89,26 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
           <ResizablePanel defaultSize={60} minSize={30}>
             <ScrollArea className='h-inherit h-[60vh] flex-1 [&>*:not(:first-element)]:mt-3'>
               <div className='mr-3'>
-                <div className='my-3'>
-                  <UpdateNameIssue />
-                </div>
+                <UpdateNameIssue />
 
-                <div className='my-3'>
-                  <Label className='mb-2 text-xl'>{message.description}</Label>
-                  <UpdateDescriptionIssue />
-                </div>
-                <div>
-                  <UpdateAttachmentIssue
-                    issueId={data.id}
-                    data={data.resources?.map((item) => {
-                      return {
-                        filename: item.name,
-                        url: item.url,
-                        id: item.id,
-                        extension: item.extension
-                      }
-                    })}
-                  />
-                </div>
+                <Separator className='my-3' />
+                <UpdateDescriptionIssue />
+
+                <Separator className='my-3' />
+                <UpdateAttachmentIssue
+                  issueId={data.id}
+                  data={data.resources?.map((item) => {
+                    return {
+                      filename: item.name,
+                      url: item.url,
+                      id: item.id,
+                      extension: item.extension
+                    }
+                  })}
+                />
+                <Separator className='my-3' />
                 <UpdateSubTaskForm />
+                <Separator className='my-3' />
                 <UpdateRelationship
                   issueId={data.id}
                   initialData={data.relations}
@@ -126,19 +129,47 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel minSize={35}>
-            <ScrollArea className='h-inherit basis-[550px] rounded-md px-4 py-2 [&>*:not(:first-child)]:mt-3'>
-              <p className='text-xl'>{message.update.form.detail}</p>
+            <ScrollArea className='h-inherit basis-[550px] rounded-md px-4 [&>*:not(:first-child)]:mt-3'>
+              <TitleLevel level={'lv-2'}>{message.update.form.info}</TitleLevel>
+              <Separator className='my-2' />
+              <div className='space-y-2'>
+                <RoundedLabel
+                  label={<span className='flex-1'>{message.assignee}</span>}
+                >
+                  {isLeader ? (
+                    <UpdateMemberIssue form={form} name='assigneeId' />
+                  ) : (
+                    <span>{data.assignee?.name ?? 'Chưa đựợc gán'}</span>
+                  )}
+                </RoundedLabel>
 
-              <div className='grid grid-cols-2 items-center gap-x-2 gap-y-3'>
-                <div>{message.assignee}</div>
-                <UpdateMemberIssue form={form} name='assigneeId' />
-                <div>{message.reviewer}</div>
-                <UpdateMemberIssue form={form} name='reviewerId' />
-
-                <div>{message.update.form.duration}</div>
-                <UpdateDateIssue />
-                <div>{message.priority}</div>
-                <UpdatePriorityIssue />
+                <RoundedLabel
+                  label={<span className='flex-1'>{message.reviewer}</span>}
+                >
+                  {isLeader ? (
+                    <UpdateMemberIssue form={form} name='reviewerId' />
+                  ) : (
+                    <span>{data.reviewer?.name ?? 'Chưa đựợc gán'}</span>
+                  )}
+                </RoundedLabel>
+                <RoundedLabel
+                  className='items-center gap-3'
+                  label={
+                    <span className='flex-1/3'>
+                      {message.update.form.duration}
+                    </span>
+                  }
+                >
+                  <UpdateDateIssue />
+                </RoundedLabel>
+                <RoundedLabel
+                  className='items-center'
+                  label={<span className='flex-1'>{message.priority}</span>}
+                >
+                  <div className='flex-1'>
+                    <UpdatePriorityIssue />
+                  </div>
+                </RoundedLabel>
               </div>
               <div className='mt-4 flex items-center gap-2'>
                 <UpdateTopicForm />

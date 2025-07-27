@@ -1,3 +1,4 @@
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import ListView from '@/components/ListView'
 
 import SprintCardInProductBacklog from '@/components/sprint/SprintCardInProductBacklog'
@@ -16,6 +17,7 @@ import { Id } from '@/types/other.type'
 const ListIssueInProductBacklog = () => {
   const message = messages.component.sprint.listIssueInProductBacklog
   const dispatch = useAppDispatch()
+  const { setSprint } = useSprintSelect()
   const { projectId } = useAppId()
   const { data, isFetching } = useGetListIssueQuery(
     {
@@ -27,7 +29,7 @@ const ListIssueInProductBacklog = () => {
   )
 
   const handleOpenCreateIssue = () => {
-    dispatch(setSprintActive(undefined))
+    setSprint(null)
     dispatch(enableCreateIssue())
   }
 
