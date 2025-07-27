@@ -525,7 +525,7 @@ public class IssueService {
       throw AppException.builder().error(Error.COMMENT_CONFLICT_STATUS_ISSUE).build();
     }
 
-    // TODO
+    // TODO: Check reviewer
     if (request.getStatus().equals(IssueStatus.DONE)) {
       task.setOpen(false);
       task.setDtEnd(ClockSimulator.now());

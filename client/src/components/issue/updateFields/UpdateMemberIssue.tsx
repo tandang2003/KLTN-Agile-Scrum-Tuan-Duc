@@ -5,6 +5,7 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
+import { Progress } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
@@ -15,8 +16,6 @@ import {
 import messages from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook'
 import { useGetMembersQuery } from '@/feature/issue/issue.api'
-import useAppId from '@/hooks/use-app-id'
-import { Progress } from '@/components/ui/progress'
 
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
@@ -26,8 +25,8 @@ import {
   UserSuitableResponse
 } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { UseFormReturn, Path, PathValue } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import { Path, PathValue, UseFormReturn } from 'react-hook-form'
 
 type FieldKey = Path<UpdateIssueType>
 type FieldName =

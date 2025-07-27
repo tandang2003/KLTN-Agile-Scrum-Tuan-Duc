@@ -6,6 +6,7 @@ import { FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useRef } from 'react'
 import messages from '@/constant/message.const'
+import TitleLevel from '@/components/TitleLevel'
 
 const CreateSubTaskForm = () => {
   const message = messages.component.issue
@@ -27,7 +28,7 @@ const CreateSubTaskForm = () => {
   return (
     <div className='border-accent mt-4 border-2 p-2 shadow-lg'>
       <div className='flex justify-between'>
-        <h2>{message.subTasks.label}</h2>
+        <TitleLevel level={'lv-2'}>{message.subTasks.label}</TitleLevel>
         <Button type='button' onClick={handleAppend}>
           <Icon icon={'ic:baseline-plus'} />
         </Button>

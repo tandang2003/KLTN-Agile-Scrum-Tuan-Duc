@@ -1,18 +1,14 @@
+import { useAuth } from '@/hooks/use-auth'
+import { useStompClient } from '@/hooks/use-stomp-client'
+import { CommentResType } from '@/types/comment.type.ts'
+import { Client } from '@stomp/stompjs'
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useRef,
   useState
 } from 'react'
-import SockJS from 'sockjs-client/dist/sockjs'
-import envConfig from '@/configuration/env.config.ts'
-import { Client, CompatClient, Stomp } from '@stomp/stompjs'
-import { useAppSelector } from '@/context/redux/hook.ts'
-import { CommentResType } from '@/types/comment.type.ts'
-import { useStompClient } from '@/hooks/use-stomp-client'
-import { useAuth } from '@/hooks/use-auth'
 
 type CommentContextType = {
   isReady: boolean

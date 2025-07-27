@@ -57,7 +57,7 @@ public class SprintScheduler {
       };
     Instant end = endTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
       .toInstant();
-    if (clockSimulator.now()
+    if (ClockSimulator.now()
       .isAfter(end)) {
       sendMessage(projectId, sprintId);
       return;

@@ -1,3 +1,5 @@
+import Empty from '@/components/Empty'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import ListView from '@/components/ListView'
 import SprintCardInSprint from '@/components/sprint/SprintCardInSprint'
 import { Button } from '@/components/ui/button'
@@ -31,6 +33,7 @@ const ListIssueInSprint = ({
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
+  const { setSprint } = useSprintSelect()
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
@@ -43,14 +46,12 @@ const ListIssueInSprint = ({
   )
 
   const handleOpenCreateIssue = () => {
+    setSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    })
     dispatch(enableCreateIssue())
-    dispatch(
-      setSprintActive({
-        id: sprintId,
-        start: toISODateString(start),
-        end: toISODateString(end)
-      })
-    )
   }
 
   return (
@@ -59,11 +60,7 @@ const ListIssueInSprint = ({
       loading={isFetching}
       loadingComponent={<Skeleton className='h-[20px] w-full' />}
       className={cn('gap-3')}
-      emptyComponent={
-        <div className='flex rounded-sm border-2 bg-white px-4 py-2'>
-          {message.list.empty}
-        </div>
-      }
+      emptyComponent={<Empty>{message.list.empty}</Empty>}
       render={(item, index) => {
         return (
           <SprintCardInSprint

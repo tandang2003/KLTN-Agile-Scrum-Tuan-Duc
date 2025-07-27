@@ -1,4 +1,6 @@
+import commentService from '@/services/comment.service'
 import issueService from '@/services/issue.service'
+import { CommentResType } from '@/types/comment.type'
 import {
   CreateIssueRequest,
   IssueDetailResponse,
@@ -216,6 +218,16 @@ const issueApi = createApi({
       invalidatesTags: (_, __, { sprintId }) => {
         return [{ type: 'SprintIssue', id: sprintId }]
       }
+    }),
+    getComments: builder.query<CommentResType[], Id>({
+      queryFn: async (arg) => {
+        try {
+          const data = await commentService.getComment(arg)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -233,5 +245,6 @@ export const {
   useReopenIssueMutation,
   useDeleteIssueMutation,
   useGetMembersQuery,
-  useClearGetListIssueMutation
+  useClearGetListIssueMutation,
+  useGetCommentsQuery
 } = issueApi

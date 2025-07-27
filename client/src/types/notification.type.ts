@@ -60,6 +60,16 @@ type NotificationResponse = {
 }
 
 type ProjectMessageResponse = {
+  type: 'UPDATE' | 'PREDICT'
+  message: ProjectMessageUpdateResponse | ProjectMessagePredictResponse
+}
+
+type ProjectMessagePredictResponse = {
+  status: boolean
+  message: string
+}
+
+type ProjectMessageUpdateResponse = {
   type: LogType
   entityTarget: string
   propertiesTargets: PropertyTarget[]
@@ -87,5 +97,7 @@ export type {
   NotificationResponse,
   ProjectMessageResponse,
   LogType,
-  PropertyTarget
+  PropertyTarget,
+  ProjectMessageUpdateResponse,
+  ProjectMessagePredictResponse
 }

@@ -1,3 +1,4 @@
+import TitleLevel from '@/components/TitleLevel'
 import {
   FormControl,
   FormField,
@@ -55,7 +56,9 @@ const SelectSprint = ({}: SelectSprintProps) => {
       name='sprintId'
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{message.form.sprint.label}</FormLabel>
+          <FormLabel>
+            <TitleLevel level={'lv-2'}>{message.form.sprint.label}</TitleLevel>
+          </FormLabel>
           <Select
             onValueChange={(value) => {
               field.onChange(value)

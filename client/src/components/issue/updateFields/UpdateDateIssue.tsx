@@ -47,7 +47,7 @@ const UpdateDateIssue = () => {
   })
 
   return (
-    <div className=''>
+    <>
       <FormField
         control={control}
         name='date.from'
@@ -75,7 +75,7 @@ const UpdateDateIssue = () => {
         name='date.to'
         render={({ field }) => {
           return (
-            <FormItem className='mt-2'>
+            <FormItem>
               <DatePickerWithPresets
                 date={field.value ?? max}
                 min={min}
@@ -91,7 +91,7 @@ const UpdateDateIssue = () => {
           )
         }}
       />
-    </div>
+    </>
   )
 }
 

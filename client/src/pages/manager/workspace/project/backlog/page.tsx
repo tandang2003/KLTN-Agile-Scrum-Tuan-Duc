@@ -1,5 +1,6 @@
 import DialogCreateIssue from '@/components/issue/DialogCreateIssue'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
+import DialogViewIssue from '@/components/issue/DialogViewIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import SprintAccordion from '@/components/sprint/SprintAccordion'
 import messages from '@/constant/message.const'
@@ -25,6 +26,7 @@ const BacklogPage = () => {
       </LoadingBoundary>
       <DialogCreateIssue />
       <DialogUpdateIssue />
+      <DialogViewIssue />
     </>
   )
 }
