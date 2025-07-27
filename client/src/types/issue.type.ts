@@ -55,6 +55,7 @@ type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
   resources: ResourceResponse[]
   relations: RelationshipResponse[]
   complexOfDescription: number
+  leader: string
 }
 
 type ResourceResponse = {

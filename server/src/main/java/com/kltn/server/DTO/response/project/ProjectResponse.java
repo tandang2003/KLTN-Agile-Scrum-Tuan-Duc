@@ -9,17 +9,15 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProjectResponse(
-  String id, String name, String description, Instant start, Instant end,
-  List<TopicResponse> topics,
-  List<SprintResponse> sprints,
-  Instant createdAt,
-  Instant updatedAt,
-  @JsonInclude(JsonInclude.Include.ALWAYS)
-  SprintResponse prevSprint,
-  @JsonInclude(JsonInclude.Include.ALWAYS)
-  SprintResponse currentSprint,
-  @JsonInclude(JsonInclude.Include.ALWAYS)
-  SprintResponse nextSprint
+    String id, String name, String description, Instant start, Instant end,
+    List<TopicResponse> topics,
+    List<SprintResponse> sprints,
+    String leader,
+    Instant createdAt,
+    Instant updatedAt,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse prevSprint,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint
 
 ) {
 
@@ -28,6 +26,7 @@ public record ProjectResponse(
     private String name;
     private List<TopicResponse> topics;
     private String description;
+    private String leader;
     private Instant start;
     private Instant end;
     private List<SprintResponse> sprints;
@@ -36,7 +35,6 @@ public record ProjectResponse(
     private SprintResponse currentSprint;
     private SprintResponse prevSprint;
     private SprintResponse nextSprint;
-
 
     public ProjectResponseBuilder id(String id) {
       this.id = id;
@@ -50,6 +48,11 @@ public record ProjectResponse(
 
     public ProjectResponseBuilder topics(List<TopicResponse> topics) {
       this.topics = topics;
+      return this;
+    }
+
+    public ProjectResponseBuilder leader(String leader) {
+      this.leader = leader;
       return this;
     }
 
@@ -91,14 +94,17 @@ public record ProjectResponse(
     public ProjectResponseBuilder prevSprint(SprintResponse prevSprint) {
       this.prevSprint = prevSprint;
       return this;
-    }    public ProjectResponseBuilder nextSprint(SprintResponse nextSprint) {
+    }
+
+    public ProjectResponseBuilder nextSprint(SprintResponse nextSprint) {
       this.nextSprint = nextSprint;
       return this;
     }
 
-
     public ProjectResponse build() {
-      return new ProjectResponse(id, name, description, start, end, topics, sprints, createdAt, updatedAt,  prevSprint,currentSprint,nextSprint);
+      return new ProjectResponse(id, name, description, start, end, topics, sprints, leader, createdAt, updatedAt,
+          prevSprint,
+          currentSprint, nextSprint);
     }
   }
 

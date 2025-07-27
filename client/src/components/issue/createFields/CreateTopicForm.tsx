@@ -7,7 +7,7 @@ import { BaseIssueFormType } from '@/types/issue.type'
 import { RefreshCcw, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 type CreateTopicProps = {}
 
 const CreateTopicForm = ({}: CreateTopicProps) => {
@@ -69,7 +69,7 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
                   </TagsInput.Item>
                 ))}
                 <TagsInput.Input
-                  placeholder='Add trick...'
+                  placeholder={message.topic}
                   className='flex-1 bg-transparent outline-hidden placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400'
                 />
               </div>

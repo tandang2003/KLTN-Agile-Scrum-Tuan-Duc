@@ -90,6 +90,8 @@ const MessageTitle = ({
     return message
   }, [property])
 
+  if (typeResult !== 'cập nhập')
+    return `${createdBy} đã thực hiện ${typeResult} issue`
   return `${createdBy} đã thực hiện ${typeResult} ${propertyResult}`
 }
 

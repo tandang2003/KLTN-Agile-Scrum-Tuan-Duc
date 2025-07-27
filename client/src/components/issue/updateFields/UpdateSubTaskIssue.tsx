@@ -30,6 +30,7 @@ import {
 import { forwardRef, useRef, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import messages from '@/constant/message.const'
+import TitleLevel from '@/components/TitleLevel'
 
 type UpdateSubTaskFormProp = {}
 
@@ -105,8 +106,8 @@ const UpdateSubTaskForm = ({}: UpdateSubTaskFormProp) => {
   }
 
   return (
-    <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <span className='text-lg'>{message.label}</span>
+    <div className='flex flex-col gap-3'>
+      <TitleLevel level={'lv-2'}>{message.label}</TitleLevel>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

@@ -28,7 +28,7 @@ public class PredictConsumer {
   @Transactional
   public void consumeSnapshot1(@Payload SprintPredictRequest sprintPredictRequest, @Header("X-Auth-User") String user) {
     var result = decisionService.makePredict(sprintPredictRequest.getProjectId(), sprintPredictRequest.getSprintId());
-    System.out.println("call here ");
+
     projectRoomService.sendToRoom(sprintPredictRequest.getProjectId(),new ProjectMessageResponse(ProjectMessageType.PREDICT, new ProjectMessagePredictResponse(result.getData(), result.getMessage())));
   }
 }

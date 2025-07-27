@@ -1,5 +1,5 @@
 import Empty from '@/components/Empty'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 import ListView from '@/components/ListView'
 import { Badge } from '@/components/ui/badge'
 import messages, { getRelationshipDisplayName } from '@/constant/message.const'

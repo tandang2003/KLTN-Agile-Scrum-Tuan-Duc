@@ -1,11 +1,13 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import Paging from '@/components/Paging'
+import { color } from '@/constant/app.const'
 import messages from '@/constant/message.const'
 import { useGetProjectWorkspaceQuery } from '@/feature/dashboard/dashboard.api'
 import useAppId from '@/hooks/use-app-id'
 import { ProjectWorkloadRes } from '@/types/dashboard.type'
 import { PageRequest } from '@/types/http.type'
 import { Id } from '@/types/other.type'
+
 import {
   BarElement,
   CategoryScale,
@@ -17,7 +19,7 @@ import {
   Tooltip
 } from 'chart.js'
 import { useEffect, useRef, useState } from 'react'
-import { Bar } from 'react-chartjs-2'
+import { Bar, Doughnut } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
@@ -77,8 +79,7 @@ const TasksByStatusPerProjectBarChart =
             <div
               style={{
                 minWidth: '100%',
-                width: `${chartWidth}px`,
-                height: '300px'
+                width: `${chartWidth}px`
               }}
             >
               <LoadingBoundary
@@ -87,27 +88,30 @@ const TasksByStatusPerProjectBarChart =
                 fallback={<p>Lỗi</p>}
               >
                 {(data) => {
-                  return <Chart data={data.items} />
+                  return (
+                    <>
+                      <div className=''>
+                        <ChartStatusPerProject data={data.items} />
+                        <Chart data={data.items} />
+                      </div>
+                      <Paging
+                        page={{
+                          currentPage: data.currentPage,
+                          totalPages: data.totalPages,
+                          totalItems: data.totalItems
+                        }}
+                        onPageChange={(page) => {
+                          setPage({
+                            page: page,
+                            size: 10
+                          })
+                        }}
+                      />
+                    </>
+                  )
                 }}
               </LoadingBoundary>
             </div>
-            <LoadingBoundary data={data} isLoading={isFetching}>
-              {(data) => (
-                <Paging
-                  page={{
-                    currentPage: data.currentPage,
-                    totalPages: data.totalPages,
-                    totalItems: data.totalItems
-                  }}
-                  onPageChange={(page) => {
-                    setPage({
-                      page: page,
-                      size: 10
-                    })
-                  }}
-                />
-              )}
-            </LoadingBoundary>
           </div>
         </div>
       </>
@@ -126,17 +130,17 @@ const Chart = ({ data }: ChartProps) => {
       {
         label: 'Tổng cộng',
         data: data.map((item) => item.total),
-        backgroundColor: '#3b82f6'
+        backgroundColor: color.stats['total']
       },
       {
         label: 'Hoàn thành',
         data: data.map((item) => item.done),
-        backgroundColor: '#10b981'
+        backgroundColor: color.stats['done']
       },
       {
         label: 'Chưa hoàn thành',
         data: data.map((item) => item.notComplete),
-        backgroundColor: '#ef4444'
+        backgroundColor: color.stats['not-done']
       }
     ]
   }
@@ -153,7 +157,6 @@ const Chart = ({ data }: ChartProps) => {
       }
     },
     scales: {
-      x: {},
       y: {
         title: {
           display: true,
@@ -163,7 +166,96 @@ const Chart = ({ data }: ChartProps) => {
       }
     }
   }
-  return <Bar options={options} data={dataChart} />
+  return <Bar height={100} options={options} data={dataChart} />
+}
+
+type ChartStatusPerProjectProps = {
+  data: Array<Pick<ProjectWorkloadRes, 'id' | 'name' | 'status'>>
+}
+
+const ChartStatusPerProject = ({
+  data: student
+}: ChartStatusPerProjectProps) => {
+  const message =
+    messages.component.dashboard.teacher.tasksByStatusPerProjectBarChart
+
+  return (
+    <>
+      <div className='mb-4 flex justify-center gap-6 text-sm text-gray-700'>
+        <div className='flex items-center gap-2'>
+          <span className='done block h-3 w-3 rounded-full'></span>
+          {message.dataset.labelIssueDone}
+        </div>
+        <div className='flex items-center gap-2'>
+          <span className='review block h-3 w-3 rounded-full'></span>
+          {message.dataset.labelIssueReview}
+        </div>
+        <div className='flex items-center gap-2'>
+          <span className='in-progress block h-3 w-3 rounded-full'></span>
+          {message.dataset.labelIssueInProcess}
+        </div>
+        <div className='flex items-center gap-2'>
+          <span className='todo block h-3 w-3 rounded-full'></span>
+          {message.dataset.labelIssueTodo}
+        </div>
+      </div>
+
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
+        {student.map((item) => {
+          const chartData = {
+            labels: [],
+            datasets: [
+              {
+                data: [
+                  item.status['DONE'],
+                  item.status['REVIEW'],
+                  item.status['INPROCESS'],
+                  item.status['TODO']
+                ],
+                backgroundColor: [
+                  color.status['DONE'],
+                  color.status['REVIEW'],
+                  color.status['INPROCESS'],
+                  color.status['TODO']
+                ]
+              }
+            ]
+          }
+
+          return (
+            <div key={item.id} className='flex flex-col items-center'>
+              <h3 className='mb-2 text-center font-semibold text-gray-700'>
+                {item.name}
+              </h3>
+              <div style={{ width: 180, height: 180 }}>
+                <Doughnut
+                  data={chartData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false },
+                      tooltip: {
+                        callbacks: {
+                          label: (tooltipItem) => {
+                            const value = tooltipItem.raw
+                            const label = ['Done', 'Failed', 'Remaining'][
+                              tooltipItem.dataIndex
+                            ]
+                            return `${label}: ${value}`
+                          }
+                        }
+                      }
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </>
+  )
 }
 
 export default TasksByStatusPerProjectBarChart

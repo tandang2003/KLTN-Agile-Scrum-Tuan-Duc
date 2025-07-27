@@ -99,6 +99,8 @@ public interface IssueMapper {
       @Mapping(target = "dtStart", source = "task.dtStart"),
       @Mapping(target = "dtEnd", source = "task.dtEnd"),
       @Mapping(target = "relations", source = "task.affectTo", qualifiedByName = "toListIssueRelationResponse"),
+      @Mapping(target = "leader", source = "task.createdBy"),
+
   })
   @BeanMapping(ignoreByDefault = true)
   IssueDetailResponse toIssueDetailResponse(Issue task, com.kltn.server.model.collection.Issue issueMongo);

@@ -1,4 +1,4 @@
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 import {
   FormControl,
   FormField,

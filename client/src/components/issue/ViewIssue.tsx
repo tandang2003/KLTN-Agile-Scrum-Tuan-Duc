@@ -1,5 +1,5 @@
 import HtmlViewer from '@/components/HtmlViewer'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 import ViewComment from '@/components/issue/viewFields/ViewComment'
 import ViewRelationship from '@/components/issue/viewFields/ViewRelationship'
 import ViewSubTask from '@/components/issue/viewFields/ViewSubTask'

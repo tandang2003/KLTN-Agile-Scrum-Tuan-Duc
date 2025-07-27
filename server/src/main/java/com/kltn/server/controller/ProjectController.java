@@ -1,33 +1,33 @@
 package com.kltn.server.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.kltn.server.DTO.request.entity.comment.CommentCreateRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.base.CommentResponse;
 import com.kltn.server.DTO.response.notification.NotificationResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.resource.ResourceOfSprintResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
-import com.kltn.server.config.init.ClockSimulator;
-import com.kltn.server.config.websocket.UserPrinciple;
 import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.mongo.ProjectMongoService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/project")
@@ -65,7 +65,7 @@ public class ProjectController {
   }
 
   @GetMapping("/{projectId}/members")
-  @PreAuthorize("hasAuthority('assign_project_members')")
+  // @PreAuthorize("hasAuthority('assign_project_members')")
   public ResponseEntity<ApiResponse<List<UserResponse>>> getMembersOfProject(@PathVariable String projectId) {
     ApiResponse<List<UserResponse>> members = projectService.getMembersOfProject(projectId);
     return ResponseEntity.status(members.getCode())

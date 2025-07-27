@@ -6,7 +6,7 @@ import { FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useRef } from 'react'
 import messages from '@/constant/message.const'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 
 const CreateSubTaskForm = () => {
   const message = messages.component.issue

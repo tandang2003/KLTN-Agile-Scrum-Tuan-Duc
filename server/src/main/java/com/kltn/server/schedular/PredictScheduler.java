@@ -2,6 +2,7 @@ package com.kltn.server.schedular;
 
 import com.kltn.server.DTO.request.kafka.SprintPredictRequest;
 import com.kltn.server.config.init.ClockSimulator;
+import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -27,7 +28,6 @@ import java.util.concurrent.ScheduledFuture;
 public class PredictScheduler {
   private ProjectSprintRepository projectSprintRepository;
   private final TaskScheduler predictScheduler;
-  // private final Map<String, ScheduledFuture<?>> tasks;
   private KafkaTemplate<String, Object> kafkaTemplate;
   private ClockSimulator clockSimulator;
 
@@ -53,7 +53,7 @@ public class PredictScheduler {
     };
     Instant end = dtPredict.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
       .toInstant();
-    if (clockSimulator.now()
+    if (ClockSimulator.now()
       .isAfter(end)) {
       sendMessage(sprintId);
       return;
@@ -62,8 +62,8 @@ public class PredictScheduler {
     long delay = Duration.between(clockSimulator.now(), end)
       .getSeconds();
     delay = Math.max(0, delay);
-    long timeSpeech = clockSimulator.getTimeSpeech();
-    Instant now = clockSimulator.now();
+    long timeSpeech = ClockSimulator.getTimeSpeech();
+    Instant now = ClockSimulator.now();
     Instant scheduledTime = now.plusSeconds(delay / timeSpeech);
 
     ScheduledFuture<?> future = predictScheduler.schedule(task, scheduledTime);
@@ -110,6 +110,7 @@ public class PredictScheduler {
   }
 
   private void sendMessage(String sprintId) {
+    Instant now = ClockSimulator.now();
     List<ProjectSprint> projectSprints = projectSprintRepository.findBySprintId(sprintId);
     for (ProjectSprint projectSprint : projectSprints) {
       String curUser = "21130171";

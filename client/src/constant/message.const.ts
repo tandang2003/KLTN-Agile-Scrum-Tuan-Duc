@@ -130,7 +130,13 @@ const messages = {
           }
         },
         tasksByStatusPerProjectBarChart: {
-          title: 'Phân loại trạng thái của các issue theo nhóm'
+          title: 'Phân loại trạng thái của các issue theo nhóm',
+          dataset: {
+            labelIssueTodo: 'Issue chuẩn bị thực hiện',
+            labelIssueInProcess: 'Issue đang thực hiện',
+            labelIssueReview: 'Issue đang đợi review',
+            labelIssueDone: 'Issue đã hoàn thành'
+          }
         }
       }
     },

@@ -1,6 +1,6 @@
 import Empty from '@/components/Empty'
 import Icon from '@/components/Icon'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 import ListView from '@/components/ListView'
 import messages from '@/constant/message.const'
 import { SubTaskModel } from '@/types/model/common.model'

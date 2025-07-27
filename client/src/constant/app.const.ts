@@ -80,3 +80,19 @@ export const WEIGHT_POSITION = 1000
 export const MAX_SIZE = 2 * 1024 * 1024 // 2MB
 export const REPORT_DIR = '_report'
 export const DEFAULT_STATUS: IssueStatus = 'TODO'
+export const color: {
+  status: Record<IssueStatus, string>
+  stats: Record<'done' | 'total' | 'not-done', string>
+} = {
+  status: {
+    TODO: 'oklch(62.3% 0.214 259.815)',
+    INPROCESS: 'oklch(79.5% 0.184 86.047)',
+    REVIEW: 'oklch(63.7% 0.237 25.331)',
+    DONE: 'oklch(72.3% 0.219 149.579)'
+  },
+  stats: {
+    total: '#3b82f6',
+    done: '#10b981',
+    'not-done': '#ef4444'
+  }
+}

@@ -19,7 +19,7 @@ import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useEffect, useRef, useState } from 'react'
 import { Separator } from '@/components/ui/separator'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 import Icon from '@/components/Icon'
 import BadgeSprint from '@/components/badge/BadgeSprint'
 type SprintAccordionProps = {

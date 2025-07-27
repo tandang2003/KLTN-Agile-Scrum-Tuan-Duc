@@ -33,7 +33,7 @@ import messages, {
 } from '@/constant/message.const'
 import Message from '@/components/Message'
 import { useCreateIssueMutation } from '@/feature/issue/issue.api'
-import TitleLevel from '@/components/issue/TitleLevel'
+import TitleLevel from '@/components/TitleLevel'
 import CreateDescriptionForm from '@/components/issue/createFields/CreateDescriptionForm'
 type CreateIssueFormProps = {
   onSubmit?: () => void

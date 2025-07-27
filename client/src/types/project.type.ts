@@ -14,6 +14,7 @@ type ProjectDetailResponse = ProjectModel & {
   currentSprint?: SprintResponse
   previousSprint?: SprintResponse
   nextSprint?: SprintResponse
+  leader: string
 }
 type CreateProjectRequest = CreateProjectFormType & {
   workspaceId: Id
