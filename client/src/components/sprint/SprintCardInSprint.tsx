@@ -57,25 +57,26 @@ const SprintCardInSprint = ({
     })
       .unwrap()
       .then(() => {
-        boardService
-          .removePosition({
-            issueId: id,
-            sprintId: sprintId,
-            projectId: item.projectId,
-            statusPrev: item.status
-          })
-          .then(() => {
-            toast.success(message.toast.moveToBacklog.success.message, {
-              description: (
-                <Message
-                  template={message.toast.moveToBacklog.success.description}
-                  values={{
-                    name: item.name
-                  }}
-                />
-              )
-            })
-          })
+        toast.success(message.toast.moveToBacklog.success.message, {
+          description: (
+            <Message
+              template={message.toast.moveToBacklog.success.description}
+              values={{
+                name: item.name
+              }}
+            />
+          )
+        })
+        // boardService
+        //   .removePosition({
+        //     issueId: id,
+        //     sprintId: sprintId,
+        //     projectId: item.projectId,
+        //     statusPrev: item.status
+        //   })
+        //   .then(() => {
+
+        //   })
       })
       .catch((err) => {
         toast.error(message.toast.moveToBacklog.failed, {
