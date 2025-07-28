@@ -7,105 +7,106 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Document
 public class Project extends BaseDocument {
 
-    @Field("nk_project_id")
+  @Field("nk_project_id")
+  private String nkProjectId;
+  @Field("description")
+  private String description;
+  @Field("topics")
+  private List<Topic> topics;
+  @Field("position")
+  private Map<String, SprintBoard> position;
+
+  public Project() {
+    super();
+  }
+
+  public Project(ProjectBuilder builder) {
+    super(builder);
+    this.nkProjectId = builder.nkProjectId;
+    this.description = builder.description;
+    this.topics = builder.topics;
+  }
+
+  public static class ProjectBuilder extends BaseDocument.BaseDocumentBuilder<Project, ProjectBuilder> {
     private String nkProjectId;
-    @Field("description")
     private String description;
-    @Field("topics")
     private List<Topic> topics;
-    @Field("position")
-    private Object position;
+    private Map<String, SprintBoard> position;
 
-    public Project() {
-        super();
+    public ProjectBuilder nkProjectId(String nkProjectId) {
+      this.nkProjectId = nkProjectId;
+      return this;
     }
 
-    public Project(ProjectBuilder builder) {
-        super(builder);
-        this.nkProjectId = builder.nkProjectId;
-        this.description = builder.description;
-        this.topics = builder.topics;
+    public ProjectBuilder description(String description) {
+      this.description = description;
+      return this;
     }
 
-    public static class ProjectBuilder extends BaseDocument.BaseDocumentBuilder<Project, ProjectBuilder> {
-        private String nkProjectId;
-        private String description;
-        private List<Topic> topics;
-        private Object position;
-
-        public ProjectBuilder nkProjectId(String nkProjectId) {
-            this.nkProjectId = nkProjectId;
-            return this;
-        }
-
-        public ProjectBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public ProjectBuilder position(Object position) {
-            this.position = position;
-            return this;
-        }
-
-        public ProjectBuilder topics(List<Topic> topics) {
-            this.topics = topics;
-            return this;
-        }
-
-        @Override
-        protected ProjectBuilder self() {
-            return this;
-        }
-
-        @Override
-
-        public Project build() {
-            return new Project(this);
-        }
+    public ProjectBuilder position(Map<String, SprintBoard> position) {
+      this.position = position;
+      return this;
     }
 
-    public static ProjectBuilder builder() {
-        return new ProjectBuilder();
+    public ProjectBuilder topics(List<Topic> topics) {
+      this.topics = topics;
+      return this;
     }
 
-    public String getNkProjectId() {
-        return nkProjectId;
+    @Override
+    protected ProjectBuilder self() {
+      return this;
     }
 
-    public void setNkProjectId(String nkProjectId) {
-        this.nkProjectId = nkProjectId;
-    }
+    @Override
 
-    public String getDescription() {
-        return description;
+    public Project build() {
+      return new Project(this);
     }
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public static ProjectBuilder builder() {
+    return new ProjectBuilder();
+  }
 
-    public List<Topic> getTopics() {
-        if (topics == null) {
-            return new ArrayList<>();
-        }
-        return topics;
-    }
+  public String getNkProjectId() {
+    return nkProjectId;
+  }
 
-    public void setTopics(List<Topic> topics) {
-        this.topics = topics;
-    }
+  public void setNkProjectId(String nkProjectId) {
+    this.nkProjectId = nkProjectId;
+  }
 
-    public Object getPosition() {
-        return position;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setPosition(Object position) {
-        this.position = position;
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public List<Topic> getTopics() {
+    if (topics == null) {
+      return new ArrayList<>();
     }
+    return topics;
+  }
+
+  public void setTopics(List<Topic> topics) {
+    this.topics = topics;
+  }
+
+  public Map<String, SprintBoard>  getPosition() {
+    return position;
+  }
+
+  public void setPosition(Map<String, SprintBoard> position) {
+    this.position = position;
+  }
 
 }

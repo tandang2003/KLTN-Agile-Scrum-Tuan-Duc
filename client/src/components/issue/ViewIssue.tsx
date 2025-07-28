@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/resizable'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import messages, {
   getComplexOfDescriptionName,
   getPriorityDisplayName,

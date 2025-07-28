@@ -17,6 +17,7 @@ import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.SprintRepository;
 import com.kltn.server.schedular.PredictScheduler;
 import com.kltn.server.schedular.SprintScheduler;
+import com.kltn.server.service.mongo.SprintBoardMongoService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,17 +38,20 @@ public class SprintService {
   private WorkspaceService workspaceService;
   private ProjectSprintService projectSprintService;
   private SprintScheduler sprintScheduler;
+  private SprintBoardMongoService sprintBoardMongoService;
 
   @Autowired
   public SprintService(SprintScheduler sprintScheduler, WorkspaceService workspaceService,
                        ProjectSprintService projectSprintService, SprintMapper sprintMapper,
-                       SprintRepository sprintRepository, PredictScheduler predictScheduler1) {
+                       SprintRepository sprintRepository, PredictScheduler predictScheduler1,
+                       SprintBoardMongoService sprintBoardMongoService) {
     this.sprintMapper = sprintMapper;
     this.sprintRepository = sprintRepository;
     this.projectSprintService = projectSprintService;
     this.workspaceService = workspaceService;
     this.sprintScheduler = sprintScheduler;
     this.predictScheduler1 = predictScheduler1;
+    this.sprintBoardMongoService = sprintBoardMongoService;
   }
 
   @Transactional
@@ -64,6 +68,9 @@ public class SprintService {
     sprint = sprintRepository.save(sprint);
     Set<Project> projects = workspace.getProjects();
     if (projects != null && !projects.isEmpty()) {
+      // FIX: POSITION
+      sprintBoardMongoService.addPositionToSprint(sprint.getId(), projects.stream().map(Project::getId).toArray(String[]::new));
+
       projectSprintService.save(projects.stream()
         .map(Project::getId)
         .toList(), sprint.getId());
@@ -163,8 +170,7 @@ public class SprintService {
         .build();
     List<SprintResponse> transferList = list.stream()
       .map(sprintMapper::toSprintCreateResponse)
-      .toList()
-      ;
+      .toList();
     return ApiResponse.<List<SprintResponse>>builder()
       .code(HttpStatus.OK.value())
       .data(transferList)

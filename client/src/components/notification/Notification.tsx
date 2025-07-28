@@ -1,10 +1,6 @@
 import Icon from '@/components/Icon'
 import NotificationList from '@/components/notification/NotificationList'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover'
+
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { disableNotification } from '@/feature/trigger/trigger.slice'
 import { cn } from '@/lib/utils'

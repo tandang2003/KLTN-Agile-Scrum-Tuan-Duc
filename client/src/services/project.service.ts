@@ -1,7 +1,6 @@
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
 import {
-  NotificationResponse,
   ProjectMessagePredictResponse,
   ProjectMessageResponse,
   ProjectMessageUpdateResponse

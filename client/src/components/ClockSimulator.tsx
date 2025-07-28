@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { formatInTimeZone } from 'date-fns-tz'
 import {
   Form,
   FormControl,
@@ -40,8 +39,8 @@ import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/use-auth'
 import { useStompClient } from '@/hooks/use-stomp-client'
-import socketService from '@/services/socket.service'
 import { uuid } from '@/lib/utils'
+import socketService from '@/services/socket.service'
 
 const ClockSimulator = () => {
   const [open, setOpen] = useState(false)

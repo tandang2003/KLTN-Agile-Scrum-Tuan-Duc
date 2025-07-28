@@ -10,7 +10,6 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
-import { getSprintStatusDisplayName } from '@/constant/message.const'
 import { useClearGetListIssueMutation } from '@/feature/issue/issue.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { sortSprintsByDateStart } from '@/lib/sprint.helper'
