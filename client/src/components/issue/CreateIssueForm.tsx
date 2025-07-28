@@ -93,14 +93,14 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           )
         })
         // Update position if available
-        if (req.sprintId) {
-          boardService.saveNewPosition({
-            projectId: projectId,
-            sprintId: req.sprintId,
-            issueId: response.id,
-            status: response.status
-          })
-        }
+        // if (req.sprintId) {
+        //   boardService.saveNewPosition({
+        //     projectId: projectId,
+        //     sprintId: req.sprintId,
+        //     issueId: response.id,
+        //     status: response.status
+        //   })
+        // }
       })
       .catch(() => toast.error(message.create.toast.failed))
       .finally(() => {

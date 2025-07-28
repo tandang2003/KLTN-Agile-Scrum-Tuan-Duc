@@ -20,7 +20,7 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
   const auth = useAuth()
   const { ws, isReady } = useStompClient({
     accessToken: auth.accessToken,
-    onConnect: (client) => {
+    onConnect: (_) => {
       console.log('✅ WebSocket project room connected')
       // You can subscribe here if needed
     },

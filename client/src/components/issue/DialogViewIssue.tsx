@@ -1,6 +1,5 @@
 import DialogController from '@/components/dialog/DialogController'
 import Icon from '@/components/Icon'
-import UpdateIssueForm from '@/components/issue/UpdateIssueForm'
 import ViewIssue from '@/components/issue/ViewIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ToolTip from '@/components/Tooltip'
