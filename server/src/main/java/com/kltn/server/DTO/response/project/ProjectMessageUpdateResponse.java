@@ -1,29 +1,30 @@
-package com.kltn.server.DTO.response.message;
+package com.kltn.server.DTO.response.project;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.DTO.response.notification.NotificationOfIssueResponse;
 import com.kltn.server.model.type.task.LogType;
-import com.kltn.server.model.type.task.ProjectMessageType;
 
 import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProjectMessageUpdateResponse(
-    LogType type,
-    String entityTarget,
-    String[] propertiesTargets,
-    NotificationOfIssueResponse change,
-    Instant dtCreated,
-    String createdBy) {
+  LogType type,
+  String entityTarget,
+  String[] propertiesTargets,
+  NotificationOfIssueResponse change,
+  Instant dtCreated,
+  String createdBy
+) {
   // Constructor used by the builder
   public ProjectMessageUpdateResponse(ProjectMessageResponseBuilder builder) {
     this(
-        builder.type,
-        builder.entityTarget,
-        builder.propertiesTargets,
-        builder.change,
-        builder.dtCreated,
-        builder.createdBy);
+      builder.type,
+      builder.entityTarget,
+      builder.propertiesTargets,
+      builder.change,
+      builder.dtCreated,
+      builder.createdBy
+    );
   }
 
   // Static method to start building
