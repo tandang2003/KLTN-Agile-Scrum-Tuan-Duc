@@ -14,9 +14,11 @@ import { IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
 import { ProjectParams } from '@/types/route.type'
 import { arrayMove } from '@dnd-kit/sortable'
+import { isAxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const BoardPage = () => {
   const { projectId } = useOutletContext<ProjectParams>()
@@ -80,8 +82,12 @@ const BoardPage = () => {
           position
         })
       } catch (error) {
-        console.error('Update failed, rolling back:', error)
-        return Promise.reject(error) // 🔥 KEY FIX HERE
+        if (isAxiosError(error)) {
+          toast.warning('Cảnh báo', {
+            description: error.response?.data?.message ?? ''
+          })
+        }
+        return Promise.reject(error)
       }
     },
     [projectId, sprintId]

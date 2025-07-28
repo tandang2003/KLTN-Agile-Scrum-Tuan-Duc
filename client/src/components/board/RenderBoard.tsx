@@ -102,7 +102,9 @@ const RenderBoard = ({ data, handleOnMove, disabled }: RenderBoardProps) => {
               .then(() => {
                 console.log('then')
               })
-              .catch(() => handleColumnRollback())
+              .catch((error) => {
+                handleColumnRollback()
+              })
           }}
           getItemValue={(item) => item.id}
         >

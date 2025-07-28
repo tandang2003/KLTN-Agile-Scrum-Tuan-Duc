@@ -48,7 +48,6 @@ import * as ReactDOM from 'react-dom'
 
 import { useComposedRefs } from '@/lib/composition'
 import { cn } from '@/lib/utils'
-import { Id } from '@/types/other.type'
 
 const directions: string[] = [
   KeyboardCode.Down,
@@ -223,9 +222,7 @@ function KanbanRoot<T>(props: KanbanRootProps<T>) {
   } = props
 
   const id = React.useId()
-  const [previousValue, setPreviousValue] = React.useState<typeof value | null>(
-    null
-  )
+
   const fromColumn = React.useRef<UniqueIdentifier | null>(null)
 
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null)
@@ -328,7 +325,6 @@ function KanbanRoot<T>(props: KanbanRootProps<T>) {
       kanbanProps.onDragStart?.(event)
 
       if (event.activatorEvent.defaultPrevented) return
-      setPreviousValue(structuredClone(value))
       fromColumn.current =
         event.active.data.current?.sortable?.containerId ?? null
       setActiveId(event.active.id)
@@ -505,11 +501,6 @@ function KanbanRoot<T>(props: KanbanRootProps<T>) {
     },
     [kanbanProps.onDragCancel]
   )
-
-  const resetDrag = React.useCallback(() => {
-    setPreviousValue(null)
-    setActiveId(null)
-  }, [])
 
   const announcements: Announcements = React.useMemo(
     () => ({

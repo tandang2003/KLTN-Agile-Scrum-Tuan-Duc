@@ -13,6 +13,7 @@ import com.kltn.server.mapper.entity.ResourceMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.Project;
+import com.kltn.server.model.collection.SprintBoard;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.document.ChangeLogRepository;
@@ -32,6 +33,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -77,25 +79,16 @@ public class ProjectMongoService {
       .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build());
   }
 
-  public Object getPosition(String id) {
-    Query query = new Query(Criteria.where("nk_project_id").is(id));
-    // only include the 'position' field in the result
-    query.fields().include("position").exclude("_id");
-
-    Document doc = mongoTemplate.findOne(query, Document.class, "project");
-    if (doc != null && doc.containsKey("position")) {
-      return Optional.of(doc.get("position"));
-    }
-    return Optional.empty();
+  public Map<String, SprintBoard> getPosition(String id) {
+    var project = projectMongoRepository.findByNkProjectId(id)
+      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build());
+    return project.getPosition();
   }
 
-  public void savePosition(String id, JsonNode payload) {
-    Document positionDoc = Document.parse(payload.toString());
-
+  public void savePosition(String id, Map<String, SprintBoard> payload) {
     Query query = new Query(Criteria.where("nk_project_id").is(id));
-    Update update = new Update().set("position", positionDoc);
-    mongoTemplate.updateFirst(query, update, "project");
-
+    Update update = new Update().set("position", payload);
+    mongoTemplate.updateFirst(query, update, Project.class);
   }
 
   public ApiResponse<ApiPaging<NotificationResponse>> getNotification(String projectId, int page, int size) {
@@ -128,12 +121,12 @@ public class ProjectMongoService {
             break;
           case "relations":
             r.change().getRelations().forEach(relation ->
-              {
+            {
               Issue issue = issueRepository.findById(relation.getIssueRelated().id()).orElse(null);
               var issueMongo = issueMongoService.getById(relation.getIssueRelated().id());
               relation.setIssueRelated(issueMapper.toIssueResponse(issue,
                 issueMongo));
-              })
+            })
             ;
 
         }
