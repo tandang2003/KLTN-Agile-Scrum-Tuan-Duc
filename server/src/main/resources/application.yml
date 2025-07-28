@@ -48,14 +48,9 @@ spring:
     bootstrap-servers: localhost:9092
 #    , localhost:9093, localhost:9094
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    urls:
-      - name: OpenAPI YAML
-        url: /swagger.yml
-
 server:
+  address: 0.0.0.0
+  port: 8080
   reactive:
     session:
       cookie:
@@ -84,6 +79,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
+  ip: 192.168.1.62
   whitelist:
     - auth
     - auth/register
@@ -95,13 +91,17 @@ app:
     - /chat/**
     - /ws/**
     - /ws
-
+  react:
+    - http://localhost:3000
+    - http://localhost:5173
+    - http://${app.ip}:5173
 verify:
-  invite-project-link: https://localhost:3000/verify?token=
+  invite-project-link: https://${app.ip}:3000/verify?token=
 data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
   server: http://localhost:8000/aggregate
+
 #kafka:
 #  topic:
 #    send-object-customer:

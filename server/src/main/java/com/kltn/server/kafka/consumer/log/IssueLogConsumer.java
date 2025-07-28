@@ -1,13 +1,13 @@
 package com.kltn.server.kafka.consumer.log;
 
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
-import com.kltn.server.DTO.response.project.ProjectMessageResponse;
-import com.kltn.server.DTO.response.project.ProjectMessageUpdateResponse;
+import com.kltn.server.DTO.response.message.MessageResponse;
+import com.kltn.server.DTO.response.message.ProjectMessageUpdateResponse;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.model.LogTask;
-import com.kltn.server.model.type.task.ProjectMessageType;
+import com.kltn.server.model.type.task.MessageType;
 import com.kltn.server.repository.document.ChangeLogRepository;
-import com.kltn.server.service.message.ProjectRoomService;
+import com.kltn.server.service.message.RoomService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class IssueLogConsumer {
   private ChangeLogRepository changeLogRepository;
-  private ProjectRoomService projectRoomService;
+  private RoomService projectRoomService;
 
-  public IssueLogConsumer(ChangeLogRepository changeLogRepository, ProjectRoomService projectRoomService) {
+  public IssueLogConsumer(ChangeLogRepository changeLogRepository, RoomService projectRoomService) {
     this.changeLogRepository = changeLogRepository;
     this.projectRoomService = projectRoomService;
   }
@@ -45,7 +45,7 @@ public class IssueLogConsumer {
         .dtCreated(projectLog.getDTCreated()).type(projectLog.getType())
         .build();
     projectRoomService.sendToRoom(projectLog.getProjectId(),
-        new ProjectMessageResponse(ProjectMessageType.UPDATE, message));
+        new MessageResponse(MessageType.UPDATE, message));
   }
   //
   // @KafkaListener(topics = "task-log", groupId = "task-log-1")

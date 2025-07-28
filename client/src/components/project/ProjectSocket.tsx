@@ -34,7 +34,6 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
   useEffect(() => {
     if (!ws || !isReady || !ws.connected) return
     const wsInstant = projectService.receiveUpdate(ws, projectId, (value) => {
-      console.log(value)
       if (isUpdateResponse(value.bodyParse)) {
         if (!isNotify) {
           dispatch(enableNotification())

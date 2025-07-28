@@ -1,8 +1,13 @@
-import { Client, IMessage } from '@stomp/stompjs'
+import { Client, IMessage, StompSubscription } from '@stomp/stompjs'
 type AppIMessage<T> = IMessage & {
   bodyParse: T
 }
 
 type AppMessageCallbackType<T> = (message: AppIMessage<T>) => void
 
-export type { AppIMessage, AppMessageCallbackType }
+type ReceiveMessageFnType<T> = (
+  ws: Client,
+  callback: AppMessageCallbackType<T>
+) => StompSubscription
+
+export type { AppIMessage, AppMessageCallbackType, ReceiveMessageFnType }

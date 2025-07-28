@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { ComponentProps, ReactNode } from 'react'
+import { ComponentProps } from 'react'
 type EmptyProps = ComponentProps<'div'>
 
 const Empty = ({ className, children, ...props }: EmptyProps) => {

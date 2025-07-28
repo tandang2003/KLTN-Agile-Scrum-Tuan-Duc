@@ -3,7 +3,6 @@ import { IssueRelationShip } from '@/types/model/relationship'
 import {
   ComplexOfDescription,
   IssuePriority,
-  issuePriorityList,
   IssueTag,
   SkillLevel,
   SprintStatusType
@@ -633,7 +632,8 @@ const messages = {
     },
     editorComment: {
       placeholder: 'Nhập bình luận của bạn tại đây',
-      send: 'Gửi'
+      send: 'Gửi',
+      cancel: 'Hủy'
     },
     sprintPredict: {
       title: 'Dự đoán Sprint',

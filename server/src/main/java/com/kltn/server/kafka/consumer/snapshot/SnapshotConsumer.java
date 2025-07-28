@@ -16,7 +16,7 @@ import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import com.kltn.server.service.entity.UserService;
-import com.kltn.server.service.message.ProjectRoomService;
+import com.kltn.server.service.message.RoomService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -40,12 +40,10 @@ public class SnapshotConsumer {
   private SnapshotRepository snapshotRepository;
   private SnapshotMapper snapshotMapper;
 
-
   @Autowired
   public SnapshotConsumer(IssueLogRepository issueLogRepository, SnapshotRepository snapshotRepository,
-                          SnapshotMapper snapshotMapper, IssueRepository issueRepository,
-                          ProjectSprintRepository projectSprintRepository, UserRepository userRepository
-                  ) {
+      SnapshotMapper snapshotMapper, IssueRepository issueRepository,
+      ProjectSprintRepository projectSprintRepository, UserRepository userRepository) {
     this.issueLogRepository = issueLogRepository;
     this.projectSprintRepository = projectSprintRepository;
     this.issueRepository = issueRepository;
@@ -59,47 +57,47 @@ public class SnapshotConsumer {
   @Transactional
   public void consumeSnapshot1(@Payload SnapshotRequest snapshotRequest, @Header("X-Auth-User") String user) {
     User u = userRepository.findByUniId(user).get();
-//    User u = userService.getUserById(user);
+    // User u = userService.getUserById(user);
     SecurityContextHolder.getContext()
-      .setAuthentication(new UsernamePasswordAuthenticationToken(u.getUniId(), null, u.getAuthorities()));
+        .setAuthentication(new UsernamePasswordAuthenticationToken(u.getUniId(), null, u.getAuthorities()));
     boolean flag = projectSprintRepository.existsById(ProjectSprintId.builder()
-      .projectId(snapshotRequest.getProjectId())
-      .sprintId(snapshotRequest.getSprintId())
-      .build())
-      & !snapshotRepository.existsByProjectIdAndSprintId(
-      snapshotRequest.getProjectId(), snapshotRequest.getSprintId());
+        .projectId(snapshotRequest.getProjectId())
+        .sprintId(snapshotRequest.getSprintId())
+        .build())
+        & !snapshotRepository.existsByProjectIdAndSprintId(
+            snapshotRequest.getProjectId(), snapshotRequest.getSprintId());
 
     if (flag) {
       Optional<List<Issue>> tasks = issueRepository.findAllByProjectIdAndSprintId(snapshotRequest.getProjectId(),
-        snapshotRequest.getSprintId());
+          snapshotRequest.getSprintId());
       if (tasks.isPresent()) {
         List<Issue> issues = tasks.get();
         Map<String, List<Resource>> mapResources = issues.stream()
-          .collect(
-            Collectors.toMap(BaseEntity::getId, Issue::getResources));
+            .collect(
+                Collectors.toMap(BaseEntity::getId, Issue::getResources));
         Map<String, List<Relation<String>>> relationships = new HashMap<>();
         for (Issue issue : issues) {
           List<Relation<String>> relations = new ArrayList<>();
           List<IssueRelation> ir = issueRepository.getIssueRelation(issue.getId());
           ir.forEach(r -> relations.add(Relation.<String>builder()
-            .related(r.getIssueRelated()
-              .getId())
-            .relationType(r.getTypeRelation())
-            .build()));
+              .related(r.getIssueRelated()
+                  .getId())
+              .relationType(r.getTypeRelation())
+              .build()));
           relationships.put(issue.getId(), relations);
         }
 
         ProjectSnapshot projectSnapshot = snapshotMapper.toSnapshot(snapshotRequest.getProjectId(),
-          snapshotRequest.getSprintId(), issues.stream()
-            .collect(
-              Collectors.toMap(
-                issue -> issue,
-                issue -> issueLogRepository.findByNkTaskId(
-                    issue.getId())
-                  .orElseThrow(
-                    () -> new RuntimeException(
-                      "Issue not found")))),
-          mapResources, relationships);
+            snapshotRequest.getSprintId(), issues.stream()
+                .collect(
+                    Collectors.toMap(
+                        issue -> issue,
+                        issue -> issueLogRepository.findByNkTaskId(
+                            issue.getId())
+                            .orElseThrow(
+                                () -> new RuntimeException(
+                                    "Issue not found")))),
+            mapResources, relationships);
         projectSnapshot = snapshotRepository.save(projectSnapshot);
       }
     }

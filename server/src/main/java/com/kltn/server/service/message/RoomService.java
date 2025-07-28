@@ -1,19 +1,23 @@
 package com.kltn.server.service.message;
 
-import com.kltn.server.DTO.response.project.ProjectMessageResponse;
-import com.kltn.server.DTO.response.project.ProjectMessageUpdateResponse;
+import com.kltn.server.DTO.response.message.MessageResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProjectRoomService {
+public class RoomService {
   private final SimpMessagingTemplate messagingTemplate;
 
-  public ProjectRoomService(SimpMessagingTemplate messagingTemplate) {
+  public RoomService(SimpMessagingTemplate messagingTemplate) {
     this.messagingTemplate = messagingTemplate;
   }
 
-  public void sendToRoom(String projectId, ProjectMessageResponse message) {
+  public void sendToRoom(String projectId, MessageResponse message) {
     messagingTemplate.convertAndSend("/topic/project/room/" + projectId, message);
+  }
+
+  public void sentToApp(MessageResponse message) {
+    messagingTemplate.convertAndSend("/topic/time", message);
+
   }
 }
