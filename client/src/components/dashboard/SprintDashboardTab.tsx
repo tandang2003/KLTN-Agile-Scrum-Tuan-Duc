@@ -1,5 +1,4 @@
 import IssueStatusDoughnutChart from '@/components/dashboard/chart/IssueStatusDoughnutChart'
-import MultiWorkloadBarChart from '@/components/dashboard/chart/WorkloadBarChart'
 import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
 import { useSprintDashboardDetailSheet } from '@/components/dashboard/SprintDashboardDetailSheet'
 import LoadingBoundary from '@/components/LoadingBoundary'
@@ -42,15 +41,6 @@ const SprintDashboardTab = ({}: SprintDashboardTabProps) => {
                   }}
                 />
               </div>
-            </ContainerDashboard>
-            <ContainerDashboard>
-              <MultiWorkloadBarChart
-                data={[
-                  { assignee: 'Alice', total: 20, done: 15, notComplete: 5 },
-                  { assignee: 'Bob', total: 10, done: 7, notComplete: 3 },
-                  { assignee: 'Charlie', total: 12, done: 12, notComplete: 0 }
-                ]}
-              />
             </ContainerDashboard>
           </div>
         )

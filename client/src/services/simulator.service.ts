@@ -1,6 +1,9 @@
 import { StorageItem } from '@/constant/app.const'
+import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { ResponseApi } from '@/types/http.type'
+import { TimeMessageResponse } from '@/types/notification.type'
+
 import {
   ClockSimulatorConfigType,
   ClockSimulatorReqType,
@@ -9,10 +12,16 @@ import {
 
 const simulatorService = {
   setSimulator: async (
-    req: ClockSimulatorReqType
+    req: ClockSimulatorReqType,
+    senderId: string
   ): Promise<ClockSimulatorConfigType> => {
+    const query = toQueryString({
+      timeSpeech: req.timeSpeech,
+      to: req.to.toISOString(),
+      senderId: senderId
+    })
     const response = await httpService.post<ResponseApi<Date>, void>(
-      `config/timespeech?timeSpeech=${req.timeSpeech}`,
+      `config/timespeech?${query}`,
       undefined
     )
 
@@ -29,6 +38,15 @@ const simulatorService = {
       timeSpeech: req.timeSpeech,
       timeEnd: new Date(req.to)
     }
+  },
+
+  setSimulatorLocal: (data: TimeMessageResponse): void => {
+    sessionStorage.setItem(
+      StorageItem.Simulator,
+      JSON.stringify({
+        to: data.to
+      })
+    )
   },
 
   getSimulator: async (): Promise<ClockSimulatorConfigType> => {
@@ -52,13 +70,20 @@ const simulatorService = {
       timeEnd: timeEnd
     }
   },
-  resetSimulator: async (): Promise<ClockSimulatorConfigType> => {
+  resetSimulator: async (
+    senderId: string
+  ): Promise<ClockSimulatorConfigType> => {
+    const query = toQueryString({
+      timeSpeech: 1,
+      senderId: senderId
+    })
     const response = await httpService.post<ResponseApi<Date>, void>(
-      `config/timespeech?timeSpeech=1`,
+      `config/timespeech?${query}`,
       undefined
     )
 
     const data = response.data.data
+    console.log('delete')
     sessionStorage.removeItem(StorageItem.Simulator)
 
     return {
@@ -67,4 +92,5 @@ const simulatorService = {
     }
   }
 }
+
 export default simulatorService

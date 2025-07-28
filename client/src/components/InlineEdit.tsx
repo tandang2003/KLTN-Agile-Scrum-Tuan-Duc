@@ -14,41 +14,59 @@ type RenderEditorProps<T> = {
   onChange: (value: T) => void
   onBlur: () => void
   onKeyDown?: (e: KeyboardEvent<any>) => void
+  onCancel: () => void
   ref: RefObject<any>
 }
 
 type InlineEditProps<T> = {
-  value: T
+  value?: T
   validate?: (value: T) => boolean
   onSave: (value: T) => void
   renderEditor: (props: RenderEditorProps<T>) => ReactNode
   displayComponent?: (value: T) => ReactNode
-} & HTMLAttributes<HTMLSpanElement>
+  onChange?: (value: T) => void
+} & Omit<HTMLAttributes<HTMLSpanElement>, 'onChange'>
 
 const InlineEdit = <T,>({
-  value: initialValue,
+  value: controlledValue,
   validate,
   onSave,
   renderEditor,
   displayComponent,
   className,
+  onChange: controlledOnChange,
   ...props
 }: InlineEditProps<T>) => {
-  const [value, setValue] = useState<T>(initialValue)
+  const isControlled =
+    controlledValue !== undefined && controlledOnChange !== undefined
+
+  const [internalValue, setInternalValue] = useState<T>(controlledValue!)
+  const value = isControlled ? controlledValue! : internalValue
+  const setValue = isControlled ? controlledOnChange! : setInternalValue
+
   const [editing, setEditing] = useState(false)
   const inputRef = useRef<any>(null)
 
   useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
+    if (!isControlled) {
+      setInternalValue(controlledValue!)
+    }
+  }, [controlledValue])
 
   const handleBlur = () => {
     setEditing(false)
-    if (value !== initialValue) {
+    if (value !== controlledValue) {
       if (validate && !validate(value)) {
         return
       }
       onSave(value)
+    }
+  }
+
+  const handleCancel = () => {
+    setEditing(false)
+    if (!isControlled) {
+      setInternalValue(controlledValue!)
     }
   }
 
@@ -57,8 +75,7 @@ const InlineEdit = <T,>({
       e.preventDefault()
       inputRef.current?.blur()
     } else if (e.key === 'Escape') {
-      setValue(initialValue)
-      setEditing(false)
+      handleCancel()
     }
   }
 
@@ -79,6 +96,7 @@ const InlineEdit = <T,>({
       onChange: setValue,
       onBlur: handleBlur,
       onKeyDown: handleKeyDown,
+      onCancel: handleCancel,
       ref: inputRef
     })
   ) : (
