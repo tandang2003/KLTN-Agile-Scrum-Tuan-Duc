@@ -1,21 +1,20 @@
 import { FormField } from '@/components/ui/form'
 import * as TagsInput from '@diceui/tags-input'
 
+import Empty from '@/components/Empty'
+import Icon from '@/components/Icon'
+import ListView from '@/components/ListView'
 import TitleLevel from '@/components/TitleLevel'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import messages from '@/constant/message.const'
 import { useAutoUpdateField } from '@/hooks/use-update'
+import { uuid } from '@/lib/utils'
 import issueService from '@/services/issue.service'
-import { TopicModelType, UpdateIssueType } from '@/types/issue.type'
-import { RefreshCcw, X } from 'lucide-react'
+import { UpdateIssueType } from '@/types/issue.type'
+import { X } from 'lucide-react'
 import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import ViewTopic from '@/components/issue/viewFields/ViewTopic'
-import ListView from '@/components/ListView'
-import Empty from '@/components/Empty'
-import { Badge } from '@/components/ui/badge'
-import Icon from '@/components/Icon'
-import { Button } from '@/components/ui/button'
-import { uuid } from '@/lib/utils'
 type UpdateTopicProps = {}
 
 const UpdateTopicForm = ({}: UpdateTopicProps) => {
@@ -24,31 +23,22 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const { control, getValues, setValue } = form
 
-  const { fields } = useFieldArray({
-    control: control,
-    name: 'topics'
-  })
+  const fields = getValues('topics')
   const [topics, setTopics] = useState<string[]>(
-    fields.map((item) => {
+    fields?.map((item) => {
       return item.name
-    })
+    }) ?? []
   )
-  const [data, setData] = useState<TopicModelType[]>(
-    fields.map((item) => {
-      return {
-        id: item.id,
-        name: item.name
-      }
-    })
-  )
+  const data = fields?.map((item) => {
+    return {
+      id: item.id,
+      name: item.name
+    }
+  })
 
   useAutoUpdateField({
     form: form,
     field: 'topics',
-    deps: [isEdit],
-    isPause: (_, __) => {
-      return isEdit
-    },
     callApi: (_, value) => {
       return issueService.updateIssue({
         id: getValues('id'),
@@ -67,7 +57,7 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
 
   const handleAddTopic = () => {
     const dataSet = topics.map((topic) => {
-      const exist = data.find((item) => item.name === topic)
+      const exist = data?.find((item) => item.name === topic)
       if (exist) {
         return {
           id: exist.id,
@@ -80,8 +70,8 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
         }
       }
     })
-    setValue('topics', dataSet)
     setIsEdit(false)
+    setValue('topics', dataSet)
   }
 
   return (
@@ -138,28 +128,30 @@ const UpdateTopicForm = ({}: UpdateTopicProps) => {
           )
         else {
           return (
-            <>
-              <ListView
-                data={data}
-                emptyComponent={
-                  <Empty className='mt-2'>Không có topic được gán</Empty>
-                }
-                orientation='horizontal'
-                className='gap-2 rounded-xl border-2 p-2'
-                render={(item) => {
-                  return <Badge className={item.id}>{item.name}</Badge>
-                }}
-                append={
-                  <Icon
-                    className='hover-opacity'
-                    icon={'material-symbols:edit-outline'}
-                    onClick={() => {
-                      setIsEdit(true)
-                    }}
-                  />
-                }
-              />
-            </>
+            <ListView
+              data={data}
+              emptyComponent={
+                <Empty className='mt-2'>Không có topic được gán</Empty>
+              }
+              orientation='horizontal'
+              className='gap-2 rounded-xl border-2 p-2'
+              render={(item) => {
+                return (
+                  <Badge key={item.id} className={item.id}>
+                    {item.name}
+                  </Badge>
+                )
+              }}
+              append={
+                <Icon
+                  className='hover-opacity'
+                  icon={'material-symbols:edit-outline'}
+                  onClick={() => {
+                    setIsEdit(true)
+                  }}
+                />
+              }
+            />
           )
         }
       }}

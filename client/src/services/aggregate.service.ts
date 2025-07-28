@@ -5,6 +5,7 @@ import { Id } from '@/types/other.type'
 
 const aggregateService = {
   getSprint: async (sprintId: Id): Promise<SprintAggregateProcessType> => {
+    console.log(sprintId)
     return new Promise((resolve) => {
       resolve([
         {

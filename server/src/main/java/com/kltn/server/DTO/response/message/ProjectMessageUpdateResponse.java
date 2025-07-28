@@ -1,4 +1,4 @@
-package com.kltn.server.DTO.response.project;
+package com.kltn.server.DTO.response.message;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kltn.server.DTO.response.notification.NotificationOfIssueResponse;

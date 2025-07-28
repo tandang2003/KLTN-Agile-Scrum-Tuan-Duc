@@ -9,6 +9,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app")
 public class ApplicationProps {
     private List<String> whitelist;
+    private List<String> react;
 
     public void setWhitelist(List<String> whitelist) {
         this.whitelist = whitelist;
@@ -17,4 +18,12 @@ public class ApplicationProps {
     public List<String> getWhitelist() {
         return whitelist;
     }
+
+  public List<String> getReact() {
+    return react;
+  }
+
+  public void setReact(List<String> react) {
+    this.react = react;
+  }
 }

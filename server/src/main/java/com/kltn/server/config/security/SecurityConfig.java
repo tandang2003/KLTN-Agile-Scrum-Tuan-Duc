@@ -7,6 +7,7 @@ import com.kltn.server.config.security.provider.BasicAuthenticationProvider;
 import com.kltn.server.config.security.provider.ProjectAuthorizationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,102 +31,103 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    private JwtDecoder accessTokenDecoder;
-    @Qualifier("verifyTokenDecoder")
-    @Autowired
-    private JwtDecoder verifyTokenDecoder;
-    @Autowired
-    private BasicAuthenticationProvider basicAuthenticationProvider;
+  @Autowired
+  private JwtDecoder accessTokenDecoder;
+  @Qualifier("verifyTokenDecoder")
+  @Autowired
+  private JwtDecoder verifyTokenDecoder;
+  @Autowired
+  private BasicAuthenticationProvider basicAuthenticationProvider;
 
-    @Autowired
-    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+  @Autowired
+  private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    @Autowired
-    private CustomAccessDenyHandler customAccessDenyHandler;
+  @Autowired
+  private CustomAccessDenyHandler customAccessDenyHandler;
 
-    @Autowired
-    private ProjectAuthorizationProvider projectAuthorizationProvider;
+  @Autowired
+  private ProjectAuthorizationProvider projectAuthorizationProvider;
+
+  @Autowired
+  private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+  @Autowired
+  private CustomConverterJwtToUser customConverterJwtToUser;
+  @Autowired
+  private CustomLogoutHandler customLogoutHandler;
+  @Autowired
+  private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+  @Autowired
+  private ApplicationProps applicationProps;
 
 
-    @Autowired
-    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-    @Autowired
-    private CustomConverterJwtToUser customConverterJwtToUser;
-    @Autowired
-    private CustomLogoutHandler customLogoutHandler;
-    @Autowired
-    private CustomLogoutSuccessHandler customLogoutSuccessHandler;
-    @Autowired
-    private ApplicationProps applicationProps;
+  @Bean
+  public AuthenticationManager authenticationManager() {
+    return new ProviderManager(List.of(basicAuthenticationProvider));
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(List.of(basicAuthenticationProvider));
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter = projectRoleAuthorizationFilter();
+    CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
+    customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+    http.securityContext(contextConfig -> {
+      contextConfig.requireExplicitSave(false);
+    })
+        .httpBasic(AbstractHttpConfigurer::disable)
+        .formLogin(AbstractHttpConfigurer::disable)
+        .logout(logoutConfig -> {
+          logoutConfig
+              .logoutUrl("/auth/logout")
+              .addLogoutHandler(customLogoutHandler)
+              .logoutSuccessHandler(customLogoutSuccessHandler)
+              .deleteCookies("refresh_token");
+        })
+        .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterAfter(projectRoleAuthorizationFilter, BearerTokenAuthenticationFilter.class)
+        .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(Customizer.withDefaults())
+        .authorizeHttpRequests(authorizeRequests -> {
+          authorizeRequests.requestMatchers(applicationProps.getWhitelist().toArray(String[]::new))
+              .permitAll();
+          authorizeRequests.anyRequest().authenticated();
+        })
+        .oauth2ResourceServer(oauth2 -> {
+          oauth2.jwt(jwt -> {
+            jwt.decoder(accessTokenDecoder);
+            jwt.jwtAuthenticationConverter(customConverterJwtToUser);
+          })
+              .authenticationEntryPoint(customAuthenticationEntryPoint);
+        })
+        .exceptionHandling(exc -> {
+          exc.accessDeniedHandler(customAccessDenyHandler);
+          exc.authenticationEntryPoint(customAuthenticationEntryPoint);
+        });
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter = projectRoleAuthorizationFilter();
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-        customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
-        http.securityContext(contextConfig -> {
-                    contextConfig.requireExplicitSave(false);
-                })
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(logoutConfig -> {
-                    logoutConfig
-                            .logoutUrl("/auth/logout")
-                            .addLogoutHandler(customLogoutHandler)
-                            .logoutSuccessHandler(customLogoutSuccessHandler)
-                            .deleteCookies("refresh_token");
-                })
-                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(projectRoleAuthorizationFilter, BearerTokenAuthenticationFilter.class)
-                .sessionManagement(ssm -> ssm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers(applicationProps.getWhitelist().toArray(String[]::new))
-                            .permitAll();
-                    authorizeRequests.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> {
-                    oauth2.jwt(jwt -> {
-                                jwt.decoder(accessTokenDecoder);
-                                jwt.jwtAuthenticationConverter(customConverterJwtToUser);
-                            })
-                            .authenticationEntryPoint(customAuthenticationEntryPoint);
-                })
-                .exceptionHandling(exc -> {
-                    exc.accessDeniedHandler(customAccessDenyHandler);
-                    exc.authenticationEntryPoint(customAuthenticationEntryPoint);
-                });
+    return http.build();
+  }
 
-        return http.build();
-    }
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    System.out.println("allowedHost");
+    System.out.println(applicationProps.getReact());
+    configuration.setAllowedOrigins(applicationProps.getReact());
+    configuration.setAllowedMethods(Arrays.asList("*"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
+    configuration.setAllowCredentials(true);
+    configuration.setMaxAge(3600L);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
-    ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter() {
-        ProjectRoleAuthorizationFilter filter = new ProjectRoleAuthorizationFilter(verifyTokenDecoder);
-        filter.setAuthenticationManager(new ProviderManager(List.of(projectAuthorizationProvider)));
-        filter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
-        return filter;
-    }
-
+  @Bean
+  ProjectRoleAuthorizationFilter projectRoleAuthorizationFilter() {
+    ProjectRoleAuthorizationFilter filter = new ProjectRoleAuthorizationFilter(verifyTokenDecoder);
+    filter.setAuthenticationManager(new ProviderManager(List.of(projectAuthorizationProvider)));
+    filter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+    return filter;
+  }
 
 }

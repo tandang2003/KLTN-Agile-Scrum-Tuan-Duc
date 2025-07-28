@@ -1,12 +1,11 @@
 package com.kltn.server.kafka.consumer.predict;
 
-import com.kltn.server.DTO.request.kafka.SnapshotRequest;
 import com.kltn.server.DTO.request.kafka.SprintPredictRequest;
-import com.kltn.server.DTO.response.project.ProjectMessagePredictResponse;
-import com.kltn.server.DTO.response.project.ProjectMessageResponse;
-import com.kltn.server.model.type.task.ProjectMessageType;
+import com.kltn.server.DTO.response.message.ProjectMessagePredictResponse;
+import com.kltn.server.DTO.response.message.MessageResponse;
+import com.kltn.server.model.type.task.MessageType;
 import com.kltn.server.service.DecisionService;
-import com.kltn.server.service.message.ProjectRoomService;
+import com.kltn.server.service.message.RoomService;
 
 import jakarta.transaction.Transactional;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,9 +16,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PredictConsumer {
   private final DecisionService decisionService;
-  private ProjectRoomService projectRoomService;
+  private RoomService projectRoomService;
 
-  public PredictConsumer(DecisionService decisionService, ProjectRoomService projectRoomService) {
+  public PredictConsumer(DecisionService decisionService, RoomService projectRoomService) {
     this.decisionService = decisionService;
     this.projectRoomService = projectRoomService;
   }
@@ -29,6 +28,7 @@ public class PredictConsumer {
   public void consumeSnapshot1(@Payload SprintPredictRequest sprintPredictRequest, @Header("X-Auth-User") String user) {
     var result = decisionService.makePredict(sprintPredictRequest.getProjectId(), sprintPredictRequest.getSprintId());
 
-    projectRoomService.sendToRoom(sprintPredictRequest.getProjectId(),new ProjectMessageResponse(ProjectMessageType.PREDICT, new ProjectMessagePredictResponse(result.getData(), result.getMessage())));
+    projectRoomService.sendToRoom(sprintPredictRequest.getProjectId(), new MessageResponse(MessageType.PREDICT,
+        new ProjectMessagePredictResponse(result.getData(), result.getMessage())));
   }
 }

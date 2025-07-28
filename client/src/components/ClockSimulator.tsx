@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { formatInTimeZone } from 'date-fns-tz'
 import {
   Form,
   FormControl,
@@ -24,40 +23,74 @@ import {
   useSimulatedClock,
   UseSimulatedClockOptions
 } from '@/hooks/use-simulated-clock'
-import { formatDate } from '@/lib/utils'
 import simulatorService from '@/services/simulator.service'
 import {
   ClockSimulatorReqType,
   ClockSimulatorSchema
 } from '@/types/simulator.type'
+import { formatInTimeZone } from 'date-fns-tz'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format, isBefore } from 'date-fns'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { isBefore } from 'date-fns'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import {
-  RelativeTime,
-  RelativeTimeZone,
-  RelativeTimeZoneDate,
-  RelativeTimeZoneDisplay,
-  RelativeTimeZoneLabel
-} from '@/components/ui/kibo-ui/relative-time'
 import { Badge } from '@/components/ui/badge'
-
-const timezones = [
-  { label: 'GMT', zone: 'Europe/London' },
-  { label: 'VN', zone: 'Asia/Ho_Chi_Minh' }
-]
+import { useAuth } from '@/hooks/use-auth'
+import { useStompClient } from '@/hooks/use-stomp-client'
+import socketService from '@/services/socket.service'
+import { uuid } from '@/lib/utils'
 
 const ClockSimulator = () => {
   const [open, setOpen] = useState(false)
+  const senderIdRef = useRef<string>(uuid()) // One-time UUID
+
   const [isReset, setIsReset] = useState(false)
   const [config, setConfig] = useState<UseSimulatedClockOptions | null>(null)
   const form = useForm<ClockSimulatorReqType>({
     resolver: zodResolver(ClockSimulatorSchema)
   })
+
+  const auth = useAuth()
+  const { ws, isReady } = useStompClient({
+    accessToken: auth.accessToken,
+    onConnect: (client) => {
+      console.log('✅ WebSocket time connected')
+      // You can subscribe here if needed
+    },
+    onDisconnect: () => {
+      console.log('🔌 Disconnected WebSocket time')
+    },
+    onError: (error) => {
+      console.error('WebSocket time error', error)
+    }
+  })
+  useEffect(() => {
+    if (!ws || !isReady || !ws.connected) return
+    const wsInstant = socketService.receiveMessageTime(ws, (value) => {
+      const { time, timeSpeech, to, senderId } = value.bodyParse.message
+      if (senderId !== senderIdRef.current) {
+        setConfig({
+          initTime: new Date(time),
+          timeSpeech: timeSpeech,
+          timeEnd: new Date(to)
+        })
+        simulatorService.setSimulatorLocal(value.bodyParse.message)
+
+        if (timeSpeech === 1) {
+          toast.info(`${senderId} đâ reset time`)
+          setIsReset(false)
+        } else {
+          toast.info(`${senderId} đang hiệu chỉnh time`)
+          setIsReset(true)
+        }
+      }
+    })
+    return () => {
+      wsInstant.unsubscribe()
+    }
+  }, [ws, isReady])
 
   const hookConfig = useMemo(() => {
     if (!config) {
@@ -124,24 +157,26 @@ const ClockSimulator = () => {
         })
         return
       }
-    simulatorService.setSimulator(values).then((config) => {
-      toast.success('Simulator time set successfully', {
-        description: `Simulator time set to ${values.to.toLocaleString()}`
+    simulatorService
+      .setSimulator(values, senderIdRef.current)
+      .then((config) => {
+        toast.success('Simulator time set successfully', {
+          description: `Simulator time set to ${values.to.toLocaleString()}`
+        })
+        setConfig({
+          initTime: config.initTime,
+          timeSpeech: config.timeSpeech,
+          timeEnd: config.timeEnd,
+          onReachedEnd: handleResetSimulator
+        })
+        setIsReset(true)
+        setOpen(false)
       })
-      setConfig({
-        initTime: config.initTime,
-        timeSpeech: config.timeSpeech,
-        timeEnd: config.timeEnd,
-        onReachedEnd: handleResetSimulator
-      })
-      setIsReset(true)
-      setOpen(false)
-    })
   }
 
   const handleResetSimulator = useCallback(() => {
     simulatorService
-      .resetSimulator()
+      .resetSimulator(senderIdRef.current)
       .then((config) => {
         toast.success('Simulator time reset successfully')
         form.reset({
