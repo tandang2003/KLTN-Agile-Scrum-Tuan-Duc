@@ -66,9 +66,13 @@ public class SprintScheduler {
     long delay = Duration.between(clockSimulator.now(), end)
       .getSeconds();
     delay = Math.max(0, delay);
-    long timeSpeech = clockSimulator.getTimeSpeech();
-    Instant now = clockSimulator.now();
-    Instant scheduledTime = now.plusSeconds(delay / timeSpeech);
+    long timeSpeech = ClockSimulator.getTimeSpeech();
+//    Instant now = clockSimulator.now();
+    Duration virtualDuration = Duration.between(ClockSimulator.now(), end);
+    long adjustedDelaySeconds = virtualDuration.getSeconds() / timeSpeech;
+
+    Instant scheduledTime = Instant.now().plusSeconds(adjustedDelaySeconds);
+//    Instant scheduledTime = now.plusSeconds(delay / timeSpeech);
 
     ScheduledFuture<?> future = taskScheduler.schedule(task, scheduledTime);
     tasks.put(key, future);

@@ -59,12 +59,14 @@ public class PredictScheduler {
       return;
     }
 
-    long delay = Duration.between(clockSimulator.now(), end)
+    long delay = Duration.between(ClockSimulator.now(), end)
       .getSeconds();
     delay = Math.max(0, delay);
     long timeSpeech = ClockSimulator.getTimeSpeech();
-    Instant now = ClockSimulator.now();
-    Instant scheduledTime = now.plusSeconds(delay / timeSpeech);
+    Duration virtualDuration = Duration.between(ClockSimulator.now(), end);
+    long adjustedDelaySeconds = virtualDuration.getSeconds() / timeSpeech;
+
+    Instant scheduledTime = Instant.now().plusSeconds(adjustedDelaySeconds);
 
     ScheduledFuture<?> future = predictScheduler.schedule(task, scheduledTime);
     tasks.put(sprintId, future);
