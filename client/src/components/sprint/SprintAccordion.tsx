@@ -89,11 +89,11 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   status={getStatusSprint(item)}
                   className='ml-auto basis-[150px]'
                 />
+                <Badge>{item.storyPoint}</Badge>
                 <Badge>
                   <Icon icon={'material-symbols:online-prediction'} />
                   {formatDate(item.predict)}
                 </Badge>
-
                 <Badge
                   className='mr-3 basis-[200px]'
                   statusSprint={getStatusSprint(item)}

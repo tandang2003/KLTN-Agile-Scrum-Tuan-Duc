@@ -13,6 +13,10 @@ priority_map = {
     "MEDIUM": 1,
     "HARD": 2
 }
+def parse_date(date_str: str) -> str:
+    """Convert dd/mm/yyyy to ISO 8601 UTC format."""
+    dt = datetime.strptime(date_str.strip(), "%d/%m/%Y")
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def preprocess ():
@@ -69,10 +73,14 @@ def main():
             "sprintId": str(row['sprintId']).strip(),
             "status": "TODO",
             "priority": str(row['priority']).strip(),
+            "assigneeId": str(row['assigneeId']),
+            "reviewerId": str(row['reviewerId']),
             "tag": str(row['tag']).strip(),
             "topics": topics_json,
             "subtasks": subtasks_json,
-            "complexOfDescription": priority_map.get(str(row['complexOfDescription']).strip().upper(), 0)
+            "complexOfDescription": priority_map.get(str(row['complexOfDescription']).strip().upper(), 0),
+            "start": parse_date(row["start"]),
+             "end": parse_date(row["end"]),
         }
 
         print(json.dumps(body, indent=4, ensure_ascii=False))

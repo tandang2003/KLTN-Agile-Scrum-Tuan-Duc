@@ -889,6 +889,14 @@ public class IssueService {
     return point / (double) skills.size();
   }
 
+  public double getVelDiff(Project project, Sprint sprint) {
+    double storyPoint = sprint.getStoryPoint();
+    double numIssueStart = getNumberOfIssuesAtStart(project, sprint);
+    double numIssueAdded = getNumberOfIssuesAdded(project, sprint);
+    double numIssueDone = getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.DONE));
+    return storyPoint / (numIssueStart + numIssueAdded) * numIssueDone - storyPoint;
+  }
+
   @SendKafkaEvent(topic = "task-log")
   @Transactional
   public ApiResponse<Void> delete(String id) {

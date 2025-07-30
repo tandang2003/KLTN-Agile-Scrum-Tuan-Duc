@@ -101,6 +101,15 @@ data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
   server: http://localhost:8000/aggregate
+
+google:
+  sheet:
+    sprint:
+      sheet: Sheet1
+      spreadsheetId: 1TQjsIekHqYxIuronG_y_hgL0XIM1ZPV9ve7gsJwqsCQ
+    issue:
+      sheet: Sheet1
+      spreadsheetId: 1G3NKAq6O5OyjNPbKwWvvvIfZ9RVU3otE3M8zaX_QJxU
 #kafka:
 #  topic:
 #    send-object-customer:

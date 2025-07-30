@@ -3,6 +3,7 @@ import ProjectHeader from '@/components/project/ProjectHeader'
 import ProjectSocket from '@/components/project/ProjectSocket'
 import SprintPredict from '@/components/SprintPredict'
 import StoreData from '@/components/StoreData'
+import StoreVelDiff from '@/components/StoreVelDiff'
 import { Separator } from '@/components/ui/separator'
 
 import { Skeleton } from '@/components/ui/skeleton'
@@ -65,6 +66,7 @@ const ProjectPage = () => {
               <ProjectNavigation id={data.id} />
               <div>
                 {workspaceId && <StoreData workspaceId={workspaceId} />}
+                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
                 <SprintPredict
                   project={{
                     id: data.id,

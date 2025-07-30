@@ -57,6 +57,12 @@ const aggregateService = {
       stage: 30
     })
     await httpService.get<ResponseApi<void>>(`/decision/store-data?${query}`)
+  },
+  storeVelDiff: async (workspaceId: Id): Promise<void> => {
+    const query = toQueryString({
+      workspaceId: workspaceId
+    })
+    await httpService.get<ResponseApi<void>>(`/decision/store_vel_dif?${query}`)
   }
 }
 
