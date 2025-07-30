@@ -7,8 +7,8 @@ import {
 } from '@/components/ui/tabs'
 import { useAppSelector } from '@/context/redux/hook'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
-import SummaryTab from '@/pages/manager/workspace/[:id]/summary/page'
-import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[:id]/template/page'
+import SummaryTab from '@/pages/manager/workspace/[id]/summary/page'
+import WorkspaceSprintTemplatePage from '@/pages/manager/workspace/[id]/template/page'
 import { Id } from '@/types/other.type'
 import { useLocation } from 'react-router-dom'
 
