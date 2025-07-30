@@ -1,9 +1,13 @@
 package com.kltn.server.kafka.consumer.log;
 
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
+import com.kltn.server.DTO.response.message.MessageResponse;
+import com.kltn.server.DTO.response.message.ProjectMessageUpdateResponse;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.model.LogTask;
+import com.kltn.server.model.type.task.MessageType;
 import com.kltn.server.repository.document.ChangeLogRepository;
+import com.kltn.server.service.message.RoomService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,25 +18,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class IssueLogConsumer {
   private ChangeLogRepository changeLogRepository;
+  private RoomService projectRoomService;
 
-  public IssueLogConsumer(ChangeLogRepository changeLogRepository) {
+  public IssueLogConsumer(ChangeLogRepository changeLogRepository, RoomService projectRoomService) {
     this.changeLogRepository = changeLogRepository;
+    this.projectRoomService = projectRoomService;
   }
 
   @KafkaListener(topics = "task-log", groupId = "task-log-1")
   public void createTask1(@Payload ChangeLogRequest project, @Header("X-Auth-User") String user) {
     SecurityContextHolder.getContext()
-      .setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
+        .setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
     var projectLog = ChangeLog.builder()
-      .type(project.type())
-      .idRef(project.idRef())
-      .projectId(project.projectId())
-      .entityTarget(project.entityTarget())
-      .change((LogTask)project.change())
-      .propertiesTargets(project.propertiesTargets())
-      .build()
-      ;
+        .type(project.type())
+        .idRef(project.idRef())
+        .projectId(project.projectId())
+        .entityTarget(project.entityTarget())
+        .change((LogTask) project.change())
+        .propertiesTargets(project.propertiesTargets())
+        .build();
     projectLog = changeLogRepository.save(projectLog);
+    ProjectMessageUpdateResponse message = ProjectMessageUpdateResponse.builder()
+        .entityTarget(projectLog.getEntityTarget())
+        .createdBy(projectLog.getCreatedBy())
+        .propertiesTargets(projectLog.getPropertiesTargets())
+        .dtCreated(projectLog.getDTCreated()).type(projectLog.getType())
+        .build();
+    projectRoomService.sendToRoom(projectLog.getProjectId(),
+        new MessageResponse(MessageType.UPDATE, message));
   }
   //
   // @KafkaListener(topics = "task-log", groupId = "task-log-1")

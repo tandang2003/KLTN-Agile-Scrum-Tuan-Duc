@@ -1,6 +1,10 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
+import ProjectSocket from '@/components/project/ProjectSocket'
 import SprintPredict from '@/components/SprintPredict'
+import StoreData from '@/components/StoreData'
+import StoreVelDiff from '@/components/StoreVelDiff'
+import { Separator } from '@/components/ui/separator'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
@@ -8,6 +12,7 @@ import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
+import useAppId from '@/hooks/use-app-id'
 import { toISODateString } from '@/lib/date.helper'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { Id } from '@/types/other.type'
@@ -21,15 +26,9 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
+  const { workspaceId } = useAppId()
 
   const dispatch = useAppDispatch()
-
-  // useEffect(() => {
-  //   if (projectId) {
-  //     console.log('setProjectCurrent', projectId)
-  //     dispatch(setProjectCurrent(projectId))
-  //   }
-  // }, [projectId, dispatch])
 
   useEffect(() => {
     if (data?.currentSprint) {
@@ -62,23 +61,27 @@ const ProjectPage = () => {
         {(data) => (
           <>
             <ProjectHeader data={data} />
-
+            {projectId && <ProjectSocket projectId={projectId} />}
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
-              <SprintPredict
-                project={{
-                  id: data.id,
-                  name: data.name
-                }}
-                sprint={
-                  data.currentSprint?.id && data.currentSprint?.title
-                    ? {
-                        id: data.currentSprint?.id,
-                        name: data.currentSprint?.title
-                      }
-                    : undefined
-                }
-              />
+              <div>
+                {workspaceId && <StoreData workspaceId={workspaceId} />}
+                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
+                <SprintPredict
+                  project={{
+                    id: data.id,
+                    name: data.name
+                  }}
+                  sprint={
+                    data.currentSprint?.id && data.currentSprint?.title
+                      ? {
+                          id: data.currentSprint?.id,
+                          name: data.currentSprint?.title
+                        }
+                      : undefined
+                  }
+                />
+              </div>
             </div>
             <Outlet
               context={{

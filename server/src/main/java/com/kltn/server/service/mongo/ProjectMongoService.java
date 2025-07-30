@@ -13,6 +13,7 @@ import com.kltn.server.mapper.entity.ResourceMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.model.collection.Project;
+import com.kltn.server.model.collection.SprintBoard;
 import com.kltn.server.model.entity.Issue;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.repository.document.ChangeLogRepository;
@@ -32,6 +33,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -48,9 +50,11 @@ public class ProjectMongoService {
   private MongoTemplate mongoTemplate;
   private ChangeLogRepository changeLogRepository;
 
-
   @Autowired
-  public ProjectMongoService(ChangeLogRepository changeLogRepository, ProjectMongoRepository projectMongoRepository, MongoTemplate mongoTemplate, NotificationMapper notificationMapper, UserMapper userMapper, UserRepository userRepository, ResourceMapper resourceMapper, ResourceService resourceService, IssueMapper issueMapper, IssueMongoService issueMongoService, IssueRepository issueRepository) {
+  public ProjectMongoService(ChangeLogRepository changeLogRepository, ProjectMongoRepository projectMongoRepository,
+      MongoTemplate mongoTemplate, NotificationMapper notificationMapper, UserMapper userMapper,
+      UserRepository userRepository, ResourceMapper resourceMapper, ResourceService resourceService,
+      IssueMapper issueMapper, IssueMongoService issueMongoService, IssueRepository issueRepository) {
     this.projectMongoRepository = projectMongoRepository;
     this.mongoTemplate = mongoTemplate;
     this.notificationMapper = notificationMapper;
@@ -74,80 +78,76 @@ public class ProjectMongoService {
 
   public Project getByNkProjectId(String id) {
     return projectMongoRepository.findByNkProjectId(id)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build());
+        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build());
   }
 
-  public Object getPosition(String id) {
-    Query query = new Query(Criteria.where("nk_project_id").is(id));
-    // only include the 'position' field in the result
-    query.fields().include("position").exclude("_id");
-
-    Document doc = mongoTemplate.findOne(query, Document.class, "project");
-    if (doc != null && doc.containsKey("position")) {
-      return Optional.of(doc.get("position"));
-    }
-    return Optional.empty();
+  public Map<String, SprintBoard> getPosition(String id) {
+    var project = projectMongoRepository.findByNkProjectId(id)
+        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND_PROJECT).build());
+    return project.getPosition();
   }
 
-  public void savePosition(String id, JsonNode payload) {
-    Document positionDoc = Document.parse(payload.toString());
-
+  public void savePosition(String id, Map<String, SprintBoard> payload) {
     Query query = new Query(Criteria.where("nk_project_id").is(id));
-    Update update = new Update().set("position", positionDoc);
-    mongoTemplate.updateFirst(query, update, "project");
-
+    Update update = new Update().set("position", payload);
+    mongoTemplate.updateFirst(query, update, Project.class);
   }
 
   public ApiResponse<ApiPaging<NotificationResponse>> getNotification(String projectId, int page, int size) {
-    Page<ChangeLog> changelog = changeLogRepository.findAllByProjectId(projectId, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dtCreated")));
+    Page<ChangeLog> changelog = changeLogRepository.findAllByProjectId(projectId,
+        PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dtCreated")));
     List<NotificationResponse> response = notificationMapper.toListNotifyResponse(changelog.getContent());
     for (NotificationResponse r : response) {
       if (r.propertiesTargets() != null) {
         switch (r.propertiesTargets()[0]) {
           case "assignee":
-            User assignee = userRepository.findByUniId(r.change().getAssignee().id()).orElse(null);
-            UserResponse assigneeResponse;
-            if (assignee != null) assigneeResponse = userMapper.toUserResponse(assignee);
-            else assigneeResponse = null;
-            r.change().setAssignee(assigneeResponse);
+            if (r.change().getAssignee() != null) {
+              User assignee = userRepository.findByUniId(r.change().getAssignee().id()).orElse(null);
+              UserResponse assigneeResponse;
+              if (assignee != null)
+                assigneeResponse = userMapper.toUserResponse(assignee);
+              else
+                assigneeResponse = null;
+              r.change().setAssignee(assigneeResponse);
+            }
             break;
           case "reviewer":
             User reviewer = userRepository.findByUniId(r.change().getReviewer().id()).orElse(null);
             UserResponse reviewerResponse;
-            if (reviewer != null) reviewerResponse = userMapper.toUserResponse(reviewer);
-            else reviewerResponse = null;
+            if (reviewer != null)
+              reviewerResponse = userMapper.toUserResponse(reviewer);
+            else
+              reviewerResponse = null;
             r.change().setReviewer(reviewerResponse);
             break;
           case "attachments":
             r.change()
-              .setAttachment(r.change()
-                .getAttachment()
-                .stream()
-                .map(resource -> resourceMapper.toResourceResponse(resourceService.getById(resource.id())))
-                .toList());
+                .setAttachment(r.change()
+                    .getAttachment()
+                    .stream()
+                    .map(resource -> resourceMapper.toResourceResponse(resourceService.getById(resource.id())))
+                    .toList());
             break;
           case "relations":
-            r.change().getRelations().forEach(relation ->
-              {
+            r.change().getRelations().forEach(relation -> {
               Issue issue = issueRepository.findById(relation.getIssueRelated().id()).orElse(null);
               var issueMongo = issueMongoService.getById(relation.getIssueRelated().id());
               relation.setIssueRelated(issueMapper.toIssueResponse(issue,
-                issueMongo));
-              })
-            ;
+                  issueMongo));
+            });
 
         }
       }
     }
     return ApiResponse.<ApiPaging<NotificationResponse>>builder()
-      .message("get notification success")
-      .code(200)
-      .data(ApiPaging.<NotificationResponse>builder()
-        .items(response)
-        .currentPage(changelog.getNumber())
-        .totalPages(changelog.getTotalPages())
-        .totalItems(changelog.getTotalElements())
-        .build())
-      .build();
+        .message("get notification success")
+        .code(200)
+        .data(ApiPaging.<NotificationResponse>builder()
+            .items(response)
+            .currentPage(changelog.getNumber())
+            .totalPages(changelog.getTotalPages())
+            .totalItems(changelog.getTotalElements())
+            .build())
+        .build();
   }
 }

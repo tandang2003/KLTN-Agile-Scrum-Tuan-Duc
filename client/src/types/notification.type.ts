@@ -53,10 +53,65 @@ type NotificationOfIssueResponse = {
 type NotificationResponse = {
   type: LogType
   entityTarget: string
-  propertiesTargets: string[]
+  propertiesTargets: PropertyTarget[]
   change: NotificationOfIssueResponse
   dtCreated: Date
   createdBy: string
 }
 
-export type { ProjectNotificationRequest, NotificationResponse }
+type MessageResponse<T> = {
+  type: 'UPDATE' | 'PREDICT' | 'TIME'
+  message: T
+}
+
+type TimeMessageResponse = {
+  timeSpeech: number
+  time: Date
+  to: Date
+  senderId: string
+}
+
+type ProjectMessageResponse = {
+  type: 'UPDATE' | 'PREDICT'
+  message: ProjectMessageUpdateResponse | ProjectMessagePredictResponse
+}
+
+type ProjectMessagePredictResponse = {
+  status: boolean
+  message: string
+}
+
+type ProjectMessageUpdateResponse = {
+  type: LogType
+  entityTarget: string
+  propertiesTargets: PropertyTarget[]
+  dtCreated: Date
+  createdBy: string
+}
+
+type PropertyTarget =
+  | 'name'
+  | 'description'
+  | 'sprint'
+  | 'complexOfDescription'
+  | 'priority'
+  | 'status'
+  | 'topics'
+  | 'subtasks'
+  | 'assignee'
+  | 'reviewer'
+  | 'start'
+  | 'end'
+  | 'attachments'
+
+export type {
+  ProjectNotificationRequest,
+  NotificationResponse,
+  MessageResponse,
+  LogType,
+  PropertyTarget,
+  ProjectMessageUpdateResponse,
+  ProjectMessagePredictResponse,
+  ProjectMessageResponse,
+  TimeMessageResponse
+}

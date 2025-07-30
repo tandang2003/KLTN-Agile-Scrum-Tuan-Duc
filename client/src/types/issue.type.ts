@@ -54,6 +54,8 @@ type IssueDetailResponse = Omit<IssueResponse, 'start' | 'end'> & {
   dtEnd?: Date
   resources: ResourceResponse[]
   relations: RelationshipResponse[]
+  complexOfDescription: number
+  leader: string
 }
 
 type ResourceResponse = {
@@ -96,7 +98,7 @@ const BaseIssueSchema = z
     reviewerId: z.string().optional(),
     subtasks: z.array(SubTaskModelSchema).optional(),
     date: dateRange.optional(),
-    complexOfDescription: z.number().optional()
+    complexOfDescription: z.coerce.number().optional()
   })
   .partial()
 

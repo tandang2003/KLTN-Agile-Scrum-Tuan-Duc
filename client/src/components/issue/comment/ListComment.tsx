@@ -1,38 +1,17 @@
 import { useCommentContext } from '@/components/issue/comment/ContextComment'
 import ItemComment from '@/components/issue/comment/ItemComment'
-import { useAppSelector } from '@/context/redux/hook'
+import ListView from '@/components/ListView'
 import { uuid } from '@/lib/utils'
-import { CommentResType } from '@/types/comment.type'
-import { useEffect } from 'react'
+import _ from 'lodash'
 
 const ListComment = () => {
-  const issueId = useAppSelector((state) => state.issueSlice.current?.id)
-  const { isReady, ws, setComment, comment } = useCommentContext()
-  useEffect(() => {
-    if (!issueId || !ws || !isReady || !ws.connected) return
-    // toast.message('Subscribe comment')
-    const subscriber = ws.subscribe(`/topic/room/${issueId}`, (value) => {
-      const response: CommentResType = JSON.parse(value.body)
-      setComment?.([
-        {
-          id: uuid(),
-          from: response.from,
-          content: response.content,
-          createdAt: response.createdAt
-        },
-        ...(comment ?? [])
-      ])
+  const { comment } = useCommentContext()
 
-      // toast.message('Receive message')
-    })
-    return () => {
-      // toast.message('Unsubscribe comment')
-      return subscriber.unsubscribe()
-    }
-  }, [ws, isReady, setComment, issueId])
   return (
-    <div>
-      {comment?.map((item) => {
+    <ListView
+      data={_.orderBy(comment, ['createdAt'], ['asc'])}
+      emptyComponent={null}
+      render={(item) => {
         return (
           <ItemComment
             key={item?.id ?? uuid()}
@@ -41,8 +20,8 @@ const ListComment = () => {
             createdAt={item.createdAt}
           />
         )
-      })}
-    </div>
+      }}
+    />
   )
 }
 

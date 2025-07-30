@@ -1,0 +1,29 @@
+workspaceId,title,description,start,end,storyPoint,sprint_id,predict
+1,Phân tích đề tài,"- Chọn đề tài 
+ - Ghi nhận các yêu cầu chung của giảng viên 
+ - Ghi nhận các kiến thức và điểm mạnh của các thành viên 
+ - Thiết lập khu vực lưu trữ code cho nhóm trên Github",09/03/2025,22/03/2025,10,bbfddaeb-dea5-4178-b067-e0fa8812c338,2025-03-15T12:00:00Z
+2,Phân tích cơ sở dữ liệu,"- Phân tích yêu cầu và chuẩn bị kiến thức 
+ - Xây dựng ERD",23/03/2025,05/04/2025,10,d74cdee3-a4fc-44b4-bd90-1e53bec5cad1,2025-03-29T12:00:00Z
+3,Thiết kế template,"- Thiết kế template cho các page 
+ - Thiết kế template cho các trang",06/04/2025,19/04/2025,15,c4389934-e970-4cab-9330-2d517122d28d,2025-04-12T12:00:00Z
+4,Báo cáo giữa kì,"Chuẩn bị: 
+ - Tài liệu kết quả làm việc 
+ - Demo giao diện",20/04/2025,26/04/2025,5,9000c302-d92f-436d-a59e-c1de271cbe87,2025-04-23T00:00:00Z
+5,Hiện thực xác thực và phân quyền,"- Ứng dụng session 
+ - Xác thực người dùng đã đăng ký 
+ - Mã hóa mật khẩu 
+ - Chặn người dùng vào một số trang theo quyền hạn",27/04/2025,03/05/2025,10,02d28358-9e5a-4b65-9f56-bac4a0bffc34,2025-04-30T00:00:00Z
+6,Hiện thực chức năng sản phẩm,"- Được phép tìm kiếm sản phẩm theo nhiều tiêu chí 
+ - Có trang sản phẩm bán chạy 
+ - Sản phẩm có nhiều ảnh, nhiều lựa chọn 
+ - Có giao diện admin tạo sản phẩm",04/05/2025,10/05/2025,10,5b1751c1-f7f6-42f3-b556-2db391f9527a,2025-05-07T00:00:00Z
+7,Hiện thực chức năng giỏ hàng,"- Lưu giỏ hàng trong session 
+ - Phân biệt các sản phẩm giống và khác nhau khi thêm vào giỏ hàng",11/05/2025,17/05/2025,10,8bace90b-9f85-46b3-9411-8e098ba21c6e,2025-05-14T00:00:00Z
+8,Hiện thực chức năng đơn hàng,"- Hiện thực cách tính tiền cho sản phẩm 
+ - Người dùng có thể xem các đơn hàng đã đặt của người dùng 
+ - Quản lý cập nhật trạng thái đơn hàng cho quản lý",18/05/2025,24/05/2025,10,55737e22-cac3-411e-96a1-b5b1a1488b61,2025-05-21T00:00:00Z
+9,Hiện thực chức năng đặc biệt,- Hiện thực chức năng đặc biệt của đề tài,25/05/2025,31/05/2025,10,00f6f2eb-2153-40a6-b2f3-8f4837ba3a3c,2025-05-28T00:00:00Z
+10,Báo cáo cuối kì,"Chuẩn bị: 
+ - Tài liệu hướng dẫn sử dụng 
+ - Demo website",01/06/2025,07/06/2025,10,14d6b9c2-92f2-4ebb-8ef6-fa89a0233449,2025-06-04T00:00:00Z

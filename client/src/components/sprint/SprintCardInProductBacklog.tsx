@@ -49,25 +49,26 @@ const SprintCardInProductBacklog = ({
       .unwrap()
       .then(() => {
         refetch()
-        boardService
-          .saveNewPosition({
-            projectId: item.projectId,
-            sprintId: sprintId,
-            issueId: item.id,
-            status: 'TODO'
-          })
-          .then(() => {
-            toast.message(message.toast.moveToSprint.success.message, {
-              description: (
-                <Message
-                  template={message.toast.moveToSprint.success.description}
-                  values={{
-                    name: item.name
-                  }}
-                />
-              )
-            })
-          })
+        toast.message(message.toast.moveToSprint.success.message, {
+          description: (
+            <Message
+              template={message.toast.moveToSprint.success.description}
+              values={{
+                name: item.name
+              }}
+            />
+          )
+        })
+        // boardService
+        //   .saveNewPosition({
+        //     projectId: item.projectId,
+        //     sprintId: sprintId,
+        //     issueId: item.id,
+        //     status: 'TODO'
+        //   })
+        //   .then(() => {
+
+        //   })
       })
       .catch((err) => {
         if (err.status === HttpStatusCode.Conflict)
@@ -123,7 +124,12 @@ const SprintCardInProductBacklog = ({
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-            <DeleteDropdownItem id={item.id} name={item.name} />
+            <DeleteDropdownItem
+              id={item.id}
+              name={item.name}
+              projectId={item.projectId}
+              status={item.status}
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       </RequiredAuth>

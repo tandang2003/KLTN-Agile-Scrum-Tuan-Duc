@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type TriggerState = {
   isCreateProject: boolean
+  isViewIssue: boolean
   isCreateIssue: boolean
   isUpdateIssue: boolean
   isOpenDialogCourse: boolean
@@ -13,15 +14,18 @@ type TriggerState = {
     start: string
     end: string
   } | null
+  isNotify: boolean
 }
 
 const initialState: TriggerState = {
   isCreateProject: false,
+  isViewIssue: false,
   isCreateIssue: false,
   isUpdateIssue: false,
   isOpenDialogSkill: false,
   isOpenDialogCourse: false,
-  isSprintUpdateTime: null
+  isSprintUpdateTime: null,
+  isNotify: false
 }
 
 const triggerSlice = createSlice({
@@ -45,6 +49,12 @@ const triggerSlice = createSlice({
     },
     disableUpdateIssue: (state: TriggerState) => {
       state.isUpdateIssue = false
+    },
+    enableViewIssue: (state: TriggerState) => {
+      state.isViewIssue = true
+    },
+    disableViewIssue: (state: TriggerState) => {
+      state.isViewIssue = false
     },
     enableDialogSkill: (state: TriggerState) => {
       state.isOpenDialogSkill = true
@@ -71,6 +81,12 @@ const triggerSlice = createSlice({
     },
     disableSprintUpdateTime: (state: TriggerState) => {
       state.isSprintUpdateTime = null
+    },
+    enableNotification: (state: TriggerState) => {
+      state.isNotify = true
+    },
+    disableNotification: (state: TriggerState) => {
+      state.isNotify = false
     }
   }
 })
@@ -89,6 +105,10 @@ export const {
   enableDialogCourse,
   disableDialogCourse,
   disableSprintUpdateTime,
-  enableSprintUpdateTime
+  enableSprintUpdateTime,
+  enableNotification,
+  disableNotification,
+  enableViewIssue,
+  disableViewIssue
 } = triggerSlice.actions
 export default triggerSlice

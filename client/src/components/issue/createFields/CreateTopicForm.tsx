@@ -1,25 +1,13 @@
 import { FormField } from '@/components/ui/form'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover'
+import * as TagsInput from '@diceui/tags-input'
 
-import Icon from '@/components/Icon'
-import { Badge } from '@/components/ui/badge'
-import {
-  Command,
-  CommandEmpty,
-  CommandInput,
-  CommandItem,
-  CommandList
-} from '@/components/ui/command'
-import { cn, uuid } from '@/lib/utils'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { BaseIssueFormType, TopicModelType } from '@/types/issue.type'
 import messages from '@/constant/message.const'
-import { useCommandState } from 'cmdk'
-import { useState } from 'react'
+import { uuid } from '@/lib/utils'
+import { BaseIssueFormType } from '@/types/issue.type'
+import { RefreshCcw, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import TitleLevel from '@/components/TitleLevel'
 type CreateTopicProps = {}
 
 const CreateTopicForm = ({}: CreateTopicProps) => {
@@ -27,40 +15,29 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
   const { control } = useFormContext<BaseIssueFormType>()
   const { fields, append, remove } = useFieldArray({
     control: control,
-    name: 'topics',
-    keyName: 'fieldId'
+    name: 'topics'
   })
 
-  const [data, setData] = useState<TopicModelType[]>(
-    fields.map((item) => {
-      return {
-        id: item.id,
-        name: item.name
+  const [topics, setTopics] = useState<string[]>([])
+
+  useEffect(() => {
+    const fieldNames = fields.map((f) => f.name)
+
+    topics.forEach((topic) => {
+      if (!fieldNames.includes(topic)) {
+        append({
+          id: uuid(),
+          name: topic
+        })
       }
     })
-  )
 
-  const [selecteds, setSelecteds] = useState<TopicModelType[]>(
-    ...[
-      fields.map((item) => {
-        return {
-          id: item.id,
-          name: item.name
-        }
-      })
-    ]
-  )
-
-  const [searchTerm, setSearchTerm] = useState('')
-  const handleAddTopic = (field: TopicModelType) => {
-    setData((prev) => [...prev, field])
-    setSelecteds((prev) => [...prev, field])
-    append({
-      id: field.id,
-      name: field.name
+    fieldNames.forEach((name, index) => {
+      if (!topics.includes(name)) {
+        remove(index)
+      }
     })
-    setSearchTerm?.('')
-  }
+  }, [topics])
 
   return (
     <>
@@ -69,117 +46,42 @@ const CreateTopicForm = ({}: CreateTopicProps) => {
         name='topics'
         render={() => {
           return (
-            <div className='flex'>
-              <Popover>
-                <PopoverTrigger className='w-full rounded border px-4 py-2 [&>*:not(:first-child)]:ml-2'>
-                  {fields.length ? (
-                    fields.map((item) => {
-                      return <Badge className='inline-block'>{item.name}</Badge>
-                    })
-                  ) : (
-                    <span>{message.topic}</span>
-                  )}
-                </PopoverTrigger>
-                <PopoverContent align='start' className='w-72 p-0'>
-                  <Command
-                    filter={(value, search) => {
-                      if (value.includes(search)) return 1
-                      return 0
-                    }}
+            <TagsInput.Root
+              value={topics}
+              onValueChange={setTopics}
+              className='mr-2 flex w-full flex-col gap-2'
+              editable
+            >
+              <TagsInput.Label className='text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+                <TitleLevel level={'lv-4'}>{message.topic}</TitleLevel>
+              </TagsInput.Label>
+              <div className='border-input bg-background flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-within:ring-zinc-400'>
+                {topics.map((topic) => (
+                  <TagsInput.Item
+                    key={topic}
+                    value={topic}
+                    className='inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-hidden data-disabled:cursor-not-allowed data-disabled:opacity-50 data-editable:select-none data-editing:bg-transparent data-editing:ring-1 data-editing:ring-zinc-500 dark:data-editing:ring-zinc-400 [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-zinc-200 [&[data-highlighted]:not([data-editing])]:text-black dark:[&[data-highlighted]:not([data-editing])]:bg-zinc-800 dark:[&[data-highlighted]:not([data-editing])]:text-white'
                   >
-                    <CommandInput
-                      value={searchTerm}
-                      placeholder='Search items...'
-                      onValueChange={setSearchTerm}
-                    />
-                    <CommandCreateButton
-                      onAddTopic={(field) => {
-                        handleAddTopic(field)
-                      }}
-                    />
-                    <CommandList>
-                      {data.map((item) => {
-                        const isSelected = selecteds
-                          .map((field) => field.name)
-                          .includes(item.name)
-                        return (
-                          <CommandItem
-                            key={item.id}
-                            value={item.id}
-                            onSelect={(value) => {
-                              const index = fields.findIndex(
-                                (field) => field.name === value
-                              )
-                              if (index > -1) {
-                                setSelecteds((prev) => [
-                                  ...prev.filter(
-                                    (field) => field.name !== value
-                                  )
-                                ])
-                                remove(index)
-                              } else {
-                                const selected = data.find(
-                                  (topic) => topic.name === value
-                                )
-                                if (selected) {
-                                  setSelecteds((prev) => [
-                                    ...prev,
-                                    {
-                                      id: selected.id,
-                                      name: selected.name
-                                    }
-                                  ])
-
-                                  append({
-                                    id: selected.id,
-                                    name: selected.name
-                                  })
-                                }
-                              }
-                            }}
-                          >
-                            <Icon
-                              icon={'material-symbols:check'}
-                              className={cn(
-                                'text-black',
-                                isSelected ? 'opacity-100' : 'opacity-0'
-                              )}
-                            />
-                            {item.name}
-                          </CommandItem>
-                        )
-                      })}
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
+                    <TagsInput.ItemText className='truncate' />
+                    <TagsInput.ItemDelete className='h-4 w-4 shrink-0 rounded-sm opacity-70 ring-offset-zinc-950 transition-opacity hover:opacity-100'>
+                      <X className='h-3.5 w-3.5' />
+                    </TagsInput.ItemDelete>
+                  </TagsInput.Item>
+                ))}
+                <TagsInput.Input
+                  placeholder={message.topic}
+                  className='flex-1 bg-transparent outline-hidden placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400'
+                />
+              </div>
+              <TagsInput.Clear className='border-input flex h-9 items-center justify-center gap-2 rounded-sm border bg-transparent text-zinc-800 shadow-xs hover:bg-zinc-100/80 dark:text-zinc-300 dark:hover:bg-zinc-900/80'>
+                <RefreshCcw className='h-4 w-4' />
+                Xóa
+              </TagsInput.Clear>
+            </TagsInput.Root>
           )
         }}
       />
     </>
-  )
-}
-
-type CommandCreateButtonProps = {
-  onAddTopic(topic: TopicModelType): void
-}
-const CommandCreateButton = ({ onAddTopic }: CommandCreateButtonProps) => {
-  const search = useCommandState((state) => state.search)
-
-  return (
-    <CommandEmpty
-      className='hover:bg-accent flex px-1.5 py-2 pl-8 hover:cursor-pointer'
-      onClick={() => {
-        const field = {
-          id: uuid(),
-          name: search
-        }
-        onAddTopic(field)
-      }}
-    >
-      <div>{search}</div>
-    </CommandEmpty>
   )
 }
 

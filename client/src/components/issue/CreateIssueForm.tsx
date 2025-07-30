@@ -1,4 +1,3 @@
-import Editor from '@/components/Editor'
 import SelectEnum from '@/components/issue/SelectEnum'
 import SelectMember from '@/components/issue/SelectMember'
 import CreateDateIssueForm from '@/components/issue/createFields/CreateDateIssueForm'
@@ -33,8 +32,9 @@ import messages, {
   getTagDisplayName
 } from '@/constant/message.const'
 import Message from '@/components/Message'
-import { getComplexityBilingual } from '@/lib/issue.helper'
 import { useCreateIssueMutation } from '@/feature/issue/issue.api'
+import TitleLevel from '@/components/TitleLevel'
+import CreateDescriptionForm from '@/components/issue/createFields/CreateDescriptionForm'
 type CreateIssueFormProps = {
   onSubmit?: () => void
   sprint?: CreateIssueType['sprint']
@@ -55,7 +55,8 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
       date: undefined,
       position: null,
       sprint: sprint,
-      sprintId: sprint?.id
+      sprintId: sprint?.id,
+      complexOfDescription: 1
     }
   })
 
@@ -75,8 +76,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
     const req: CreateIssueRequest = {
       projectId: projectId,
       ...values,
-      status: DEFAULT_STATUS,
-      complexOfDescription: getComplexityBilingual(values.description ?? '')
+      status: DEFAULT_STATUS
     }
     create(req)
       .unwrap()
@@ -93,14 +93,14 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
           )
         })
         // Update position if available
-        if (req.sprintId) {
-          boardService.saveNewPosition({
-            projectId: projectId,
-            sprintId: req.sprintId,
-            issueId: response.id,
-            status: response.status
-          })
-        }
+        // if (req.sprintId) {
+        //   boardService.saveNewPosition({
+        //     projectId: projectId,
+        //     sprintId: req.sprintId,
+        //     issueId: response.id,
+        //     status: response.status
+        //   })
+        // }
       })
       .catch(() => toast.error(message.create.toast.failed))
       .finally(() => {
@@ -117,7 +117,11 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{message.create.form.name}</FormLabel>
+                  <FormLabel>
+                    <TitleLevel level={'lv-2'}>
+                      {message.create.form.name}
+                    </TitleLevel>
+                  </FormLabel>
                   <FormControl>
                     <Input type='text' placeholder='Solve Problem' {...field} />
                   </FormControl>
@@ -125,23 +129,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field }) => (
-                <FormItem className='mt-4'>
-                  <FormLabel>{message.description}</FormLabel>
-
-                  <FormControl>
-                    <Editor
-                      className='h-full'
-                      {...field}
-                      classNameContainer='h-[200px] rounded-md border shadow-sm'
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <CreateDescriptionForm />
             <CreateSubTaskForm />
           </div>
           <div className='basis-[450px] [&>*:not(:first-child)]:mt-3'>

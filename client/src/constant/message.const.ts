@@ -1,8 +1,8 @@
 import { RoleType } from '@/types/auth.type'
 import { IssueRelationShip } from '@/types/model/relationship'
 import {
+  ComplexOfDescription,
   IssuePriority,
-  issuePriorityList,
   IssueTag,
   SkillLevel,
   SprintStatusType
@@ -119,9 +119,8 @@ const messages = {
         tasksByStatusPerStudentBarChart: {
           title: 'Phân loại trạng thái của các issue theo sinh viên',
           dataset: {
-            labelIssueTodo: 'Issue chuẩn bị thực hiện',
-            labelIssueInProcess: 'Issue đang thực hiện',
-            labelIssueReview: 'Issue đang đợi review',
+            labelIssueFailed: 'Issue chưa hoàn thành',
+            labelIssueTotal: 'Tổng issue',
             labelIssueDone: 'Issue đã hoàn thành'
           },
           scales: {
@@ -130,7 +129,13 @@ const messages = {
           }
         },
         tasksByStatusPerProjectBarChart: {
-          title: 'Phân loại trạng thái của các issue theo nhóm'
+          title: 'Phân loại trạng thái của các issue theo nhóm',
+          dataset: {
+            labelIssueTodo: 'Issue chuẩn bị thực hiện',
+            labelIssueInProcess: 'Issue đang thực hiện',
+            labelIssueReview: 'Issue đang đợi review',
+            labelIssueDone: 'Issue đã hoàn thành'
+          }
         }
       }
     },
@@ -499,6 +504,11 @@ const messages = {
         },
         create: 'Tạo issue'
       },
+      viewDropdownItem: {
+        dropdown: {
+          view: 'Xem issue'
+        }
+      },
       deleteDropdownItem: {
         dropdown: {
           delete: 'Xóa issue'
@@ -559,6 +569,7 @@ const messages = {
         form: {
           comment: 'Bình luận',
           detail: 'Mô tả chi tiết',
+          info: 'Thông tin',
           priority: 'Mức độ ưu tiên',
           duration: 'Thời gian',
           descriptionFallback: 'Chưa có mô tả nào cho issue này',
@@ -621,7 +632,8 @@ const messages = {
     },
     editorComment: {
       placeholder: 'Nhập bình luận của bạn tại đây',
-      send: 'Gửi'
+      send: 'Gửi',
+      cancel: 'Hủy'
     },
     sprintPredict: {
       title: 'Dự đoán Sprint',
@@ -632,7 +644,7 @@ const messages = {
         cancel: 'Hủy'
       },
       toast: {
-        success: 'Dự đoán Sprint thành công',
+        success: 'Dự đoán Sprint có khả năng thành công',
         failed: 'Dự đoán Sprint thất bại, vui lòng thử lại sau'
       }
     }
@@ -725,6 +737,15 @@ const getProficiencyDisplayName = (proficiency: number): string => {
   return map[proficiency as SkillLevel] ?? 'Không xác định'
 }
 
+const getComplexOfDescriptionName = (proficiency: number): string => {
+  const map: Record<ComplexOfDescription, string> = {
+    [ComplexOfDescription.Easy]: 'Dễ',
+    [ComplexOfDescription.Medium]: 'Trung bình',
+    [ComplexOfDescription.Hard]: 'Khó'
+  }
+  return map[proficiency as ComplexOfDescription] ?? 'Không xác định'
+}
+
 const getSprintStatusDisplayName = (status: SprintStatusType): string => {
   const map: Record<SprintStatusType, string> = {
     PENDING: 'Chưa bắt đầu',
@@ -777,5 +798,6 @@ export {
   getSprintStatusDisplayName,
   getTagDisplayName,
   getPriorityDisplayName,
-  getRelationshipDisplayName
+  getRelationshipDisplayName,
+  getComplexOfDescriptionName
 }

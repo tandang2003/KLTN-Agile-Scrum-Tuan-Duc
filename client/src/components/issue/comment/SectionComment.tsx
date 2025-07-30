@@ -4,6 +4,7 @@ import ListComment from '@/components/issue/comment/ListComment'
 import { useAppSelector } from '@/context/redux/hook'
 import commentService from '@/services/comment.service'
 import { CommentResType } from '@/types/comment.type'
+import { Id } from '@/types/other.type'
 import { useEffect, useState } from 'react'
 
 const SectionComment = () => {
@@ -11,14 +12,13 @@ const SectionComment = () => {
   const [comment, setComment] = useState<CommentResType[]>()
   useEffect(() => {
     if (id) {
-      console.log('fetch comment for issue', id)
       commentService.getComment(id).then((res) => {
         setComment(res)
       })
     }
   }, [id])
   return (
-    <CommentProvider initValue={comment}>
+    <CommentProvider initValue={comment} issueId={id as Id}>
       <section>
         <EditorComment />
         <ListComment />

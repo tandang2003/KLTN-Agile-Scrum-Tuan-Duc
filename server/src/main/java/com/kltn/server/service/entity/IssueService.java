@@ -36,6 +36,7 @@ import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.relation.IssueRelationRepository;
 import com.kltn.server.repository.entity.relation.PersonalSkillRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
+import com.kltn.server.service.mongo.SprintBoardMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,7 @@ public class IssueService {
   private SubTaskMapper subTaskMapper;
   private SnapshotService snapshotService;
   private IssueRelationRepository issueRelationRepository;
+  private SprintBoardMongoService sprintBoardMongoService;
 
   @Autowired
   public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
@@ -72,7 +74,8 @@ public class IssueService {
       ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService,
       UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
       IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
-      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper) {
+      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper,
+      SprintBoardMongoService sprintBoardMongoService) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -89,6 +92,7 @@ public class IssueService {
     this.userMapper = userMapper;
     this.personalSkillRepository = personalSkillRepository;
     this.skillMapper = skillMapper;
+    this.sprintBoardMongoService = sprintBoardMongoService;
   }
 
   @SendKafkaEvent(topic = "task-log")
@@ -138,6 +142,8 @@ public class IssueService {
       task.setResources(resources);
     }
     task = taskRepository.save(task);
+    // FIX: POSITION
+    sprintBoardMongoService.addIssue(project.getId(), issueCreateRequest.getSprintId(), task.getId());
     if (task == null || task.getId() == null) {
       throw AppException.builder().error(Error.DB_SERVER_ERROR).build();
     }
@@ -167,36 +173,40 @@ public class IssueService {
       User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
       task.setReviewer(reviewer);
     }
-//    if (issueCreateRequest.getSprintId() != null && !issueCreateRequest.getSprintId().isEmpty()) {
-//      Sprint sprint = sprintService.getSprintById(issueCreateRequest.getSprintId());
-//      Instant now = ClockSimulator.now();
-//      if (now.isAfter(sprint.getDtStart())) {
-//        throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
-//      }
-//      if (now.isAfter(sprint.getDtEnd())) {
-//        throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
-//      }
-//      if (task.getDtStart() == null) {
-//        task.setDtStart(sprint.getDtStart());
-//      } else if (task.getDtStart() != null && task.getDtStart().isBefore(sprint.getDtStart())) {
-//        Map<String, String> error = new HashMap<>();
-//        error.put("start", "Start date cannot be before sprint start date");
-//        List<Map<String, String>> errors = new ArrayList<>();
-//        errors.add(error);
-//        throw AppMethodArgumentNotValidException.builder().error(errors).build();
-//      }
-//      if (task.getDtEnd() == null) {
-//        task.setDtEnd(sprint.getDtEnd());
-//      } else if (task.getDtEnd() != null && task.getDtEnd().isAfter(sprint.getDtEnd())) {
-//        Map<String, String> error = new HashMap<>();
-//        error.put("end", "End date cannot be after sprint end date");
-//        List<Map<String, String>> errors = new ArrayList<>();
-//        errors.add(error);
-//        throw AppMethodArgumentNotValidException.builder().error(errors).build();
-//      }
-//      task.setSprint(sprint);
-//      task.setDtAppend(ClockSimulator.now());
-//    }
+    // if (issueCreateRequest.getSprintId() != null &&
+    // !issueCreateRequest.getSprintId().isEmpty()) {
+    // Sprint sprint =
+    // sprintService.getSprintById(issueCreateRequest.getSprintId());
+    // Instant now = ClockSimulator.now();
+    // if (now.isAfter(sprint.getDtStart())) {
+    // throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
+    // }
+    // if (now.isAfter(sprint.getDtEnd())) {
+    // throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
+    // }
+    // if (task.getDtStart() == null) {
+    // task.setDtStart(sprint.getDtStart());
+    // } else if (task.getDtStart() != null &&
+    // task.getDtStart().isBefore(sprint.getDtStart())) {
+    // Map<String, String> error = new HashMap<>();
+    // error.put("start", "Start date cannot be before sprint start date");
+    // List<Map<String, String>> errors = new ArrayList<>();
+    // errors.add(error);
+    // throw AppMethodArgumentNotValidException.builder().error(errors).build();
+    // }
+    // if (task.getDtEnd() == null) {
+    // task.setDtEnd(sprint.getDtEnd());
+    // } else if (task.getDtEnd() != null &&
+    // task.getDtEnd().isAfter(sprint.getDtEnd())) {
+    // Map<String, String> error = new HashMap<>();
+    // error.put("end", "End date cannot be after sprint end date");
+    // List<Map<String, String>> errors = new ArrayList<>();
+    // errors.add(error);
+    // throw AppMethodArgumentNotValidException.builder().error(errors).build();
+    // }
+    // task.setSprint(sprint);
+    // task.setDtAppend(ClockSimulator.now());
+    // }
     if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
       List<Resource> resources = issueCreateRequest.getAttachments()
           .stream()
@@ -304,10 +314,17 @@ public class IssueService {
             .isEmpty() ? null : sprintService.getSprintById(updateRequest.getSprintId());
         if (targetSprint == null) {
           // remove sprint
+          var sprintId = task.getSprint().getId();
           task.setSprint(null);
           task.setDtAppend(null);
           task.setStatus(IssueStatus.BACKLOG);
           task = saveEntity(task);
+          // FIX: POSITION
+          sprintBoardMongoService.deleteIssue(
+              task.getProject().getId(),
+              sprintId,
+              task.getId(),
+              task.getStatus());
           changeLog = changeLogMapper.taskToUpdate(new String[] { "sprint" }, task, taskMongo);
           break;
         }
@@ -339,6 +356,8 @@ public class IssueService {
             task.setDtEnd(targetSprint.getDtEnd());
           }
           task = saveEntity(task);
+          // FIX: POSITION
+          sprintBoardMongoService.addIssue(task.getProject().getId(), task.getSprint().getId(), task.getId());
           changeLog = changeLogMapper.taskToUpdate(new String[] { "sprint" }, task, taskMongo);
           break;
         }
@@ -463,7 +482,6 @@ public class IssueService {
   }
 
   public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
-
     String sprintId = request.getSprintId();
     String projectId = request.getProjectId();
     if (sprintId == null || sprintId.isEmpty()) {
@@ -509,6 +527,38 @@ public class IssueService {
     var task = getEntityById(id);
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
+
+    // if (task.getAssignee() != null) {
+    // String assigneeId = task.getAssignee().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> assigneeId.equals(n.getFrom()))
+    // .count();
+    //
+    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
+    // IssueStatus.DONE)
+    // && commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
+    // }
+    // }
+    // if (task.getReviewer() != null) {
+    // String reviewerId = task.getAssignee().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> reviewerId.equals(n.getFrom()))
+    // .count();
+    //
+    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
+    // IssueStatus.DONE)
+    // && commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
+    // }
+    // }
+
     if (request.getStatus().equals(IssueStatus.DONE)) {
       task.setOpen(false);
       task.setDtEnd(ClockSimulator.now());
@@ -544,6 +594,7 @@ public class IssueService {
     issue.setDtAppend(null);
     issue = saveEntity(issue);
     var taskMongo = issueMongoService.getById(issue.getId());
+
     ChangeLogRequest changeLog = changeLogMapper.taskToUpdate(new String[] { "open" }, issue, taskMongo);
     return ApiResponse.<Boolean>builder()
         .code(HttpStatus.OK.value())
@@ -838,6 +889,14 @@ public class IssueService {
     return point / (double) skills.size();
   }
 
+  public double getVelDiff(Project project, Sprint sprint) {
+    double storyPoint = sprint.getStoryPoint();
+    double numIssueStart = getNumberOfIssuesAtStart(project, sprint);
+    double numIssueAdded = getNumberOfIssuesAdded(project, sprint);
+    double numIssueDone = getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.DONE));
+    return storyPoint / (numIssueStart + numIssueAdded) * numIssueDone - storyPoint;
+  }
+
   @SendKafkaEvent(topic = "task-log")
   @Transactional
   public ApiResponse<Void> delete(String id) {
@@ -866,6 +925,14 @@ public class IssueService {
           projectSprintService.save(projectSprint);
         }
         taskRepository.delete(issue);
+
+        // FIX: POSITION
+        if (issue.getSprint() != null)
+          sprintBoardMongoService.deleteIssue(
+              issue.getProject().getId(),
+              issue.getSprint().getId(),
+              issue.getId(),
+              issue.getStatus());
       }
       return ApiResponse.<Void>builder()
           .code(HttpStatus.OK.value())
@@ -885,7 +952,10 @@ public class IssueService {
     var issueMongo = issueMongoService.getById(id);
     List<User> members = issue.getProject().getMembers();
     List<UserSuitableResponse> suitableResponses = new ArrayList<>();
-    List<String> topics = issueMongo.getTopics().stream().map(Topic::getName).map(String::toLowerCase).toList();
+    List<String> topics = Optional.ofNullable(
+        issueMongo.getTopics()).orElse(Collections.emptyList())
+        .stream().map(Topic::getName).map(String::toLowerCase)
+        .toList();
 
     if (topics.isEmpty()) {
       return ApiResponse.<List<UserSuitableResponse>>builder()

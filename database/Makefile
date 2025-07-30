@@ -76,7 +76,9 @@ restore-mongo-into:
 	. $(VENV) && $(PYTHON) -m $(RESTORE_SCRIPT_MONGO) $$ts $$db
 
 run:
-	. $(VENV) && $(PYTHON) $(FILE)
+	@echo "▶️ Running file: $(FILE)"
+	. $(VENV) && PYTHONPATH=$(CURDIR) $(PYTHON) $(FILE)
 
 run-module:
-	. $(VENV) && $(PYTHON) -m $(MODULE)
+	@echo "▶️ Running module: $(MODULE)"
+	. $(VENV) && PYTHONPATH=$(CURDIR) $(PYTHON) -m $(MODULE)

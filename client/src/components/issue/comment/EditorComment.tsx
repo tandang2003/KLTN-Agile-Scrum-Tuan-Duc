@@ -8,7 +8,6 @@ import messages from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook.ts'
 import { RootState } from '@/context/redux/store.ts'
 import commentService from '@/services/comment.service.ts'
-import { useState } from 'react'
 
 const EditorComment = () => {
   const message = messages.component.editorComment
@@ -16,14 +15,15 @@ const EditorComment = () => {
     (state: RootState) => state.issueSlice.current?.id
   )
   const { isReady, ws } = useCommentContext()
-  const [comment, setComment] = useState<string>('')
 
   const handlePushComment = (val: string) => {
     if (issueId && isReady && ws) {
+      if (val.trim() === '') {
+        return
+      }
       commentService.sendComment(ws, issueId, {
         content: val
       })
-      setComment('')
     }
   }
 
@@ -37,7 +37,6 @@ const EditorComment = () => {
       </div>
 
       <InlineEdit<string>
-        value={comment}
         onSave={handlePushComment}
         className='block flex-1'
         displayComponent={(_) => {
@@ -48,7 +47,7 @@ const EditorComment = () => {
             />
           )
         }}
-        renderEditor={({ value, onChange, onBlur, ref }) => (
+        renderEditor={({ value, onChange, onCancel, onBlur, ref }) => (
           <div className='flex-1'>
             <Editor
               value={value}
@@ -59,8 +58,21 @@ const EditorComment = () => {
                 onChange(editor.getHTML())
               }}
             />
-            <div className='mt-3 flex justify-end'>
-              <Button type='button' onClick={() => onBlur()}>
+            <div className='mt-3 flex justify-end gap-3'>
+              <Button
+                type='button'
+                className='cancel'
+                onClick={() => {
+                  onCancel()
+                }}
+              >
+                {message.cancel}
+              </Button>
+              <Button
+                type='button'
+                className='success'
+                onClick={() => onBlur()}
+              >
                 {message.send}
               </Button>
             </div>

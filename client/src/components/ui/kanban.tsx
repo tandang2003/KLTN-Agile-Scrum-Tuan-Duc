@@ -1,3 +1,5 @@
+'use client'
+
 import {
   type Announcements,
   type CollisionDetection,
@@ -17,6 +19,7 @@ import {
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
+  PointerSensor,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
@@ -154,16 +157,6 @@ const ITEM_NAME = 'KanbanItem'
 const ITEM_HANDLE_NAME = 'KanbanItemHandle'
 const OVERLAY_NAME = 'KanbanOverlay'
 
-const KANBAN_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [BOARD_NAME]: `\`${BOARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [COLUMN_NAME]: `\`${COLUMN_NAME}\` must be within \`${BOARD_NAME}\``,
-  [COLUMN_HANDLE_NAME]: `\`${COLUMN_HANDLE_NAME}\` must be within \`${COLUMN_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${COLUMN_NAME}\``,
-  [ITEM_HANDLE_NAME]: `\`${ITEM_HANDLE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``
-} as const
-
 interface KanbanContextValue<T> {
   id: string
   items: Record<UniqueIdentifier, T[]>
@@ -181,10 +174,10 @@ const KanbanContext = React.createContext<KanbanContextValue<unknown> | null>(
 )
 KanbanContext.displayName = ROOT_NAME
 
-function useKanbanContext(name: keyof typeof KANBAN_ERRORS) {
+function useKanbanContext(consumerName: string) {
   const context = React.useContext(KanbanContext)
   if (!context) {
-    throw new Error(KANBAN_ERRORS[name])
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``)
   }
   return context
 }
@@ -197,19 +190,24 @@ interface GetItemValue<T> {
   getItemValue: (item: T) => UniqueIdentifier
 }
 
-type KanbanProps<T> = Omit<DndContextProps, 'collisionDetection'> &
+type KanbanRootProps<T> = Omit<DndContextProps, 'collisionDetection'> &
   GetItemValue<T> & {
     value: Record<UniqueIdentifier, T[]>
     onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void
     onMove?: (
-      event: DragEndEvent & { activeIndex: number; overIndex: number }
+      event: DragEndEvent & {
+        activeIndex: number
+        overIndex: number
+        fromColumn?: UniqueIdentifier
+        toColumn?: UniqueIdentifier
+      }
     ) => void
     strategy?: SortableContextProps['strategy']
     orientation?: 'horizontal' | 'vertical'
     flatCursor?: boolean
   } & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>)
 
-function Kanban<T>(props: KanbanProps<T>) {
+function KanbanRoot<T>(props: KanbanRootProps<T>) {
   const {
     value,
     onValueChange,
@@ -224,6 +222,9 @@ function Kanban<T>(props: KanbanProps<T>) {
   } = props
 
   const id = React.useId()
+
+  const fromColumn = React.useRef<UniqueIdentifier | null>(null)
+
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null)
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null)
   const hasMovedRef = React.useRef(false)
@@ -318,6 +319,8 @@ function Kanban<T>(props: KanbanProps<T>) {
       kanbanProps.onDragStart?.(event)
 
       if (event.activatorEvent.defaultPrevented) return
+      fromColumn.current =
+        event.active.data.current?.sortable?.containerId ?? null
       setActiveId(event.active.id)
     },
     [kanbanProps.onDragStart]
@@ -336,9 +339,8 @@ function Kanban<T>(props: KanbanProps<T>) {
       const overColumn = getColumn(over.id)
 
       if (!activeColumn || !overColumn) return
-      // Same column
+
       if (activeColumn === overColumn) {
-        console.log('drag over same column')
         const items = value[activeColumn]
         if (!items) return
 
@@ -355,7 +357,6 @@ function Kanban<T>(props: KanbanProps<T>) {
           onValueChange?.(newColumns)
         }
       } else {
-        console.log('drag over different column')
         const activeItems = value[activeColumn]
         const overItems = value[overColumn]
 
@@ -397,9 +398,8 @@ function Kanban<T>(props: KanbanProps<T>) {
         setActiveId(null)
         return
       }
-      // Handle drag column
+
       if (active.id in value && over.id in value) {
-        console.log('drag end column')
         const activeIndex = Object.keys(value).indexOf(active.id as string)
         const overIndex = Object.keys(value).indexOf(over.id as string)
 
@@ -422,15 +422,16 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
         }
       } else {
-        console.log('drag end card')
         const activeColumn = getColumn(active.id)
         const overColumn = getColumn(over.id)
+
         if (!activeColumn || !overColumn) {
           setActiveId(null)
           return
         }
+
         if (activeColumn === overColumn) {
-          console.log('drag end card in 1 column')
+          console.log('drag same column')
           const items = value[activeColumn]
           if (!items) {
             setActiveId(null)
@@ -446,15 +447,26 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (activeIndex !== overIndex) {
             const newColumns = { ...value }
             newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex)
+
             if (onMove) {
               onMove({
                 ...event,
                 activeIndex,
-                overIndex
+                overIndex,
+                fromColumn: fromColumn.current ?? undefined,
+                toColumn: overColumn
               })
             } else {
               onValueChange?.(newColumns)
             }
+          } else {
+            onMove?.({
+              ...event,
+              activeIndex,
+              overIndex,
+              fromColumn: fromColumn.current ?? undefined,
+              toColumn: overColumn
+            })
           }
         }
       }
@@ -709,6 +721,16 @@ const KanbanColumnContext =
   React.createContext<KanbanColumnContextValue | null>(null)
 KanbanColumnContext.displayName = COLUMN_NAME
 
+function useKanbanColumnContext(consumerName: string) {
+  const context = React.useContext(KanbanColumnContext)
+  if (!context) {
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${COLUMN_NAME}\``
+    )
+  }
+  return context
+}
+
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true })
 
@@ -738,7 +760,9 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     const inOverlay = React.useContext(KanbanOverlayContext)
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERRORS[COLUMN_NAME])
+      throw new Error(
+        `\`${COLUMN_NAME}\` must be used within \`${BOARD_NAME}\` or \`${OVERLAY_NAME}\``
+      )
     }
 
     if (value === '') {
@@ -794,6 +818,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     return (
       <KanbanColumnContext.Provider value={columnContext}>
         <SortableContext
+          id={value.toString()}
           items={items}
           strategy={
             context.orientation === 'horizontal'
@@ -843,11 +868,7 @@ const KanbanColumnHandle = React.forwardRef<
   const { asChild, disabled, className, ...columnHandleProps } = props
 
   const context = useKanbanContext(COLUMN_NAME)
-  const columnContext = React.useContext(KanbanColumnContext)
-
-  if (!columnContext) {
-    throw new Error(KANBAN_ERRORS[COLUMN_HANDLE_NAME])
-  }
+  const columnContext = useKanbanColumnContext(COLUMN_HANDLE_NAME)
 
   const isDisabled = disabled ?? columnContext.disabled
 
@@ -896,6 +917,14 @@ const KanbanItemContext = React.createContext<KanbanItemContextValue | null>(
 )
 KanbanItemContext.displayName = ITEM_NAME
 
+function useKanbanItemContext(consumerName: string) {
+  const context = React.useContext(KanbanItemContext)
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``)
+  }
+  return context
+}
+
 interface KanbanItemProps extends React.ComponentPropsWithoutRef<'div'> {
   value: UniqueIdentifier
   asHandle?: boolean
@@ -921,7 +950,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
     const inOverlay = React.useContext(KanbanOverlayContext)
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERRORS[ITEM_NAME])
+      throw new Error(`\`${ITEM_NAME}\` must be used within \`${BOARD_NAME}\``)
     }
 
     const {
@@ -1007,11 +1036,8 @@ const KanbanItemHandle = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...itemHandleProps } = props
 
-  const itemContext = React.useContext(KanbanItemContext)
-  if (!itemContext) {
-    throw new Error(KANBAN_ERRORS[ITEM_HANDLE_NAME])
-  }
   const context = useKanbanContext(ITEM_HANDLE_NAME)
+  const itemContext = useKanbanItemContext(ITEM_HANDLE_NAME)
 
   const isDisabled = disabled ?? itemContext.disabled
 
@@ -1108,16 +1134,8 @@ function KanbanOverlay(props: KanbanOverlayProps) {
   )
 }
 
-const Root = Kanban
-const Board = KanbanBoard
-const Column = KanbanColumn
-const ColumnHandle = KanbanColumnHandle
-const Item = KanbanItem
-const ItemHandle = KanbanItemHandle
-const Overlay = KanbanOverlay
-
 export {
-  Kanban,
+  KanbanRoot as Kanban,
   KanbanBoard,
   KanbanColumn,
   KanbanColumnHandle,
@@ -1125,11 +1143,11 @@ export {
   KanbanItemHandle,
   KanbanOverlay,
   //
-  Root,
-  Board,
-  Column,
-  ColumnHandle,
-  Item,
-  ItemHandle,
-  Overlay
+  KanbanRoot as Root,
+  KanbanBoard as Board,
+  KanbanColumn as Column,
+  KanbanColumnHandle as ColumnHandle,
+  KanbanItem as Item,
+  KanbanItemHandle as ItemHandle,
+  KanbanOverlay as Overlay
 }

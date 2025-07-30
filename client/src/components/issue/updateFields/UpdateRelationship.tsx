@@ -38,6 +38,7 @@ import {
 import { toast } from 'sonner'
 import Message from '@/components/Message'
 import _ from 'lodash'
+import TitleLevel from '@/components/TitleLevel'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -96,8 +97,8 @@ const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
   }, [form?.typeRelation])
 
   return (
-    <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-      <span className='text-lg'>{message.title}</span>
+    <div className='flex flex-col gap-3'>
+      <TitleLevel level={'lv-2'}>{message.title}</TitleLevel>
       <LoadingBoundary<RelationshipResponse[]>
         loading='Loading relationships...'
         fallback={message.fallback}
@@ -210,9 +211,9 @@ const RelationshipList = ({ items = [], issueId }: RelationshipListProps) => {
         if (value.length === 0) return null
         return (
           <div key={key}>
-            <span className='mt-2 mb-2 inline-block text-base font-bold'>
+            <TitleLevel level={'lv-3'} className='mt-2 inline-block'>
               {getRelationshipDisplayName(key as IssueRelationShip)}
-            </span>
+            </TitleLevel>
             <div className='mt-2 flex flex-col gap-1'>
               {value.map((item) => {
                 return (

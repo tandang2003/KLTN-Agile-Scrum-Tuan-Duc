@@ -1,3 +1,5 @@
+import Empty from '@/components/Empty'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import ListView from '@/components/ListView'
 import SprintCardInSprint from '@/components/sprint/SprintCardInSprint'
 import { Button } from '@/components/ui/button'
@@ -6,11 +8,9 @@ import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import messages from '@/constant/message.const'
 import { useAppDispatch } from '@/context/redux/hook'
 import { useGetListIssueQuery } from '@/feature/issue/issue.api'
-import { setSprintActive } from '@/feature/sprint/sprint.slice'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import useAppId from '@/hooks/use-app-id'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import { toISODateString } from '@/lib/date.helper'
 import { cn } from '@/lib/utils'
 import { IssueResponse } from '@/types/issue.type'
 import { Id } from '@/types/other.type'
@@ -31,25 +31,25 @@ const ListIssueInSprint = ({
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
+  const { setSprint } = useSprintSelect()
   const { data, isFetching } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
       sprintId
     },
     {
-      skip: !sprintId || !projectId
+      skip: !sprintId || !projectId,
+      refetchOnMountOrArgChange: true
     }
   )
 
   const handleOpenCreateIssue = () => {
+    setSprint({
+      id: sprintId,
+      start: start,
+      end: end
+    })
     dispatch(enableCreateIssue())
-    dispatch(
-      setSprintActive({
-        id: sprintId,
-        start: toISODateString(start),
-        end: toISODateString(end)
-      })
-    )
   }
 
   return (
@@ -58,11 +58,7 @@ const ListIssueInSprint = ({
       loading={isFetching}
       loadingComponent={<Skeleton className='h-[20px] w-full' />}
       className={cn('gap-3')}
-      emptyComponent={
-        <div className='flex rounded-sm border-2 bg-white px-4 py-2'>
-          {message.list.empty}
-        </div>
-      }
+      emptyComponent={<Empty>{message.list.empty}</Empty>}
       render={(item, index) => {
         return (
           <SprintCardInSprint

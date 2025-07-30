@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon'
+import TitleLevel from '@/components/TitleLevel'
 import ListView from '@/components/ListView'
 import {
   DropdownMenu,
@@ -130,10 +131,10 @@ export const UpdateAttachmentIssue = ({
         onCreate: onCreate
       }}
     >
-      <div className='border-accent mt-4 flex flex-col gap-3 border-2 p-2'>
-        <span className='text-lg'>
+      <div className='flex flex-col gap-3'>
+        <TitleLevel level={'lv-2'}>
           {messages.component.issue.update.form.attachment}
-        </span>
+        </TitleLevel>
         <UpdateAttachmentIssueUpload />
         <ListAttachmentIssue />
       </div>

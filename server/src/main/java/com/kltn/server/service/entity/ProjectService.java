@@ -32,6 +32,7 @@ import com.kltn.server.schedular.SprintScheduler;
 import com.kltn.server.service.EmailService;
 import com.kltn.server.service.entity.relation.WorkspacesUsersProjectsService;
 import com.kltn.server.service.mongo.ProjectMongoService;
+import com.kltn.server.service.mongo.SprintBoardMongoService;
 import com.kltn.server.util.RoleType;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +65,16 @@ public class ProjectService {
   private String link;
   private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
   private final SprintScheduler sprintScheduler;
+  private final SprintBoardMongoService sprintBoardMongoService;
 
   @Autowired
-  public ProjectService(SprintScheduler sprintScheduler, ProjectSprintService projectSprintService, WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMongoService projectMongoService, EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper, ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository, com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService, ChangeLogMapper changeLogMapper, ResourceMapper resourceMapper) {
+  public ProjectService(SprintScheduler sprintScheduler, ProjectSprintService projectSprintService,
+                        WorkspacesUsersProjectsService workspacesUsersProjectsService, ProjectMongoService projectMongoService,
+                        EmailService emailService, RoleService roleInit, UserService userService, TopicMapper topicMapper,
+                        ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
+                        com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService,
+                        ChangeLogMapper changeLogMapper, ResourceMapper resourceMapper,
+                        SprintBoardMongoService sprintBoardMongoService) {
     this.projectMongoService = projectMongoService;
     this.sprintScheduler = sprintScheduler;
     this.roleInit = roleInit;
@@ -81,18 +89,18 @@ public class ProjectService {
     this.changeLogMapper = changeLogMapper;
     this.projectSprintService = projectSprintService;
     this.resourceMapper = resourceMapper;
+    this.sprintBoardMongoService = sprintBoardMongoService;
   }
 
   @Transactional
   public ApiResponse<ProjectResponse> createProject(ProjectCreationRequest creationRequest) {
     WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder()
-        .workspaceId(creationRequest.workspaceId())
-        .userId(creationRequest.userId())
-        .build();
+      .workspaceId(creationRequest.workspaceId())
+      .userId(creationRequest.userId())
+      .build();
 
     WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository.findById(workspacesUsersId)
       .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
-
 
     if (workspacesUsersProjects.getProject() != null) {
       throw AppException.builder()
@@ -116,6 +124,7 @@ public class ProjectService {
         }
       });
     }
+
     workspacesUsersProjects.setProject(savedProject);
     workspacesUsersProjects.setRole(roleInit.getRole(RoleType.LEADER.getName()));
     workspacesUsersProjects.setInProject(true);
@@ -128,16 +137,21 @@ public class ProjectService {
       .description(project.getDescription())
       .topics(topics)
       .build();
-    projectMongoService.save(projectMongo);
+    var projectSaved = projectMongoService.save(projectMongo);
 
     // ChangeLogRequest log = changeLogMapper.projectToCreateLog(project,
     // projectMongo);
+    // FIX: POSITION
+    if (projectSaved != null && sprints != null)
+      sprintBoardMongoService.addPositionToProject(savedProject.getId(), sprints.stream()
+        .map(Sprint::getId)
+        .toList());
 
     return ApiResponse.<ProjectResponse>builder()
-        .message("Create project success")
-        .data(projectMapper.toCreationResponse(savedProject, topics))
-        // .logData(log)
-        .build();
+      .message("Create project success")
+      .data(projectMapper.toCreationResponse(savedProject, topics))
+      // .logData(log)
+      .build();
   }
 
   public ApiResponse<Void> inviteUserToProject(ProjectInvitationRequest invitationRequest) {
@@ -211,7 +225,7 @@ public class ProjectService {
     setCurrentSprint(project, workspace.getSprints());
     var project1 = projectMongoService.getByNkProjectId(projectId);
     List<Topic> topics = project1.getTopics();
-//     List<SprintResponse> sprintResponses = getSprintResponses(project);
+    // List<SprintResponse> sprintResponses = getSprintResponses(project);
     ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics);
     return ApiResponse.<ProjectResponse>builder()
       .message("Get project by id")
@@ -227,7 +241,6 @@ public class ProjectService {
   }
 
   public ApiResponse<List<UserResponse>> getMembersOfProject(String projectId) {
-
     Project project = getProjectById(projectId);
     var workspacesUsersProjects = project.getWorkspacesUserProjects();
     List<UserResponse> userResponses = workspacesUsersProjects.stream()
@@ -242,9 +255,9 @@ public class ProjectService {
 
   public ApiResponse<ResourceOfSprintResponse> getResourceByProjectAndSprint(String projectId, String sprintId) {
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
-        .projectId(projectId)
-        .sprintId(sprintId)
-        .build());
+      .projectId(projectId)
+      .sprintId(sprintId)
+      .build());
     List<ResourceResponse> dailyResources = projectSprint.getDailyFiles() != null && !projectSprint.getDailyFiles()
       .isEmpty() ? resourceMapper.toResourceResponseList(
       projectSprint.getDailyFiles()) : new ArrayList<>();

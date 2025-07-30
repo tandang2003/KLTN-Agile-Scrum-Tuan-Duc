@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/select'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
 import useAppId from '@/hooks/use-app-id'
-import { useProjectDashBoard } from '@/pages/manager/workspace/[:id]/dashboard/context'
+import { useProjectDashBoard } from '@/pages/manager/workspace/[id]/dashboard/context'
 import { Id } from '@/types/other.type'
 
 const DashboardFilter = () => {

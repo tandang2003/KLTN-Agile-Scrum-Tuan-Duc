@@ -19,8 +19,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import messages from '@/constant/message.const'
 import {
-  useCreateCourseMutation,
-  useGetPrerequisiteCourseQuery
+  useCreateCourseByPassMutation,
+  useCreateCourseMutation
 } from '@/feature/course/course.api'
 import { useClearGetWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import {
@@ -33,7 +33,7 @@ import {
 import { Id } from '@/types/other.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DialogTitle } from '@radix-ui/react-dialog'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -50,67 +50,42 @@ const WorkspaceCourseCheckLayer = ({
 }: WorkspaceCourseCheckLayerProps) => {
   const message = messages.component.workspaceCourseLayerCheck
 
-  const { data: prerequisiteCourse, isLoading } = useGetPrerequisiteCourseQuery(
-    course.id as Id,
-    {
-      skip: !course.id
-    }
-  )
-
-  // Calculate unmet prerequisites only when data is ready
-  const courseNeedField = useMemo(() => {
-    if (!prerequisiteCourse) return []
-    const allPrerequisiteCourseCompleted = prerequisiteCourseOfUser.every(
-      (userCourse) =>
-        userCourse.point !== -1.0 &&
-        prerequisiteCourse.some((item) => item.id === userCourse.course.id)
-    )
-    if (allPrerequisiteCourseCompleted) return []
-
-    return prerequisiteCourse.filter(
-      (item) =>
-        !prerequisiteCourseOfUser.some(
-          (userCourse) =>
-            userCourse.course.id === item.id && userCourse.point !== -1.0
-        )
-    )
-  }, [prerequisiteCourse, prerequisiteCourseOfUser])
-
   const [open, setIsOpen] = useState(false)
-  const [hasInitialized, setHasInitialized] = useState(false)
+  const init = useRef(false)
 
   useEffect(() => {
-    if (!isLoading && !hasInitialized) {
-      if (courseNeedField.length > 0) {
+    if (!init.current) {
+      const pass = prerequisiteCourseOfUser.every((item) => item.point != -1)
+      if (pass) {
+        setIsOpen(false)
+        toast.info('Thỏa mãn điều kiện môn học')
+      } else {
         setIsOpen(true)
+        toast.info('Vui lòng nhập môn học cần để tham gia workspace')
+
+        form.reset({
+          courses: prerequisiteCourseOfUser.map((item) => ({
+            courseId: item.course.id,
+            point: undefined
+          }))
+        })
       }
-      setHasInitialized(true)
+      init.current = true
     }
-  }, [isLoading, courseNeedField, hasInitialized])
+  }, [init.current])
 
   const [clear] = useClearGetWorkspaceMutation()
-  const [create, { error, isError }] = useCreateCourseMutation()
+  const [create, { error, isError }] = useCreateCourseByPassMutation()
 
   const form = useForm<CreateCourseSchemaType>({
     resolver: zodResolver(CreateCourseSchema),
     defaultValues: {
-      courses: courseNeedField.map((item) => ({
-        courseId: item.id,
-        point: undefined
+      courses: prerequisiteCourseOfUser.map((item) => ({
+        courseId: item.course.id,
+        point: 0
       }))
     }
   })
-
-  useEffect(() => {
-    if (courseNeedField.length > 0) {
-      form.reset({
-        courses: courseNeedField.map((item) => ({
-          courseId: item.id,
-          point: undefined
-        }))
-      })
-    }
-  }, [courseNeedField])
 
   const handleSubmit = (data: CreateCourseSchemaType) => {
     const dataParse = CreateCourseSchemeParse.parse(data)
@@ -126,7 +101,7 @@ const WorkspaceCourseCheckLayer = ({
       })
   }
 
-  if (!hasInitialized) return null // Wait until all is ready
+  if (!init.current) return null // Wait until all is ready
 
   return (
     <Dialog open={open}>
@@ -159,13 +134,13 @@ const WorkspaceCourseCheckLayer = ({
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
-            {courseNeedField.map((item, index) => (
+            {prerequisiteCourseOfUser.map((item, index) => (
               <FormField
-                key={item.id}
+                key={item.course.id}
                 name={`courses.${index}.point`}
                 render={({ field }) => (
                   <FormItem className='mt-2 flex flex-col gap-2'>
-                    <Label>{item.name}</Label>
+                    <Label>{item.course.name}</Label>
                     <FormControl>
                       <Input
                         type='number'

@@ -27,7 +27,7 @@ const ReportSprintSheetTeacher = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent className='min-w-[90vw]'>
+      <SheetContent className='min-w-[70vw]'>
         <SheetHeader>
           <SheetTitle>{message.title}</SheetTitle>
 

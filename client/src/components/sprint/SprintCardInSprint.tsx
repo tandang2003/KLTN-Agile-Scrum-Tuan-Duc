@@ -3,6 +3,7 @@ import Icon from '@/components/Icon'
 import Message from '@/components/Message'
 import DeleteDropdownItem from '@/components/sprint/action/DeleteDropdownItem'
 import UpdateDropdownItem from '@/components/sprint/action/UpdateDropdownItem'
+import ViewDropdownItem from '@/components/sprint/action/ViewDropdownItem'
 import ToolTip from '@/components/Tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -45,7 +46,7 @@ const SprintCardInSprint = ({
   const [moveToBacklog] = useMoveIssueToBacklogMutation()
   const { showAlert } = useAlertHost()
   const [reopen] = useReopenIssueMutation()
-  const { id, name } = item
+  const { id, name, status, projectId } = item
   const { id: sprintId, start, end } = sprint
   const { hasRequiredRole } = useAuthGuard({ roles: ['student'] })
 
@@ -56,25 +57,26 @@ const SprintCardInSprint = ({
     })
       .unwrap()
       .then(() => {
-        boardService
-          .removePosition({
-            issueId: id,
-            sprintId: sprintId,
-            projectId: item.projectId,
-            statusPrev: item.status
-          })
-          .then(() => {
-            toast.success(message.toast.moveToBacklog.success.message, {
-              description: (
-                <Message
-                  template={message.toast.moveToBacklog.success.description}
-                  values={{
-                    name: item.name
-                  }}
-                />
-              )
-            })
-          })
+        toast.success(message.toast.moveToBacklog.success.message, {
+          description: (
+            <Message
+              template={message.toast.moveToBacklog.success.description}
+              values={{
+                name: item.name
+              }}
+            />
+          )
+        })
+        // boardService
+        //   .removePosition({
+        //     issueId: id,
+        //     sprintId: sprintId,
+        //     projectId: item.projectId,
+        //     statusPrev: item.status
+        //   })
+        //   .then(() => {
+
+        //   })
       })
       .catch((err) => {
         toast.error(message.toast.moveToBacklog.failed, {
@@ -169,7 +171,11 @@ const SprintCardInSprint = ({
           <Icon icon={'ri:more-fill'} className='ml-3' />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          {canEdit && <UpdateDropdownItem id={id} />}
+          {canEdit ? (
+            <UpdateDropdownItem id={id} />
+          ) : (
+            <ViewDropdownItem id={id} />
+          )}
           {canReopen && (
             <DropdownMenuItem onClick={handleReopen}>
               {message.dropdown.reopen}
@@ -180,7 +186,15 @@ const SprintCardInSprint = ({
               {message.dropdown.moveToBacklog}
             </DropdownMenuItem>
           )}
-          {canDelete && <DeleteDropdownItem id={id} name={name} />}
+          {canDelete && (
+            <DeleteDropdownItem
+              id={id}
+              name={name}
+              projectId={projectId}
+              sprintId={sprintId}
+              status={status}
+            />
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

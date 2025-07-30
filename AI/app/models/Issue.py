@@ -15,7 +15,7 @@ class Issue(BaseModel):
   no_link: int
   no_issue_blocking: int
   no_issue_blocked: int
-  # numOfComment: int
+  no_of_comment: int
   no_fix_version_change: int
   no_priority_change: int
   no_description_change: int
@@ -31,6 +31,7 @@ def map(issue: IssueModel) -> Issue:
       no_fix_version=issue.numOfFixVersions,
       no_link=issue.numOfLink,
       no_issue_blocked=issue.numOfBlocked,
+      no_of_comment=issue.numOfComment,
       no_issue_blocking=issue.numOfBlock,
       no_fix_version_change=issue.numOfChangeFixVersion,
       no_priority_change=issue.numOfChangeOfPriority,
@@ -54,6 +55,7 @@ def issues_to_dataframe(issues: List[Issue]) -> pd.DataFrame:
       "no_affect_version": issue.no_affect_version,
       "no_fix_version": issue.no_fix_version,
       "no_link": issue.no_link,
+      "no_of_comment": issue.numOfComment,
       "no_issue_blocked": issue.no_issue_blocked,
       "no_issue_blocking": issue.no_issue_blocking,
       "no_fix_version_change": issue.no_fix_version_change,
