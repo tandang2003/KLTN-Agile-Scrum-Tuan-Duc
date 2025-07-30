@@ -238,10 +238,14 @@ const ChartStatusPerProject = ({
                       tooltip: {
                         callbacks: {
                           label: (tooltipItem) => {
-                            const value = tooltipItem.raw
-                            const label = ['Done', 'Failed', 'Remaining'][
-                              tooltipItem.dataIndex
+                            const labels = [
+                              message.dataset.labelIssueDone,
+                              message.dataset.labelIssueReview,
+                              message.dataset.labelIssueInProcess,
+                              message.dataset.labelIssueTodo
                             ]
+                            const value = tooltipItem.raw
+                            const label = labels[tooltipItem.dataIndex]
                             return `${label}: ${value}`
                           }
                         }

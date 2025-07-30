@@ -97,12 +97,37 @@ const courseApi = createApi({
                 id: 'LIST'
               }
             ]
+    }),
+    createCourseByPass: builder.mutation<
+      UserCourseResponseType[],
+      CreateCourseRequestType
+    >({
+      async queryFn(arg) {
+        try {
+          const data = await courseService.addCourseByPass(arg)
+          return { data: data }
+        } catch (error) {
+          return {
+            error: getErrorMessage(error)
+          }
+        }
+      },
+      invalidatesTags: (_, error) =>
+        error
+          ? []
+          : [
+              {
+                type: 'CoursesUser' as const,
+                id: 'LIST'
+              }
+            ]
     })
   })
 })
 
 export default courseApi
 export const {
+  useCreateCourseByPassMutation,
   useCreateCourseMutation,
   useGetAllCourseQuery,
   useGetCourseByIdQuery,

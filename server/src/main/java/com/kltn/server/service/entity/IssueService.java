@@ -528,32 +528,36 @@ public class IssueService {
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
 
-//    if (task.getAssignee() != null) {
-//      String assigneeId = task.getAssignee().getUniId();
-//      long commentCount = Optional.ofNullable(taskMongo.getComments())
-//          .orElse(Collections.emptyList()) // use empty list if null
-//          .stream()
-//          .filter(n -> assigneeId.equals(n.getFrom()))
-//          .count();
-//
-//      if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() == IssueStatus.DONE)
-//          && commentCount < 1) {
-//        throw AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
-//      }
-//    }
-//    if (task.getReviewer() != null) {
-//      String reviewerId = task.getAssignee().getUniId();
-//      long commentCount = Optional.ofNullable(taskMongo.getComments())
-//          .orElse(Collections.emptyList()) // use empty list if null
-//          .stream()
-//          .filter(n -> reviewerId.equals(n.getFrom()))
-//          .count();
-//
-//      if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() == IssueStatus.DONE)
-//          && commentCount < 1) {
-//        throw AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
-//      }
-//    }
+    // if (task.getAssignee() != null) {
+    // String assigneeId = task.getAssignee().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> assigneeId.equals(n.getFrom()))
+    // .count();
+    //
+    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
+    // IssueStatus.DONE)
+    // && commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
+    // }
+    // }
+    // if (task.getReviewer() != null) {
+    // String reviewerId = task.getAssignee().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> reviewerId.equals(n.getFrom()))
+    // .count();
+    //
+    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
+    // IssueStatus.DONE)
+    // && commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
+    // }
+    // }
 
     if (request.getStatus().equals(IssueStatus.DONE)) {
       task.setOpen(false);
@@ -940,7 +944,10 @@ public class IssueService {
     var issueMongo = issueMongoService.getById(id);
     List<User> members = issue.getProject().getMembers();
     List<UserSuitableResponse> suitableResponses = new ArrayList<>();
-    List<String> topics = issueMongo.getTopics().stream().map(Topic::getName).map(String::toLowerCase).toList();
+    List<String> topics = Optional.ofNullable(
+        issueMongo.getTopics()).orElse(Collections.emptyList())
+        .stream().map(Topic::getName).map(String::toLowerCase)
+        .toList();
 
     if (topics.isEmpty()) {
       return ApiResponse.<List<UserSuitableResponse>>builder()

@@ -51,46 +51,54 @@ const ClockSimulator = () => {
   const form = useForm<ClockSimulatorReqType>({
     resolver: zodResolver(ClockSimulatorSchema)
   })
+  const unsubscribeRef = useRef<(() => void) | null>(null)
 
   const auth = useAuth()
-  const { ws, isReady } = useStompClient({
+  useStompClient({
     accessToken: auth.accessToken,
     onConnect: (client) => {
       console.log('✅ WebSocket time connected')
-      // You can subscribe here if needed
+
+      // Move subscription logic here:
+      const subscription = socketService.receiveMessageTime(client, (value) => {
+        const { time, timeSpeech, to, senderId } = value.bodyParse.message
+        if (senderId !== senderIdRef.current) {
+          setConfig({
+            initTime: new Date(time),
+            timeSpeech: timeSpeech,
+            timeEnd: new Date(to)
+          })
+          simulatorService.setSimulatorLocal(value.bodyParse.message)
+
+          if (timeSpeech === 1) {
+            toast.info(`${senderId} đâ reset time`)
+            setIsReset(false)
+          } else {
+            toast.info(`${senderId} đang hiệu chỉnh time`)
+            setIsReset(true)
+          }
+        }
+      })
+
+      // Clean up on disconnect
+      unsubscribeRef.current = () => {
+        subscription.unsubscribe()
+      }
     },
     onDisconnect: () => {
+      unsubscribeRef.current?.()
       console.log('🔌 Disconnected WebSocket time')
     },
     onError: (error) => {
       console.error('WebSocket time error', error)
     }
   })
-  useEffect(() => {
-    if (!ws || !isReady || !ws.connected) return
-    const wsInstant = socketService.receiveMessageTime(ws, (value) => {
-      const { time, timeSpeech, to, senderId } = value.bodyParse.message
-      if (senderId !== senderIdRef.current) {
-        setConfig({
-          initTime: new Date(time),
-          timeSpeech: timeSpeech,
-          timeEnd: new Date(to)
-        })
-        simulatorService.setSimulatorLocal(value.bodyParse.message)
 
-        if (timeSpeech === 1) {
-          toast.info(`${senderId} đâ reset time`)
-          setIsReset(false)
-        } else {
-          toast.info(`${senderId} đang hiệu chỉnh time`)
-          setIsReset(true)
-        }
-      }
-    })
+  useEffect(() => {
     return () => {
-      wsInstant.unsubscribe()
+      unsubscribeRef.current?.()
     }
-  }, [ws, isReady])
+  }, [])
 
   const hookConfig = useMemo(() => {
     if (!config) {
@@ -115,7 +123,7 @@ const ClockSimulator = () => {
           <p>{formatInTimeZone(simulatedTime, 'UTC', 'HH:mm:ss dd/MM/yyyy')}</p>
         </div>
         <div className='flex gap-2'>
-          <Badge>GMT +8</Badge>
+          <Badge>GMT +7</Badge>
           <p>
             {formatInTimeZone(
               simulatedTime,

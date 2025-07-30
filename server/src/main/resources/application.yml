@@ -79,7 +79,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
-  ip: localhost
+  ip: 192.168.1.62
   whitelist:
     - auth
     - auth/register
@@ -101,7 +101,6 @@ data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
   server: http://localhost:8000/aggregate
-
 #kafka:
 #  topic:
 #    send-object-customer:

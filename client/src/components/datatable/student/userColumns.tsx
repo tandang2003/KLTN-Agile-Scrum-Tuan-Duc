@@ -17,10 +17,7 @@ const columns: ColumnDef<StudentColumns>[] = [
     accessorKey: 'name',
     header: name
   },
-  {
-    accessorKey: 'className',
-    header: className
-  },
+
   {
     accessorKey: 'role',
     header: role,

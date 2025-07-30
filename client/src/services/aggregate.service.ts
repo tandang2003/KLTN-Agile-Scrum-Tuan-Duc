@@ -1,3 +1,4 @@
+import { toQueryString } from '@/lib/utils'
 import httpService from '@/services/http.service'
 import { SprintAggregateProcessType } from '@/types/aggregate.type'
 import { ResponseApi } from '@/types/http.type'
@@ -49,6 +50,13 @@ const aggregateService = {
       `/decision/${projectId}/${sprintId}/predict`
     )
     return res.data
+  },
+  storeData: async (workspaceId: Id): Promise<void> => {
+    const query = toQueryString({
+      workspaceId: workspaceId,
+      stage: 30
+    })
+    await httpService.get<ResponseApi<void>>(`/decision/store-data?${query}`)
   }
 }
 
