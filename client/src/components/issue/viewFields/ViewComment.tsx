@@ -14,7 +14,7 @@ const ViewComment = ({ issueId }: ViewCommentProps) => {
   const { data, isFetching } = useGetCommentsQuery(issueId)
   return (
     <ListView
-      data={_.orderBy(data, ['createdAt'], ['asc'])}
+      data={_.orderBy(data)}
       loading={isFetching}
       emptyComponent={<Empty>Không có comment</Empty>}
       render={(item) => (

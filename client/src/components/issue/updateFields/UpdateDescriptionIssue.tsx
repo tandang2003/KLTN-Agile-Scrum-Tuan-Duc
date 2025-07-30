@@ -101,7 +101,7 @@ const ComplexDescriptionSelect = () => {
 
   useAutoUpdateField({
     form: form,
-    field: 'description',
+    field: 'complexOfDescription',
     callApi: (field, value) => {
       return issueService.updateIssue({
         id: getValues('id'),
@@ -120,7 +120,7 @@ const ComplexDescriptionSelect = () => {
           <Select
             defaultValue='1'
             value={field.value?.toString() ?? '1'}
-            onValueChange={field.onChange}
+            onValueChange={(value)=> field.onChange(Number(value))}
           >
             <SelectTrigger className='w-[120px]'>
               <SelectValue placeholder='Độ khó' />

@@ -1,0 +1,21 @@
+client/src/components/ui/kanban.tsx
+client/src/pages/manager/workspace/project/page.tsx
+client/src/services/aggregate.service.ts
+client/src/types/issue.type.ts
+client/src/types/model/typeOf.ts
+database/src/api/create_issue/main.py
+database/src/api/create_skill/created_skills.csv
+database/src/api/create_skill/main.py
+database/src/api/create_skill/skill.csv
+database/src/api/create_skill/uniid_skill_mapping.csv
+"resources/data/30/L\341\272\255p tr\303\254nh Web 2025/issue.xlsx"
+"resources/data/30/L\341\272\255p tr\303\254nh Web 2025/sprint.xlsx"
+"resources/data/30/Th\341\273\261c t\341\272\255p L\341\272\255p tr\303\254nh WEB/issue.xlsx"
+"resources/data/30/Th\341\273\261c t\341\272\255p L\341\272\255p tr\303\254nh WEB/sprint.xlsx"
+"resources/data/vel_diff/L\341\272\255p tr\303\254nh Web 2025/vel_diff.xlsx"
+server/.gitignore
+server/build.gradle
+server/src/main/java/com/kltn/server/config/init/ClockSimulator.java
+server/src/main/java/com/kltn/server/controller/DecisionController.java
+server/src/main/java/com/kltn/server/service/entity/IssueService.java
+server/src/main/resources/application.yml

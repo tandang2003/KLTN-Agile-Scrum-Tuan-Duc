@@ -59,13 +59,15 @@ const FilterBoard = ({}: FilterBoardProps) => {
         </PopoverContent>
       </Popover>
       <div>
-        <ToolTip
-          trigger={
-            <Badge className='text-md active-bg'>{sprintMemo?.title}</Badge>
-          }
-        >
-          {sprintMemo?.id}
-        </ToolTip>
+        {sprintMemo?.id && (
+          <ToolTip
+            trigger={
+              <Badge className='text-md active-bg'>{sprintMemo?.title}</Badge>
+            }
+          >
+            {sprintMemo?.id}
+          </ToolTip>
+        )}
       </div>
     </div>
   )

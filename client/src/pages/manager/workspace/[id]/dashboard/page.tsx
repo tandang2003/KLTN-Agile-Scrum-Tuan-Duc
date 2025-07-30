@@ -2,7 +2,7 @@ import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
 import DashboardHeader from '@/components/dashboard/teacher/DashboardHeader'
 import TasksByStatusPerProjectBarChart from '@/components/dashboard/teacher/TasksByStatusPerProjectBarChart.teacher'
 import TasksByStatusPerStudentBarChart from '@/components/dashboard/teacher/TasksByStatusPerStudentBarChart.teacher'
-import { ProjectDashBoardProvider } from '@/pages/manager/workspace/[:id]/dashboard/context'
+import { ProjectDashBoardProvider } from '@/pages/manager/workspace/[id]/dashboard/context'
 import { Id } from '@/types/other.type'
 import { useState } from 'react'
 

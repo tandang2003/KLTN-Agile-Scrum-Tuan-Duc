@@ -8,7 +8,7 @@ import projectService, {
   isUpdateResponse
 } from '@/services/project.service'
 import { Id } from '@/types/other.type'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 type ProjectSocketProps = {
   projectId: Id
@@ -18,11 +18,31 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
   const isNotify = useAppSelector((state) => state.triggerSlice.isNotify)
   const dispatch = useAppDispatch()
   const auth = useAuth()
-  const { ws, isReady } = useStompClient({
+  const unsubscribeRef = useRef<(() => void) | null>(null)
+
+  useStompClient({
     accessToken: auth.accessToken,
-    onConnect: (_) => {
+    onConnect: (client) => {
       console.log('✅ WebSocket project room connected')
-      // You can subscribe here if needed
+      // Clean up previous subscription
+      unsubscribeRef.current?.()
+
+      const subscription = projectService.receiveUpdate(
+        client,
+        projectId,
+        (value) => {
+          if (isUpdateResponse(value.bodyParse)) {
+            if (!isNotify) {
+              dispatch(enableNotification())
+              toast(<ProjectMessage data={value.bodyParse.message} />)
+            }
+          }
+          if (isPredictResponse(value.bodyParse)) {
+            toast(value.bodyParse.message.message)
+          }
+        }
+      )
+      unsubscribeRef.current = () => subscription.unsubscribe()
     },
     onDisconnect: () => {
       console.log('🔌 Disconnected project room')
@@ -31,24 +51,12 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
       console.error('WebSocket error', error)
     }
   })
-  useEffect(() => {
-    if (!ws || !isReady || !ws.connected) return
-    const wsInstant = projectService.receiveUpdate(ws, projectId, (value) => {
-      if (isUpdateResponse(value.bodyParse)) {
-        if (!isNotify) {
-          dispatch(enableNotification())
-          toast(<ProjectMessage data={value.bodyParse.message} />)
-        }
-      }
-      if (isPredictResponse(value.bodyParse)) {
-        toast(value.bodyParse.message.message)
-      }
-    })
-    return () => {
-      wsInstant.unsubscribe()
-    }
-  }, [ws, isReady, projectId])
 
+  useEffect(() => {
+    return () => {
+      unsubscribeRef.current?.()
+    }
+  }, [])
   return null
 }
 

@@ -1,6 +1,7 @@
 import FilterBoard from '@/components/board/FilterBoard'
 import RenderBoard from '@/components/board/RenderBoard'
 import { DataOnMoveType, Position } from '@/components/board/type'
+import Empty from '@/components/Empty'
 import DialogUpdateIssue from '@/components/issue/DialogUpdateIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -177,6 +178,7 @@ const BoardPage = () => {
       <LoadingBoundary
         data={data}
         isLoading={isFetching}
+        fallback={<Empty>Chưa có sprint nào đang chạy</Empty>}
         loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
       >
         {(data) => {

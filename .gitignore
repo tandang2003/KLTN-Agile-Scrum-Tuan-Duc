@@ -1,2 +1,4 @@
 .idea
 .vscode
+
+server/src/main/resources/key1.json

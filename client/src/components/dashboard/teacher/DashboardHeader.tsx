@@ -5,7 +5,7 @@ import LoadingBoundary from '@/components/LoadingBoundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetDashboardWorkspaceQuery } from '@/feature/dashboard/dashboard.api'
 import useAppId from '@/hooks/use-app-id'
-import { useProjectDashBoard } from '@/pages/manager/workspace/[:id]/dashboard/context'
+import { useProjectDashBoard } from '@/pages/manager/workspace/[id]/dashboard/context'
 import { DashboardWorkspaceResponse } from '@/types/dashboard.type'
 import { Id } from '@/types/other.type'
 type DashboardHeaderProps = {}
