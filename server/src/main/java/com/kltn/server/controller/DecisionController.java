@@ -41,15 +41,15 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 @RestController
 @RequestMapping("decision")
 public class DecisionController {
-  @Value("${google.sheet.sprint.spreadsheetId}")
+  @Value("${app.google.sheet.sprint.spreadsheetId}")
   private String sprintSpreadsheetId;
 
-  @Value("${google.sheet.issue.spreadsheetId}")
+  @Value("${app.google.sheet.issue.spreadsheetId}")
   private String issueSpreadsheetId;
-  @Value("${google.sheet.sprint.sheet}")
+  @Value("${app.google.sheet.sprint.sheet}")
   private String sprintSpreadsheetName;
 
-  @Value("${google.sheet.issue.sheet}")
+  @Value("${app.google.sheet.issue.sheet}")
   private String issueSpreadsheetName;
   private final DecisionService decisionService;
   private final WorkspaceService workspaceService;

@@ -71,3 +71,11 @@ app:
       api-secret: rfWLwei-lyOo2LWTIdlu2E5Hr_Y
       url-upload: https://api.cloudinary.com/v1_1/yourstyle/auto/upload
       root-folder: KLTN
+  google:
+    sheet:
+      sprint:
+        sheet: Sheet1
+        spreadsheetId: ${APP_SHEET_SPRINT_ID}
+      issue:
+        sheet: Sheet1
+        spreadsheetId: ${APP_SHEET_ISSUE_ID}

@@ -15,6 +15,8 @@ services:
       - VERIFY_INVITE_PROJECT_LINK=http://localhost:${FE_PORT}/project/invite?token=
       - PYTHON_SERVER=http://app-ai:8080/aggregate
       - KEY_BASE=/app/keys
+      - APP_SHEET_SPRINT_ID=${APP_SHEET_SPRINT_ID}
+      - APP_SHEET_ISSUE_ID=${APP_SHEET_ISSUE_ID}
     volumes:
       - ./keys:/app/keys
     depends_on:
