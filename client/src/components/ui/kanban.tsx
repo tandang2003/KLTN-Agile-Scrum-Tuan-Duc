@@ -19,7 +19,6 @@ import {
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
-  PointerSensor,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
