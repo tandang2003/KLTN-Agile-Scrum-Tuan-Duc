@@ -21,7 +21,7 @@ const SprintDashboardTab = ({}: SprintDashboardTabProps) => {
       data={data}
       isLoading={isFetching}
     >
-      {(data) => {
+      {(_) => {
         return (
           <div className='grid grid-cols-2 gap-4'>
             {/* <ContainerDashboard className='flex-1'>

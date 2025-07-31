@@ -18,10 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import messages from '@/constant/message.const'
-import {
-  useCreateCourseMutation,
-  useGetPrerequisiteCourseQuery
-} from '@/feature/course/course.api'
+import { useCreateCourseMutation } from '@/feature/course/course.api'
 import { useClearGetWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import {
   CourseResponseType,

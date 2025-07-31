@@ -8,7 +8,6 @@ import messages from '@/constant/message.const'
 import { useAppSelector } from '@/context/redux/hook.ts'
 import { RootState } from '@/context/redux/store.ts'
 import commentService from '@/services/comment.service.ts'
-import { useState } from 'react'
 
 const EditorComment = () => {
   const message = messages.component.editorComment

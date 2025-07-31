@@ -14,7 +14,7 @@ import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { X } from 'lucide-react'
 import { useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 type UpdateTopicProps = {}
 
 const UpdateTopicForm = ({}: UpdateTopicProps) => {

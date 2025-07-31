@@ -9,7 +9,6 @@ import UpdateRelationship from '@/components/issue/updateFields/UpdateRelationsh
 import UpdateSubTaskForm from '@/components/issue/updateFields/UpdateSubTaskIssue'
 import UpdateTopicForm from '@/components/issue/updateFields/UpdateTopicIssue'
 import { Form } from '@/components/ui/form'
-import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import messages from '@/constant/message.const'

@@ -47,7 +47,7 @@ export const CommentProvider = ({
   }, [initValue])
   const { ws, isReady } = useStompClient({
     accessToken: auth.accessToken,
-    onConnect: (client) => {
+    onConnect: (_) => {
       console.log('✅ WebSocket connected')
       // You can subscribe here if needed
     },
