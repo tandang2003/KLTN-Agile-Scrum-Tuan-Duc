@@ -16,7 +16,6 @@ import {
 import { Input } from '@/components/ui/input'
 import useAppId from '@/hooks/use-app-id'
 import { DEFAULT_STATUS } from '@/constant/app.const'
-import boardService from '@/services/board.service'
 import {
   CreateIssueRequest,
   CreateIssueSchema,

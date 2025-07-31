@@ -1,5 +1,5 @@
 import SectionComment from '@/components/issue/comment/SectionComment'
-import {UpdateAttachmentIssue} from '@/components/issue/updateFields/UpdateAttachmentIssue'
+import { UpdateAttachmentIssue } from '@/components/issue/updateFields/UpdateAttachmentIssue'
 import UpdateDateIssue from '@/components/issue/updateFields/UpdateDateIssue'
 import UpdateDescriptionIssue from '@/components/issue/updateFields/UpdateDescriptionIssue'
 import UpdateMemberIssue from '@/components/issue/updateFields/UpdateMemberIssue'
@@ -8,25 +8,25 @@ import UpdatePriorityIssue from '@/components/issue/updateFields/UpdatePriorityI
 import UpdateRelationship from '@/components/issue/updateFields/UpdateRelationship'
 import UpdateSubTaskForm from '@/components/issue/updateFields/UpdateSubTaskIssue'
 import UpdateTopicForm from '@/components/issue/updateFields/UpdateTopicIssue'
-import {Form} from '@/components/ui/form'
-import {ScrollArea, ScrollBar} from '@/components/ui/scroll-area'
-import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
+import { Form } from '@/components/ui/form'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import messages from '@/constant/message.const'
 import {
   IssueDetailResponse,
   UpdateIssueSchema,
   UpdateIssueType
 } from '@/types/issue.type'
-import {zodResolver} from '@hookform/resolvers/zod'
-import {useEffect} from 'react'
-import {useForm} from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup
 } from '@/components/ui/resizable'
-import {Separator} from '@/components/ui/separator'
-import {useAuth} from '@/hooks/use-auth'
+import { Separator } from '@/components/ui/separator'
+import { useAuth } from '@/hooks/use-auth'
 import TitleLevel from '@/components/TitleLevel'
 import RoundedLabel from '@/components/issue/RoundedLabel'
 
@@ -34,9 +34,9 @@ type UpdateIssueFormProps = {
   data: IssueDetailResponse
 }
 
-const UpdateIssueForm = ({data}: UpdateIssueFormProps) => {
+const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
   const message = messages.component.issue
-  const {user} = useAuth()
+  const { user } = useAuth()
   const isLeader = user?.uniId === data.leader
   const form = useForm<UpdateIssueType>({
     resolver: zodResolver(UpdateIssueSchema),
@@ -88,12 +88,12 @@ const UpdateIssueForm = ({data}: UpdateIssueFormProps) => {
           <ResizablePanel defaultSize={60} minSize={30}>
             <ScrollArea className='h-inherit h-[60vh] flex-1 [&>*:not(:first-element)]:mt-3'>
               <div className='mr-3'>
-                <UpdateNameIssue/>
+                <UpdateNameIssue />
 
-                <Separator className='my-3'/>
-                <UpdateDescriptionIssue/>
+                <Separator className='my-3' />
+                <UpdateDescriptionIssue />
 
-                <Separator className='my-3'/>
+                <Separator className='my-3' />
                 <UpdateAttachmentIssue
                   issueId={data.id}
                   data={data.resources?.map((item) => {
@@ -105,9 +105,9 @@ const UpdateIssueForm = ({data}: UpdateIssueFormProps) => {
                     }
                   })}
                 />
-                <Separator className='my-3'/>
-                <UpdateSubTaskForm/>
-                <Separator className='my-3'/>
+                <Separator className='my-3' />
+                <UpdateSubTaskForm />
+                <Separator className='my-3' />
                 <UpdateRelationship
                   issueId={data.id}
                   initialData={data.relations}
@@ -119,25 +119,25 @@ const UpdateIssueForm = ({data}: UpdateIssueFormProps) => {
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value='comment'>
-                    <SectionComment/>
+                    <SectionComment />
                   </TabsContent>
                 </Tabs>
               </div>
-              <ScrollBar/>
+              <ScrollBar />
             </ScrollArea>
           </ResizablePanel>
-          <ResizableHandle/>
+          <ResizableHandle />
           <ResizablePanel minSize={35}>
             <ScrollArea className='h-inherit basis-[550px] rounded-md px-4 [&>*:not(:first-child)]:mt-3'>
               <TitleLevel level={'lv-2'}>{message.update.form.info}</TitleLevel>
-              <Separator className='my-2'/>
+              <Separator className='my-2' />
               <div className='space-y-2'>
                 <RoundedLabel
                   label={<span className='flex-1'>{message.assignee}</span>}
                 >
                   {isLeader ? (
                     <div className={'flex-1'}>
-                      <UpdateMemberIssue form={form} name='assigneeId'/>
+                      <UpdateMemberIssue form={form} name='assigneeId' />
                     </div>
                   ) : (
                     <span>{data.assignee?.name ?? 'Chưa đựợc gán'}</span>
@@ -149,7 +149,7 @@ const UpdateIssueForm = ({data}: UpdateIssueFormProps) => {
                 >
                   {isLeader ? (
                     <div className={'flex-1'}>
-                      <UpdateMemberIssue form={form} name='reviewerId'/>
+                      <UpdateMemberIssue form={form} name='reviewerId' />
                     </div>
                   ) : (
                     <span>{data.reviewer?.name ?? 'Chưa đựợc gán'}</span>
@@ -163,22 +163,22 @@ const UpdateIssueForm = ({data}: UpdateIssueFormProps) => {
                     </span>
                   }
                 >
-                  <UpdateDateIssue/>
+                  <UpdateDateIssue />
                 </RoundedLabel>
                 <RoundedLabel
                   className='items-center'
                   label={<span className='flex-1'>{message.priority}</span>}
                 >
                   <div className='flex-1'>
-                    <UpdatePriorityIssue/>
+                    <UpdatePriorityIssue />
                   </div>
                 </RoundedLabel>
               </div>
               <div className='mt-4 flex items-center gap-2'>
-                <UpdateTopicForm/>
+                <UpdateTopicForm />
               </div>
 
-              <ScrollBar/>
+              <ScrollBar />
             </ScrollArea>
           </ResizablePanel>
         </ResizablePanelGroup>

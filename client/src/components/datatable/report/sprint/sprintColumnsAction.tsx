@@ -13,10 +13,7 @@ type ReportColumnsActionProps = {
   }
 }
 
-const ReportColumnsAction = ({
-  sprint,
-  projectId
-}: ReportColumnsActionProps) => {
+const ReportColumnsAction = ({ sprint }: ReportColumnsActionProps) => {
   const [open, setOpen] = useState(false)
   const [hasOpened, setHasOpened] = useState(false) // track if opened at least once
 
