@@ -56,7 +56,7 @@ const ClockSimulator = () => {
   const auth = useAuth()
   useStompClient({
     accessToken: auth.accessToken,
-    onConnect: (client) => {
+    onConnect: (_) => {
       console.log('✅ WebSocket time connected')
 
       // Move subscription logic here:

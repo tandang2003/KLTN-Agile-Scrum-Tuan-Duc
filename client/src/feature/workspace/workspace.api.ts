@@ -3,7 +3,10 @@ import resourceService from '@/services/resource.service'
 import workspaceService from '@/services/workspace.service'
 import { Page } from '@/types/http.type'
 import { Id } from '@/types/other.type'
-import { ProjectResourceResponseType } from '@/types/resource.type'
+import {
+  ProjectResourceResponseType,
+  SprintResourceResponseType
+} from '@/types/resource.type'
 import {
   CreateWorkspaceReqType,
   InviteStudentWorkspaceReqType,
@@ -192,7 +195,7 @@ const workspaceApi = createApi({
         }
       }
     }),
-    getAllResourceBySprint: builder.query<ProjectResourceResponseType, Id>({
+    getAllResourceBySprint: builder.query<SprintResourceResponseType, Id>({
       async queryFn(args) {
         try {
           const data = await resourceService.getAllResourceBySprint(args)

@@ -18,10 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import messages from '@/constant/message.const'
-import {
-  useCreateCourseByPassMutation,
-  useCreateCourseMutation
-} from '@/feature/course/course.api'
+import { useCreateCourseByPassMutation } from '@/feature/course/course.api'
 import { useClearGetWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import {
   CourseResponseType,

@@ -52,7 +52,7 @@ export const CommentProvider = ({
 
   const { ws, isReady } = useStompClient({
     accessToken: auth.accessToken,
-    onConnect: (client) => {
+    onConnect: (_) => {
       console.log('✅ WebSocket connected')
       // Unsubscribe previous if reconnecting
       unsubscribeRef.current?.()

@@ -1,9 +1,6 @@
 import DialogController from '@/components/dialog/DialogController'
 import CreateIssueForm from '@/components/issue/CreateIssueForm'
-import {
-  SprintSelectProvider,
-  useSprintSelect
-} from '@/components/issue/IssueSelectSprintContext'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import {
   DialogContent,
   DialogDescription,
