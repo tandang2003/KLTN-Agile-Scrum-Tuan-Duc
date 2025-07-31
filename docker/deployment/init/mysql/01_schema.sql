@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `course`;
 CREATE TABLE `course` (
   `id` varchar(255) NOT NULL,
   `create_by` varchar(255) DEFAULT NULL,
-  `is_deleted` bit(1) DEFAULT b'1',
+  `is_deleted` bit(1) DEFAULT NULL,
   `deleted_by` varchar(255) DEFAULT NULL,
   `dt_created` datetime(6) NOT NULL,
   `dt_deleted` datetime(6) DEFAULT NULL,
@@ -113,6 +113,7 @@ CREATE TABLE `issues` (
   `name` varchar(255) DEFAULT NULL,
   `num_changing_of_description` int DEFAULT NULL,
   `num_changing_of_priority` int DEFAULT NULL,
+  `open` bit(1) NOT NULL DEFAULT b'1',
   `position` varchar(255) DEFAULT NULL,
   `priority` enum('BLOCKED','CRITICAL','MAJOR','MINOR','TRIVIAL') DEFAULT NULL,
   `status` enum('BACKLOG','DONE','INPROCESS','REVIEW','TODO') DEFAULT NULL,
@@ -121,7 +122,7 @@ CREATE TABLE `issues` (
   `project_id` varchar(255) NOT NULL,
   `reviewer_id` varchar(255) DEFAULT NULL,
   `sprint_id` varchar(255) DEFAULT NULL,
-  `open` bit(1) NOT NULL,
+  `dt_append` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK6tkde1c2odhrtreahor01p5fb` (`assignee_id`),
   KEY `FK4j2x3reshuu7qj5svh6eacnpt` (`project_id`),
@@ -174,11 +175,12 @@ DROP TABLE IF EXISTS `project_sprint`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `project_sprint` (
-  `dt_planning` datetime(6) DEFAULT NULL,
-  `dt_preview` datetime(6) DEFAULT NULL,
+  `file_backlog_id` varchar(255) DEFAULT NULL,
   `project_id` varchar(255) NOT NULL,
   `sprint_id` varchar(255) NOT NULL,
-  `file_backlog_id` varchar(255) DEFAULT NULL,
+  `dt_last_predicted` datetime(6) DEFAULT NULL,
+  `predicted_result` int DEFAULT '-2',
+  `removed_issue` int DEFAULT '0',
   PRIMARY KEY (`project_id`,`sprint_id`),
   UNIQUE KEY `UKqakv6jiht1m7mow4w6vf5fwua` (`file_backlog_id`),
   KEY `FKc72pgdev7lt0kjs5x2b533x43` (`sprint_id`),
@@ -229,20 +231,13 @@ CREATE TABLE `resources` (
   `content_type` enum('FILE','IMAGE') DEFAULT NULL,
   `extension` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `place_content` enum('ISSUE','AVATAR','PROJECT') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `size` bigint NOT NULL,
-  `issue_id` varchar(255) DEFAULT NULL,
-  `project_id` varchar(255) DEFAULT NULL,
-  `user_id` varchar(255) DEFAULT NULL,
-  `sail` varchar(255) DEFAULT NULL,
+  `place_content` enum('AVATAR','ISSUE','PROJECT') DEFAULT NULL,
   `public_id` varchar(255) DEFAULT NULL,
+  `size` bigint NOT NULL,
+  `user_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKrhhpfo0o15o1j5bshmjbkigqj` (`issue_id`),
-  KEY `FK4dekmr3028xq5q54nj338ywya` (`project_id`),
   KEY `FKcoba1blh4w96p6n34i4xfoiyp` (`user_id`),
-  CONSTRAINT `FK4dekmr3028xq5q54nj338ywya` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
-  CONSTRAINT `FKcoba1blh4w96p6n34i4xfoiyp` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `FKrhhpfo0o15o1j5bshmjbkigqj` FOREIGN KEY (`issue_id`) REFERENCES `issues` (`id`)
+  CONSTRAINT `FKcoba1blh4w96p6n34i4xfoiyp` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -254,15 +249,15 @@ DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles` (
-  `is_deleted` bit(1) DEFAULT b'0',
-  `dt_created` datetime(6) DEFAULT NULL,
+  `id` varchar(255) NOT NULL,
+  `create_by` varchar(255) DEFAULT NULL,
+  `is_deleted` bit(1) DEFAULT NULL,
+  `deleted_by` varchar(255) DEFAULT NULL,
+  `dt_created` datetime(6) NOT NULL,
   `dt_deleted` datetime(6) DEFAULT NULL,
   `dt_modified` datetime(6) DEFAULT NULL,
-  `create_by` varchar(255) DEFAULT NULL,
-  `deleted_by` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `id` varchar(255) NOT NULL,
   `modified_by` varchar(255) DEFAULT NULL,
+  `description` longtext,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -276,10 +271,10 @@ DROP TABLE IF EXISTS `roles_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles_permissions` (
-  `permission_id` varchar(255) NOT NULL,
   `role_id` varchar(255) NOT NULL,
-  PRIMARY KEY (`permission_id`,`role_id`),
-  KEY `FKqi9odri6c1o81vjox54eedwyh` (`role_id`),
+  `permission_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`role_id`,`permission_id`),
+  KEY `FKbx9r9uw77p58gsq4mus0mec0o` (`permission_id`),
   CONSTRAINT `FKbx9r9uw77p58gsq4mus0mec0o` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`),
   CONSTRAINT `FKqi9odri6c1o81vjox54eedwyh` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -343,9 +338,10 @@ CREATE TABLE `sprints` (
   `dt_end` datetime(6) DEFAULT NULL,
   `dt_predict` datetime(6) DEFAULT NULL,
   `dt_start` datetime(6) DEFAULT NULL,
+  `story_point` int NOT NULL,
   `title` longtext,
   `workspace_id` varchar(255) DEFAULT NULL,
-  `story_point` int NOT NULL,
+  `description` longtext,
   PRIMARY KEY (`id`),
   KEY `FKo9l6h39pakacjhw8xm18jrcqu` (`workspace_id`),
   CONSTRAINT `FKo9l6h39pakacjhw8xm18jrcqu` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`)
@@ -378,21 +374,21 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `is_deleted` bit(1) NOT NULL DEFAULT b'0',
+  `id` varchar(255) NOT NULL,
+  `create_by` varchar(255) DEFAULT NULL,
+  `is_deleted` bit(1) DEFAULT NULL,
+  `deleted_by` varchar(255) DEFAULT NULL,
   `dt_created` datetime(6) NOT NULL,
   `dt_deleted` datetime(6) DEFAULT NULL,
   `dt_modified` datetime(6) DEFAULT NULL,
-  `create_by` varchar(255) DEFAULT NULL,
-  `deleted_by` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `id` varchar(255) NOT NULL,
   `modified_by` varchar(255) DEFAULT NULL,
+  `class_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role_id` varchar(255) DEFAULT NULL,
   `uni_id` varchar(255) DEFAULT NULL,
   `uni_password` varchar(255) DEFAULT NULL,
-  `class_name` varchar(255) DEFAULT NULL,
+  `role_id` varchar(255) DEFAULT NULL,
   `avatar_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKrsulcn2gynjy3cddpwmosv881` (`avatar_id`),
@@ -441,11 +437,11 @@ DROP TABLE IF EXISTS `workspaces_users_projects`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `workspaces_users_projects` (
   `in_project` bit(1) NOT NULL,
-  `in_workspace` bit(1) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `workspace_id` varchar(255) NOT NULL,
   `project_id` varchar(255) DEFAULT NULL,
   `role_id` varchar(255) DEFAULT NULL,
+  `in_workspace` bit(1) NOT NULL,
   PRIMARY KEY (`user_id`,`workspace_id`),
   KEY `FKie1muh0vgmfaw8neob7rdjkq1` (`project_id`),
   KEY `FKljv7uknbf639p7tocjun96648` (`role_id`),
@@ -466,4 +462,4 @@ CREATE TABLE `workspaces_users_projects` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-02 16:45:02
+-- Dump completed on 2025-07-30 22:04:09
