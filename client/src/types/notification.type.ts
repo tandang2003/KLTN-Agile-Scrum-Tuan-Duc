@@ -59,11 +59,6 @@ type NotificationResponse = {
   createdBy: string
 }
 
-type MessageResponse<T> = {
-  type: 'UPDATE' | 'PREDICT' | 'TIME'
-  message: T
-}
-
 type TimeMessageResponse = {
   timeSpeech: number
   time: Date
@@ -107,7 +102,6 @@ type PropertyTarget =
 export type {
   ProjectNotificationRequest,
   NotificationResponse,
-  MessageResponse,
   LogType,
   PropertyTarget,
   ProjectMessageUpdateResponse,

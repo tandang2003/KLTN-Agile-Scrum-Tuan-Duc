@@ -2,6 +2,7 @@ import dashboardService from '@/services/dashboard.service'
 import {
   DashboardRes,
   DashboardWorkspaceResponse,
+  ProjectPredictRes,
   ProjectWorkloadRes,
   WorkloadDataItem
 } from '@/types/dashboard.type'
@@ -92,6 +93,27 @@ const dashboardApi = createApi({
           return { error }
         }
       }
+    }),
+    getProjectPredict: builder.query<
+      Page<ProjectPredictRes>,
+      {
+        workspaceId: Id
+        page: PageRequest
+        sprintId?: Id
+      }
+    >({
+      queryFn: async ({ workspaceId, page, sprintId }) => {
+        try {
+          const data = await dashboardService.getProjectPredict(
+            workspaceId,
+            page,
+            sprintId
+          )
+          return { data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -101,5 +123,6 @@ export const {
   useGetDashboardProjectQuery,
   useGetDashboardWorkspaceQuery,
   useGetProjectWorkspaceQuery,
-  useGetWorkloadWorkspaceQuery
+  useGetWorkloadWorkspaceQuery,
+  useGetProjectPredictQuery
 } = dashboardApi

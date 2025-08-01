@@ -3,6 +3,8 @@ package com.kltn.server.repository.entity.relation;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +28,7 @@ public interface ProjectSprintRepository extends JpaRepository<ProjectSprint, Pr
     Optional<List<String>> findProjectIdBySprintId(String sprintId);
 
   List<ProjectSprint> findBySprintId(String sprintId);
+  Page<ProjectSprint> findBySprintId(String sprintId, Pageable pageable);
 
   List<ProjectSprint> findByProjectId(String projectId);
 

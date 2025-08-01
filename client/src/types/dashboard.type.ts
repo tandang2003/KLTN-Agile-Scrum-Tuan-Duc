@@ -62,6 +62,13 @@ type ProjectWorkloadRes = {
   taskBalance: number
 }
 
+type ProjectPredictRes = {
+  id: Id
+  name: string
+  lastTime?: Date
+  predict: -2 | -1 | 0
+}
+
 export type {
   DashboardRes,
   WorkloadDataItem,
@@ -69,5 +76,6 @@ export type {
   IssueStatusTrendItem,
   WorkloadDataItemDetail,
   DashboardWorkspaceResponse,
-  ProjectWorkloadRes
+  ProjectWorkloadRes,
+  ProjectPredictRes
 }

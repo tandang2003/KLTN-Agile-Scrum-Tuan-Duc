@@ -36,19 +36,24 @@ const initialState: AuthState = {
   loading: false
 }
 
-const loginThunk = createAsyncThunk<UserInfoResponse, LoginReq>(
-  'auth/login',
-  async (req, { rejectWithValue }) => {
-    try {
-      const data = await authService.login(req)
-      tokenService.setTokenLocal(data.data.access_token)
-      const info = await userService.getInfo()
-      return info.data
-    } catch (_) {
-      return rejectWithValue('Email or password not right')
+const loginThunk = createAsyncThunk<
+  UserInfoResponse & {
+    access_token: string
+  },
+  LoginReq
+>('auth/login', async (req, { rejectWithValue }) => {
+  try {
+    const data = await authService.login(req)
+    tokenService.setTokenLocal(data.data.access_token)
+    const info = await userService.getInfo()
+    return {
+      ...info.data,
+      access_token: data.data.access_token
     }
+  } catch (_) {
+    return rejectWithValue('Email or password not right')
   }
-)
+})
 
 const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
   'auth/user',
@@ -93,7 +98,14 @@ const authSlice = createSlice({
     })
     builder.addCase(
       loginThunk.fulfilled,
-      (state: AuthState, action: PayloadAction<UserInfoResponse>) => {
+      (
+        state: AuthState,
+        action: PayloadAction<
+          UserInfoResponse & {
+            access_token: string
+          }
+        >
+      ) => {
         const user = action.payload
         state.user = {
           id: user.id,
@@ -102,6 +114,8 @@ const authSlice = createSlice({
           role: user.role,
           avatar: user.avatar?.url
         }
+
+        state.accessToken = action.payload.access_token
         state.isAuth = true
       }
     )
