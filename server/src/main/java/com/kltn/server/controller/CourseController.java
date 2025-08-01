@@ -47,7 +47,6 @@ public class CourseController {
     return ResponseEntity.status(response.getCode()).body(response);
   }
 
-
   @GetMapping("user")
   public ResponseEntity<ApiResponse<List<UserCourseResponse>>> getCourseOfUser() {
     var response = courseService.getCourseOfUser();
@@ -56,21 +55,28 @@ public class CourseController {
 
   @PostMapping()
   public ResponseEntity<ApiResponse<List<UserCourseResponse>>> addCourseForUser(
-    @Valid @RequestBody UserCourseRequest userCourse) {
+      @Valid @RequestBody UserCourseRequest userCourse) {
     var response = courseService.addCourseForUser(userCourse.getCoursePoints());
+    return ResponseEntity.status(response.getCode()).body(response);
+  }
+
+  @PostMapping("bypass")
+  public ResponseEntity<ApiResponse<List<UserCourseResponse>>> addCourseForUserByPass(
+      @Valid @RequestBody UserCourseRequest userCourse) {
+    var response = courseService.addCourseForUserByPass(userCourse.getCoursePoints());
     return ResponseEntity.status(response.getCode()).body(response);
   }
 
   @PutMapping
   public ResponseEntity<ApiResponse<List<UserCourseResponse>>> updatePoint(
-    @Valid @RequestBody UserCourseUpdateRequest userCourse) {
+      @Valid @RequestBody UserCourseUpdateRequest userCourse) {
     var response = courseService.updatePoint(userCourse);
     return ResponseEntity.status(response.getCode()).body(response);
   }
 
   @DeleteMapping
   public ResponseEntity<ApiResponse<Boolean>> deleteUserCourse(
-    @RequestParam String userId, @RequestParam String courseId) {
+      @RequestParam String userId, @RequestParam String courseId) {
     var response = courseService.deleteUserCourse(userId, courseId);
     return ResponseEntity.status(response.getCode()).body(response);
   }

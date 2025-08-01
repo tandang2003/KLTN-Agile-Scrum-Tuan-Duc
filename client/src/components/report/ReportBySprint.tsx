@@ -2,6 +2,7 @@ import ListView from '@/components/ListView'
 import ReportSprintSheetTeacher from '@/components/report/ReportSprintSheetTeacher'
 import RowFileReport from '@/components/RowFileReport'
 import ToolTip from '@/components/Tooltip'
+import { Separator } from '@/components/ui/separator'
 import { useGetAllResourceBySprintQuery } from '@/feature/workspace/workspace.api'
 import { Id } from '@/types/other.type'
 import { ProjectResourceResponseType } from '@/types/resource.type'
@@ -17,14 +18,18 @@ const ReportBySprint = ({ sprintId, isOpen, onOpenChange }: Props) => {
     <ReportSprintSheetTeacher isOpen={isOpen} onOpenChange={onOpenChange}>
       <div className='mt-4'>
         <ListView<ProjectResourceResponseType[0]>
-          data={data}
+          data={data?.map((item) => ({
+            ...item,
+            name: item.title
+          }))}
           loading={isFetching}
           orientation='vertical'
           render={(item) => (
             <div key={item.id} className='mt-3'>
-              <ToolTip trigger={<h2 className='text-xl'>{item.title}</h2>}>
+              <ToolTip trigger={<h2 className='text-xl'>{item.name}</h2>}>
                 {item.id}
               </ToolTip>
+              <Separator className='my-3' />
               <RowFileReport
                 data={{
                   daily: item.daily,

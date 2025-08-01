@@ -19,7 +19,6 @@ import {
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
-  PointerSensor,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
@@ -233,12 +232,6 @@ function KanbanRoot<T>(props: KanbanRootProps<T>) {
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter
-    }),
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        delay: 90,
-        tolerance: 5
-      }
     })
   )
 

@@ -17,7 +17,7 @@ const RowFileReport = ({ data }: RowFileReportProps) => {
   const message = messages.component.reportSprintSheet
 
   return (
-    <div className='mt-3 flex gap-10'>
+    <div className='flex gap-10'>
       <div>
         <h4 className='mb-3 text-base font-semibold'>
           {message.form.daily1.label}

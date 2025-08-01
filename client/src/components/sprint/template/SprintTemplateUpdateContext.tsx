@@ -6,4 +6,4 @@ type ContextValue = {
   setSprintModel: (sprint: SprintModel) => void
 }
 
-const [useSprint, SprintProvider] = createCtx<ContextValue>()
+const [_useSprint, _SprintProvider] = createCtx<ContextValue>()

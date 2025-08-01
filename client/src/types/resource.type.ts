@@ -69,14 +69,13 @@ type ProjectResourceResponseType = Array<
   {
     id: Id
     name: string
-    title: string
   } & ResourceOfSprintResponseType
 >
 
 type SprintResourceResponseType = Array<
   {
     id: Id
-    name: string
+    title: string
   } & ResourceOfSprintResponseType
 >
 

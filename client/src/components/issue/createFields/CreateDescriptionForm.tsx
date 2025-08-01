@@ -42,7 +42,6 @@ const CreateDescriptionForm = ({}: CreateDescriptionProps) => {
     }
 
     const handler = setTimeout(() => {
-      console.log('desc')
       setValue(
         'complexOfDescription',
         getComplexityBilingual(watchDescription ?? '')

@@ -18,10 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import messages from '@/constant/message.const'
-import {
-  useCreateCourseMutation,
-  useGetPrerequisiteCourseQuery
-} from '@/feature/course/course.api'
+import { useCreateCourseByPassMutation } from '@/feature/course/course.api'
 import { useClearGetWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import {
   CourseResponseType,
@@ -33,7 +30,7 @@ import {
 import { Id } from '@/types/other.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DialogTitle } from '@radix-ui/react-dialog'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -51,43 +48,41 @@ const WorkspaceCourseCheckLayer = ({
   const message = messages.component.workspaceCourseLayerCheck
 
   const [open, setIsOpen] = useState(false)
-  const [hasInitialized, setHasInitialized] = useState(false)
+  const init = useRef(false)
 
   useEffect(() => {
-    if (!hasInitialized) {
-      const pass = prerequisiteCourseOfUser.every((item) => item.point != 0)
+    if (!init.current) {
+      const pass = prerequisiteCourseOfUser.every((item) => item.point != -1)
       if (pass) {
         setIsOpen(false)
+        toast.info('Thỏa mãn điều kiện môn học')
       } else {
         setIsOpen(true)
+        toast.info('Vui lòng nhập môn học cần để tham gia workspace')
+
+        form.reset({
+          courses: prerequisiteCourseOfUser.map((item) => ({
+            courseId: item.course.id,
+            point: undefined
+          }))
+        })
       }
-      setHasInitialized(true)
+      init.current = true
     }
-  }, [hasInitialized])
+  }, [init.current])
 
   const [clear] = useClearGetWorkspaceMutation()
-  const [create, { error, isError }] = useCreateCourseMutation()
+  const [create, { error, isError }] = useCreateCourseByPassMutation()
 
   const form = useForm<CreateCourseSchemaType>({
     resolver: zodResolver(CreateCourseSchema),
     defaultValues: {
       courses: prerequisiteCourseOfUser.map((item) => ({
         courseId: item.course.id,
-        point: undefined
+        point: 0
       }))
     }
   })
-
-  useEffect(() => {
-    if (prerequisiteCourseOfUser.length > 0) {
-      form.reset({
-        courses: prerequisiteCourseOfUser.map((item) => ({
-          courseId: item.course.id,
-          point: undefined
-        }))
-      })
-    }
-  }, [prerequisiteCourseOfUser])
 
   const handleSubmit = (data: CreateCourseSchemaType) => {
     const dataParse = CreateCourseSchemeParse.parse(data)
@@ -103,7 +98,7 @@ const WorkspaceCourseCheckLayer = ({
       })
   }
 
-  if (!hasInitialized) return null // Wait until all is ready
+  if (!init.current) return null // Wait until all is ready
 
   return (
     <Dialog open={open}>

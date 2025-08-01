@@ -9,7 +9,6 @@ import UpdateRelationship from '@/components/issue/updateFields/UpdateRelationsh
 import UpdateSubTaskForm from '@/components/issue/updateFields/UpdateSubTaskIssue'
 import UpdateTopicForm from '@/components/issue/updateFields/UpdateTopicIssue'
 import { Form } from '@/components/ui/form'
-import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import messages from '@/constant/message.const'
@@ -137,7 +136,9 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
                   label={<span className='flex-1'>{message.assignee}</span>}
                 >
                   {isLeader ? (
-                    <UpdateMemberIssue form={form} name='assigneeId' />
+                    <div className={'flex-1'}>
+                      <UpdateMemberIssue form={form} name='assigneeId' />
+                    </div>
                   ) : (
                     <span>{data.assignee?.name ?? 'Chưa đựợc gán'}</span>
                   )}
@@ -147,7 +148,9 @@ const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
                   label={<span className='flex-1'>{message.reviewer}</span>}
                 >
                   {isLeader ? (
-                    <UpdateMemberIssue form={form} name='reviewerId' />
+                    <div className={'flex-1'}>
+                      <UpdateMemberIssue form={form} name='reviewerId' />
+                    </div>
                   ) : (
                     <span>{data.reviewer?.name ?? 'Chưa đựợc gán'}</span>
                   )}

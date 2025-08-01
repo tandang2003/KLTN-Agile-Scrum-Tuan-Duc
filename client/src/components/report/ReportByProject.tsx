@@ -2,6 +2,7 @@ import ListView from '@/components/ListView'
 import ReportSprintSheetTeacher from '@/components/report/ReportSprintSheetTeacher'
 import RowFileReport from '@/components/RowFileReport'
 import ToolTip from '@/components/Tooltip'
+import { Separator } from '@/components/ui/separator'
 import { useGetAllResourceByProjectQuery } from '@/feature/workspace/workspace.api'
 import { Id } from '@/types/other.type'
 import { ProjectResourceResponseType } from '@/types/resource.type'
@@ -31,6 +32,7 @@ const ReportByProject = ({ projectId, isOpen, onOpenChange }: Props) => {
               >
                 {item.id}
               </ToolTip>
+              <Separator className='my-3' />
               <RowFileReport
                 data={{
                   daily: item.daily,

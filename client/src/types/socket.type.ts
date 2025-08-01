@@ -10,4 +10,14 @@ type ReceiveMessageFnType<T> = (
   callback: AppMessageCallbackType<T>
 ) => StompSubscription
 
-export type { AppIMessage, AppMessageCallbackType, ReceiveMessageFnType }
+type MessageResponse<T> = {
+  type: 'UPDATE' | 'PREDICT' | 'TIME' | 'COMMENT_CREATE' | 'COMMENT_DELETE'
+  message: T
+}
+
+export type {
+  AppIMessage,
+  AppMessageCallbackType,
+  ReceiveMessageFnType,
+  MessageResponse
+}

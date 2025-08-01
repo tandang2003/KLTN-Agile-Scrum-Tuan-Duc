@@ -48,6 +48,17 @@ const courseService = {
       coursePoints: req
     })
     return res.data.data
+  },
+  addCourseByPass: async (req: CreateCourseRequestType) => {
+    const res = await httpService.post<
+      ResponseApi<UserCourseResponseType[]>,
+      {
+        coursePoints: CreateCourseRequestType
+      }
+    >(`/course/bypass`, {
+      coursePoints: req
+    })
+    return res.data.data
   }
 }
 export default courseService

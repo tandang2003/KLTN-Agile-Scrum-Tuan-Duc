@@ -79,7 +79,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
-  ip: 192.168.1.62
+  ip: 192.168.1.59
   whitelist:
     - auth
     - auth/register
@@ -102,6 +102,14 @@ data:
 python:
   server: http://localhost:8000/aggregate
 
+google:
+  sheet:
+    sprint:
+      sheet: Sheet1
+      spreadsheetId: 1TQjsIekHqYxIuronG_y_hgL0XIM1ZPV9ve7gsJwqsCQ
+    issue:
+      sheet: Sheet1
+      spreadsheetId: 1G3NKAq6O5OyjNPbKwWvvvIfZ9RVU3otE3M8zaX_QJxU
 #kafka:
 #  topic:
 #    send-object-customer:

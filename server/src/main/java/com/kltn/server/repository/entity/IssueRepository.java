@@ -30,18 +30,18 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndSprintIdAndStatus(String projectId, String sprintId, IssueStatus status);
 
   @Query(value = "SELECT COUNT(DISTINCT assignee_id) FROM issues " +
-      "WHERE project_id = :projectId AND sprint_id = :sprintId AND assignee_id IS NOT NULL", nativeQuery = true)
+    "WHERE project_id = :projectId AND sprint_id = :sprintId AND assignee_id IS NOT NULL", nativeQuery = true)
   int countByProjectIdAndSprintIdAndAssigneeNotNull(String projectId, String sprintId);
 
   @Query("SELECT COUNT(DISTINCT i.sprint) " +
-      "FROM IssueRelation ir " +
-      "JOIN ir.issue i " +
-      "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " +
-      "AND ir.issueRelated.id = :issueId")
+    "FROM IssueRelation ir " +
+    "JOIN ir.issue i " +
+    "WHERE ir.typeRelation = 'IS_BLOCKED_BY' " +
+    "AND ir.issueRelated.id = :issueId")
   int getNumberOfAffectVersions(@Param("issueId") String issueId);
 
   @Query(value = "SELECT r.* FROM issues i JOIN issue_resources rs ON i.id=rs.issue_id" + "JOIN resources r ON r" +
-      ".id=rs.issue_id", nativeQuery = true)
+    ".id=rs.issue_id", nativeQuery = true)
   List<Resource> getResources(String issueId);
 
   @Query(value = "SELECT ir.* FROM issue_relation ir WHERE ir.issue_id= :issueId ", nativeQuery = true)
@@ -50,10 +50,10 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndSprintIdAndDtAppendBefore(String projectId, String sprintId, Instant dtAppendBefore);
 
   int countByProjectIdAndSprintIdAndDtAppendLessThanEqual(String projectId, String sprintId,
-      Instant dtAppendIsLessThan);
+                                                          Instant dtAppendIsLessThan);
 
   int countByProjectIdAndSprintIdAndDtAppendGreaterThan(String projectId, String sprintId,
-      Instant dtAppendIsGreaterThan);
+                                                        Instant dtAppendIsGreaterThan);
 
   int countByProjectIdAndSprintIdAndStatusIn(String projectId, String sprintId, Collection<IssueStatus> statuses);
 
@@ -64,10 +64,10 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndSprintIdAndAssigneeId(String projectId, String sprintId, String assigneeId);
 
   int countByProjectIdAndSprintIdAndAssigneeIdAndStatus(String projectId, String sprintId, String assigneeId,
-      IssueStatus status);
+                                                        IssueStatus status);
 
   int countByProjectIdAndSprintIdAndAssigneeIdAndStatusNot(String projectId, String sprintId, String assigneeId,
-      IssueStatus status);
+                                                           IssueStatus status);
 
   int countByProjectIdAndSprintIdAndPriority(String projectId, String sprintId, IssuePriority priority);
 
@@ -96,4 +96,5 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
   int countByProjectIdAndAssigneeIdAndStatusAndSprintId(String projectId, String assigneeId, IssueStatus status, String sprintId);
 
   int countByProjectIdAndStatusAndSprintId(String projectId, IssueStatus status, String sprintId);
+
 }

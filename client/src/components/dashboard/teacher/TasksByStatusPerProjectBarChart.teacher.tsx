@@ -1,5 +1,6 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import Paging from '@/components/Paging'
+import { Separator } from '@/components/ui/separator'
 import { color } from '@/constant/app.const'
 import messages from '@/constant/message.const'
 import { useGetProjectWorkspaceQuery } from '@/feature/dashboard/dashboard.api'
@@ -64,7 +65,6 @@ const TasksByStatusPerProjectBarChart =
       containerWidth,
       (data?.items?.length || 0) * BAR_WIDTH
     )
-
     return (
       <>
         <h2 className='mb-4 text-center text-2xl font-bold text-gray-800'>
@@ -90,8 +90,9 @@ const TasksByStatusPerProjectBarChart =
                 {(data) => {
                   return (
                     <>
-                      <div className=''>
+                      <div>
                         <ChartStatusPerProject data={data.items} />
+                        <Separator className='my-4' />
                         <Chart data={data.items} />
                       </div>
                       <Paging
@@ -101,10 +102,10 @@ const TasksByStatusPerProjectBarChart =
                           totalItems: data.totalItems
                         }}
                         onPageChange={(page) => {
-                          setPage({
-                            page: page,
-                            size: 10
-                          })
+                          setPage((prev) => ({
+                            ...prev,
+                            page: page
+                          }))
                         }}
                       />
                     </>
@@ -238,10 +239,14 @@ const ChartStatusPerProject = ({
                       tooltip: {
                         callbacks: {
                           label: (tooltipItem) => {
-                            const value = tooltipItem.raw
-                            const label = ['Done', 'Failed', 'Remaining'][
-                              tooltipItem.dataIndex
+                            const labels = [
+                              message.dataset.labelIssueDone,
+                              message.dataset.labelIssueReview,
+                              message.dataset.labelIssueInProcess,
+                              message.dataset.labelIssueTodo
                             ]
+                            const value = tooltipItem.raw
+                            const label = labels[tooltipItem.dataIndex]
                             return `${label}: ${value}`
                           }
                         }

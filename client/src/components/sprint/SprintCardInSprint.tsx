@@ -20,7 +20,6 @@ import {
 } from '@/feature/issue/issue.api'
 import useAuthGuard from '@/hooks/use-auth'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import boardService from '@/services/board.service'
 import { IssueResponse } from '@/types/issue.type'
 import { toast } from 'sonner'
 

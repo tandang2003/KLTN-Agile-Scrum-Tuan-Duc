@@ -43,7 +43,6 @@ public class TokenUtils {
   @Autowired
   private ClockSimulator clockSimulator;
 
-
   public String generateAccessToken(Object authentication) {
     UserDetails userDetails;
     if (authentication instanceof Authentication)
@@ -53,66 +52,65 @@ public class TokenUtils {
     String subject = userDetails.getUsername();
     Instant now = Instant.now();
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                                         .issuer("myApp")
-                                         .issuedAt(now)
-                                         .expiresAt(now.plus(getAccessTokenExpiration(), ChronoUnit.SECONDS))
-                                         .subject(subject)
-                                         .claim("authorities", userDetails.getAuthorities()
-                                                                          .stream()
-                                                                          .map(GrantedAuthority::getAuthority)
-                                                                          .toList())
-                                         .claim("uniId", ((User) userDetails).getUniId())
-                                         .claim("sail", UUID.randomUUID()
-                                                            .toString())
-                                         .build();
+        .issuer("myApp")
+        .issuedAt(now)
+        .expiresAt(now.plus(getAccessTokenExpiration(), ChronoUnit.SECONDS))
+        .subject(subject)
+        .claim("authorities", userDetails.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .toList())
+        .claim("uniId", ((User) userDetails).getUniId())
+        .claim("sail", UUID.randomUUID()
+            .toString())
+        .build();
 
     return accessJwtEncoder.encode(JwtEncoderParameters.from(claimsSet))
-                           .getTokenValue();
+        .getTokenValue();
   }
 
   public String generateRefreshToken(Authentication authentication) {
     UserDetails user = (UserDetails) authentication.getPrincipal();
     Instant now = Instant.now();
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                                         .issuer("myApp")
-                                         .issuedAt(now)
-                                         .expiresAt(now.plus(getRefreshTokenExpiration(), ChronoUnit.SECONDS))
-                                         .subject(user.getUsername())
-                                         .claim("uniId", ((User) user).getUniId())
-                                         .claim("sail", UUID.randomUUID()
-                                                            .toString())
-                                         .build();
+        .issuer("myApp")
+        .issuedAt(now)
+        .expiresAt(now.plus(getRefreshTokenExpiration(), ChronoUnit.SECONDS))
+        .subject(user.getUsername())
+        .claim("uniId", ((User) user).getUniId())
+        .claim("sail", UUID.randomUUID()
+            .toString())
+        .build();
 
     return refreshJwtEncoder.encode(JwtEncoderParameters.from(claimsSet))
-                            .getTokenValue();
+        .getTokenValue();
   }
 
   public String generateVerifyToken(String context, Map<String, Object> data) {
     Instant now = Instant.now();
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                                         .issuer("verify_" + context)
-                                         .issuedAt(now)
-                                         .expiresAt(now.plus(getVerifyTokenExpiration(), ChronoUnit.SECONDS))
-                                         .claims(stringObjectMap -> stringObjectMap.putAll(data))
-                                         .build();
+        .issuer("verify_" + context)
+        .issuedAt(now)
+        .expiresAt(now.plus(getVerifyTokenExpiration(), ChronoUnit.SECONDS))
+        .claims(stringObjectMap -> stringObjectMap.putAll(data))
+        .build();
 
     return verifyTokenEncoder.encode(JwtEncoderParameters.from(claimsSet))
-                             .getTokenValue();
+        .getTokenValue();
   }
-
 
   public long getAccessTokenExpiration() {
     return Duration.parse("PT" + accessTokenTOL.toUpperCase())
-                   .getSeconds();
+        .getSeconds();
   }
 
   public long getRefreshTokenExpiration() {
     return Duration.parse("PT" + refreshTokenTOL.toUpperCase())
-                   .getSeconds();
+        .getSeconds();
   }
 
   public long getVerifyTokenExpiration() {
     return Duration.parse("PT" + verifyTokenTOL.toUpperCase())
-                   .getSeconds();
+        .getSeconds();
   }
 }

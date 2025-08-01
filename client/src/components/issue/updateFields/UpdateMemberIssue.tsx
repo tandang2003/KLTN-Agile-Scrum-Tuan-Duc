@@ -1,3 +1,4 @@
+import ToolTip from '@/components/Tooltip'
 import {
   FormControl,
   FormField,
@@ -133,7 +134,7 @@ const SelectItemWithValue = ({
   return (
     <SelectItem key={id} value={id}>
       <div>
-        <div>{name}</div>
+        <ToolTip trigger={<div>{name}</div>}>{id}</ToolTip>
         <Progress value={progress} className='mt-2' />
       </div>
     </SelectItem>

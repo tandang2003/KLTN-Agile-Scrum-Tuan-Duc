@@ -27,6 +27,7 @@ public record IssueResponse(String id,
     String description,
     AuthenticationResponse.UserDetailDTO assignee,
     AuthenticationResponse.UserDetailDTO reviewer,
+    int numComment,
     Instant start,
     Instant end) {
   public static IssueResponseBuilder builder() {
@@ -48,12 +49,13 @@ public record IssueResponse(String id,
     private String description;
     private AuthenticationResponse.UserDetailDTO assignee;
     private AuthenticationResponse.UserDetailDTO reviewer;
+    private int numComment;
     private Instant start;
     private Instant end;
 
     public IssueResponse build() {
       return new IssueResponse(id, name, projectId, sprintId, status, priority, tag, position, topics, subtasks,
-          attachments, description, assignee, reviewer, start, end);
+          attachments, description, assignee, reviewer, numComment, start, end);
     }
 
     public IssueResponseBuilder id(String id) {
@@ -135,6 +137,9 @@ public record IssueResponse(String id,
       this.end = end;
       return this;
     }
+    public IssueResponseBuilder numComment(int numComment) {
+      this.numComment = numComment;
+      return this;
+    }
   }
-
 }

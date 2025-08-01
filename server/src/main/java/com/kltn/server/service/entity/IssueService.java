@@ -38,6 +38,7 @@ import com.kltn.server.repository.entity.relation.PersonalSkillRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.SprintBoardMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -54,9 +55,10 @@ public class IssueService {
   private final UserMapper userMapper;
   private final PersonalSkillRepository personalSkillRepository;
   private final SkillMapper skillMapper;
+  private final IssueRepository issueRepository;
   private IssueMapper taskMapper;
   private ProjectSprintService projectSprintService;
-  private IssueRepository taskRepository;
+    private IssueRepository taskRepository;
   private UserService userService;
   private ResourceService resourceService;
   private IssueMongoService issueMongoService;
@@ -70,12 +72,12 @@ public class IssueService {
 
   @Autowired
   public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
-      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
-      ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService,
-      UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
-      IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
-      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper,
-      SprintBoardMongoService sprintBoardMongoService) {
+                      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
+                      ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService,
+                      UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
+                      IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
+                      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper,
+                      SprintBoardMongoService sprintBoardMongoService, IssueRepository issueRepository) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -93,6 +95,7 @@ public class IssueService {
     this.personalSkillRepository = personalSkillRepository;
     this.skillMapper = skillMapper;
     this.sprintBoardMongoService = sprintBoardMongoService;
+    this.issueRepository = issueRepository;
   }
 
   @SendKafkaEvent(topic = "task-log")
@@ -482,7 +485,6 @@ public class IssueService {
   }
 
   public ApiResponse<List<IssueResponse>> getIssuesBySprintId(IssueOfSprintRequest request) {
-
     String sprintId = request.getSprintId();
     String projectId = request.getProjectId();
     if (sprintId == null || sprintId.isEmpty()) {
@@ -529,34 +531,52 @@ public class IssueService {
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
 
-    if (task.getAssignee() != null) {
-      String assigneeId = task.getAssignee().getUniId();
-      long commentCount = Optional.ofNullable(taskMongo.getComments())
-          .orElse(Collections.emptyList()) // use empty list if null
-          .stream()
-          .filter(n -> assigneeId.equals(n.getFrom()))
-          .count();
-
-      if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() == IssueStatus.DONE)
-          && commentCount < 1) {
-        throw AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
-      }
-    }
-    if (task.getReviewer() != null) {
-      String reviewerId = task.getAssignee().getUniId();
-      long commentCount = Optional.ofNullable(taskMongo.getComments())
-          .orElse(Collections.emptyList()) // use empty list if null
-          .stream()
-          .filter(n -> reviewerId.equals(n.getFrom()))
-          .count();
-
-      if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() == IssueStatus.DONE)
-          && commentCount < 1) {
-        throw AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
-      }
+    // Check skip status
+    if ((request.getStatus().equals(IssueStatus.REVIEW) || request.getStatus().equals(IssueStatus.DONE))
+        && task.getStatus().equals(IssueStatus.TODO)) {
+      throw AppException.builder().error(Error.STATUS_ISSUE_CONFLICT).build();
     }
 
-    // TODO: Check reviewer
+    if (request.getStatus().equals(IssueStatus.DONE) && task.getStatus().equals(IssueStatus.INPROCESS)) {
+      throw AppException.builder().error(Error.STATUS_ISSUE_CONFLICT).build();
+
+    }
+
+    // Check comment
+    // if (request.getStatus() == IssueStatus.REVIEW) {
+    // if (task.getAssignee() != null) {
+    // String assigneeId = task.getAssignee().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> assigneeId.equals(n.getFrom()))
+    // .count();
+
+    // if (commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
+    // }
+    // }
+    // }
+
+    // if (request.getStatus() == IssueStatus.DONE) {
+    // if (task.getReviewer() != null) {
+    // String reviewerId = task.getReviewer().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> reviewerId.equals(n.getFrom()))
+    // .count();
+
+    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
+    // IssueStatus.DONE)
+    // && commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
+    // }
+    // }
+    // }
+
     if (request.getStatus().equals(IssueStatus.DONE)) {
       task.setOpen(false);
       task.setDtEnd(ClockSimulator.now());
@@ -887,6 +907,19 @@ public class IssueService {
     return point / (double) skills.size();
   }
 
+  public int getNoOfIssue (Project project, Sprint sprint){
+      return issueRepository.countByProjectIdAndSprintId(project.getId(), sprint.getId());
+  }
+
+
+  public double getVelDiff(Project project, Sprint sprint) {
+    double storyPoint = sprint.getStoryPoint();
+    double numIssueStart = getNumberOfIssuesAtStart(project, sprint);
+    double numIssueAdded = getNumberOfIssuesAdded(project, sprint);
+    double numIssueDone = getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.DONE));
+    return storyPoint / (numIssueStart + numIssueAdded) * numIssueDone - storyPoint;
+  }
+
   @SendKafkaEvent(topic = "task-log")
   @Transactional
   public ApiResponse<Void> delete(String id) {
@@ -942,7 +975,10 @@ public class IssueService {
     var issueMongo = issueMongoService.getById(id);
     List<User> members = issue.getProject().getMembers();
     List<UserSuitableResponse> suitableResponses = new ArrayList<>();
-    List<String> topics = issueMongo.getTopics().stream().map(Topic::getName).map(String::toLowerCase).toList();
+    List<String> topics = Optional.ofNullable(
+        issueMongo.getTopics()).orElse(Collections.emptyList())
+        .stream().map(Topic::getName).map(String::toLowerCase)
+        .toList();
 
     if (topics.isEmpty()) {
       return ApiResponse.<List<UserSuitableResponse>>builder()

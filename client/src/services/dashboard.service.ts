@@ -3,6 +3,7 @@ import httpService from '@/services/http.service'
 import {
   DashboardRes,
   DashboardWorkspaceResponse,
+  ProjectPredictRes,
   ProjectWorkloadRes,
   WorkloadDataItem
 } from '@/types/dashboard.type'
@@ -65,6 +66,22 @@ const dashboardService = {
     })
     const res = await httpService.get<ResponseApi<Page<ProjectWorkloadRes>>>(
       `/dashboard/workspace/project?${query}`
+    )
+    return res.data.data
+  },
+  getProjectPredict: async (
+    workspaceId: Id,
+    page: PageRequest,
+    sprintId?: Id
+  ): Promise<Page<ProjectPredictRes>> => {
+    const query = toQueryString({
+      workspaceId,
+      sprintId,
+      page: page.page,
+      size: page.size
+    })
+    const res = await httpService.get<ResponseApi<Page<ProjectPredictRes>>>(
+      `/dashboard/workspace/project/predict?${query}`
     )
     return res.data.data
   }
