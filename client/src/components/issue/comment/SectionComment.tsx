@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 const SectionComment = () => {
   const id = useAppSelector((state) => state.issueSlice.current?.id)
   const [comment, setComment] = useState<CommentResType[]>()
+
   useEffect(() => {
     if (id) {
       commentService.getComment(id).then((res) => {
@@ -17,6 +18,7 @@ const SectionComment = () => {
       })
     }
   }, [id])
+
   return (
     <CommentProvider initValue={comment} issueId={id as Id}>
       <section>

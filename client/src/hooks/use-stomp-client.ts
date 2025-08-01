@@ -34,6 +34,7 @@ export const useStompClient = ({
     client.debug = () => {}
 
     client.onConnect = () => {
+      console.log('connect success')
       ws.current = client
       setIsReady(true)
       onConnect?.(client)

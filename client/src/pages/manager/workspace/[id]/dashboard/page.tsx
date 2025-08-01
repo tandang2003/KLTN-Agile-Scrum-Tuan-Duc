@@ -1,5 +1,6 @@
 import ContainerDashboard from '@/components/dashboard/ContainerDashboard'
 import DashboardHeader from '@/components/dashboard/teacher/DashboardHeader'
+import ProjectPredict from '@/components/dashboard/teacher/ProjectPredict.teacher'
 import TasksByStatusPerProjectBarChart from '@/components/dashboard/teacher/TasksByStatusPerProjectBarChart.teacher'
 import TasksByStatusPerStudentBarChart from '@/components/dashboard/teacher/TasksByStatusPerStudentBarChart.teacher'
 import { ProjectDashBoardProvider } from '@/pages/manager/workspace/[id]/dashboard/context'
@@ -26,6 +27,9 @@ const WorkspaceDashboardPage = () => {
         </ContainerDashboard>
         <ContainerDashboard className='mt-2'>
           <TasksByStatusPerProjectBarChart />
+        </ContainerDashboard>
+        <ContainerDashboard className='mt-2'>
+          <ProjectPredict />
         </ContainerDashboard>
       </ProjectDashBoardProvider>
     </section>
