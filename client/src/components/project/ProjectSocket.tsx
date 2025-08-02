@@ -34,7 +34,11 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
           if (isUpdateResponse(value.bodyParse)) {
             if (!isNotify) {
               dispatch(enableNotification())
-              toast(<ProjectMessage data={value.bodyParse.message} />)
+              const { message } = value.bodyParse
+              if (message.createdBy) {
+                // render board again
+              }
+              toast(<ProjectMessage data={message} />)
             }
           }
           if (isPredictResponse(value.bodyParse)) {

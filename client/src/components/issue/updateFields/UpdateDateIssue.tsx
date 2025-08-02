@@ -19,8 +19,8 @@ const UpdateDateIssue = () => {
   useAutoUpdateField({
     form: form,
     field: 'date.from',
-    isPause: (_, value) => {
-      return value == undefined
+    isPause: (_, __) => {
+      return false
     },
     callApi: (_, value) => {
       return issueService.updateIssue({
@@ -34,8 +34,8 @@ const UpdateDateIssue = () => {
   useAutoUpdateField({
     form: form,
     field: 'date.to',
-    isPause: (_, value) => {
-      return value == undefined
+    isPause: (_, __) => {
+      return false
     },
     callApi: (_, value) => {
       return issueService.updateIssue({

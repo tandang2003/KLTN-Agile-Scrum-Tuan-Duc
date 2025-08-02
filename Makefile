@@ -1,4 +1,4 @@
-.PHONY: up down server client ai
+.PHONY: up down server client ai ai-docker
 
 up:
 	( \
@@ -23,6 +23,13 @@ ai:
 		cd ./AI && \
 		make run \
 	)
+
+ai-docker:
+	( \
+		cd ./docker/deployment && \
+		docker-compose up -d app-ai \
+	)
+
 
 server:
 	(\

@@ -61,22 +61,29 @@ const ClockSimulator = () => {
 
       // Move subscription logic here:
       const subscription = socketService.receiveMessageTime(client, (value) => {
-        const { time, timeSpeech, to, senderId } = value.bodyParse.message
-        if (senderId !== senderIdRef.current) {
-          setConfig({
-            initTime: new Date(time),
-            timeSpeech: timeSpeech,
-            timeEnd: new Date(to)
-          })
-          simulatorService.setSimulatorLocal(value.bodyParse.message)
+        const { type } = value.bodyParse
+        if (type === 'TIME') {
+          const { time, timeSpeech, to, senderId } = value.bodyParse.message
+          if (senderId !== senderIdRef.current) {
+            setConfig({
+              initTime: new Date(time),
+              timeSpeech: timeSpeech,
+              timeEnd: new Date(to)
+            })
+            simulatorService.setSimulatorLocal(value.bodyParse.message)
 
-          if (timeSpeech === 1) {
-            toast.info(`${senderId} đâ reset time`)
-            setIsReset(false)
-          } else {
-            toast.info(`${senderId} đang hiệu chỉnh time`)
-            setIsReset(true)
+            if (timeSpeech === 1) {
+              toast.info(`${senderId} đâ reset time`)
+              setIsReset(false)
+            } else {
+              toast.info(`${senderId} đang hiệu chỉnh time`)
+              setIsReset(true)
+            }
           }
+        }
+        if (type === 'SNAPSHOT') {
+          toast.info('Create snapshot success')
+          window.location.reload()
         }
       })
 

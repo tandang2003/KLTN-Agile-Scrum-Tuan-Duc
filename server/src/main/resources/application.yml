@@ -3,7 +3,7 @@ spring:
     name: server
     security:
       access-token:
-        time-of-life: 30M
+        time-of-life: 5H
         key:
           private-key: classpath:key/access/private_key.pem
           public-key: classpath:key/access/public_key.pem
@@ -79,7 +79,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
-  ip: 192.168.1.59
+  ip: 172.16.16.80
   whitelist:
     - auth
     - auth/register
@@ -100,7 +100,7 @@ verify:
 data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
-  server: http://localhost:8000/aggregate
+  server: http://localhost:8081/aggregate
 
 google:
   sheet:

@@ -71,9 +71,10 @@ const projectService = {
     })
   }
 }
-function isUpdateResponse(
-  res: ProjectMessageResponse
-): res is { type: 'UPDATE'; message: ProjectMessageUpdateResponse } {
+function isUpdateResponse(res: ProjectMessageResponse): res is {
+  type: 'UPDATE'
+  message: ProjectMessageUpdateResponse
+} {
   return res.type === 'UPDATE'
 }
 

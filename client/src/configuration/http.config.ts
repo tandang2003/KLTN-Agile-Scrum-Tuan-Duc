@@ -23,7 +23,7 @@ const setAuthorization = (accessToken?: string) => {
     : undefined
 }
 
-const setProjectAuthorization = (token: string) => {
+const setProjectAuthorization = (token?: string) => {
   appAxios.defaults.headers.common['Project-Authorization'] = token ?? undefined
 }
 
