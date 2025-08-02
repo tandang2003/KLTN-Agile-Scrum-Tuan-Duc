@@ -94,10 +94,6 @@ const CommentProvider = ({
     setComment(initValue)
   }, [initValue])
 
-  useEffect(() => {
-    console.log(comment)
-  }, [comment])
-
   const handlePushComment = (val: string) => {
     if (issueId && isReady && ws) {
       if (val.trim() === '') {

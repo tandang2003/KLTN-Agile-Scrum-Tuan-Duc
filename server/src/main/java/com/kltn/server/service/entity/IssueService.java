@@ -58,7 +58,7 @@ public class IssueService {
   private final IssueRepository issueRepository;
   private IssueMapper taskMapper;
   private ProjectSprintService projectSprintService;
-    private IssueRepository taskRepository;
+  private IssueRepository taskRepository;
   private UserService userService;
   private ResourceService resourceService;
   private IssueMongoService issueMongoService;
@@ -72,12 +72,12 @@ public class IssueService {
 
   @Autowired
   public IssueService(IssueRelationRepository issueRelationRepository, SnapshotService snapshotService,
-                      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
-                      ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService,
-                      UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
-                      IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
-                      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper,
-                      SprintBoardMongoService sprintBoardMongoService, IssueRepository issueRepository) {
+      TopicMapper topicMapper, SubTaskMapper subTaskMapper, ProjectService projectService,
+      ResourceService resourceService, ChangeLogMapper changeLogMapper, IssueMongoService issueMongoService,
+      UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
+      IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
+      PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper,
+      SprintBoardMongoService sprintBoardMongoService, IssueRepository issueRepository) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -907,10 +907,9 @@ public class IssueService {
     return point / (double) skills.size();
   }
 
-  public int getNoOfIssue (Project project, Sprint sprint){
-      return issueRepository.countByProjectIdAndSprintId(project.getId(), sprint.getId());
+  public int getNoOfIssue(Project project, Sprint sprint) {
+    return issueRepository.countByProjectIdAndSprintId(project.getId(), sprint.getId());
   }
-
 
   public double getVelDiff(Project project, Sprint sprint) {
     double storyPoint = sprint.getStoryPoint();

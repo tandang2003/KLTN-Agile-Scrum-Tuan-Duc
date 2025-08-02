@@ -3,6 +3,7 @@ import { PageRequest } from '@/types/http.type'
 import { IssueRelationShip } from '@/types/model/relationship'
 import { IssuePriority, IssueStatus } from '@/types/model/typeOf'
 import { Id } from '@/types/other.type'
+import { MessageResponse } from '@/types/socket.type'
 import { UserResponse } from '@/types/user.type'
 
 type ProjectNotificationRequest = PageRequest
@@ -66,10 +67,9 @@ type TimeMessageResponse = {
   senderId: string
 }
 
-type ProjectMessageResponse = {
-  type: 'UPDATE' | 'PREDICT'
-  message: ProjectMessageUpdateResponse | ProjectMessagePredictResponse
-}
+type ProjectMessageResponse = MessageResponse<
+  ProjectMessageUpdateResponse | ProjectMessagePredictResponse
+>
 
 type ProjectMessagePredictResponse = {
   status: boolean
