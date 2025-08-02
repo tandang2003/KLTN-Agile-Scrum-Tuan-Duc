@@ -54,6 +54,7 @@ const tokenService = {
   removeTokenLocal: () => {
     sessionStorage.removeItem(StorageItem.AccessToken)
     setAuthorization(undefined)
+    setProjectAuthorization(undefined)
   },
 
   restoreTokenLocal: (): string | undefined => {

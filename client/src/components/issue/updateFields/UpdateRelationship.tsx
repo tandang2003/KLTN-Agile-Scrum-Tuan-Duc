@@ -39,6 +39,8 @@ import { toast } from 'sonner'
 import Message from '@/components/Message'
 import _ from 'lodash'
 import TitleLevel from '@/components/TitleLevel'
+import Empty from '@/components/Empty'
+import { Badge } from '@/components/ui/badge'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -96,16 +98,22 @@ const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
     }
   }, [form?.typeRelation])
 
+  const relatedIssueIds = useMemo(() => {
+    return new Set(relationships?.map((r) => r.issueRelated.id) || [])
+  }, [relationships])
+
   return (
     <div className='flex flex-col gap-3'>
       <TitleLevel level={'lv-2'}>{message.title}</TitleLevel>
       <LoadingBoundary<RelationshipResponse[]>
         loading='Loading relationships...'
-        fallback={message.fallback}
+        fallback={<Empty>{message.fallback}</Empty>}
         data={relationships}
         isLoading={isLoading}
       >
-        {(data) => <RelationshipList items={data} issueId={issueId} />}
+        {(data) => {
+          return <RelationshipList items={data} issueId={issueId} />
+        }}
       </LoadingBoundary>
 
       {open === false ? (
@@ -149,11 +157,16 @@ const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
                 <SelectValue placeholder='Relation' />
               </SelectTrigger>
               <SelectContent>
-                {_.orderBy(issues, ['name'])?.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.name}
-                  </SelectItem>
-                ))}
+                {_.orderBy(issues, ['name'])
+                  .filter(
+                    (item) =>
+                      item.id !== issueId && !relatedIssueIds.has(item.id)
+                  )
+                  ?.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -266,8 +279,11 @@ const RelationshipItem = ({ issueRelated, issueId }: RelationshipItemProps) => {
     })
   }
   return (
-    <div className='border-accent flex justify-between rounded-md border-2 px-4 py-2 shadow-md'>
+    <div className='border-accent flex rounded-md border-2 px-4 py-2 shadow-md'>
       <span>{issueRelated.name}</span>
+      <Badge className='mr-2 ml-auto' status={issueRelated.status}>
+        {issueRelated.status}
+      </Badge>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Icon icon={'ri:more-fill'} />

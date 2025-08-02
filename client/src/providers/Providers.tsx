@@ -10,7 +10,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <AppGlobalState>
       <StateLoader loading={<Loading />}>
-        <Toaster expand={true} richColors position='bottom-right' />
+        <Toaster richColors position='bottom-right' />
         <AlertHostProvider>
           <SprintSelectProvider>{children}</SprintSelectProvider>
         </AlertHostProvider>

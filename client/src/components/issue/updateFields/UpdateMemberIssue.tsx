@@ -49,6 +49,9 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
 
   const { getValues, control } = form
   const totalTopic = getValues('topics')?.length || 0
+  const notShowId = getValues(
+    name == 'assigneeId' ? 'reviewerId' : 'assigneeId'
+  )
 
   const callApi: (
     field: FieldName,
@@ -92,13 +95,15 @@ const UpdateMemberIssue = ({ form, name, label }: SelectMemberProps) => {
             </FormControl>
             <SelectContent>
               <SelectItem value='null'>{message.select.null}</SelectItem>
-              {data?.map((item) => (
-                <SelectItemWithValue
-                  key={item.id}
-                  data={item}
-                  totalTopic={totalTopic}
-                />
-              ))}
+              {data
+                ?.filter((item) => item.id != notShowId)
+                ?.map((item) => (
+                  <SelectItemWithValue
+                    key={item.id}
+                    data={item}
+                    totalTopic={totalTopic}
+                  />
+                ))}
             </SelectContent>
           </Select>
           <FormMessage />

@@ -56,53 +56,51 @@ public class DecisionController {
   private final SprintService sprintService;
   private final SprintRepository sprintRepository;
   private final IssueService issueService;
-  String[] velDiffSprintRow = new String[]{
-    "project_id",
-    "sprint_id",
-    "story_point",
-    "no_issue_starttime",
-    "no_issue_added",
-    "no_issue_done",
-    "no_of_issue",//Số lượng issue
-    "no_of_issue_commited",//Số lượng issue cam kết hoàn thành tại thời điểm dự đoán
-    "vel_diff"
+  String[] velDiffSprintRow = new String[] {
+      "project_id",
+      "sprint_id",
+      "story_point",
+      "no_issue_starttime",
+      "no_issue_added",
+      "no_issue_done",
+      "no_of_issue", // Số lượng issue
   };
-  String[] sprintRow = new String[]{
-    "project_id",
-    "sprint_id",
-    "planday",
-    "story_point",
-    "no_issue_starttime",
-    "no_issue_added",
-    "no_issue_removed",
-    "no_issue_todo",
-    "no_issue_inprogress",
-    "no_issue_done",
-    "no_team_size"};
-  String[] issueRow = new String[]{
-    "issue_name",
-    "project_id",
-    "sprint_id",
-    "type",
-    "priority",
-    "no_affect_version",
-    "no_fix_version",
-    "no_link",
-    "no_of_comment",
-    "no_issue_blocking",
-    "no_issue_blocked",
-    "no_fix_version_change",
-    "no_priority_change",
-    "no_description_change",
-    "complexity_of_description",
-    "suitable_assignee"};
+  String[] sprintRow = new String[] {
+      "project_id",
+      "sprint_id",
+      "planday",
+      "story_point",
+      "no_issue_starttime",
+      "no_issue_added",
+      "no_issue_removed",
+      "no_issue_todo",
+      "no_issue_inprogress",
+      "no_issue_done",
+      "no_team_size" };
+  String[] issueRow = new String[] {
+      "issue_name",
+      "project_id",
+      "sprint_id",
+      "type",
+      "priority",
+      "no_affect_version",
+      "no_fix_version",
+      "no_link",
+      "no_of_comment",
+      "no_issue_blocking",
+      "no_issue_blocked",
+      "no_fix_version_change",
+      "no_priority_change",
+      "no_description_change",
+      "complexity_of_description",
+      "suitable_assignee" };
   @Value("${data.filepath}")
   String filePathOfData;
 
   @Autowired
   public DecisionController(DecisionService decisionService, WorkspaceService workspaceService,
-                            ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository,
-                            IssueService issueService) {
+      ProjectService projectService, SprintService sprintService, SprintRepository sprintRepository,
+      IssueService issueService) {
     this.decisionService = decisionService;
     this.workspaceService = workspaceService;
     this.projectService = projectService;
@@ -113,7 +111,7 @@ public class DecisionController {
 
   @GetMapping("{projectId}/{sprintId}/predict")
   public ResponseEntity<ApiResponse<Boolean>> makePredict(
-    @PathVariable String projectId, @PathVariable String sprintId) {
+      @PathVariable String projectId, @PathVariable String sprintId) {
     var response = decisionService.makePredict(projectId, sprintId);
 
     // Placeholder for decision logic
@@ -126,9 +124,9 @@ public class DecisionController {
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
 
     List<Sprint> sprints = workspace.getSprints()
-      .stream()
-      .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
-      .collect(Collectors.toList());
+        .stream()
+        .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
+        .collect(Collectors.toList());
     for (Sprint sprint : sprints) {
       List<Project> projects = sprint.getProjects();
       for (Project project : projects) {
@@ -140,19 +138,18 @@ public class DecisionController {
   }
 
   @GetMapping("store_vel_dif")
-  public ResponseEntity<ApiResponse<Boolean>> storeVel(@RequestParam String workspaceId,
-                                                       @RequestParam String stage) {
+  public ResponseEntity<ApiResponse<Boolean>> storeVel(@RequestParam String workspaceId) {
     Instant now = ClockSimulator.now();
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
 
     List<Sprint> sprints = workspace.getSprints()
-      .stream()
-      .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
-      .toList();
+        .stream()
+        .filter(s -> s.getDtStart().isBefore(now) && s.getDtEnd().isAfter(now))
+        .toList();
     for (Sprint sprint : sprints) {
       List<Project> projects = sprint.getProjects();
       for (Project project : projects) {
-        writeToExcelVelDiff(workspace.getId(), project.getId(), sprint.getId(), stage);
+        writeToExcelVelDiff(workspace.getId(), project.getId(), sprint.getId());
       }
     }
     return ResponseEntity.ok().body(ApiResponse.<Boolean>builder().data(true).build());
@@ -195,8 +192,7 @@ public class DecisionController {
 
       // Append new data row
       int rowCount = sheet.getLastRowNum();
-      // Google api
-      List<Object> newRowData = new java.util.ArrayList<>();
+
       Row newRow = sheet.createRow(rowCount + 1);
       for (int i = 0; i < sprintRow.length; i++) {
         Cell cell = newRow.createCell(i);
@@ -228,7 +224,7 @@ public class DecisionController {
             break;
           case "no_issue_inprogress":
             cell.setCellValue(issueService.getNumberOfIssuesByStatuses(project, sprint,
-              List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
+                List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
             break;
           case "no_issue_done":
             cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
@@ -277,9 +273,6 @@ public class DecisionController {
           header.createCell(i).setCellValue(issueRow[i]);
         }
       }
-
-      // Append new data row
-      List<List<Object>> issueDataToUpload = new ArrayList<>();
 
       int rowCount = sheet.getLastRowNum();
       for (Issue issue : issues) {
@@ -351,11 +344,11 @@ public class DecisionController {
     }
   }
 
-  public void writeToExcelVelDiff(String workspaceId, String projectId, String sprintId, String stage) {
+  public void writeToExcelVelDiff(String workspaceId, String projectId, String sprintId) {
     Sprint sprint = sprintService.getSprintById(sprintId);
     Project project = projectService.getProjectById(projectId);
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
-    String courseFile = this.filePathOfData + "/" + (stage == null ? "before" : stage) + "/" + workspace.getName();
+    String courseFile = this.filePathOfData + "/" + "vel_diff" + "/" + workspace.getName();
     String velDifSprintPath = courseFile + "/" + "vel_diff.xlsx";
 
     File file = new File(velDifSprintPath);
@@ -411,16 +404,6 @@ public class DecisionController {
             break;
           case "no_of_issue":
             cell.setCellValue(issueService.getNoOfIssue(project, sprint));
-            break;
-          case "no_of_issue_commited":
-            if (stage == null) {
-              cell.setCellValue(0);
-            } else {
-              cell.setCellValue(issueService.getNoOfIssue(project, sprint) * ((double) Integer.parseInt(stage) / 100));
-            }
-            break;
-          case "vel_diff":
-            cell.setCellValue(issueService.getVelDiff(project, sprint));
             break;
         }
       }

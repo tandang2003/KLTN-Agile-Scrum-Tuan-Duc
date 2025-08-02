@@ -19,11 +19,6 @@ const StoreData = ({ workspaceId, stage }: StoreDataProps) => {
           .storeData(workspaceId, stage)
           .then(() => {
             toast.success(`Create data stage ${stage} success`)
-            aggregateService
-              .storeVelDiff(workspaceId, stage.toString())
-              .then(() =>
-                toast.success(`Create vel diff stage ${stage} success`)
-              )
           })
           .catch(() => {
             toast.error('Create data failed')
