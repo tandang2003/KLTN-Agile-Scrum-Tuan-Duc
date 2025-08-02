@@ -850,13 +850,12 @@ public class IssueService {
 
   // số lượng issue block issue này lại
   public int getNumberOfBlocked(String id) {
-    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.IS_BLOCKED_BY, id);
+    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.IS_BLOCKED_BY, id)+issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.BLOCKS, id);
   }
 
-  // số lượng issue mà issue này block lại
+  // số lượng issue bij issue này block lại
   public int getNumberOfBlock(String id) {
-    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.IS_BLOCKED_BY,
-        id);
+    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.IS_BLOCKED_BY,id)+issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.BLOCKS,id);
   }
 
   public int getNumberOfComments(String id) {
