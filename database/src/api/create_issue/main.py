@@ -2,12 +2,13 @@ import requests
 from src.api.utils import set_header, get_project_token, login, ROOT_PATH, BASE_API
 import pandas as pd
 import json
+import datetime
 
-WORKSPACE_ID = "26b84f37-a0bb-4d11-8cc4-785e7707dfbb"
-UNI_ID='21130371'
+WORKSPACE_ID = "86a434ee-075e-406a-9098-aea8d4ae86f0"
+UNI_ID=''
 PASSWORD='123123123'
 ISSUE_FILE='issue.csv'
-
+FOLDER_DATE = 'ml'
 priority_map = {
     "EASY": 0,
     "MEDIUM": 1,
@@ -20,7 +21,7 @@ def parse_date(date_str: str) -> str:
 
 
 def preprocess ():
-    df = pd.read_csv(ROOT_PATH / "create_issue" / ISSUE_FILE, encoding='utf-8')
+    df = pd.read_csv(ROOT_PATH / "create_issue" /"data" / FOLDER_DATE / ISSUE_FILE, encoding='utf-8', sep="\t")
 
     # Drop completely empty rows
     df.dropna(how='all', inplace=True)
@@ -57,8 +58,8 @@ def main():
                 print(f"Skipping row {index} — already has ID: {row['id']}")
                 continue
 
-        topics_raw = row.get("topics_mapper", "")
-        topics = str(topics_raw).strip().split(", ")
+        topics_raw = row.get("topics", "")
+        topics = str(topics_raw).strip().split(",")
         topics_json = [{"name": topic.strip(), "color": ""} for topic in topics if topic.strip()]
 
         subtasks = str(row['subtasks']).strip().split(" - ")
@@ -69,8 +70,8 @@ def main():
 
         body = {
             "name": str(row['name']).strip(),
-            "projectId": str(row['projectId']).strip(),
-            "sprintId": str(row['sprintId']).strip(),
+            "projectId": str(row['project_map']).strip(),
+            "sprintId": str(row['sprint_map']).strip(),
             "status": "TODO",
             "priority": str(row['priority']).strip(),
             "assigneeId": str(row['assigneeId']),
@@ -79,8 +80,8 @@ def main():
             "topics": topics_json,
             "subtasks": subtasks_json,
             "complexOfDescription": priority_map.get(str(row['complexOfDescription']).strip().upper(), 0),
-            "start": parse_date(row["start"]),
-             "end": parse_date(row["end"]),
+            # "start": parse_date(row["start"]),
+            #  "end": parse_date(row["end"]),
         }
 
         print(json.dumps(body, indent=4, ensure_ascii=False))
@@ -99,7 +100,7 @@ def main():
       except Exception as e:
         print(f"Skipping row {index} due to error: {e}")
     # Optionally save updated CSV
-    df.to_csv(ROOT_PATH / "create_issue" /"issue_with_ids_.tsv", sep="\t", index=False)
+    df.to_csv(ROOT_PATH / "create_issue" /"data"/ FOLDER_DATE /"issue_with_ids_.tsv", index=False)
 
 if __name__ == '__main__':
     main()

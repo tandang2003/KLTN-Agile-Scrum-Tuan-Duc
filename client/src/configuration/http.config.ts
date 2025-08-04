@@ -7,7 +7,7 @@ import {
 } from '@/types/http.type'
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from 'axios'
 import { toast } from 'sonner'
-
+axios.defaults.withCredentials = true
 const appAxios = axios.create({
   baseURL: envConfig.BACKEND_URL,
   withCredentials: true

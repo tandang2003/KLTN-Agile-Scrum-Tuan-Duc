@@ -2,8 +2,8 @@ from src.api.utils import set_header, get_project_token, login, ROOT_PATH, BASE_
 import pandas as pd
 import requests
 
-workspace_id = "26b84f37-a0bb-4d11-8cc4-785e7707dfbb"
-
+workspace_id = "f228ad1b-f250-41b6-ab6e-7979a8c78a52"
+COURSE='ml'
 def merge_csv ():
     
     # Read the first file (only uniIds)
@@ -57,7 +57,7 @@ def main():
     # merge_csv()
     sent = []
     
-    df = pd.read_csv(ROOT_PATH / "create_project" /"merged_output.csv")
+    df = pd.read_csv(ROOT_PATH/ "create_project" / "data"/ COURSE  /"merged_output.csv", sep="\t")
 
     if "projectId" not in df.columns:
         df["projectId"] = None
@@ -82,7 +82,7 @@ def main():
               "name": str(row['name']),
               "description": str(row.get('desc', '')),
               "workspaceId": workspace_id,
-              "userId": str(row['id'])
+              "userId": str(row['user-id'])
           }
 
           print("Creating project:", body)

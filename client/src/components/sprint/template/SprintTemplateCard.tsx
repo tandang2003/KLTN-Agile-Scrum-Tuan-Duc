@@ -23,6 +23,7 @@ import messages, { getSprintStatusDisplayName } from '@/constant/message.const'
 import Message from '@/components/Message'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import ToolTip from '@/components/Tooltip'
+import BadgeSprint from '@/components/badge/BadgeSprint'
 type SprintTemplateCardProps = {
   id: Id
   data: SprintResponse
@@ -95,13 +96,9 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
         </span>
         <span className='ml-auto flex items-center gap-4'>
           <span>{message.point}: </span>
-          <Badge className='bg-green-500'>{data.storyPoint}</Badge>
-          <Badge
-            statusSprint={getStatusSprint(data)}
-            className='ml-auto w-[100px]'
-          >
-            {getSprintStatusDisplayName(getStatusSprint(data))}
-          </Badge>
+          <Badge className='w-[50px]'>{data.storyPoint}</Badge>
+          <BadgeSprint status={getStatusSprint(data)} className='ml-auto]' />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Icon icon={'ri:more-fill'} />
