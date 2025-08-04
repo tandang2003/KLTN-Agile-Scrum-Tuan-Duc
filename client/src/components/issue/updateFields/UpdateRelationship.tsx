@@ -13,7 +13,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
@@ -41,6 +43,11 @@ import _ from 'lodash'
 import TitleLevel from '@/components/TitleLevel'
 import Empty from '@/components/Empty'
 import { Badge } from '@/components/ui/badge'
+import useSprintOrder from '@/hooks/use-sprint-order'
+import { statusOrder } from '@/types/model/typeOf'
+import { getStatusSprint } from '@/lib/sprint.helper'
+import { Separator } from '@/components/ui/separator'
+import BadgeSprint from '@/components/badge/BadgeSprint'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]
@@ -51,6 +58,9 @@ const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
   const [form, setForm] = useState<Partial<CreateRelationshipIssueType>>({
     typeRelation: 'BLOCKS'
   })
+  const {
+    utils: { getSprintById }
+  } = useSprintOrder()
   const { data: relationships, isLoading } = useGetRelationshipQuery(issueId)
   const [trigger, { data: issues }] = useLazyGetIssueAvailableQuery()
   const [createIssue] = useCreateRelationshipMutation()
@@ -101,6 +111,18 @@ const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
   const relatedIssueIds = useMemo(() => {
     return new Set(relationships?.map((r) => r.issueRelated.id) || [])
   }, [relationships])
+
+  const { data: sprints } = useSprintOrder()
+  const grouped = _.groupBy(issues, 'sprintId')
+  const result = _(sprints.map((item) => item.id))
+    .filter((id) => grouped[id] && grouped[id].length > 0)
+    .map((id) => ({
+      sprintId: id,
+      issues: _.sortBy(grouped[id], (issue) =>
+        statusOrder.indexOf(issue.status)
+      )
+    }))
+    .value()
 
   return (
     <div className='flex flex-col gap-3'>
@@ -156,17 +178,35 @@ const UpdateRelationship = ({ issueId }: UpdateRelationshipProps) => {
               <SelectTrigger className='w-full'>
                 <SelectValue placeholder='Relation' />
               </SelectTrigger>
-              <SelectContent>
-                {_.orderBy(issues, ['name'])
-                  .filter(
-                    (item) =>
-                      item.id !== issueId && !relatedIssueIds.has(item.id)
+              <SelectContent className='w-fit'>
+                {result.map((sprint) => {
+                  const sprintDetail = getSprintById(sprint.sprintId)
+                  if (sprintDetail === null) return null
+                  return (
+                    <SelectGroup key={sprint.sprintId}>
+                      <Separator className='my-2' />
+                      <SelectLabel className='w-full text-black'>
+                        <Badge
+                          className='w-full text-xs'
+                          statusSprint={getStatusSprint(sprintDetail)}
+                        >
+                          {sprintDetail.title}
+                        </Badge>
+                      </SelectLabel>
+                      {sprint.issues
+                        .filter(
+                          (item) =>
+                            item.id !== issueId && !relatedIssueIds.has(item.id)
+                        )
+                        .map((issue) => (
+                          <SelectItem key={issue.id} value={issue.id}>
+                            {issue.name}
+                            <Badge status={issue.status}>{issue.status}</Badge>
+                          </SelectItem>
+                        ))}
+                    </SelectGroup>
                   )
-                  ?.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
+                })}
               </SelectContent>
             </Select>
           </div>

@@ -36,7 +36,7 @@ const badgeVariants = cva<{
         DONE: 'text-white done font-semibold'
       },
       statusSprint: {
-        PENDING: 'text-black bg-gray-400 font-semibold',
+        PENDING: 'text-white bg-gray-400 font-semibold',
         COMPLETE: 'text-white bg-green-500 font-semibold',
         RUNNING: 'text-white bg-blue-500 font-semibold'
       },
