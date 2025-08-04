@@ -2,8 +2,8 @@ from src.api.utils import set_header, get_project_token, login, ROOT_PATH, BASE_
 import pandas as pd
 import requests
 
-workspace_id = "26b84f37-a0bb-4d11-8cc4-785e7707dfbb"
-
+workspace_id = "139b821a-f5d0-49c8-9f26-da68e54d59a2"
+COURSE='android'
 def merge_csv ():
     
     # Read the first file (only uniIds)
@@ -57,7 +57,7 @@ def main():
     # merge_csv()
     sent = []
     
-    df = pd.read_csv(ROOT_PATH / "create_project" /"merged_output.csv")
+    df = pd.read_csv(ROOT_PATH/ "create_project" / "data"/ COURSE  /"merged_output.csv")
 
     if "projectId" not in df.columns:
         df["projectId"] = None
@@ -82,7 +82,7 @@ def main():
               "name": str(row['name']),
               "description": str(row.get('desc', '')),
               "workspaceId": workspace_id,
-              "userId": str(row['id'])
+              "userId": str(row['user-id'])
           }
 
           print("Creating project:", body)
@@ -93,7 +93,7 @@ def main():
               print(f"✅ Project created: {project_id}")
 
               # Step 3: Invite users
-              send_list = str(row['send']).split('\b')  # \b is BACKSPACE; use '\\b' or better delimiter if needed
+              send_list = str(row['send']).split(' - ')  # \b is BACKSPACE; use '\\b' or better delimiter if needed
               # ⬅️ Save projectId into DataFrame
               df.at[index, "projectId"] = project_id
               invite_body = {
@@ -116,7 +116,7 @@ def main():
           print(f"❌ Error processing row {index}: {e}")
           continue
 
-    df.to_csv(ROOT_PATH / "create_project" / "merged_output_with_project_ids.csv", index=False)
+    df.to_csv(ROOT_PATH / "create_project" /  "data"/ COURSE  / "merged_output_with_project_ids.csv", index=False)
     print("✅ Saved updated CSV with project IDs")
     
     print("All invited uniIds:", ",".join(map(str, sent)))

@@ -59,7 +59,6 @@ public class SecurityConfig {
   @Autowired
   private ApplicationProps applicationProps;
 
-
   @Bean
   public AuthenticationManager authenticationManager() {
     return new ProviderManager(List.of(basicAuthenticationProvider));
@@ -113,7 +112,7 @@ public class SecurityConfig {
     System.out.println("allowedHost");
     System.out.println(applicationProps.getReact());
     configuration.setAllowedOrigins(applicationProps.getReact());
-    configuration.setAllowedMethods(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);
     configuration.setMaxAge(3600L);

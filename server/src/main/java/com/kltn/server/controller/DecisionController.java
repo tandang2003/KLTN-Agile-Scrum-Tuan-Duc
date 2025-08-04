@@ -191,9 +191,8 @@ public class DecisionController {
       }
 
       // Append new data row
-      int rowCount = sheet.getLastRowNum();
-
-      Row newRow = sheet.createRow(rowCount + 1);
+      int newRowNum = findNextEmptyRow(sheet);
+      Row newRow = sheet.createRow(newRowNum);
       for (int i = 0; i < sprintRow.length; i++) {
         Cell cell = newRow.createCell(i);
         switch (sprintRow[i]) {
@@ -274,9 +273,12 @@ public class DecisionController {
         }
       }
 
-      int rowCount = sheet.getLastRowNum();
+      int newRowNum = findNextEmptyRow(sheet);
       for (Issue issue : issues) {
-        Row newRow = sheet.createRow(++rowCount);
+        if (newRowNum >= 1048576) {
+          throw new IllegalStateException("Excel row limit reached while writing issues.");
+        }
+        Row newRow = sheet.createRow(newRowNum++);
         for (int i = 0; i < issueRow.length; i++) {
           Cell cell = newRow.createCell(i);
           switch (issueRow[i]) {
@@ -422,4 +424,27 @@ public class DecisionController {
       throw new RuntimeException(e);
     }
   }
+
+  private int findNextEmptyRow(Sheet sheet) {
+    int maxRows = 1048576;
+    for (int i = 1; i < maxRows; i++) {
+      Row row = sheet.getRow(i);
+      if (row == null || isRowEmpty(row)) {
+        return i;
+      }
+    }
+    throw new IllegalStateException("No empty rows available in sheet. Excel row limit reached.");
+  }
+
+  private boolean isRowEmpty(Row row) {
+    if (row == null)
+      return true;
+    for (Cell cell : row) {
+      if (cell != null && cell.getCellType() != CellType.BLANK) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }
