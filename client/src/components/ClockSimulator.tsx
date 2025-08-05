@@ -41,6 +41,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { useStompClient } from '@/hooks/use-stomp-client'
 import { uuid } from '@/lib/utils'
 import socketService from '@/services/socket.service'
+import { useDate } from '@/providers/DateProvider'
 
 const ClockSimulator = () => {
   const [open, setOpen] = useState(false)
@@ -52,7 +53,7 @@ const ClockSimulator = () => {
     resolver: zodResolver(ClockSimulatorSchema)
   })
   const unsubscribeRef = useRef<(() => void) | null>(null)
-
+  const { setNow } = useDate()
   const auth = useAuth()
   useStompClient({
     accessToken: auth.accessToken,
@@ -71,7 +72,6 @@ const ClockSimulator = () => {
               timeEnd: new Date(to)
             })
             simulatorService.setSimulatorLocal(value.bodyParse.message)
-
             if (timeSpeech === 1) {
               toast.info(`${senderId} đâ reset time`)
               setIsReset(false)
@@ -80,6 +80,7 @@ const ClockSimulator = () => {
               setIsReset(true)
             }
           }
+          setNow(time)
         }
         if (type === 'SNAPSHOT') {
           toast.info('Create snapshot success')
@@ -120,6 +121,10 @@ const ClockSimulator = () => {
   }, [config])
 
   const simulatedTime = useSimulatedClock(hookConfig)
+
+  useEffect(() => {
+    setNow(simulatedTime)
+  }, [])
 
   const ClockDisplay = useMemo(
     () => (

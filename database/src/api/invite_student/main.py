@@ -1,9 +1,9 @@
 import requests
 from src.api.utils import set_header, get_project_token, login, ROOT_PATH, BASE_API
 import pandas as pd
-UNI_ID = "1000005"
+UNI_ID = "1000003"
 PASSWORD = "123123123"
-workspace_id = "26b84f37-a0bb-4d11-8cc4-785e7707dfbb"
+workspace_id = "139b821a-f5d0-49c8-9f26-da68e54d59a2"
 
 def main ():
     # Step 1: Authenticate and get headers

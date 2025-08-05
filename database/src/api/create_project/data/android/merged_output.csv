@@ -1,0 +1,7 @@
+name	desc	uniId	send	id	projectId	user-id
+Ứng dụng Sức Khỏe & Thể Dục	Phát triển ứng dụng theo dõi hoạt động thể chất, lượng calo tiêu thụ, giấc ngủ và cung cấp các bài tập, chế độ ăn uống gợi ý.	22130001	20130196 - 21130004	project5_uuid	project5	1e999da3-163f-4a7c-84cd-2678f6ca565d
+Ứng dụng Quản Lý Công Việc (To-Do List)	Xây dựng ứng dụng quản lý danh sách công việc, thiết lập nhắc nhở, phân loại theo dự án/mức độ ưu tiên và theo dõi tiến độ.	21130279	21130326 - 20130237	project6_uuid	project6	d48742db-1f1a-4bf1-aeef-1865a47b5d09
+Ứng dụng Mua Sắm Thực Phẩm Online	Phát triển ứng dụng cho phép người dùng đặt mua thực phẩm tươi sống, rau củ, thịt cá từ các cửa hàng địa phương. Có tính năng giao hàng.	21130335	21130304 - 21130309	project7_uuid	project7	8525cbcd-87f7-4826-96d2-05ef5a536c9b
+Ứng dụng Thư Viện Sách Điện Tử	Xây dựng ứng dụng đọc sách điện tử với kho sách phong phú, tính năng tìm kiếm, đánh dấu trang và tùy chỉnh hiển thị.	20130224	20130225 - 21130042	project8_uuid	project8	0fbf8da7-6caa-46bc-a29b-ee41767323dd
+Ứng dụng Tìm Việc Làm	Phát triển ứng dụng giúp người dùng tìm kiếm, nộp hồ sơ xin việc, theo dõi trạng thái ứng tuyển và nhận thông báo việc làm mới.	21130359	21130386 - 21130367	project9_uuid	project9	4587115e-b26e-4761-8de8-41826f97d842
+Ứng dụng Du Lịch & Hướng Dẫn Viên	Xây dựng ứng dụng cung cấp thông tin địa điểm du lịch, gợi ý lịch trình, bản đồ và các review từ người dùng. Có tính năng đặt tour.	21130371	21130390 - 21130076	project10_uuid	project10	e8940cd9-c8f9-4bd8-97b6-be4f7b8536e7
