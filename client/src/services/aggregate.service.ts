@@ -51,16 +51,17 @@ const aggregateService = {
     )
     return res.data
   },
-  storeData: async (workspaceId: Id): Promise<void> => {
+  storeData: async (workspaceId: Id, stage: number): Promise<void> => {
     const query = toQueryString({
       workspaceId: workspaceId,
-      stage: 30
+      stage: stage
     })
     await httpService.get<ResponseApi<void>>(`/decision/store-data?${query}`)
   },
-  storeVelDiff: async (workspaceId: Id): Promise<void> => {
+  storeVelDiff: async (workspaceId: Id, stage?: string): Promise<void> => {
     const query = toQueryString({
-      workspaceId: workspaceId
+      workspaceId: workspaceId,
+      stage
     })
     await httpService.get<ResponseApi<void>>(`/decision/store_vel_dif?${query}`)
   }

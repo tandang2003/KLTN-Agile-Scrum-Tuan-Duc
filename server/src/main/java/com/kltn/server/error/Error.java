@@ -63,7 +63,9 @@ public enum Error {
   PERSONAL_SKILL_NOT_FOUND(404, "Không tìm thấy kỹ năng cá nhân"),
   DAILY_FILE_ALREADY_UPLOAD(HttpServletResponse.SC_CONFLICT, "Tập tin daily đã được tải lên"),
   COMMENT_ASSIGNEE_STATUS_ISSUE(HttpServletResponse.SC_CONFLICT, "Người được giao nhiệm vụ chưa comment"),
-  COMMENT_REVIEWER_STATUS_ISSUE(HttpServletResponse.SC_CONFLICT, "Người được giao review chưa comment");
+  COMMENT_REVIEWER_STATUS_ISSUE(HttpServletResponse.SC_CONFLICT, "Người được giao review chưa comment"),
+  STATUS_ISSUE_CONFLICT(HttpServletResponse.SC_CONFLICT,
+      "Trạng thái thay đổi quá đôt ngột, vui lòng thực hiện theo thứ tự");
 
   private int code;
   private String message;

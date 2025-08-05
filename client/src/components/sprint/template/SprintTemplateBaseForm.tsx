@@ -19,6 +19,8 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import messages from '@/constant/message.const'
+import { getMiddleDate } from '@/lib/date.helper'
+import { useDate } from '@/providers/DateProvider'
 import {
   BaseSprintFormSchema,
   BaseSprintFormType,
@@ -47,6 +49,7 @@ const SprintTemplateBaseForm = ({
   submitText = 'Create Sprint'
 }: SprintTemplateFormProps) => {
   const message = messages.component.sprint.template.baseForm
+  const { now } = useDate()
   const [durationValue, setDurationValue] = useState<{
     active: DurationType
     list: DurationType[]
@@ -59,11 +62,11 @@ const SprintTemplateBaseForm = ({
     resolver: zodResolver(BaseSprintFormSchema),
     defaultValues: initialValues ?? {
       title: '',
-      predict: addDays(new Date(), 4),
+      predict: addDays(now, 4),
       storyPoint: 0,
       description: '',
-      start: addDays(new Date(), 2),
-      end: addDays(new Date(), 7)
+      start: addDays(now, 2),
+      end: addDays(now, 7)
     }
   })
 
@@ -92,6 +95,13 @@ const SprintTemplateBaseForm = ({
     }
   }, [durationValue, startDate])
 
+  useEffect(() => {
+    if (!predictDate) {
+      const middle = getMiddleDate(startDate, endDate)
+      form.setValue('predict', middle)
+    }
+  }, [])
+
   const handleSelectDurationChange = (value: string) => {
     if (value) {
       setDurationValue((prev) => ({
@@ -102,7 +112,6 @@ const SprintTemplateBaseForm = ({
   }
 
   const handleSubmit = (values: CreateSprintFormType) => {
-    console.log(JSON.stringify(values))
     onSubmit?.(values, form)
   }
 

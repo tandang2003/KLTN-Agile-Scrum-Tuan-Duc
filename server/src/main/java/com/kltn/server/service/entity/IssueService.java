@@ -20,6 +20,7 @@ import com.kltn.server.mapper.entity.IssueMapper;
 import com.kltn.server.mapper.entity.SkillMapper;
 import com.kltn.server.mapper.entity.UserMapper;
 import com.kltn.server.model.base.BaseEntity;
+import com.kltn.server.model.collection.model.Relation;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.collection.snapshot.IssueSnapshot;
 import com.kltn.server.model.entity.*;
@@ -38,6 +39,7 @@ import com.kltn.server.repository.entity.relation.PersonalSkillRepository;
 import com.kltn.server.service.mongo.IssueMongoService;
 import com.kltn.server.service.mongo.SprintBoardMongoService;
 import com.kltn.server.service.mongo.snapshot.SnapshotService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -54,6 +56,7 @@ public class IssueService {
   private final UserMapper userMapper;
   private final PersonalSkillRepository personalSkillRepository;
   private final SkillMapper skillMapper;
+  private final IssueRepository issueRepository;
   private IssueMapper taskMapper;
   private ProjectSprintService projectSprintService;
   private IssueRepository taskRepository;
@@ -75,7 +78,7 @@ public class IssueService {
       UserService userService, ProjectSprintService projectSprintService, IssueMapper taskMapper,
       IssueRepository taskRepository, SprintService sprintService, UserMapper userMapper,
       PersonalSkillRepository personalSkillRepository, SkillMapper skillMapper,
-      SprintBoardMongoService sprintBoardMongoService) {
+      SprintBoardMongoService sprintBoardMongoService, IssueRepository issueRepository) {
     this.issueRelationRepository = issueRelationRepository;
     this.snapshotService = snapshotService;
     this.taskMapper = taskMapper;
@@ -93,6 +96,7 @@ public class IssueService {
     this.personalSkillRepository = personalSkillRepository;
     this.skillMapper = skillMapper;
     this.sprintBoardMongoService = sprintBoardMongoService;
+    this.issueRepository = issueRepository;
   }
 
   @SendKafkaEvent(topic = "task-log")
@@ -268,7 +272,13 @@ public class IssueService {
                 .error(Error.NOT_FOUND)
                 .message("Task not found in this sprint")
                 .build());
+
+        List<IssueRelation> relations = rebuildIssueRelation(snapshots, id);
+        relations.forEach(r -> r.setIssueRelated(entity));
+        relations = relations.stream().map(this::reverse).toList();
+
         IssueDetailResponse response = taskMapper.toIssueDetailResponseFromSnapshot(snapshot);
+        response.setRelations(taskMapper.toListIssueRelationResponse(relations));
 
         response.setAssignee(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getAssignee())));
         response.setReviewer(userMapper.toUserDetailDTO(userService.getUserByUniId(snapshot.getReviewer())));
@@ -286,7 +296,23 @@ public class IssueService {
         .message("Get task detail successfully")
         .data(taskResponse)
         .build();
+  }
 
+  private List<IssueRelation> rebuildIssueRelation(List<IssueSnapshot> snapshots, String issueId) {
+    List<IssueRelation> relations = new ArrayList<>();
+    for (IssueSnapshot snapshot : snapshots) {
+      if (snapshot.getNkTaskId().equals(issueId))
+        continue;
+      for (Relation<String> relation : snapshot.getRelated()) {
+        if (relation.getRelated().equals(issueId)) {
+          IssueRelation issueRelation = new IssueRelation();
+          issueRelation.setIssue(Issue.builder().id(snapshot.getNkTaskId()).name(snapshot.getName()).build());
+          issueRelation.setTypeRelation(relation.getRelationType());
+          relations.add(issueRelation);
+        }
+      }
+    }
+    return relations;
   }
 
   @SendKafkaEvent(topic = "task-log")
@@ -528,6 +554,19 @@ public class IssueService {
     var taskMongo = issueMongoService.getById(id);
     ChangeLogRequest changeLog;
 
+    // Check skip status
+    if ((request.getStatus().equals(IssueStatus.REVIEW) || request.getStatus().equals(IssueStatus.DONE))
+        && task.getStatus().equals(IssueStatus.TODO)) {
+      throw AppException.builder().error(Error.STATUS_ISSUE_CONFLICT).build();
+    }
+
+    if (request.getStatus().equals(IssueStatus.DONE) && task.getStatus().equals(IssueStatus.INPROCESS)) {
+      throw AppException.builder().error(Error.STATUS_ISSUE_CONFLICT).build();
+
+    }
+
+    // Check comment
+    // if (request.getStatus() == IssueStatus.REVIEW) {
     // if (task.getAssignee() != null) {
     // String assigneeId = task.getAssignee().getUniId();
     // long commentCount = Optional.ofNullable(taskMongo.getComments())
@@ -535,27 +574,28 @@ public class IssueService {
     // .stream()
     // .filter(n -> assigneeId.equals(n.getFrom()))
     // .count();
-    //
-    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
-    // IssueStatus.DONE)
-    // && commentCount < 1) {
+
+    // if (commentCount < 1) {
     // throw
     // AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
     // }
     // }
+    // }
+
+    // if (request.getStatus() == IssueStatus.DONE) {
     // if (task.getReviewer() != null) {
-    // String reviewerId = task.getAssignee().getUniId();
+    // String reviewerId = task.getReviewer().getUniId();
     // long commentCount = Optional.ofNullable(taskMongo.getComments())
     // .orElse(Collections.emptyList()) // use empty list if null
     // .stream()
     // .filter(n -> reviewerId.equals(n.getFrom()))
     // .count();
-    //
     // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
     // IssueStatus.DONE)
     // && commentCount < 1) {
     // throw
     // AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
+    // }
     // }
     // }
 
@@ -832,13 +872,14 @@ public class IssueService {
 
   // số lượng issue block issue này lại
   public int getNumberOfBlocked(String id) {
-    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.IS_BLOCKED_BY, id);
+    return issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.IS_BLOCKED_BY, id)
+        + issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.BLOCKS, id);
   }
 
-  // số lượng issue mà issue này block lại
+  // số lượng issue bij issue này block lại
   public int getNumberOfBlock(String id) {
     return issueRelationRepository.countIssueRelationByTypeRelationAndIssueRelatedId(IssueRelationType.IS_BLOCKED_BY,
-        id);
+        id) + issueRelationRepository.countIssueRelationByTypeRelationAndIssueId(IssueRelationType.BLOCKS, id);
   }
 
   public int getNumberOfComments(String id) {
@@ -887,6 +928,10 @@ public class IssueService {
       }
     }
     return point / (double) skills.size();
+  }
+
+  public int getNoOfIssue(Project project, Sprint sprint) {
+    return issueRepository.countByProjectIdAndSprintId(project.getId(), sprint.getId());
   }
 
   public double getVelDiff(Project project, Sprint sprint) {

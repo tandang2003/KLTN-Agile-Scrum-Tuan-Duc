@@ -33,7 +33,6 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [messagePredict, setMessagePredict] = useState<string>('')
-
   useEffect(() => {
     if (!isOpen) setLoading(false)
   }, [isOpen])

@@ -3,6 +3,7 @@ import Icon from '@/components/Icon'
 import UpdateIssueForm from '@/components/issue/UpdateIssueForm'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ToolTip from '@/components/Tooltip'
+import { Badge } from '@/components/ui/badge'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -51,7 +52,7 @@ const DialogUpdateIssue = () => {
             close={''}
           >
             <DialogHeader>
-              <DialogTitle className='flex items-center justify-between gap-3'>
+              <DialogTitle className='flex items-center gap-3'>
                 <ToolTip
                   trigger={
                     <span className='w-[100px] truncate rounded-md bg-gray-400 p-2 shadow-md'>
@@ -61,11 +62,12 @@ const DialogUpdateIssue = () => {
                 >
                   {data.id}
                 </ToolTip>
+                <Badge status={data.status}>{data.status}</Badge>
                 <DialogClose asChild>
                   <Button
                     type='button'
                     variant='secondary'
-                    className='p-2 hover:bg-red-600 hover:text-white'
+                    className='ml-auto p-2 hover:bg-red-600 hover:text-white'
                   >
                     <Icon icon={'iconoir:xmark'} />
                   </Button>

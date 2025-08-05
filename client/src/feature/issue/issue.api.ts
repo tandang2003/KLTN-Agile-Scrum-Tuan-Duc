@@ -228,6 +228,22 @@ const issueApi = createApi({
           return { error }
         }
       }
+    }),
+    deleteComment: builder.mutation<
+      void,
+      {
+        issueId: Id
+        id: Id
+      }
+    >({
+      queryFn: async ({ id, issueId }) => {
+        try {
+          const data = await commentService.deleteComment(issueId, id)
+          return { data: data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -246,5 +262,6 @@ export const {
   useDeleteIssueMutation,
   useGetMembersQuery,
   useClearGetListIssueMutation,
-  useGetCommentsQuery
+  useGetCommentsQuery,
+  useDeleteCommentMutation
 } = issueApi

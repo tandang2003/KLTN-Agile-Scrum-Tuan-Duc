@@ -9,7 +9,7 @@ public class ProjectLoad {
   private int total;
   private int done;
   private int notComplete;
-  // private double taskBalance;
+  private int predict;
 
   public ProjectLoad() {
   }
@@ -20,8 +20,8 @@ public class ProjectLoad {
     this.status = builder.status;
     this.total = builder.total;
     this.done = builder.done;
+    this.predict = builder.predict;
     this.notComplete = builder.notComplete;
-    // this.taskBalance = builder.taskBalance;
   }
 
   public static ProjectLoadBuilder builder() {
@@ -35,7 +35,7 @@ public class ProjectLoad {
     private int total;
     private int done;
     private int notComplete;
-    private double taskBalance;
+    private int predict;
 
     public ProjectLoadBuilder id(String id) {
       this.id = id;
@@ -67,8 +67,8 @@ public class ProjectLoad {
       return this;
     }
 
-    public ProjectLoadBuilder taskBalance(double taskBalance) {
-      this.taskBalance = taskBalance;
+    public ProjectLoadBuilder predict(int predict) {
+      this.predict = predict;
       return this;
     }
 
@@ -126,11 +126,12 @@ public class ProjectLoad {
     this.notComplete = notComplete;
   }
 
-  // public double getTaskBalance() {
-  // return taskBalance;
-  // }
-  //
-  // public void setTaskBalance(double taskBalance) {
-  // this.taskBalance = taskBalance;
-  // }
+  public int getPredict() {
+    return predict;
+  }
+
+  public void setPredict(int predict) {
+    this.predict = predict;
+  }
+
 }

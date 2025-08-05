@@ -5,8 +5,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 type StudentColumns = StudentWorkspaceDataTable
 
-const { className, name, role, uniId } =
-  messages.component.dataTable.user.columns
+const { name, role, uniId } = messages.component.dataTable.user.columns
 
 const columns: ColumnDef<StudentColumns>[] = [
   {

@@ -1,7 +1,11 @@
 import ListIssueInSprint from '@/components/sprint/ListIssueInSprint'
 
+import BadgeSprint from '@/components/badge/BadgeSprint'
 import HtmlViewer from '@/components/HtmlViewer'
+import Icon from '@/components/Icon'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import ListIssueInProductBacklog from '@/components/sprint/ListIssueInProductBacklog'
+import TitleLevel from '@/components/TitleLevel'
 import ToolTip from '@/components/Tooltip'
 import {
   Accordion,
@@ -10,17 +14,14 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { useClearGetListIssueMutation } from '@/feature/issue/issue.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
-import { useEffect, useRef, useState } from 'react'
-import { Separator } from '@/components/ui/separator'
-import TitleLevel from '@/components/TitleLevel'
-import Icon from '@/components/Icon'
-import BadgeSprint from '@/components/badge/BadgeSprint'
+import { useEffect, useState } from 'react'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
@@ -29,9 +30,9 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
-  const refContent = useRef<HTMLDivElement>(null)
   const [sprintId, setSprintId] = useState<Id | null>(null)
   const [clear] = useClearGetListIssueMutation()
+  const { setSprint } = useSprintSelect()
 
   useEffect(() => {
     if (sprintId) {
@@ -71,9 +72,12 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                 value={item.id}
                 className='gap-2'
                 onClick={(e) => {
-                  if (refContent.current) {
-                    setSprintId(e.currentTarget.value)
-                  }
+                  setSprint({
+                    id: item.id,
+                    start: item.start,
+                    end: item.end
+                  })
+                  setSprintId(e.currentTarget.value)
                 }}
               >
                 <ToolTip
@@ -102,7 +106,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   {formatDate(item.start)} - {formatDate(item.end)}
                 </Badge>
               </AccordionTrigger>
-              <AccordionContent ref={refContent}>
+              <AccordionContent>
                 <div className='mb-2 flex items-start justify-between gap-2'>
                   <div className='w-full bg-white p-2 shadow'>
                     <TitleLevel level={'lv-2'}>Nội dung thực hiện</TitleLevel>

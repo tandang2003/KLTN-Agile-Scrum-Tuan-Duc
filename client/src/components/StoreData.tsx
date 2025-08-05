@@ -5,9 +5,10 @@ import { Id } from '@/types/other.type'
 import { toast } from 'sonner'
 type StoreDataProps = {
   workspaceId: Id
+  stage: number
 }
 
-const StoreData = ({ workspaceId }: StoreDataProps) => {
+const StoreData = ({ workspaceId, stage }: StoreDataProps) => {
   const { showAlert } = useAlertHost()
   const handleOnClick = () => {
     showAlert({
@@ -15,19 +16,19 @@ const StoreData = ({ workspaceId }: StoreDataProps) => {
       message: workspaceId,
       onConfirm: () => {
         return aggregateService
-          .storeData(workspaceId)
+          .storeData(workspaceId, stage)
           .then(() => {
-            toast.success('Create data')
+            toast.success(`Create data stage ${stage} success`)
           })
           .catch(() => {
-            toast.error('Create data')
+            toast.error('Create data failed')
           })
       }
     })
   }
   return (
     <Button type='button' className='active-bg' onClick={handleOnClick}>
-      Store data
+      Store data {stage}
     </Button>
   )
 }

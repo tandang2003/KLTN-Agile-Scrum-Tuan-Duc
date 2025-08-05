@@ -243,6 +243,8 @@ public class DashBoardService {
         .getWorkspacesUserProjects();
 
     for (WorkspacesUsersProjects userProject : userProjects) {
+      if (userProject.getUser() == null)
+        continue;
       String assigneeId = String.valueOf(userProject.getUser().getId());
       workloads.add(Workload.builder()
           .assignee(Assignee.builder()
@@ -638,6 +640,34 @@ public class DashBoardService {
         .code(200)
         .data(paging)
         .message("Đã truy xuất thành công số liệu thống kê khối lượng công việc của dự án.")
+        .build();
+  }
+
+  public ApiResponse<ApiPaging<ProjectPredictResponse>> getPredictForTeacher(String workspaceId, String sprintId,
+      int page,
+      int size) {
+    Pageable pageRequest = PageRequest.of(page, size);
+    var projectSprint = projectSprintRepository.findBySprintId(sprintId, pageRequest);
+    List<ProjectPredictResponse> items = new ArrayList<>();
+    for (ProjectSprint item : projectSprint.stream().toList()) {
+      items.add(ProjectPredictResponse
+          .builder().id(item.getProject().getId())
+          .name(item.getProject().getName())
+          .lastTime(item.getDtLastPredicted())
+          .predict(item.isPredictedResult())
+          .build());
+    }
+    ApiPaging<ProjectPredictResponse> paging = ApiPaging.<ProjectPredictResponse>builder()
+        .currentPage(page)
+        .items(items)
+        .totalItems(projectSprint.getTotalElements())
+        .totalPages(projectSprint.getTotalPages())
+        .build();
+
+    return ApiResponse.<ApiPaging<ProjectPredictResponse>>builder()
+        .code(200)
+        .data(paging)
+        .message("Đã truy xuất thành công dự kết quả của dự án theo mỗi sprint")
         .build();
   }
   // private void addToMap(Map<String, Integer> map, String key, int value) {

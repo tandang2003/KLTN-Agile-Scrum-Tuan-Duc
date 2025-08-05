@@ -1,6 +1,5 @@
 package com.kltn.server.model.collection.model;
 
-import com.kltn.server.model.collection.Issue;
 import com.kltn.server.model.type.task.IssueRelationType;
 import org.bson.types.ObjectId;
 

@@ -27,7 +27,7 @@ const BoardPage = () => {
   const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
   const sprintId = sprint?.id
   const { sprint: currentSprint } = useSprintCurrent()
-  const { data, isFetching } = useGetListIssueQuery(
+  const { data, isFetching, refetch } = useGetListIssueQuery(
     {
       projectId: projectId as Id,
       sprintId: sprintId as Id
@@ -174,12 +174,12 @@ const BoardPage = () => {
 
   return (
     <div>
-      <FilterBoard />
+      <FilterBoard onRefresh={refetch} />
       <LoadingBoundary
         data={data}
         isLoading={isFetching}
         fallback={<Empty>Chưa có sprint nào đang chạy</Empty>}
-        loading={<Skeleton className={'h-4/5 rounded-xl bg-red-400'} />}
+        loading={<Skeleton className={'active-bg h-[200px] rounded-xl'} />}
       >
         {(data) => {
           return (

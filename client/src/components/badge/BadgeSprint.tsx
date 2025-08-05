@@ -10,7 +10,7 @@ type BadgeSprintProps = {
 
 const BadgeSprint = ({ status, className }: BadgeSprintProps) => {
   return (
-    <Badge className={cn(className)} statusSprint={status}>
+    <Badge className={cn('min-w-[150px]', className)} statusSprint={status}>
       {status === 'RUNNING' && <Icon icon={'solar:running-bold'} />}
       {status === 'PENDING' && <Icon icon={'material-symbols:pending'} />}
       {status === 'COMPLETE' && <Icon icon={'nrk:media-media-complete'} />}

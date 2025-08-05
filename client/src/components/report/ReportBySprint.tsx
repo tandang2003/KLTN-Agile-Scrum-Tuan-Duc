@@ -18,12 +18,15 @@ const ReportBySprint = ({ sprintId, isOpen, onOpenChange }: Props) => {
     <ReportSprintSheetTeacher isOpen={isOpen} onOpenChange={onOpenChange}>
       <div className='mt-4'>
         <ListView<ProjectResourceResponseType[0]>
-          data={data}
+          data={data?.map((item) => ({
+            ...item,
+            name: item.title
+          }))}
           loading={isFetching}
           orientation='vertical'
           render={(item) => (
             <div key={item.id} className='mt-3'>
-              <ToolTip trigger={<h2 className='text-xl'>{item.title}</h2>}>
+              <ToolTip trigger={<h2 className='text-xl'>{item.name}</h2>}>
                 {item.id}
               </ToolTip>
               <Separator className='my-3' />

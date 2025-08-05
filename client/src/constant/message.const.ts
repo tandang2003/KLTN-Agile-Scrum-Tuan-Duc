@@ -645,7 +645,7 @@ const messages = {
       },
       toast: {
         success: 'Dự đoán Sprint có khả năng thành công',
-        failed: 'Dự đoán Sprint thất bại, vui lòng thử lại sau'
+        failed: 'Dự đoán Sprint có khả năng không thành công'
       }
     }
   },
@@ -766,10 +766,10 @@ const getTagDisplayName = (tag: IssueTag): string => {
 const getPriorityDisplayName = (priority: IssuePriority): string => {
   const map: Record<IssuePriority, string> = {
     BLOCKED: 'Đang bị chặn',
-    TRIVIAL: 'Không đáng kể',
-    MINOR: 'Nhỏ',
-    MAJOR: 'Lớn ',
-    CRITICAL: 'Nghiêm trọng '
+    TRIVIAL: 'Không ảnh hưởng',
+    MINOR: 'Ảnh hướng thấp',
+    MAJOR: 'Cần thực hiện',
+    CRITICAL: 'Quan trọng'
   }
   return map[priority] ?? 'Không xác định'
 }

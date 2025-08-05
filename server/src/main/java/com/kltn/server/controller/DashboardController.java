@@ -2,10 +2,7 @@ package com.kltn.server.controller;
 
 import com.kltn.server.DTO.response.ApiPaging;
 import com.kltn.server.DTO.response.ApiResponse;
-import com.kltn.server.DTO.response.dashboard.DashboardProjectResponse;
-import com.kltn.server.DTO.response.dashboard.DashboardWorkspaceResponse;
-import com.kltn.server.DTO.response.dashboard.ProjectLoad;
-import com.kltn.server.DTO.response.dashboard.Workload;
+import com.kltn.server.DTO.response.dashboard.*;
 import com.kltn.server.service.DashBoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +50,17 @@ public class DashboardController {
       @RequestParam String workspaceId,
       @RequestParam(required = false) String sprintId, @RequestParam int page,
       @RequestParam(defaultValue = "10") int size) {
-    var response = dashBoardService.getProjectLoadForTeacher(workspaceId, sprintId, 0, size);
+    var response = dashBoardService.getProjectLoadForTeacher(workspaceId, sprintId, page, size);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/workspace/project/predict")
+  public ResponseEntity<ApiResponse<ApiPaging<ProjectPredictResponse>>> getProjectPredictCurrentPaging(
+      @RequestParam String workspaceId,
+      @RequestParam int page,
+      @RequestParam String sprintId,
+      @RequestParam(defaultValue = "10") int size) {
+    var response = dashBoardService.getPredictForTeacher(workspaceId, sprintId, page, size);
     return ResponseEntity.ok(response);
   }
 }

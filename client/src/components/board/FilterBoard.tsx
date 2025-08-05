@@ -16,9 +16,11 @@ import useAppId from '@/hooks/use-app-id'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useMemo } from 'react'
-type FilterBoardProps = {}
+type FilterBoardProps = {
+  onRefresh: () => void
+}
 
-const FilterBoard = ({}: FilterBoardProps) => {
+const FilterBoard = ({ onRefresh }: FilterBoardProps) => {
   const { workspaceId } = useAppId()
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
@@ -69,6 +71,9 @@ const FilterBoard = ({}: FilterBoardProps) => {
           </ToolTip>
         )}
       </div>
+      <Button className='active-bg ml-3' onClick={onRefresh}>
+        Làm mới
+      </Button>
     </div>
   )
 }

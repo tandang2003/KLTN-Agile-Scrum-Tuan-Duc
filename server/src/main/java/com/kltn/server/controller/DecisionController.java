@@ -1,12 +1,5 @@
 package com.kltn.server.controller;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.sheets.v4.model.AppendValuesResponse;
-import com.google.api.services.sheets.v4.model.ValueRange;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.model.entity.Issue;
@@ -64,7 +57,7 @@ public class DecisionController {
       "no_issue_starttime",
       "no_issue_added",
       "no_issue_done",
-      "vel_diff"
+      "no_of_issue", // Số lượng issue
   };
   String[] sprintRow = new String[] {
       "project_id",
@@ -123,7 +116,6 @@ public class DecisionController {
   public ResponseEntity<ApiResponse<Boolean>> storeData(@RequestParam String stage, @RequestParam String workspaceId) {
     Instant now = ClockSimulator.now();
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
-    List<Object> newRowData = new java.util.ArrayList<>();
 
     List<Sprint> sprints = workspace.getSprints()
         .stream()
@@ -151,7 +143,7 @@ public class DecisionController {
     for (Sprint sprint : sprints) {
       List<Project> projects = sprint.getProjects();
       for (Project project : projects) {
-        writeToExcelVel(workspace.getId(), project.getId(), sprint.getId());
+        writeToExcelVelDiff(workspace.getId(), project.getId(), sprint.getId());
       }
     }
     return ResponseEntity.ok().body(ApiResponse.<Boolean>builder().data(true).build());
@@ -166,7 +158,6 @@ public class DecisionController {
     String courseFile = this.filePathOfData + "/" + stage + "/" + workspace.getName();
     String sprintFilePath = courseFile + "/" + "sprint.xlsx";
     String issueFilePath = courseFile + "/" + "issue.xlsx";
-
     File file = new File(sprintFilePath);
     File parentDir = file.getParentFile();
     if (parentDir != null && !parentDir.exists()) {
@@ -194,10 +185,8 @@ public class DecisionController {
       }
 
       // Append new data row
-      int rowCount = sheet.getLastRowNum();
-      // Google api
-      List<Object> newRowData = new java.util.ArrayList<>();
-      Row newRow = sheet.createRow(rowCount + 1);
+      int newRowNum = findNextEmptyRow(sheet);
+      Row newRow = sheet.createRow(newRowNum);
       for (int i = 0; i < sprintRow.length; i++) {
         Cell cell = newRow.createCell(i);
         switch (sprintRow[i]) {
@@ -237,25 +226,6 @@ public class DecisionController {
             cell.setCellValue(issueService.getNumberOfMembersInSprint(project, sprint));
             break;
         }
-
-        // Google api
-        Object value = switch (sprintRow[i]) {
-          case "project_id" -> projectId;
-          case "sprint_id" -> sprint.getId();
-          case "story_point" -> sprint.getStoryPoint();
-          case "planday" -> decisionService.calculateSprintDuration(sprint);
-          case "no_issue_starttime" -> issueService.getNumberOfIssuesAtStart(project, sprint);
-          case "no_issue_added" -> issueService.getNumberOfIssuesAdded(project, sprint);
-          case "no_issue_removed" -> 0;
-          case "no_issue_todo" -> issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO);
-          case "no_issue_inprogress" -> issueService.getNumberOfIssuesByStatuses(project, sprint,
-              List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW));
-          case "no_issue_done" -> issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE);
-          case "no_team_size" -> issueService.getNumberOfMembersInSprint(project, sprint);
-          default -> "";
-        };
-        cell.setCellValue(value.toString());
-        newRowData.add(value);
       }
 
       // Write to file
@@ -265,15 +235,6 @@ public class DecisionController {
       workbook.close();
 
       System.out.println("Data written to " + sprintFilePath);
-
-      // Google api
-      if (!newRowData.isEmpty()) {
-        List<List<Object>> uploadData = new java.util.ArrayList<>();
-        uploadData.add(newRowData);
-
-        Sheets service = getSheetsService();
-        appendToGoogleSheet(service, sprintSpreadsheetId, sprintSpreadsheetName, uploadData);
-      }
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -306,12 +267,12 @@ public class DecisionController {
         }
       }
 
-      // Append new data row
-      List<List<Object>> issueDataToUpload = new ArrayList<>();
-
-      int rowCount = sheet.getLastRowNum();
+      int newRowNum = findNextEmptyRow(sheet);
       for (Issue issue : issues) {
-        Row newRow = sheet.createRow(++rowCount);
+        if (newRowNum >= 1048576) {
+          throw new IllegalStateException("Excel row limit reached while writing issues.");
+        }
+        Row newRow = sheet.createRow(newRowNum++);
         for (int i = 0; i < issueRow.length; i++) {
           Cell cell = newRow.createCell(i);
           switch (issueRow[i]) {
@@ -365,36 +326,6 @@ public class DecisionController {
               break;
           }
         }
-
-        // Google api
-        Row newRowIssue = sheet.createRow(++rowCount);
-        List<Object> rowData = new ArrayList<>();
-
-        for (int i = 0; i < issueRow.length; i++) {
-          Cell cell = newRowIssue.createCell(i);
-          Object value = switch (issueRow[i]) {
-            case "issue_name" -> issue.getName();
-            case "project_id" -> projectId;
-            case "sprint_id" -> sprintId;
-            case "type" -> issue.getTag().name();
-            case "priority" -> issue.getPriority().name();
-            case "no_affect_version" -> issueService.getNumberOfAffectVersions(issue.getId());
-            case "no_fix_version" -> issueService.getNumberOfFixVersions(issue.getId());
-            case "no_link" -> issueService.getNumberOfLink(issue.getId());
-            case "no_issue_blocking" -> issueService.getNumberOfBlocked(issue.getId());
-            case "no_issue_blocked" -> issueService.getNumberOfBlock(issue.getId());
-            case "no_of_comment" -> issueService.getNumberOfComments(issue.getId());
-            case "no_fix_version_change" -> issueService.getNumChangeFixVersion(issue.getId());
-            case "no_priority_change" -> issue.getNumChangeOfPriority();
-            case "no_description_change" -> issue.getNumChangeOfDescription();
-            case "complexity_of_description" -> issue.getComplexOfDescription();
-            case "suitable_assignee" -> issueService.calculateCompatibleOfAssignee(issue);
-            default -> "";
-          };
-          cell.setCellValue(value.toString());
-          rowData.add(value);
-        }
-        issueDataToUpload.add(rowData);
       }
       // Write to file
       FileOutputStream fos = new FileOutputStream(issueFilePath);
@@ -402,11 +333,6 @@ public class DecisionController {
       fos.close();
       workbook.close();
 
-      // Google api
-      if (!issueDataToUpload.isEmpty()) {
-        Sheets service = getSheetsService();
-        appendToGoogleSheet(service, issueSpreadsheetId, issueSpreadsheetName, issueDataToUpload);
-      }
       System.out.println("Data written to " + issueFilePath);
 
     } catch (Exception e) {
@@ -414,7 +340,7 @@ public class DecisionController {
     }
   }
 
-  public void writeToExcelVel(String workspaceId, String projectId, String sprintId) {
+  public void writeToExcelVelDiff(String workspaceId, String projectId, String sprintId) {
     Sprint sprint = sprintService.getSprintById(sprintId);
     Project project = projectService.getProjectById(projectId);
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
@@ -472,8 +398,8 @@ public class DecisionController {
           case "no_issue_done":
             cell.setCellValue(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
             break;
-          case "vel_diff":
-            cell.setCellValue(issueService.getVelDiff(project, sprint));
+          case "no_of_issue":
+            cell.setCellValue(issueService.getNoOfIssue(project, sprint));
             break;
         }
       }
@@ -493,62 +419,26 @@ public class DecisionController {
     }
   }
 
-  private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
-  private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-
-  private List<List<Object>> convertSheetToValueList(Sheet sheet) {
-    List<List<Object>> values = new java.util.ArrayList<>();
-    for (Row row : sheet) {
-      List<Object> rowData = new java.util.ArrayList<>();
-      for (Cell cell : row) {
-        switch (cell.getCellType()) {
-          case STRING -> rowData.add(cell.getStringCellValue());
-          case NUMERIC -> rowData.add(cell.getNumericCellValue());
-          case BOOLEAN -> rowData.add(cell.getBooleanCellValue());
-          default -> rowData.add("");
-        }
+  private int findNextEmptyRow(Sheet sheet) {
+    int maxRows = 1048576;
+    for (int i = 1; i < maxRows; i++) {
+      Row row = sheet.getRow(i);
+      if (row == null || isRowEmpty(row)) {
+        return i;
       }
-      values.add(rowData);
     }
-    return values;
+    throw new IllegalStateException("No empty rows available in sheet. Excel row limit reached.");
   }
 
-  public Sheets getSheetsService() throws Exception {
-
-    InputStream serviceAccountStream = getClass().getClassLoader()
-        .getResourceAsStream("key.json"); // must match file in src/main/resources
-
-    if (serviceAccountStream == null) {
-      throw new RuntimeException("Service account file not found in resources!");
+  private boolean isRowEmpty(Row row) {
+    if (row == null)
+      return true;
+    for (Cell cell : row) {
+      if (cell != null && cell.getCellType() != CellType.BLANK) {
+        return false;
+      }
     }
-
-    // Create credential
-    GoogleCredential credential = GoogleCredential.fromStream(serviceAccountStream)
-        .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
-
-    // Build and return Sheets service
-    return new Sheets.Builder(
-        GoogleNetHttpTransport.newTrustedTransport(),
-        JSON_FACTORY,
-        credential).setApplicationName(APPLICATION_NAME).build();
+    return true;
   }
 
-  public void appendToGoogleSheet(Sheets sheetsService,
-      String spreadsheetId,
-      String sheetName,
-      List<List<Object>> data) throws Exception {
-    // Define the full range — sheet name only, no cell address needed for append
-    String range = sheetName;
-
-    // Prepare the data body
-    ValueRange body = new ValueRange().setValues(data);
-
-    // Perform the append operation
-    AppendValuesResponse response = sheetsService.spreadsheets().values()
-        .append(spreadsheetId, range, body)
-        .setValueInputOption("RAW") // Or "USER_ENTERED" if needed
-        .setInsertDataOption("INSERT_ROWS") // Insert rows for each record
-        .execute();
-    System.out.println("Appended to range: " + response.getUpdates().getUpdatedRange());
-  }
 }

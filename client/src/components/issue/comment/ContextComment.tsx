@@ -1,47 +1,35 @@
+import { useDeleteCommentMutation } from '@/feature/issue/issue.api'
 import { useAuth } from '@/hooks/use-auth'
 import { useStompClient } from '@/hooks/use-stomp-client'
-import { uuid } from '@/lib/utils'
-import commentService from '@/services/comment.service'
+import { createCtx } from '@/lib/context.helper'
+import commentService, {
+  isCreateComment,
+  isDeleteComment
+} from '@/services/comment.service'
 import { CommentResType } from '@/types/comment.type.ts'
 import { Id } from '@/types/other.type'
 import { Client } from '@stomp/stompjs'
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import _ from 'lodash'
 
 type CommentContextType = {
+  issueId: Id
   isReady: boolean
   ws?: Client
+  pushComment: (val: string) => void
+  deleteComment: (id: Id) => void
   comment?: CommentResType[]
-  setComment?: (value: CommentResType[]) => void
 }
 
-const CommentContext = createContext<CommentContextType | undefined>(undefined)
-
-export const useCommentContext = () => {
-  const context = useContext(CommentContext)
-  if (!context) {
-    throw new Error(
-      'useContextComment must be used inside ProviderCommentProvider'
-    )
-  }
-  return context
-}
+const [useCommentContext, CommentContextProvider] =
+  createCtx<CommentContextType>()
 
 type CommentProviderProps = {
   children?: ReactNode
   initValue?: CommentResType[]
   issueId: Id
 }
-
-export const CommentProvider = ({
+const CommentProvider = ({
   children,
   issueId,
   initValue = []
@@ -49,35 +37,43 @@ export const CommentProvider = ({
   const auth = useAuth()
   const [comment, setComment] = useState<CommentResType[]>(initValue)
   const unsubscribeRef = useRef<(() => void) | null>(null)
+  const [action] = useDeleteCommentMutation()
 
   const { ws, isReady } = useStompClient({
     accessToken: auth.accessToken,
     onConnect: (client) => {
-      console.log('✅ WebSocket connected')
+      console.log('✅ WebSocket comment connected')
       // Unsubscribe previous if reconnecting
       unsubscribeRef.current?.()
 
-      const subscription = commentService.receiveComment(
+      const subscriptionPushComment = commentService.receiveComment(
         client,
         issueId,
         ({ bodyParse: response }) => {
-          commentService.getComment(issueId).then((res) => {
-            const data = res.map((item) => ({
-              id: uuid(),
-              content: item.content,
-              createdAt: item.createdAt,
-              from: item.from
-            }))
-            return setComment(_.orderBy(data, ['createdAt'], ['desc']))
-          })
-          if (auth?.user?.uniId && response.from !== auth?.user?.uniId)
-            toast(`Nhận tin nhắn mới từ ${response.from}`, {
-              description: response.content
+          if (isCreateComment(response)) {
+            commentService.getComment(issueId).then((res) => {
+              const data = res.map((item) => ({
+                id: item.id,
+                content: item.content,
+                createdAt: item.createdAt,
+                from: item.from
+              }))
+              return setComment(data)
             })
+            const { message } = response
+            if (auth?.user?.uniId && message.from !== auth?.user?.uniId)
+              toast(`Nhận tin nhắn mới từ ${message.from}`, {
+                description: message.content
+              })
+          }
+          if (isDeleteComment(response)) {
+            const { message } = response
+            setComment([...message])
+          }
         }
       )
 
-      unsubscribeRef.current = () => subscription.unsubscribe()
+      unsubscribeRef.current = () => subscriptionPushComment.unsubscribe()
     },
     onDisconnect: () => {
       console.log('🔌 Disconnected')
@@ -88,25 +84,50 @@ export const CommentProvider = ({
   })
 
   useEffect(() => {
-    setComment(initValue)
-  }, [initValue])
-
-  useEffect(() => {
     return () => {
       unsubscribeRef.current?.()
     }
   }, [])
 
+  useEffect(() => {
+    setComment(initValue)
+  }, [initValue])
+
+  const handlePushComment = (val: string) => {
+    if (issueId && isReady && ws) {
+      if (val.trim() === '') {
+        return
+      }
+      commentService.sendComment(ws, issueId, {
+        content: val
+      })
+    }
+  }
+
+  const handleDeleteComment = (id: Id) => {
+    action({
+      id: id,
+      issueId: issueId
+    })
+      .unwrap()
+      .then(() => {
+        toast.info('Xóa comment thành công')
+      })
+  }
+
   return (
-    <CommentContext.Provider
+    <CommentContextProvider
       value={{
+        issueId: issueId,
         isReady: isReady,
         ws: ws || undefined,
         comment: comment,
-        setComment: setComment
+        pushComment: handlePushComment,
+        deleteComment: handleDeleteComment
       }}
     >
       {children}
-    </CommentContext.Provider>
+    </CommentContextProvider>
   )
 }
+export { CommentProvider, useCommentContext }

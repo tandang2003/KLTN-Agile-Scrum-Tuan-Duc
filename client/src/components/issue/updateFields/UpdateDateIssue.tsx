@@ -1,27 +1,22 @@
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import { DatePickerWithPresets } from '@/components/ui/date-picker'
 import { FormField, FormItem, FormMessage } from '@/components/ui/form'
-import useSprintActive from '@/hooks/use-sprint-active'
 import { useAutoUpdateField } from '@/hooks/use-update'
 import issueService from '@/services/issue.service'
 import { UpdateIssueType } from '@/types/issue.type'
 import { useFormContext } from 'react-hook-form'
 
 const UpdateDateIssue = () => {
-  const { sprint } = useSprintActive()
+  const { sprint } = useSprintSelect()
   const min = sprint?.start ?? undefined
   const max = sprint?.end ?? undefined
-  const date = undefined
 
   const form = useFormContext<UpdateIssueType>()
-
   const { control, getValues } = form
 
   useAutoUpdateField({
     form: form,
     field: 'date.from',
-    isPause: (_, value) => {
-      return value == undefined
-    },
     callApi: (_, value) => {
       return issueService.updateIssue({
         id: getValues('id'),
@@ -34,9 +29,6 @@ const UpdateDateIssue = () => {
   useAutoUpdateField({
     form: form,
     field: 'date.to',
-    isPause: (_, value) => {
-      return value == undefined
-    },
     callApi: (_, value) => {
       return issueService.updateIssue({
         id: getValues('id'),
@@ -55,14 +47,13 @@ const UpdateDateIssue = () => {
           return (
             <FormItem>
               <DatePickerWithPresets
-                date={field.value ?? date}
+                date={field.value}
+                setDate={(date) => {
+                  field.onChange(date) // <-- This is essential
+                }}
                 min={min}
                 max={max}
-                onDayBlur={(date) => {
-                  if (date) {
-                    field.onChange(date)
-                  }
-                }}
+                onDayBlur={field.onChange}
               />
               <FormMessage />
             </FormItem>
@@ -77,14 +68,13 @@ const UpdateDateIssue = () => {
           return (
             <FormItem>
               <DatePickerWithPresets
-                date={field.value ?? max}
+                date={field.value}
+                setDate={(date) => {
+                  field.onChange(date) // <-- This is essential
+                }}
                 min={min}
                 max={max}
-                onDayBlur={(date) => {
-                  if (date) {
-                    field.onChange(date)
-                  }
-                }}
+                onDayBlur={field.onChange}
               />
               <FormMessage />
             </FormItem>

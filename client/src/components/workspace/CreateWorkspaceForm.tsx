@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input'
 import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { RootState } from '@/context/redux/store'
-import { useGetAllCourseQuery } from '@/feature/course/course.api'
 import { useCreateWorkspaceMutation } from '@/feature/workspace/workspace.api'
 import { setStateDialogWorkspace } from '@/feature/workspace/workspace.slice'
 import { handleErrorApi } from '@/lib/form'
@@ -29,8 +28,6 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 const CreateWorkspaceForm = () => {
-  const { data: courses } = useGetAllCourseQuery()
-
   const [createWorkspace] = useCreateWorkspaceMutation()
   const state = useAppSelector(
     (state: RootState) => state.workspaceSlice.isDialogCreateOpen

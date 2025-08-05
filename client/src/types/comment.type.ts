@@ -10,7 +10,7 @@ type CommentReqType = {
 }
 
 type CommentResType = {
-  id?: string
+  id: string
   from: string
   content: string
   createdAt: Date

@@ -4,7 +4,6 @@ import ProjectSocket from '@/components/project/ProjectSocket'
 import SprintPredict from '@/components/SprintPredict'
 import StoreData from '@/components/StoreData'
 import StoreVelDiff from '@/components/StoreVelDiff'
-import { Separator } from '@/components/ui/separator'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
@@ -65,7 +64,12 @@ const ProjectPage = () => {
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
               <div>
-                {workspaceId && <StoreData workspaceId={workspaceId} />}
+                {workspaceId && (
+                  <StoreData workspaceId={workspaceId} stage={30} />
+                )}
+                {workspaceId && (
+                  <StoreData workspaceId={workspaceId} stage={50} />
+                )}
                 {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
                 <SprintPredict
                   project={{

@@ -4,7 +4,6 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 import { IssueStatus, SkillLevel, SprintStatusType } from '@/types/model/typeOf'
-import Icon from '@/components/Icon'
 
 const badgeVariants = cva<{
   variant: {
@@ -37,7 +36,7 @@ const badgeVariants = cva<{
         DONE: 'text-white done font-semibold'
       },
       statusSprint: {
-        PENDING: 'text-black bg-gray-400 font-semibold',
+        PENDING: 'text-white bg-gray-400 font-semibold',
         COMPLETE: 'text-white bg-green-500 font-semibold',
         RUNNING: 'text-white bg-blue-500 font-semibold'
       },

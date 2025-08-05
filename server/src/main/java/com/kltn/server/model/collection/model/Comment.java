@@ -8,9 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+
 @Component
 public class Comment {
-  private ObjectId id;
+  private ObjectId id = new ObjectId();
   @Field // issueId
   private String to;
   @Field // uniId
@@ -46,7 +47,7 @@ public class Comment {
   }
 
   public static class CommentBuilder {
-    private ObjectId id;
+    private ObjectId id = new ObjectId();
     private String to;
     private String from;
     private String message;
@@ -104,6 +105,8 @@ public class Comment {
       return new Comment(this);
     }
   }
+
+
 
   public String getTo() {
     return to;
@@ -171,12 +174,12 @@ public class Comment {
 
   public Comment clone() {
     return Comment.builder()
-        .to(this.to)
-        .from(this.from)
-        .message(this.message)
-        // .attachment(this.attachment != null ? this.attachment.clone() : null)
-        .deleted(this.deleted)
-        .deletedBy(this.deletedBy)
-        .build();
+      .to(this.to)
+      .from(this.from)
+      .message(this.message)
+      // .attachment(this.attachment != null ? this.attachment.clone() : null)
+      .deleted(this.deleted)
+      .deletedBy(this.deletedBy)
+      .build();
   }
 }
