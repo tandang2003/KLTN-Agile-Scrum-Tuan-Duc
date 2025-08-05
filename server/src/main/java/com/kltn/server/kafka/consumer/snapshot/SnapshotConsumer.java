@@ -1,6 +1,7 @@
 package com.kltn.server.kafka.consumer.snapshot;
 
 import com.kltn.server.DTO.request.kafka.SnapshotRequest;
+import com.kltn.server.DTO.response.message.MessageResponse;
 import com.kltn.server.mapper.snapshot.SnapshotMapper;
 import com.kltn.server.model.base.BaseEntity;
 import com.kltn.server.model.collection.model.Relation;
@@ -10,6 +11,7 @@ import com.kltn.server.model.entity.Resource;
 import com.kltn.server.model.entity.User;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.IssueRelation;
+import com.kltn.server.model.type.task.MessageType;
 import com.kltn.server.repository.document.IssueLogRepository;
 import com.kltn.server.repository.document.snapshot.SnapshotRepository;
 import com.kltn.server.repository.entity.IssueRepository;
@@ -39,17 +41,19 @@ public class SnapshotConsumer {
   private IssueLogRepository issueLogRepository;
   private SnapshotRepository snapshotRepository;
   private SnapshotMapper snapshotMapper;
+  private final RoomService roomService;
 
   @Autowired
   public SnapshotConsumer(IssueLogRepository issueLogRepository, SnapshotRepository snapshotRepository,
       SnapshotMapper snapshotMapper, IssueRepository issueRepository,
-      ProjectSprintRepository projectSprintRepository, UserRepository userRepository) {
+      ProjectSprintRepository projectSprintRepository, UserRepository userRepository, RoomService roomService) {
     this.issueLogRepository = issueLogRepository;
     this.projectSprintRepository = projectSprintRepository;
     this.issueRepository = issueRepository;
     this.snapshotRepository = snapshotRepository;
     this.snapshotMapper = snapshotMapper;
     this.userRepository = userRepository;
+    this.roomService = roomService;
 
   }
 
@@ -100,6 +104,7 @@ public class SnapshotConsumer {
             mapResources, relationships);
         projectSnapshot = snapshotRepository.save(projectSnapshot);
       }
+      roomService.sentToApp(new MessageResponse(MessageType.SNAPSHOT, "create snapshot success"));
     }
   }
 

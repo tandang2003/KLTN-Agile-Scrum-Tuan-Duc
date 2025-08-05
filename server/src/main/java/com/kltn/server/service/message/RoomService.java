@@ -17,7 +17,6 @@ public class RoomService {
   }
 
   public void sentToApp(MessageResponse message) {
-    messagingTemplate.convertAndSend("/topic/time", message);
-
+    messagingTemplate.convertAndSend("/topic/app", message);
   }
 }

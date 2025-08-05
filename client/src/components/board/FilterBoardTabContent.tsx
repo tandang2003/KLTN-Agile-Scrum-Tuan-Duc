@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { getSprintStatusDisplayName } from '@/constant/message.const'
@@ -15,8 +16,13 @@ type FilterBoardTabContentProps = {
 const FilterBoardTabContent = ({ items }: FilterBoardTabContentProps) => {
   const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
   const dispatch = useAppDispatch()
-
+  const { setSprint } = useSprintSelect()
   const handleSelectSprintFilter = (sprint: SprintModel) => {
+    setSprint({
+      id: sprint.id,
+      start: sprint.start,
+      end: sprint.end
+    })
     dispatch(
       setSprintFilter({
         id: sprint.id,

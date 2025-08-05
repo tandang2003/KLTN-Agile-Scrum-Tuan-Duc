@@ -21,6 +21,7 @@ import { Separator } from '@/components/ui/separator'
 import TitleLevel from '@/components/TitleLevel'
 import Icon from '@/components/Icon'
 import BadgeSprint from '@/components/badge/BadgeSprint'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
@@ -29,9 +30,9 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
-  const refContent = useRef<HTMLDivElement>(null)
   const [sprintId, setSprintId] = useState<Id | null>(null)
   const [clear] = useClearGetListIssueMutation()
+  const { setSprint } = useSprintSelect()
 
   useEffect(() => {
     if (sprintId) {
@@ -71,9 +72,12 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                 value={item.id}
                 className='gap-2'
                 onClick={(e) => {
-                  if (refContent.current) {
-                    setSprintId(e.currentTarget.value)
-                  }
+                  setSprint({
+                    id: item.id,
+                    start: item.start,
+                    end: item.end
+                  })
+                  setSprintId(e.currentTarget.value)
                 }}
               >
                 <ToolTip
@@ -102,7 +106,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   {formatDate(item.start)} - {formatDate(item.end)}
                 </Badge>
               </AccordionTrigger>
-              <AccordionContent ref={refContent}>
+              <AccordionContent>
                 <div className='mb-2 flex items-start justify-between gap-2'>
                   <div className='w-full bg-white p-2 shadow'>
                     <TitleLevel level={'lv-2'}>Nội dung thực hiện</TitleLevel>

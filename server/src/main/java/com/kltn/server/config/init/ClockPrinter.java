@@ -16,9 +16,9 @@ public class ClockPrinter {
     this.clockSimulator = clockSimulator;
   }
 
-  @Scheduled(fixedRate = 1000) // every 2 seconds
-  public void printSimulatedTime() {
-    System.out.println("Simulated Server Time: " +
-        clockSimulator.now());
-  }
+  // @Scheduled(fixedRate = 1000) // every 2 seconds
+  // public void printSimulatedTime() {
+  // System.out.println("Simulated Server Time: " +
+  // clockSimulator.now());
+  // }
 }

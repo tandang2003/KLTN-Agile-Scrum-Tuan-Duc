@@ -41,6 +41,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { useStompClient } from '@/hooks/use-stomp-client'
 import { uuid } from '@/lib/utils'
 import socketService from '@/services/socket.service'
+import { useDate } from '@/providers/DateProvider'
 
 const ClockSimulator = () => {
   const [open, setOpen] = useState(false)
@@ -52,7 +53,7 @@ const ClockSimulator = () => {
     resolver: zodResolver(ClockSimulatorSchema)
   })
   const unsubscribeRef = useRef<(() => void) | null>(null)
-
+  const { setNow } = useDate()
   const auth = useAuth()
   useStompClient({
     accessToken: auth.accessToken,
@@ -61,22 +62,29 @@ const ClockSimulator = () => {
 
       // Move subscription logic here:
       const subscription = socketService.receiveMessageTime(client, (value) => {
-        const { time, timeSpeech, to, senderId } = value.bodyParse.message
-        if (senderId !== senderIdRef.current) {
-          setConfig({
-            initTime: new Date(time),
-            timeSpeech: timeSpeech,
-            timeEnd: new Date(to)
-          })
-          simulatorService.setSimulatorLocal(value.bodyParse.message)
-
-          if (timeSpeech === 1) {
-            toast.info(`${senderId} đâ reset time`)
-            setIsReset(false)
-          } else {
-            toast.info(`${senderId} đang hiệu chỉnh time`)
-            setIsReset(true)
+        const { type } = value.bodyParse
+        if (type === 'TIME') {
+          const { time, timeSpeech, to, senderId } = value.bodyParse.message
+          if (senderId !== senderIdRef.current) {
+            setConfig({
+              initTime: new Date(time),
+              timeSpeech: timeSpeech,
+              timeEnd: new Date(to)
+            })
+            simulatorService.setSimulatorLocal(value.bodyParse.message)
+            if (timeSpeech === 1) {
+              toast.info(`${senderId} đâ reset time`)
+              setIsReset(false)
+            } else {
+              toast.info(`${senderId} đang hiệu chỉnh time`)
+              setIsReset(true)
+            }
           }
+          setNow(time)
+        }
+        if (type === 'SNAPSHOT') {
+          toast.info('Create snapshot success')
+          window.location.reload()
         }
       })
 
@@ -113,6 +121,10 @@ const ClockSimulator = () => {
   }, [config])
 
   const simulatedTime = useSimulatedClock(hookConfig)
+
+  useEffect(() => {
+    setNow(simulatedTime)
+  }, [])
 
   const ClockDisplay = useMemo(
     () => (

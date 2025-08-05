@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { CSS } from '@dnd-kit/utilities'
+import { Checkbox } from '@/components/ui/checkbox'
 
 import { FormControl, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -31,6 +32,7 @@ import { forwardRef, useRef, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import messages from '@/constant/message.const'
 import TitleLevel from '@/components/TitleLevel'
+import { is } from 'date-fns/locale'
 
 type UpdateSubTaskFormProp = {}
 
@@ -47,7 +49,7 @@ const UpdateSubTaskForm = ({}: UpdateSubTaskFormProp) => {
   const sensors = useSensors(pointerSensor)
 
   const form = useFormContext<UpdateIssueType>()
-  const { fields, append, move, remove } = useFieldArray({
+  const { fields, append, move, remove, update } = useFieldArray({
     control: form.control,
     name: 'subtasks',
     keyName: 'id'
@@ -123,6 +125,12 @@ const UpdateSubTaskForm = ({}: UpdateSubTaskFormProp) => {
               index={index}
               {...item}
               remove={remove}
+              update={(index, checked) => {
+                update(index, {
+                  ...item,
+                  checked
+                })
+              }}
             />
           ))}
         </SortableContext>
@@ -149,10 +157,19 @@ const UpdateSubTaskForm = ({}: UpdateSubTaskFormProp) => {
 type SubTaskItemProps = {
   id: string
   name: string
+  checked?: boolean
   index: number
   remove: (index: number) => void
+  update: (index: number, checked: boolean) => void
 }
-const SubTaskItem = ({ id, name, index, remove }: SubTaskItemProps) => {
+const SubTaskItem = ({
+  id,
+  name,
+  index,
+  checked = true,
+  remove,
+  update
+}: SubTaskItemProps) => {
   const {
     attributes,
     listeners,
@@ -195,14 +212,24 @@ const SubTaskItem = ({ id, name, index, remove }: SubTaskItemProps) => {
       >
         <Icon icon={'lsicon:drag-filled'} className='text-black' />
       </Button>
-      <p className='flex-1 px-3'>{name}</p>
+      <Checkbox
+        defaultChecked={checked}
+        onCheckedChange={(checked) => {
+          console.log(checked)
+          checked && update(index, checked as boolean)
+        }}
+        className='ml-2 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700'
+      />
+      <p className={cn('flex-1 px-3', checked && 'text-gray-400 line-through')}>
+        {name}
+      </p>
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Icon icon={'ri:more-fill'} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuItem className='cancel' onClick={() => remove(index)}>
-            Delete
+            Xóa
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
