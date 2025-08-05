@@ -1,11 +1,5 @@
 package com.kltn.server.controller;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.sheets.v4.model.AppendValuesResponse;
-import com.google.api.services.sheets.v4.model.ValueRange;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.model.entity.Issue;

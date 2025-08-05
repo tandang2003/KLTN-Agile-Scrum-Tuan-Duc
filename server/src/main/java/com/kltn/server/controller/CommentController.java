@@ -32,7 +32,8 @@ public class CommentController {
   }
 
   @MessageMapping("/issue/{issueId}")
-  public void sendToGroup(@DestinationVariable("issueId") String issueId, @Payload CommentCreateRequest message, Principal principal) {
+  public void sendToGroup(@DestinationVariable("issueId") String issueId, @Payload CommentCreateRequest message,
+      Principal principal) {
     String userId = "";
     if (principal instanceof UserPrinciple) {
       userId = principal.getName();// uniId
@@ -42,11 +43,10 @@ public class CommentController {
     // send to /topic/room/{roomId}
 
     messagingTemplate.convertAndSend(
-      "/topic/issue/room/" + issueId,
-      new MessageResponse(
-        MessageType.COMMENT_CREATE,
-        new CommentResponse(comment.getId().toHexString(), userId, message.getContent(), ClockSimulator.now())
-      ));
+        "/topic/issue/room/" + issueId,
+        new MessageResponse(
+            MessageType.COMMENT_CREATE,
+            new CommentResponse(comment.getId().toHexString(), userId, message.getContent(), ClockSimulator.now())));
   }
 
   @GetMapping("/comments/{issueId}")
@@ -58,14 +58,12 @@ public class CommentController {
   @DeleteMapping("/comments/{issueId}/{id}")
   @ResponseBody
   public void deleteCommentsInIssue(
-    @PathVariable("issueId") String issueId, @PathVariable("id") String id) {
+      @PathVariable("issueId") String issueId, @PathVariable("id") String id) {
     List<CommentResponse> comment = commentService.deleteCommentsInIssue(issueId, id);
     messagingTemplate.convertAndSend(
-      "/topic/issue/room/" + issueId,
-      new MessageResponse(
-        MessageType.COMMENT_DELETE,
-        comment
-      )
-    );
+        "/topic/issue/room/" + issueId,
+        new MessageResponse(
+            MessageType.COMMENT_DELETE,
+            comment));
   }
 }

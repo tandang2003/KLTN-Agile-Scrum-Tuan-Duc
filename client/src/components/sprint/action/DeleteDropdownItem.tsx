@@ -31,14 +31,25 @@ const DeleteDropdownItem = ({ id, name }: DeleteDropdownItemProps) => {
         />
       ),
       onConfirm: () => {
-        return deleteIssue(id)
-          .unwrap()
-          .then(() => {
-            toast.success(message.toast.success)
-          })
-          .catch(() => {
-            toast.error(message.toast.failed)
-          })
+        return (
+          deleteIssue(id)
+            .unwrap()
+            // .then(() => {
+            //   if (sprintId)
+            //     boardService.removePosition({
+            //       issueId: id,
+            //       sprintId: sprintId,
+            //       projectId: projectId,
+            //       statusPrev: status
+            //     })
+            // })
+            .then(() => {
+              toast.success(message.toast.success)
+            })
+            .catch(() => {
+              toast.error(message.toast.failed)
+            })
+        )
       }
     })
   }
