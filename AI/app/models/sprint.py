@@ -35,5 +35,4 @@ def map(iterator: IterationModel) -> Sprint:
 
 def map_to_dataframe(iterator: IterationModel) -> pd.DataFrame:
     sprint = map(iterator)  # map to Sprint (Pydantic model)
-
     return pd.DataFrame([sprint.model_dump()])

@@ -55,7 +55,7 @@ def issues_to_dataframe(issues: List[Issue]) -> pd.DataFrame:
       "no_affect_version": issue.no_affect_version,
       "no_fix_version": issue.no_fix_version,
       "no_link": issue.no_link,
-      "no_of_comment": issue.numOfComment,
+      # "no_of_comment": issue.no_of_comment,
       "no_issue_blocked": issue.no_issue_blocked,
       "no_issue_blocking": issue.no_issue_blocking,
       "no_fix_version_change": issue.no_fix_version_change,
