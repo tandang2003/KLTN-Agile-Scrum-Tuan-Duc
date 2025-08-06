@@ -29,15 +29,23 @@ public class ProjectSprint {
   @JoinColumn(name = "file_backlog_id",
     referencedColumnName = "id")
   private Resource fileBackLog;
-  @ManyToMany
-  @JoinTable(name = "sprint_resource",
-    joinColumns = {
-      @JoinColumn(name = "project_id",
-        referencedColumnName = "project_id"),
-      @JoinColumn(name = "sprint_id",
-        referencedColumnName = "sprint_id")},
-    inverseJoinColumns = @JoinColumn(name = "resource_id"))
-  private List<Resource> dailyFiles;
+  @OneToOne
+  @JoinColumn(name = "file_daily_first_id",
+    referencedColumnName = "id")
+  private Resource fileDailyFirst;
+  @OneToOne
+  @JoinColumn(name = "file_daily_second_id",
+    referencedColumnName = "id")
+  private Resource fileDailySecond;
+//  @ManyToMany
+//  @JoinTable(name = "sprint_resource",
+//    joinColumns = {
+//      @JoinColumn(name = "project_id",
+//        referencedColumnName = "project_id"),
+//      @JoinColumn(name = "sprint_id",
+//        referencedColumnName = "sprint_id")},
+//    inverseJoinColumns = @JoinColumn(name = "resource_id"))
+//  private List<Resource> dailyFiles;
   //  private Instant dtPreview;
   private int removedIssue;
   private int predictedResult = -2; // -2: not predicted, -1: predicted result is fail, 0: predicted result is success
@@ -128,12 +136,24 @@ public class ProjectSprint {
     this.fileBackLog = fileBackLog;
   }
 
-  public List<Resource> getDailyFiles() {
-    return dailyFiles;
+  public Resource getFileDailyFirst() {
+    return fileDailyFirst;
   }
 
-  public void setDailyFiles(List<Resource> dailyFiles) {
-    this.dailyFiles = dailyFiles;
+  public void setFileDailyFirst(Resource fileDailyFirst) {
+    this.fileDailyFirst = fileDailyFirst;
+  }
+
+  public Resource getFileDailySecond() {
+    return fileDailySecond;
+  }
+
+  public void setFileDailySecond(Resource fileDailySecond) {
+    this.fileDailySecond = fileDailySecond;
+  }
+
+  public int getPredictedResult() {
+    return predictedResult;
   }
 
   public int getRemovedIssue() {

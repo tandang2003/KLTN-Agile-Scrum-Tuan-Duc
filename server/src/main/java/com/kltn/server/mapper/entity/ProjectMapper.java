@@ -5,7 +5,6 @@ import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.model.collection.model.Topic;
 import com.kltn.server.model.entity.Project;
-import com.kltn.server.model.entity.Sprint;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -51,9 +50,11 @@ public interface ProjectMapper {
       @Mapping(target = "createAt", source = "project.dtCreated"),
       @Mapping(target = "updateAt", source = "project.dtModified"),
       @Mapping(target = "topics", source = "topics", qualifiedByName = "toTopicResponse"),
+      @Mapping(target = "completedSprints", source = "completedSprints"),
+      @Mapping(target = "totalEndedSprints", source = "totalEndedSprints"),
   })
   @BeanMapping(ignoreByDefault = true)
-  ProjectResponse toProjectResponseForPaging(Project project, List<Topic> topics);
+  ProjectResponse toProjectResponseForPaging(Project project, List<Topic> topics, int completedSprints, int totalEndedSprints);
 
   // ProjectResponse toProjectResponseById( );
   @Mappings({

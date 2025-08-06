@@ -135,29 +135,30 @@ public class ResourceService {
 
   }
 
-  public ApiResponse<ResourceResponse> uploadFileToDailySprint(DailyResourceSignatureRequest request) {
+  public ApiResponse<ResourceResponse> uploadFileToDailySprint(DailyResourceSignatureRequest request, int times) {
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
         .sprintId(
             request.getSprintId())
         .projectId(
             request.getProjectId())
         .build());
-    List<Resource> dailyFiles = projectSprint.getDailyFiles();
-    if (dailyFiles != null && dailyFiles.size() >= 2) {
+    Resource resource = times == 1
+        ? projectSprint.getFileDailyFirst()
+        : projectSprint.getFileDailySecond();
+    if (resource != null) {
       throw AppException.builder()
           .error(Error.DAILY_FILE_ALREADY_UPLOAD)
           .build();
     }
-    Resource resource = resourceMapper.toResource(request);
+    resource = resourceMapper.toResource(request);
     resource.setUser(userService.getCurrentUser());
     repository.save(resource);
     // Sprint sprint = sprintService.getSprintById(request.getSprintId());
 
-    if (projectSprint.getDailyFiles() == null) {
-      dailyFiles = new ArrayList<>();
-    }
-    dailyFiles.add(resource);
-    projectSprint.setDailyFiles(dailyFiles);
+    if (times == 1)
+      projectSprint.setFileDailyFirst(resource);
+    else
+      projectSprint.setFileDailySecond(resource);
     projectSprintService.save(projectSprint);
     return ApiResponse.<ResourceResponse>builder()
         .code(HttpStatus.CREATED.value())
@@ -221,12 +222,17 @@ public class ResourceService {
       projectSprint.setFileBackLog(null);
       projectSprintService.save(projectSprint);
     }
-    for (ProjectSprint projectSprint : resource.getIssueDailyFiles()) {
-      projectSprint.getDailyFiles()
-          .remove(resource);
+    if (resource.getProjectSprintDailyFirst() != null) {
+      ProjectSprint projectSprint = resource.getProjectSprintDailyFirst();
+      projectSprint.setFileDailyFirst(null);
+      projectSprintService.save(projectSprint);
     }
-    projectSprintRepository.saveAll(resource.getIssueDailyFiles());
-    fileService.deleteFile(resource.getPublicId());
+    if (resource.getProjectSprintDailySecond() != null) {
+      ProjectSprint projectSprint = resource.getProjectSprintDailySecond();
+      projectSprint.setFileDailySecond(null);
+      projectSprintService.save(projectSprint);
+    }
+
     repository.delete(resource);
     return ApiResponse.<Void>builder()
         .code(HttpStatus.OK.value())
@@ -242,9 +248,18 @@ public class ResourceService {
       var builder = ResourceSprintAcrossProjectResponse.builder()
           .id(projectSprint.getProject().getId())
           .title(projectSprint.getProject().getName())
-          .daily(resourceMapper.toResourceResponseList(projectSprint.getDailyFiles()))
-          .backlog(resourceMapper.toResourceResponse(projectSprint.getFileBackLog())).build();
-      dataResult.add(builder);
+          .backlog(resourceMapper.toResourceResponse(projectSprint.getFileBackLog()));
+      List<ResourceResponse> dailyFiles = new ArrayList<>();
+      if (projectSprint.getFileDailyFirst() != null) {
+        dailyFiles.add(resourceMapper.toResourceResponse(projectSprint.getFileDailyFirst()));
+      } else
+        dailyFiles.add(null);
+      if (projectSprint.getFileDailySecond() != null) {
+        dailyFiles.add(resourceMapper.toResourceResponse(projectSprint.getFileDailySecond()));
+      } else
+        dailyFiles.add(null);
+      builder.daily(dailyFiles);
+      dataResult.add(builder.build());
     }
     return ApiResponse.<List<ResourceSprintAcrossProjectResponse>>builder()
         .code(200)
@@ -261,9 +276,18 @@ public class ResourceService {
       var builder = ResourceProjectAcrossSprintResponse.builder()
           .id(projectSprint.getSprint().getId())
           .name(projectSprint.getSprint().getTitle())
-          .daily(resourceMapper.toResourceResponseList(projectSprint.getDailyFiles()))
-          .backlog(resourceMapper.toResourceResponse(projectSprint.getFileBackLog())).build();
-      dataResult.add(builder);
+          .backlog(resourceMapper.toResourceResponse(projectSprint.getFileBackLog()));
+      List<ResourceResponse> dailyFiles = new ArrayList<>();
+      if (projectSprint.getFileDailyFirst() != null) {
+        dailyFiles.add(resourceMapper.toResourceResponse(projectSprint.getFileDailyFirst()));
+      } else
+        dailyFiles.add(null);
+      if (projectSprint.getFileDailySecond() != null) {
+        dailyFiles.add(resourceMapper.toResourceResponse(projectSprint.getFileDailySecond()));
+      } else
+        dailyFiles.add(null);
+      builder.daily(dailyFiles);
+      dataResult.add(builder.build());
     }
     return ApiResponse.<List<ResourceProjectAcrossSprintResponse>>builder()
         .code(200)

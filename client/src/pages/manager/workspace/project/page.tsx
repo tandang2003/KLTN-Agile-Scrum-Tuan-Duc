@@ -1,6 +1,7 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
 import ProjectSocket from '@/components/project/ProjectSocket'
+import ProjectStatus from '@/components/ProjectStatus'
 import RefreshSprint from '@/components/RefreshSprint'
 import SprintPredict from '@/components/SprintPredict'
 import StoreData from '@/components/StoreData'
@@ -13,6 +14,7 @@ import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
 import useAppId from '@/hooks/use-app-id'
+import useSprintCurrent from '@/hooks/use-sprint-current'
 import { toISODateString } from '@/lib/date.helper'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { Id } from '@/types/other.type'
@@ -26,7 +28,8 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
-  const { workspaceId } = useAppId()
+
+  const { sprint } = useSprintCurrent()
 
   const dispatch = useAppDispatch()
 
@@ -64,14 +67,18 @@ const ProjectPage = () => {
             {projectId && <ProjectSocket projectId={projectId} />}
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
-              <div className='flex gap-3'>
-                {workspaceId && (
+
+              <div className='flex items-center gap-3'>
+                {/* {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={30} />
                 )}
                 {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={50} />
                 )}
-                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
+                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />} */}
+                {projectId && sprint?.id && (
+                  <ProjectStatus projectId={projectId} sprintId={sprint?.id} />
+                )}
                 <RefreshSprint />
                 <SprintPredict
                   project={{

@@ -670,6 +670,23 @@ public class DashBoardService {
         .message("Đã truy xuất thành công dự kết quả của dự án theo mỗi sprint")
         .build();
   }
+
+  public ApiResponse<ProjectPredictResponse> getPredictForTeacher(String sprintId,
+      String projectId) {
+    var projectSprint = projectSprintRepository.findBySprintIdAndProjectId(sprintId, projectId);
+    ProjectPredictResponse result = ProjectPredictResponse.builder().id(projectSprint.getProject().getId())
+        .name(projectSprint.getProject().getName())
+        .lastTime(projectSprint.getDtLastPredicted())
+        .predict(projectSprint.isPredictedResult())
+        .build();
+
+    return ApiResponse.<ProjectPredictResponse>builder()
+        .code(200)
+        .data(
+            result)
+        .message("Đã truy xuất thành công dự kết quả của dự án ")
+        .build();
+  }
   // private void addToMap(Map<String, Integer> map, String key, int value) {
   // map.merge(key, value, Integer::sum);
   // }

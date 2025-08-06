@@ -9,15 +9,17 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProjectResponse(
-    String id, String name, String description, Instant start, Instant end,
-    List<TopicResponse> topics,
-    List<SprintResponse> sprints,
-    String leader,
-    Instant createdAt,
-    Instant updatedAt,
-    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse prevSprint,
-    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
-    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint
+  String id, String name, String description, Instant start, Instant end,
+  List<TopicResponse> topics,
+  List<SprintResponse> sprints,
+  String leader,
+  Instant createdAt,
+  Instant updatedAt,
+  @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse prevSprint,
+  @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
+  @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint,
+  int completedSprints,
+  int totalEndedSprints
 
 ) {
 
@@ -35,6 +37,8 @@ public record ProjectResponse(
     private SprintResponse currentSprint;
     private SprintResponse prevSprint;
     private SprintResponse nextSprint;
+    private int completedSprints;
+    private int totalEndedSprints;
 
     public ProjectResponseBuilder id(String id) {
       this.id = id;
@@ -101,10 +105,20 @@ public record ProjectResponse(
       return this;
     }
 
+    public ProjectResponseBuilder completedSprints(int completedSprints) {
+      this.completedSprints = completedSprints;
+      return this;
+    }
+
+    public ProjectResponseBuilder totalEndedSprints(int totalEndedSprints) {
+      this.totalEndedSprints = totalEndedSprints;
+      return this;
+    }
+
     public ProjectResponse build() {
       return new ProjectResponse(id, name, description, start, end, topics, sprints, leader, createdAt, updatedAt,
-          prevSprint,
-          currentSprint, nextSprint);
+        prevSprint,
+        currentSprint, nextSprint, completedSprints, totalEndedSprints);
     }
   }
 

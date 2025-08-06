@@ -17,7 +17,7 @@ The Makefile provides easy commands to manage Python environment setup and datab
 | `freeze`  | Save current Python packages to `requirements.txt`           | `make freeze`           |
 
 ---
-
+mk
 ### MySQL Commands
 
 | Target               | Description                                                     | Notes                                                |

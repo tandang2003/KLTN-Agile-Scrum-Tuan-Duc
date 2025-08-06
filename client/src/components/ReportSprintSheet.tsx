@@ -58,7 +58,6 @@ const ReportSprintSheet = ({
     start: sprint.start,
     end: sprint.end
   })
-  const disabled = status === 'COMPLETE'
   const disableDaily1 = useCallback(() => {
     return !isWithinInterval(now, {
       start: sprint.start,
@@ -267,7 +266,7 @@ const ReportSprintSheet = ({
                 label: 'Excel Spreadsheet (.xlsx)'
               }}
               signatureFn={handleSignatureFn}
-              disabled={disabled}
+              disabled={disableDaily2()}
               createFn={handleUploadBacklog}
               onDelete={() => handleDelete('backlog')}
             />

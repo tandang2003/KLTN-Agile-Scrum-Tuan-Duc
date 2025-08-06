@@ -1,5 +1,6 @@
 import ListViewPagination from '@/components/ListViewPagination'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getProjectPredictDisplayName } from '@/constant/message.const'
 import { useGetProjectPredictQuery } from '@/feature/dashboard/dashboard.api'
 import useAppId from '@/hooks/use-app-id'
 import useSprintCurrent from '@/hooks/use-sprint-current'
@@ -47,12 +48,7 @@ const ProjectPredict = () => {
                   <CardContent>
                     <div>
                       <span>
-                        Trạng thái:{' '}
-                        {item.predict == -2 && 'Chưa thực hiện dự đoán'}
-                        {item.predict == -1 &&
-                          'Project có khả năng không thành công ở sprint này'}
-                        {item.predict == 0 &&
-                          'Project có khả năng thành công ở sprint này'}
+                        Trạng thái: {getProjectPredictDisplayName(item.predict)}
                       </span>
                     </div>
                     <p className='pt-4 text-right text-sm text-gray-500'>

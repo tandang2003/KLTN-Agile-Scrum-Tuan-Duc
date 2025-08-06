@@ -54,6 +54,7 @@ public class WorkspaceService {
   private final CourseMapper courseMapper;
   private final UserCourseService userCourseService;
   private final CourseService courseService;
+  private final SprintService sprintService;
   //  private UserRepository userRepository;
   private WorkspaceRepository workspaceRepository;
   private WorkspaceMapper workspaceMapper;
@@ -74,7 +75,7 @@ public class WorkspaceService {
                           UserMapper userMapper,
                           WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper,
                           @Lazy
-                          UserService userService, UserCourseRelationRepository userCourseRelationRepository, CourseMapper courseMapper, UserCourseService userCourseService, CourseService courseService) {
+                          UserService userService, UserCourseRelationRepository userCourseRelationRepository, CourseMapper courseMapper, UserCourseService userCourseService, CourseService courseService, SprintService sprintService) {
     this.tokenUtils = tokenUtils;
     this.roleService = roleService;
 //    this.userRepository = userRepository;
@@ -90,6 +91,7 @@ public class WorkspaceService {
     this.courseMapper = courseMapper;
     this.userCourseService = userCourseService;
     this.courseService = courseService;
+    this.sprintService = sprintService;
   }
 
   @Transactional
@@ -225,7 +227,8 @@ public class WorkspaceService {
       List<Topic> topics;
       if (project1.isPresent()) topics = project1.get().getTopics();
       else topics = new ArrayList<>();
-      projectResponses.add(projectMapper.toProjectResponseForPaging(project, topics));
+      ProjectResponse projectResponse= projectMapper.toProjectResponseForPaging(project, topics, completedSprints(project), totalEndedSprints(project));
+      projectResponses.add(projectResponse);
       });
 
     return ApiResponse.<ApiPaging<ProjectResponse>>builder()
@@ -237,6 +240,18 @@ public class WorkspaceService {
         .currentPage(page)
         .build())
       .build();
+  }
+
+  private int completedSprints(Project project) {
+    return (int) project.getSprints().stream()
+      .filter(sprint -> sprintService.completedSprint(project, sprint))
+      .count();
+  }
+
+  private int totalEndedSprints(Project project) {
+    return (int) project.getSprints().stream()
+      .filter(sprint -> sprint.getDtEnd().isBefore(ClockSimulator.now()))
+      .count();
   }
 
   public ApiResponse<WorkspaceAuthorizationResponse> getUserInfoInWorkspace(String workspaceId) {

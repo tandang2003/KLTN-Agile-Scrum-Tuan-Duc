@@ -117,7 +117,7 @@ const SprintCardInSprint = ({
       id: sprintId,
       start: start,
       end: end
-    }) !== 'COMPLETE' &&
+    }) === 'PENDING' &&
     hasRequiredRole
 
   const canEdit =
