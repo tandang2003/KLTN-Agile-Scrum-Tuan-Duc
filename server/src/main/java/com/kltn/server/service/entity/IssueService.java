@@ -177,40 +177,7 @@ public class IssueService {
       User reviewer = userService.getUserByUniId(issueCreateRequest.getReviewerId());
       task.setReviewer(reviewer);
     }
-    // if (issueCreateRequest.getSprintId() != null &&
-    // !issueCreateRequest.getSprintId().isEmpty()) {
-    // Sprint sprint =
-    // sprintService.getSprintById(issueCreateRequest.getSprintId());
-    // Instant now = ClockSimulator.now();
-    // if (now.isAfter(sprint.getDtStart())) {
-    // throw AppException.builder().error(Error.SPRINT_ALREADY_START).build();
-    // }
-    // if (now.isAfter(sprint.getDtEnd())) {
-    // throw AppException.builder().error(Error.SPRINT_ALREADY_END).build();
-    // }
-    // if (task.getDtStart() == null) {
-    // task.setDtStart(sprint.getDtStart());
-    // } else if (task.getDtStart() != null &&
-    // task.getDtStart().isBefore(sprint.getDtStart())) {
-    // Map<String, String> error = new HashMap<>();
-    // error.put("start", "Start date cannot be before sprint start date");
-    // List<Map<String, String>> errors = new ArrayList<>();
-    // errors.add(error);
-    // throw AppMethodArgumentNotValidException.builder().error(errors).build();
-    // }
-    // if (task.getDtEnd() == null) {
-    // task.setDtEnd(sprint.getDtEnd());
-    // } else if (task.getDtEnd() != null &&
-    // task.getDtEnd().isAfter(sprint.getDtEnd())) {
-    // Map<String, String> error = new HashMap<>();
-    // error.put("end", "End date cannot be after sprint end date");
-    // List<Map<String, String>> errors = new ArrayList<>();
-    // errors.add(error);
-    // throw AppMethodArgumentNotValidException.builder().error(errors).build();
-    // }
-    // task.setSprint(sprint);
-    // task.setDtAppend(ClockSimulator.now());
-    // }
+
     if (issueCreateRequest.getAttachments() != null && !issueCreateRequest.getAttachments().isEmpty()) {
       List<Resource> resources = issueCreateRequest.getAttachments()
           .stream()
@@ -599,13 +566,16 @@ public class IssueService {
     // }
     // }
 
+    // Check rollback from done
+    if (task.getStatus().equals(IssueStatus.DONE) && !request.getStatus().equals(IssueStatus.DONE)) {
+      throw AppException.builder().error(Error.STATUS_ISSUE_CONFLICT_ROLLBACK).build();
+    }
+
     if (request.getStatus().equals(IssueStatus.DONE)) {
       task.setOpen(false);
       task.setDtEnd(ClockSimulator.now());
-    } else if (task.getStatus().equals(IssueStatus.DONE) && !request.getStatus().equals(IssueStatus.DONE)) {
-      task.setOpen(true);
-      task.setDtEnd(null);
     }
+
     task.setStatus(request.getStatus());
 
     task.setPosition(request.getPosition());

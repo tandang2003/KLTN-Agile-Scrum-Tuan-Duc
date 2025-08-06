@@ -21,7 +21,6 @@ import com.kltn.server.service.entity.ProjectSprintService;
 import com.kltn.server.service.entity.SprintService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -52,16 +51,23 @@ public class DecisionService {
   public ApiResponse<Boolean> makePredict(String projectId, String sprintId) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
+
+    // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
     var responsePrePredictChecking = checkPrePredict(project, sprint);
     if (responsePrePredictChecking != null)
       return responsePrePredictChecking;
+
+    // Kiếm tra sprint thực hiện dự đoán hiện tại đang hoạt động
     Instant start = sprint.getDtStart();
     Instant now = ClockSimulator.now();
     if (start.isAfter(now)) {
       throw AppException.builder().error(Error.SPRINT_CONFLICT_TIME).message("Sprint has not started yet").build();
     }
+
+    // Thực hiện lấy dữ liệu sprint để đưa vào mô hình
     IterationModel.IterationModelBuilder iterationModelBuilder = IterationModel.builder();
     iterationModelBuilder.sprint_id(sprintId);
+    iterationModelBuilder.course_name(project.getWorkspace().getCourse().getName());
     iterationModelBuilder.storyPoint(sprint.getStoryPoint());
     iterationModelBuilder.sprintDuration(calculateSprintDuration(sprint));
     iterationModelBuilder.numOfIssueAtStart(issueService.getNumberOfIssuesAtStart(project, sprint));
@@ -72,14 +78,22 @@ public class DecisionService {
         issueService.getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
     iterationModelBuilder.numOfIssueDone(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
     iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
-    iterationModelBuilder.issueModelList(getIssuesInSprint(project, sprint));
+
+    // Thực hiện lấy dữ liệu issue của sprint để đưa vào mô hình dự đoán
+    List<IssueModel> issueModels = getIssuesInSprint(project, sprint);
+    iterationModelBuilder.issueModelList(issueModels);
     IterationModel iterationModel = iterationModelBuilder.build();
+
+    // Gọi api qua python server để yêu cầu chạy mô hình
     int r = sendToPython(iterationModel);
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
         .sprintId(sprint.getId())
         .projectId(project.getId())
         .build());
+
+    // Lưu kết quả đa dự đoán vào database
     projectSprint.setPredictedResult(r);
+    // Lưu thời gian dự đoán
     projectSprint.setDtLastPredicted(ClockSimulator.now());
     projectSprintService.save(projectSprint);
     return ApiResponse.<Boolean>builder().code(200).message("Decision retrieved successfully").data(r == 0).build();
@@ -87,13 +101,17 @@ public class DecisionService {
 
   private ApiResponse<Boolean> checkPrePredict(Project project, Sprint sprint) {
     List<Issue> issues = issueService.getIssuesBySprintId(project.getId(), sprint.getId());
+
+    // Kiểm tra issue rỗng trong sprint
     if (issues == null || issues.isEmpty()) {
       return ApiResponse.<Boolean>builder()
           .code(400)
-          .message("Không thể tiến hành dự đoán vì không có vấn đề nào trong sprint")
+          .message("Không thể tiến hành dự đoán vì không có issue nào trong sprint")
           .data(false)
           .build();
     }
+
+    // Kiểm tra sprint chưa thiết lập thời gian
     if (sprint.getDtStart() == null || sprint.getDtEnd() == null) {
       return ApiResponse.<Boolean>builder()
           .code(400)
@@ -101,6 +119,8 @@ public class DecisionService {
           .data(false)
           .build();
     }
+
+    // Kiểm tra sprint đã bắt đầu chưa?
     if (sprint.getDtStart().isAfter(ClockSimulator.now())) {
       return ApiResponse.<Boolean>builder()
           .code(400)
@@ -108,6 +128,8 @@ public class DecisionService {
           .data(false)
           .build();
     }
+
+    // Kiểm tra sprint đã kết thúc chưa?
     if (sprint.getDtEnd().isBefore(ClockSimulator.now())) {
       return ApiResponse.<Boolean>builder()
           .code(400)
@@ -115,24 +137,31 @@ public class DecisionService {
           .data(false)
           .build();
     }
-    int issueInaccept = 0;
+
+    // Kiểm tra số lượng các issue được cập nhập với số lượng thỏa mãn (=2)
+    int issueInAccept = 0;
     String[] propertiesTargets = new String[] {
         "status" };
     for (Issue issue : issues) {
+
+      // Lấy ra danh sách các thay đổi trạng thái của issue
       List<ChangeLog> issueLog = changeLogRepository.findByIdRefAndTypeAndPropertiesTargetsContains(issue.getId(),
           LogType.UPDATE, propertiesTargets);
+
+      // Kiểm tra số lượng thay đổi trạng thái thỏa mãn
       if (issueLog.isEmpty() || (issueLog.size() < 2 && issueLog.stream()
           .anyMatch(changeLog -> Objects.equals(changeLog.getChange()
               .getStatus(), IssueStatus.DONE.name())))) {
-        issueInaccept++;
+        issueInAccept++;
         continue;
       }
-      // issueLog.sort(Comparator.comparing(ChangeLog::getCreatedBy));
     }
-    if (issueInaccept > issues.size() / 2) {
+
+    // Số lượng issue thỏa mãn phải lớn hơn 50% tổng số issue được tạo trong sprint
+    if (issueInAccept > issues.size() / 2) {
       return ApiResponse.<Boolean>builder()
           .code(400)
-          .message("Không thể tiến hành dự đoán vì có " + issueInaccept + " vấn đề không hợp lệ trong sprint")
+          .message("Không thể tiến hành dự đoán vì có " + issueInAccept + " vấn đề không hợp lệ trong sprint")
           .data(false)
           .build();
     }
@@ -143,8 +172,6 @@ public class DecisionService {
     List<Issue> issues = issueService.getIssuesBySprintId(project.getId(), sprint.getId());
     if (issues == null || issues.isEmpty()) {
       return new ArrayList<>();
-      // throw AppException.builder().error(Error.NOT_FOUND).message("No issues found
-      // in the sprint").build();
     }
     List<IssueModel> issueModels = new ArrayList<>();
     for (Issue issue : issues) {

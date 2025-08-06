@@ -13,7 +13,7 @@ process = My_Process()
 
 @router.post("")
 async def list_issues(data:IterationModel):
-
+  process.reset_model(data.course_name)
   process.set_sprint_data(sprintMapDataframe(data))
   process.set_issue_data(issueMapListToDataFrame(issueMapList(data.issueModelList)))
   return process.process();
