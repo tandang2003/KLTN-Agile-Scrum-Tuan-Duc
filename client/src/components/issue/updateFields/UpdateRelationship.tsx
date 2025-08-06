@@ -47,7 +47,6 @@ import useSprintOrder from '@/hooks/use-sprint-order'
 import { statusOrder } from '@/types/model/typeOf'
 import { getStatusSprint } from '@/lib/sprint.helper'
 import { Separator } from '@/components/ui/separator'
-import BadgeSprint from '@/components/badge/BadgeSprint'
 type UpdateRelationshipProps = {
   issueId: Id
   initialData?: RelationshipResponse[]

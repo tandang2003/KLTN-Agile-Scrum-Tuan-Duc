@@ -670,4 +670,7 @@ public class DashBoardService {
         .message("Đã truy xuất thành công dự kết quả của dự án theo mỗi sprint")
         .build();
   }
+  // private void addToMap(Map<String, Integer> map, String key, int value) {
+  // map.merge(key, value, Integer::sum);
+  // }
 }

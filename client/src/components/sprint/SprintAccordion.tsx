@@ -1,7 +1,11 @@
 import ListIssueInSprint from '@/components/sprint/ListIssueInSprint'
 
+import BadgeSprint from '@/components/badge/BadgeSprint'
 import HtmlViewer from '@/components/HtmlViewer'
+import Icon from '@/components/Icon'
+import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
 import ListIssueInProductBacklog from '@/components/sprint/ListIssueInProductBacklog'
+import TitleLevel from '@/components/TitleLevel'
 import ToolTip from '@/components/Tooltip'
 import {
   Accordion,
@@ -10,18 +14,14 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { useClearGetListIssueMutation } from '@/feature/issue/issue.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { sortSprintsByDateStart } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
-import { useEffect, useRef, useState } from 'react'
-import { Separator } from '@/components/ui/separator'
-import TitleLevel from '@/components/TitleLevel'
-import Icon from '@/components/Icon'
-import BadgeSprint from '@/components/badge/BadgeSprint'
-import { useSprintSelect } from '@/components/issue/IssueSelectSprintContext'
+import { useEffect, useState } from 'react'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }

@@ -13,7 +13,6 @@ import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
 import useAppId from '@/hooks/use-app-id'
-import useSprintCurrent from '@/hooks/use-sprint-current'
 import { toISODateString } from '@/lib/date.helper'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
 import { Id } from '@/types/other.type'
@@ -27,7 +26,6 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
-
   const { workspaceId } = useAppId()
 
   const dispatch = useAppDispatch()

@@ -32,7 +32,6 @@ import { forwardRef, useRef, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import messages from '@/constant/message.const'
 import TitleLevel from '@/components/TitleLevel'
-import { is } from 'date-fns/locale'
 
 type UpdateSubTaskFormProp = {}
 

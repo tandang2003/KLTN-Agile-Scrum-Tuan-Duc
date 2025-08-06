@@ -2,7 +2,6 @@ import { useDeleteCommentMutation } from '@/feature/issue/issue.api'
 import { useAuth } from '@/hooks/use-auth'
 import { useStompClient } from '@/hooks/use-stomp-client'
 import { createCtx } from '@/lib/context.helper'
-import { uuid } from '@/lib/utils'
 import commentService, {
   isCreateComment,
   isDeleteComment
