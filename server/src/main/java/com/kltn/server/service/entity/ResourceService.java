@@ -226,6 +226,7 @@ public class ResourceService {
           .remove(resource);
     }
     projectSprintRepository.saveAll(resource.getIssueDailyFiles());
+    fileService.deleteFile(resource.getPublicId());
     repository.delete(resource);
     return ApiResponse.<Void>builder()
         .code(HttpStatus.OK.value())

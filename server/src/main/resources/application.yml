@@ -79,7 +79,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
-  ip: 192.168.1.12
+  ip: 172.16.17.56
   whitelist:
     - auth
     - auth/register

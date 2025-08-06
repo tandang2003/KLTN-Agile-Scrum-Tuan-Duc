@@ -1,6 +1,7 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
 import ProjectSocket from '@/components/project/ProjectSocket'
+import RefreshSprint from '@/components/RefreshSprint'
 import SprintPredict from '@/components/SprintPredict'
 import StoreData from '@/components/StoreData'
 import StoreVelDiff from '@/components/StoreVelDiff'
@@ -65,7 +66,7 @@ const ProjectPage = () => {
             {projectId && <ProjectSocket projectId={projectId} />}
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
-              <div>
+              <div className='flex gap-3'>
                 {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={30} />
                 )}
@@ -73,6 +74,7 @@ const ProjectPage = () => {
                   <StoreData workspaceId={workspaceId} stage={50} />
                 )}
                 {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
+                <RefreshSprint />
                 <SprintPredict
                   project={{
                     id: data.id,

@@ -66,16 +66,6 @@ const SprintCardInSprint = ({
             />
           )
         })
-        // boardService
-        //   .removePosition({
-        //     issueId: id,
-        //     sprintId: sprintId,
-        //     projectId: item.projectId,
-        //     statusPrev: item.status
-        //   })
-        //   .then(() => {
-
-        //   })
       })
       .catch((err) => {
         toast.error(message.toast.moveToBacklog.failed, {
