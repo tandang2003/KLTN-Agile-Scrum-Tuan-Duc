@@ -9,17 +9,20 @@ import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
 import com.kltn.server.mapper.entity.SprintMapper;
+import com.kltn.server.model.collection.snapshot.ProjectSnapshot;
 import com.kltn.server.model.entity.Project;
 import com.kltn.server.model.entity.Sprint;
-import com.kltn.server.model.entity.Workspace;
 import com.kltn.server.model.entity.embeddedKey.ProjectSprintId;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
+import com.kltn.server.repository.document.ChangeLogRepository;
+import com.kltn.server.repository.document.snapshot.SnapshotRepository;
 import com.kltn.server.repository.entity.SprintRepository;
 import com.kltn.server.schedular.PredictScheduler;
 import com.kltn.server.schedular.SprintScheduler;
 import com.kltn.server.service.mongo.SprintBoardMongoService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -33,25 +36,29 @@ import java.util.Set;
 @Service
 public class SprintService {
   private final PredictScheduler predictScheduler1;
+  private final SnapshotRepository snapshotRepository;
   private SprintMapper sprintMapper;
   private SprintRepository sprintRepository;
+  @Lazy
+  @Autowired
   private WorkspaceService workspaceService;
   private ProjectSprintService projectSprintService;
   private SprintScheduler sprintScheduler;
   private SprintBoardMongoService sprintBoardMongoService;
 
   @Autowired
-  public SprintService(SprintScheduler sprintScheduler, WorkspaceService workspaceService,
+  public SprintService(SprintScheduler sprintScheduler,
                        ProjectSprintService projectSprintService, SprintMapper sprintMapper,
                        SprintRepository sprintRepository, PredictScheduler predictScheduler1,
-                       SprintBoardMongoService sprintBoardMongoService) {
+                       SprintBoardMongoService sprintBoardMongoService, SnapshotRepository snapshotRepository) {
     this.sprintMapper = sprintMapper;
     this.sprintRepository = sprintRepository;
     this.projectSprintService = projectSprintService;
-    this.workspaceService = workspaceService;
+
     this.sprintScheduler = sprintScheduler;
     this.predictScheduler1 = predictScheduler1;
     this.sprintBoardMongoService = sprintBoardMongoService;
+    this.snapshotRepository = snapshotRepository;
   }
 
   @Transactional
@@ -69,7 +76,9 @@ public class SprintService {
     Set<Project> projects = workspace.getProjects();
     if (projects != null && !projects.isEmpty()) {
       // FIX: POSITION
-      sprintBoardMongoService.addPositionToSprint(sprint.getId(), projects.stream().map(Project::getId).toArray(String[]::new));
+      sprintBoardMongoService.addPositionToSprint(sprint.getId(), projects.stream()
+        .map(Project::getId)
+        .toArray(String[]::new));
 
       projectSprintService.save(projects.stream()
         .map(Project::getId)
@@ -170,7 +179,8 @@ public class SprintService {
         .build();
     List<SprintResponse> transferList = list.stream()
       .map(sprintMapper::toSprintCreateResponse)
-      .toList();
+      .toList()
+      ;
     return ApiResponse.<List<SprintResponse>>builder()
       .code(HttpStatus.OK.value())
       .data(transferList)
@@ -240,5 +250,19 @@ public class SprintService {
       }
     }
     return false;
+  }
+
+  public boolean completedSprint(Project project, Sprint sprint) {
+    ProjectSnapshot projectSnapshot = snapshotRepository.findByProjectIdAndSprintId(project.getId(), sprint.getId())
+      .orElse(null);
+    if (projectSnapshot == null) return false;
+    int totalIssues = projectSnapshot.getIssues().size();
+    int completedIssues = (int) projectSnapshot.getIssues().stream()
+      .filter(issue -> issue.getStatus()
+        .equals("DONE"))
+      .count();
+    // Làm tròn xuống 80% của tổng số issue
+    int requiredCompleted = (int) Math.floor(totalIssues * 0.8);
+    return completedIssues >= requiredCompleted;
   }
 }
