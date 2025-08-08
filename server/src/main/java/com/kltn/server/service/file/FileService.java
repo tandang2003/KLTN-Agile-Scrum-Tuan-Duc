@@ -7,5 +7,7 @@ public interface FileService {
 
   String getUrl(String publishId);
 
+  String getUrl(String publishId, String type);
+
   void deleteFile(String publicId);
 }

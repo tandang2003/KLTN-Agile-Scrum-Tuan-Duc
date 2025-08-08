@@ -759,13 +759,13 @@ const getProjectPredictDisplayName = (status: -2 | -1 | 0) => {
   let result = ''
   switch (status) {
     case -2:
-      result = 'Chưa thực hiện dự đoán'
+      result = 'Dự án chưa thực hiện dự đoán'
       break
     case -1:
-      result = 'Project có khả năng không thành công ở sprint này'
+      result = 'Dự án có khả năng không thành công ở sprint này'
       break
     case 0:
-      result = 'Project có khả năng thành công ở sprint này'
+      result = 'Dự án có khả năng thành công ở sprint này'
       break
     default:
       break

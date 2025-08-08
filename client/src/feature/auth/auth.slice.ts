@@ -44,7 +44,7 @@ const loginThunk = createAsyncThunk<
 >('auth/login', async (req, { rejectWithValue }) => {
   try {
     const data = await authService.login(req)
-    tokenService.setTokenLocal(data.data.access_token)
+    tokenService.setTokenAuth(data.data.access_token)
     const info = await userService.getInfo()
     return {
       ...info.data,
@@ -62,7 +62,7 @@ const restoreUserThunk = createAsyncThunk<UserInfoResponse, void>(
       const data = await userService.getInfo()
       return data.data
     } catch (_) {
-      tokenService.removeTokenLocal()
+      tokenService.removeTokenAuth()
       return rejectWithValue('Get user workspace failed')
     }
   }
@@ -76,8 +76,8 @@ const logoutThunk = createAsyncThunk<void, LogoutReq>(
     } catch (_) {
       return rejectWithValue('Token invalid')
     } finally {
-      tokenService.removeTokenLocal()
-      toast.success('Logout by token expired')
+      tokenService.clearAxios()
+      tokenService.clear()
       dispatch(workspaceApi.util.resetApiState())
     }
   }

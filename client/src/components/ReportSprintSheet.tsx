@@ -82,15 +82,18 @@ const ReportSprintSheet = ({
     data: CreateFileData,
     type: 'daily1' | 'daily2'
   ): Promise<Thumbnail> => {
-    const response = await resourceService.createResourceDaily({
-      contentType: 'FILE',
-      extension: data.format,
-      name: data.baseName,
-      publicId: data.public_id,
-      size: data.bytes,
-      projectId: projectId,
-      sprintId: sprint.id
-    })
+    const response = await resourceService.createResourceDaily(
+      {
+        contentType: 'FILE',
+        extension: data.format,
+        name: data.baseName,
+        publicId: data.public_id,
+        size: data.bytes,
+        projectId: projectId,
+        sprintId: sprint.id
+      },
+      type === 'daily1' ? 1 : 2
+    )
 
     const thumbnail: Thumbnail = {
       id: response.id,

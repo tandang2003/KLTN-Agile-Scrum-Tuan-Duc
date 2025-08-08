@@ -58,4 +58,10 @@ public class CloudinaryService implements FileService {
     }
   }
 
+  @Override
+  public String getUrl(String publishId, String type) {
+    return cloudinary.url().resourcType(type)
+        .generate(publishId);
+  }
+
 }

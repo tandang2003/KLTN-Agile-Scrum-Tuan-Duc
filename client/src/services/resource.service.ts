@@ -73,11 +73,14 @@ const resourceService = {
     return res.data.data
   },
 
-  createResourceDaily: async (req: CreateResourceDailyRequestType) => {
+  createResourceDaily: async (
+    req: CreateResourceDailyRequestType,
+    time: 1 | 2
+  ) => {
     const res = await httpService.post<
       ResponseApi<ResourceResponseType>,
       CreateResourceDailyRequestType
-    >('/resource/daily', req)
+    >(`/resource/daily/${time}`, req)
     return res.data.data
   },
 
