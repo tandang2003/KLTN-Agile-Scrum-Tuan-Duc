@@ -178,7 +178,7 @@ const BoardPage = () => {
       <LoadingBoundary
         data={data}
         isLoading={isFetching}
-        fallback={<Empty>Chưa có sprint nào đang chạy</Empty>}
+        fallback={<Empty>Không có bất kì issue nào trong sprint này</Empty>}
         loading={<Skeleton className={'active-bg h-[200px] rounded-xl'} />}
       >
         {(data) => {

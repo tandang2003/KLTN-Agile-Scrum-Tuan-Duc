@@ -8,6 +8,7 @@ import com.kltn.server.service.DecisionService;
 import com.kltn.server.service.message.RoomService;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,6 +19,7 @@ public class PredictConsumer {
   private final DecisionService decisionService;
   private RoomService projectRoomService;
 
+  @Autowired
   public PredictConsumer(DecisionService decisionService, RoomService projectRoomService) {
     this.decisionService = decisionService;
     this.projectRoomService = projectRoomService;
@@ -26,7 +28,8 @@ public class PredictConsumer {
   @KafkaListener(topics = "predict", groupId = "predict-1")
   @Transactional
   public void consumeSnapshot1(@Payload SprintPredictRequest sprintPredictRequest, @Header("X-Auth-User") String user) {
-    var result = decisionService.makePredict(sprintPredictRequest.getProjectId(), sprintPredictRequest.getSprintId());
+    var result = decisionService.makePredict(sprintPredictRequest.getProjectId(), sprintPredictRequest.getSprintId(),
+        false);
     projectRoomService.sendToRoom(sprintPredictRequest.getProjectId(), new MessageResponse(MessageType.PREDICT,
         new ProjectMessagePredictResponse(result.getData(), result.getMessage())));
   }

@@ -1,0 +1,81 @@
+@startuml
+autonumber
+actor "Sinh viên" as SV
+participant "View\n(/manager/project/:projectId)" as View
+participant "IssueController" as Controller
+participant "Issue\nService" as Service
+participant "Sprint\nService" as SprintService
+participant "IssueRepository" as Repo
+participant "IssueMongo\nService" as IssueMongoService
+database "MySQL" as MySQL
+database "MongoDB" as MongoDB
+
+activate SV
+SV -> View : Student access
+activate View
+View -> View : Get list sprint
+
+SV -> View : Select issue editing
+View --> View: Fill data issue in form
+SV -> View: Change field
+
+View -> Controller : PUT /issue/update-status
+activate Controller
+Controller -> Service : updateTask\n(request)
+activate Service
+Service --> Service : Get status \n change \n from request
+Service -> Repo: findById(id)
+activate Repo
+Repo -> MySQL: findById(id)
+activate MySQL
+MySQL --> Repo: Issue model
+deactivate MySQL
+Repo --> Service: Issue model
+deactivate Repo
+
+Service --> Service: get statusCurr \n issue model
+
+opt If (status = REVIEW \n| status = DONE) \n& statusCurr = TODO
+    Service --> Service: throw STATUS_ISSUE_CONFLICT
+end
+
+opt If status = DONE & \n statusCurr= INPROCESS
+    Service --> Service: throw STATUS_ISSUE_CONFLICT
+end
+
+opt If status = REVIEW
+    Service --> Service: get numComment assignee
+    opt If numComment < 1
+      Service --> Service: throw \nCOMMENT_ASSIGNEE_STATUS_ISSUE
+    end
+end
+
+opt If status = DONE
+    Service --> Service: get numComment reviewer
+    opt If numComment < 1
+      Service --> Service: throw \nCOMMENT_REVIEWER_STATUS_ISSUE
+    end
+end
+
+opt If statusCUrr = DONE \n&& status != DONE
+    Service --> Service: throw \nSTATUS_ISSUE_CONFLICT_ROLLBACK
+end
+
+
+opt If status = DONE
+    Service --> Service: setOpen(false) for \nissue model
+     Service --> Service: setDtEnd(now) for \nissue model
+end
+
+Service -> Service: update \n Changelog \n via Kafka
+
+Service --> Controller :  issue model
+deactivate Service
+
+Controller --> View :   issue model
+deactivate Controller
+
+View --> SV :  issue model
+deactivate View
+deactivate SV
+@enduml

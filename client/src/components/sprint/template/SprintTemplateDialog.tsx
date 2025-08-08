@@ -50,9 +50,10 @@ const SprintTemplateDialog = ({ open, onOpen }: SprintTemplateDialogProps) => {
     })
       .unwrap()
       .then(({ id, title }) => {
+        console.log(id, title)
         toast.success(
           messages.component.sprint.template.dialog.toast.create.success
-            .description,
+            .message,
           {
             description: (
               <Message

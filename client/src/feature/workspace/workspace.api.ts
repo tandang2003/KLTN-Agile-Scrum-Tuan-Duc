@@ -230,5 +230,6 @@ export const {
   useInviteStudentWorkspaceMutation,
   useClearGetWorkspaceMutation,
   useGetAllResourceByProjectQuery,
-  useGetAllResourceBySprintQuery
+  useGetAllResourceBySprintQuery,
+  useLazyGetWorkspaceQuery
 } = workspaceApi

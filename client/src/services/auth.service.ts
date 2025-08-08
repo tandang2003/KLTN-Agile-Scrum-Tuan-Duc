@@ -30,10 +30,10 @@ const authService = {
 
       const body: ResponseApi<LoginRes> = response.data
       const { access_token } = body.data
-      tokenService.setTokenLocal(access_token)
+      tokenService.setTokenAuth(access_token)
       return body
     } catch (e) {
-      tokenService.removeTokenLocal()
+      tokenService.removeTokenAuth()
       throw new Error('UnAuthorization')
     }
   }
