@@ -1,5 +1,4 @@
 import { RootState } from '@/context/redux/store'
-import { logoutThunk } from '@/feature/auth/auth.slice'
 import { setSprintFilter } from '@/feature/board/board.slice'
 import {
   getTokenProjectThunk,
@@ -55,12 +54,6 @@ const persistAuthorizationMiddleware: Middleware<{}, RootState> =
       })
     }
 
-    if (
-      logoutThunk.fulfilled.match(action) ||
-      logoutThunk.rejected.match(action)
-    ) {
-      tokenService.clear()
-    }
     return next(action)
   }
 

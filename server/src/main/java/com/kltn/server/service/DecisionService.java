@@ -48,15 +48,16 @@ public class DecisionService {
   }
 
   @Transactional
-  public ApiResponse<Boolean> makePredict(String projectId, String sprintId) {
+  public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean checkPrePredict) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
 
     // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
-    var responsePrePredictChecking = checkPrePredict(project, sprint);
-    if (responsePrePredictChecking != null)
-      return responsePrePredictChecking;
-
+    if (checkPrePredict) {
+      var responsePrePredictChecking = checkPrePredict(project, sprint);
+      if (responsePrePredictChecking != null)
+        return responsePrePredictChecking;
+    }
     // Kiếm tra sprint thực hiện dự đoán hiện tại đang hoạt động
     Instant start = sprint.getDtStart();
     Instant now = ClockSimulator.now();
@@ -138,8 +139,8 @@ public class DecisionService {
           .build();
     }
 
-    // Kiểm tra số lượng các issue được cập nhập với số lượng thỏa mãn (=2)
-    int issueInAccept = 0;
+    // Kiểm tra số lượng các issue được cập nhập không thỏa điều kiện
+    int issueInaccept = 0;
     String[] propertiesTargets = new String[] {
         "status" };
     for (Issue issue : issues) {
@@ -148,20 +149,21 @@ public class DecisionService {
       List<ChangeLog> issueLog = changeLogRepository.findByIdRefAndTypeAndPropertiesTargetsContains(issue.getId(),
           LogType.UPDATE, propertiesTargets);
 
+      issueLog = issueLog.stream().filter(i -> i.getChange().getSprintId().equals(sprint.getId())).toList();
       // Kiểm tra số lượng thay đổi trạng thái thỏa mãn
       if (issueLog.isEmpty() || (issueLog.size() < 2 && issueLog.stream()
           .anyMatch(changeLog -> Objects.equals(changeLog.getChange()
               .getStatus(), IssueStatus.DONE.name())))) {
-        issueInAccept++;
+        issueInaccept++;
         continue;
       }
     }
 
     // Số lượng issue thỏa mãn phải lớn hơn 50% tổng số issue được tạo trong sprint
-    if (issueInAccept > issues.size() / 2) {
+    if (issueInaccept > issues.size() / 2) {
       return ApiResponse.<Boolean>builder()
           .code(400)
-          .message("Không thể tiến hành dự đoán vì có " + issueInAccept + " vấn đề không hợp lệ trong sprint")
+          .message("Không thể tiến hành dự đoán vì có " + issueInaccept + " vấn đề không hợp lệ trong sprint")
           .data(false)
           .build();
     }

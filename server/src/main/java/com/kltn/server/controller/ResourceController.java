@@ -59,10 +59,10 @@ public class ResourceController {
                          .body(response);
   }
 
-  @PostMapping("daily")
+  @PostMapping("daily/{times}")
   public ResponseEntity<ApiResponse<ResourceResponse>> uploadDailyFile(
-    @RequestBody DailyResourceSignatureRequest request) {
-    var response = resourceService.uploadFileToDailySprint(request);
+    @RequestBody DailyResourceSignatureRequest request, @PathVariable int times) {
+    var response = resourceService.uploadFileToDailySprint(request,times);
     return ResponseEntity.ok()
                          .body(response);
   }

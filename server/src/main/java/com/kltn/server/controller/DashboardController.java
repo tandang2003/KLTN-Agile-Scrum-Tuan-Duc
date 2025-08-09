@@ -63,4 +63,12 @@ public class DashboardController {
     var response = dashBoardService.getPredictForTeacher(workspaceId, sprintId, page, size);
     return ResponseEntity.ok(response);
   }
+
+  @GetMapping("/workspace/project/predict/current")
+  public ResponseEntity<ApiResponse<ProjectPredictResponse>> getProjectPredict(
+      @RequestParam String sprintId,
+      @RequestParam String projectId) {
+    var response = dashBoardService.getPredictForTeacher(sprintId, projectId);
+    return ResponseEntity.ok(response);
+  }
 }

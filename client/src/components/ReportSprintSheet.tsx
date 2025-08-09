@@ -1,5 +1,7 @@
+import Icon from '@/components/Icon'
 import { CreateFileData, Thumbnail } from '@/components/media/media'
 import MediaProvider from '@/components/media/MediaProvider'
+import ToolTip from '@/components/Tooltip'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -10,14 +12,18 @@ import {
   SheetHeader,
   SheetTitle
 } from '@/components/ui/sheet'
+import { REPORT_DIR } from '@/constant/app.const'
+import messages from '@/constant/message.const'
 import { useGetResourcesQuery } from '@/feature/project/project.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import { REPORT_DIR } from '@/constant/app.const'
+import { getDateByPercent } from '@/lib/date.helper'
+import { formatDate } from '@/lib/utils'
+import { useDate } from '@/providers/DateProvider'
 import resourceService from '@/services/resource.service'
 import { SprintOverview } from '@/types/sprint.type'
-import { useEffect, useState } from 'react'
+import { isWithinInterval } from 'date-fns'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import messages from '@/constant/message.const'
 
 type Sprint = SprintOverview
 
@@ -43,7 +49,7 @@ const ReportSprintSheet = ({
     projectId: projectId,
     sprintId: sprint.id
   })
-
+  const { now } = useDate()
   const [daily1, setDaily1] = useState<Thumbnail | null>(null)
   const [daily2, setDaily2] = useState<Thumbnail | null>(null)
   const [backlog, setBacklog] = useState<Thumbnail | null>(null)
@@ -52,7 +58,19 @@ const ReportSprintSheet = ({
     start: sprint.start,
     end: sprint.end
   })
-  const disabled = status === 'COMPLETE'
+  const disableDaily1 = useCallback(() => {
+    return !isWithinInterval(now, {
+      start: sprint.start,
+      end: getDateByPercent(sprint.start, sprint.end, 30)
+    })
+  }, [now, sprint])
+
+  const disableDaily2 = useCallback(() => {
+    return !isWithinInterval(now, {
+      start: getDateByPercent(sprint.start, sprint.end, 30),
+      end: sprint.end
+    })
+  }, [now, sprint])
   const handleSignatureFn = () => {
     return resourceService.getSignature({
       projectId: projectId,
@@ -64,15 +82,18 @@ const ReportSprintSheet = ({
     data: CreateFileData,
     type: 'daily1' | 'daily2'
   ): Promise<Thumbnail> => {
-    const response = await resourceService.createResourceDaily({
-      contentType: 'FILE',
-      extension: data.format,
-      name: data.baseName,
-      publicId: data.public_id,
-      size: data.bytes,
-      projectId: projectId,
-      sprintId: sprint.id
-    })
+    const response = await resourceService.createResourceDaily(
+      {
+        contentType: 'FILE',
+        extension: data.format,
+        name: data.baseName,
+        publicId: data.public_id,
+        size: data.bytes,
+        projectId: projectId,
+        sprintId: sprint.id
+      },
+      type === 'daily1' ? 1 : 2
+    )
 
     const thumbnail: Thumbnail = {
       id: response.id,
@@ -83,10 +104,10 @@ const ReportSprintSheet = ({
 
     if (type === 'daily1') {
       setDaily1(thumbnail)
-      toast.success('Upload file daily 1')
+      toast.success('Tải file báo cáo daily 1 thành công')
     } else {
       setDaily2(thumbnail)
-      toast.success('Upload file daily 2')
+      toast.success('Tải file báo cáo daily 2 thành công')
     }
 
     return thumbnail
@@ -113,7 +134,7 @@ const ReportSprintSheet = ({
     }
 
     setBacklog(thumbnail)
-    toast.success('Upload file success')
+    toast.success('Tải file báo cáo sprint backlog thành công')
     return thumbnail
   }
 
@@ -135,21 +156,18 @@ const ReportSprintSheet = ({
         if (type === 'daily1') setDaily1(null)
         else if (type === 'daily2') setDaily2(null)
         else if (type === 'backlog') setBacklog(null)
-        toast.success('Delete file success')
+        toast.success('Xóa file thành công')
       })
-      .catch((error) => {
-        console.error('Failed to delete resource:', error)
+      .catch((_) => {
         toast.error('Failed to delete file')
       })
   }
 
   const validationDaily = (file: File): string | null => {
     const uploadedSize = file.size
-    console.log(uploadedSize)
-    if (uploadedSize != 11130) {
+    if (uploadedSize <= 11000) {
       return 'Dung lượng file không khớp, vui lòng nộp đúng file'
     }
-
     return null
   }
 
@@ -194,16 +212,23 @@ const ReportSprintSheet = ({
         </SheetHeader>
         <div className='mt-4 grid flex-1 auto-rows-min grid-cols-2 gap-6'>
           <div>
-            <h4 className='mb-3 text-base font-semibold'>
+            <h4 className='mb-3 flex items-center gap-2 text-base font-semibold'>
               {message.form.daily1.label}
+              <ToolTip
+                trigger={<Icon size={20} icon={'material-symbols:info'} />}
+              >
+                Nộp trước ngày{' '}
+                {formatDate(getDateByPercent(sprint.start, sprint.end, 30))}
+              </ToolTip>
             </h4>
+
             <MediaProvider
               thumbnail={daily1 ?? undefined}
               type={{
                 mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 label: 'Excel Spreadsheet (.xlsx)'
               }}
-              disabled={disabled}
+              disabled={disableDaily1()}
               onFileValidate={validationDaily}
               signatureFn={handleSignatureFn}
               createFn={(data) => handleUploadDaily(data, 'daily1')}
@@ -211,13 +236,24 @@ const ReportSprintSheet = ({
             />
           </div>
           <div>
-            <h4 className='mb-3 text-base font-semibold'>
+            <h4 className='mb-3 flex items-center gap-3 text-base font-semibold'>
               {message.form.daily2.label}
+              <ToolTip
+                trigger={<Icon size={20} icon={'material-symbols:info'} />}
+              >
+                Nộp trước ngày{' '}
+                {formatDate(getDateByPercent(sprint.start, sprint.end, 70))}
+              </ToolTip>
             </h4>
+
             <MediaProvider
               thumbnail={daily2 ?? undefined}
+              type={{
+                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                label: 'Excel Spreadsheet (.xlsx)'
+              }}
               signatureFn={handleSignatureFn}
-              disabled={disabled}
+              disabled={disableDaily2()}
               createFn={(data) => handleUploadDaily(data, 'daily2')}
               onDelete={() => handleDelete('daily2')}
             />
@@ -228,8 +264,12 @@ const ReportSprintSheet = ({
             </h4>
             <MediaProvider
               thumbnail={backlog ?? undefined}
+              type={{
+                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                label: 'Excel Spreadsheet (.xlsx)'
+              }}
               signatureFn={handleSignatureFn}
-              disabled={disabled}
+              disabled={disableDaily2()}
               createFn={handleUploadBacklog}
               onDelete={() => handleDelete('backlog')}
             />
