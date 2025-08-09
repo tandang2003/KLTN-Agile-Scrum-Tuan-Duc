@@ -100,7 +100,7 @@ verify:
 data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
-  server: http://localhost:8000/aggregate
+  server: http://localhost:8081/aggregate
 
 google:
   sheet:
