@@ -443,8 +443,7 @@ const messages = {
       listIssueInSprint: {
         list: {
           empty: 'Chưa có issue nào trong Sprint này'
-        },
-        create: 'Tạo issue'
+        }
       },
       sprintCardInBacklog: {
         dropdown: {

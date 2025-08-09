@@ -29,7 +29,6 @@ const sprintSlice = createSlice({
     ) {
       state.active = action.payload
     },
-
     openDialogCreateSprint(state: SprintState) {
       state.isOpenDialogCreate = true
       state.mode = 'create'

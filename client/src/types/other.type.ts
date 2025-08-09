@@ -1,3 +1,4 @@
+import { setEndOfUTCDay, setStartOfUTCDay } from '@/lib/date.helper'
 import { z } from 'zod'
 
 export type Id = string
@@ -24,6 +25,10 @@ const dateRange = z
       path: ['to']
     }
   )
+  .transform((date) => ({
+    from: setStartOfUTCDay(date.from),
+    to: setEndOfUTCDay(date.to)
+  }))
 
 const dateRangeOptional = z
   .object({
@@ -42,5 +47,13 @@ const dateRangeOptional = z
       path: ['to']
     }
   )
+  .transform((date) => {
+    if (date.from && date.to) {
+      return {
+        from: setStartOfUTCDay(date.from),
+        to: setEndOfUTCDay(date.to)
+      }
+    }
+  })
 
 export { dateRange, stringSchema, dateRangeOptional }

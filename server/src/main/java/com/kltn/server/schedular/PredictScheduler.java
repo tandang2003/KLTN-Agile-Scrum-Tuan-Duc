@@ -59,9 +59,9 @@ public class PredictScheduler {
       return;
     }
 
-    long delay = Duration.between(ClockSimulator.now(), end)
-      .getSeconds();
-    delay = Math.max(0, delay);
+//    long delay = Duration.between(ClockSimulator.now(), end)
+//      .getSeconds();
+//    delay = Math.max(0, delay);
     long timeSpeech = ClockSimulator.getTimeSpeech();
     Duration virtualDuration = Duration.between(ClockSimulator.now(), end);
     long adjustedDelaySeconds = virtualDuration.getSeconds() / timeSpeech;
