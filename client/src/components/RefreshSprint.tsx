@@ -1,5 +1,7 @@
+import Icon from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch } from '@/context/redux/hook'
+import { setSprintFilter } from '@/feature/board/board.slice'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
 import { useLazyGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
@@ -25,6 +27,13 @@ const RefreshSprint = () => {
               end: toISODateString(end)
             })
           )
+          dispatch(
+            setSprintFilter({
+              id: id,
+              start: toISODateString(start),
+              end: toISODateString(end)
+            })
+          )
           toast.success('Cập nhập sprint hiện tại thành công')
           return
         }
@@ -35,7 +44,11 @@ const RefreshSprint = () => {
         }
       })
   }
-  return <Button onClick={handleOnClick}>Làm mới sprint hiện tại</Button>
+  return (
+    <Button onClick={handleOnClick}>
+      <Icon size={20} icon={'material-symbols:refresh'} />
+    </Button>
+  )
 }
 
 export default RefreshSprint

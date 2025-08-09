@@ -36,7 +36,7 @@ public class WorkspaceController {
         ApiResponse.<WorkspaceResponse>builder()
             .code(HttpStatus.CREATED.value())
             .message("Create workspace success")
-            .data(workspaceService.createWorkspace(workspaceCreationRequest))
+             .data(workspaceService.createWorkspace(workspaceCreationRequest))
             .build());
   }
 

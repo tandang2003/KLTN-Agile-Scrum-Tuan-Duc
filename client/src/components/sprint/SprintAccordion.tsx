@@ -22,6 +22,10 @@ import { formatDate } from '@/lib/utils'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useEffect, useState } from 'react'
+import { useAppDispatch } from '@/context/redux/hook'
+import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
+import RequiredAuth from '@/components/wrapper/RequiredAuth'
+import { Button } from '@/components/ui/button'
 type SprintAccordionProps = {
   sprints: SprintModel[]
 }
@@ -33,6 +37,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
   const [sprintId, setSprintId] = useState<Id | null>(null)
   const [clear] = useClearGetListIssueMutation()
   const { setSprint } = useSprintSelect()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (sprintId) {
@@ -44,8 +49,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
 
   return (
     <div>
-      {/* Sprint backlog */}
-
       <Accordion
         type='single'
         collapsible
@@ -60,6 +63,22 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
       </Accordion>
 
       {sortSprintsByDateStart(sprints).map((item, index) => {
+        const canCreate =
+          getStatusSprint({
+            id: item.id,
+            start: item.start,
+            end: item.end
+          }) !== 'COMPLETE'
+
+        const handleOpenCreateIssue = () => {
+          setSprint({
+            id: item.id,
+            start: item.start,
+            end: item.end
+          })
+          dispatch(enableCreateIssue())
+        }
+
         return (
           <Accordion
             key={item.id}
@@ -114,7 +133,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                     <HtmlViewer value={item.description} />
                   </div>
                 </div>
-
                 {sprintId && (
                   <ListIssueInSprint
                     sprintId={item.id}
@@ -122,6 +140,17 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                     end={item.end}
                   />
                 )}
+                <RequiredAuth mode='hide' roles={['student']}>
+                  {canCreate && (
+                    <Button
+                      className='mt-2 w-full justify-start border-none'
+                      variant={'default'}
+                      onClick={handleOpenCreateIssue}
+                    >
+                      Tạo issue
+                    </Button>
+                  )}
+                </RequiredAuth>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
