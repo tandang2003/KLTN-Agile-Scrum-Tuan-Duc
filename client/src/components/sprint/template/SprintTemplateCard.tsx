@@ -91,12 +91,19 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
         <ToolTip trigger={<h3 className='text-md font-bold'>{data.title}</h3>}>
           {data.id}
         </ToolTip>
-        <span className='ml-2 text-sm text-gray-500'>
-          {formatDate(data.start, 'd MMM')} - {formatDate(data.end, 'd MMM')}
-        </span>
+
         <span className='ml-auto flex items-center gap-4'>
           <span>{message.point}: </span>
           <Badge className='w-[50px]'>{data.storyPoint}</Badge>
+          <Badge>
+            <Icon icon={'material-symbols:online-prediction'} />
+            {formatDate(data.predict)}
+          </Badge>
+          <Badge className='basis-[200px]' statusSprint={getStatusSprint(data)}>
+            <Icon icon={'mingcute:time-duration-fill'} />
+            {formatDate(data.start)} - {formatDate(data.end)}
+          </Badge>
+
           <BadgeSprint status={getStatusSprint(data)} className='ml-auto]' />
 
           <DropdownMenu>

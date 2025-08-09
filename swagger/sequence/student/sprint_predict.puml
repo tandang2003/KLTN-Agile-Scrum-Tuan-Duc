@@ -14,26 +14,34 @@ View -> Controller: GET /decision/{projectId}\n/{sprintId}/predict
 activate Controller
 Controller -> Service: makePredict\n(sprintId, projectId)
 activate Service
-Service -> Service: collect data
-Service -> Python:
-activate Python
-Python -> Python: predict \n by model
-Python --> Service: return result \nof model
-deactivate Python
-Service -> Repo: save result
-activate Repo
-Repo -> MySQL: save
-activate MySQL
-MySQL -> Repo: project \nsprint \nmodel
-deactivate MySQL
-Repo --> Service: save success
-deactivate Repo
-Service --> Controller: success
-deactivate Service
-Controller --> View: success
-deactivate Controller
-View --> SV: show success
-deactivate View
-deactivate SV
+Service --> Service: checkPrePredict\n(projectId, sprintId
 
+alt checkPrePredict not passed
+  Service --> Controller: response
+  Controller --> View: response
+  View --> SV: notify
+else
+  Service --> Service: collect data\nsprint
+  Service --> Service: collect data\nissues
+  Service -> Python: POST \n/aggregate
+  activate Python
+  Python --> Python: predict
+  Python --> Service: result \npredict
+  deactivate Python
+  Service -> Repo: save result
+  activate Repo
+  Repo -> MySQL: save
+  activate MySQL
+  MySQL -> Repo: project \nsprint \nmodel
+  deactivate MySQL
+  Repo --> Service: save success
+  deactivate Repo
+  Service --> Controller: success
+  deactivate Service
+  Controller --> View: success
+  deactivate Controller
+  View --> SV: show success
+  deactivate View
+  deactivate SV
+end
 @enduml

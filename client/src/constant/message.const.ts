@@ -755,6 +755,25 @@ const getSprintStatusDisplayName = (status: SprintStatusType): string => {
   return map[status] ?? 'Không xác định'
 }
 
+const getProjectPredictDisplayName = (status: -2 | -1 | 0) => {
+  let result = ''
+  switch (status) {
+    case -2:
+      result = 'Dự án chưa thực hiện dự đoán'
+      break
+    case -1:
+      result = 'Dự án có khả năng không thành công ở sprint này'
+      break
+    case 0:
+      result = 'Dự án có khả năng thành công ở sprint này'
+      break
+    default:
+      break
+  }
+
+  return result
+}
+
 const getTagDisplayName = (tag: IssueTag): string => {
   const map: Record<IssueTag, string> = {
     THEORY: 'Lý thuyết',
@@ -799,5 +818,6 @@ export {
   getTagDisplayName,
   getPriorityDisplayName,
   getRelationshipDisplayName,
-  getComplexOfDescriptionName
+  getComplexOfDescriptionName,
+  getProjectPredictDisplayName
 }

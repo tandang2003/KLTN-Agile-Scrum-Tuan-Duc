@@ -106,7 +106,7 @@ public class DecisionController {
   @GetMapping("{projectId}/{sprintId}/predict")
   public ResponseEntity<ApiResponse<Boolean>> makePredict(
       @PathVariable String projectId, @PathVariable String sprintId) {
-    var response = decisionService.makePredict(projectId, sprintId);
+    var response = decisionService.makePredict(projectId, sprintId, true);
 
     // Placeholder for decision logic
     return ResponseEntity.ok(response);

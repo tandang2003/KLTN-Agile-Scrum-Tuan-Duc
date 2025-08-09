@@ -11,9 +11,10 @@ import java.util.List;
 @Entity
 @Table(name = "resources")
 public class Resource extends BaseEntity {
-  //ManyToMany sprint
-  @ManyToMany(mappedBy = "dailyFiles")
-  private List<ProjectSprint> issueDailyFiles;
+  @OneToOne(mappedBy = "fileDailyFirst")
+  private ProjectSprint projectSprintDailyFirst;
+  @OneToOne(mappedBy = "fileDailySecond")
+  private ProjectSprint projectSprintDailySecond;
   @OneToOne(mappedBy = "fileBackLog")
   private ProjectSprint projectSprint;
   @OneToOne(mappedBy = "avatar")
@@ -189,12 +190,20 @@ public class Resource extends BaseEntity {
     this.publicId = publicId;
   }
 
-  public List<ProjectSprint> getIssueDailyFiles() {
-    return issueDailyFiles;
+  public ProjectSprint getProjectSprintDailySecond() {
+    return projectSprintDailySecond;
   }
 
-  public void setIssueDailyFiles(List<ProjectSprint> issueDailyFiles) {
-    this.issueDailyFiles = issueDailyFiles;
+  public void setProjectSprintDailySecond(ProjectSprint projectSprintDailySecond) {
+    this.projectSprintDailySecond = projectSprintDailySecond;
+  }
+
+  public ProjectSprint getProjectSprintDailyFirst() {
+    return projectSprintDailyFirst;
+  }
+
+  public void setProjectSprintDailyFirst(ProjectSprint projectSprintDailyFirst) {
+    this.projectSprintDailyFirst = projectSprintDailyFirst;
   }
 
   public List<Issue> getIssues() {

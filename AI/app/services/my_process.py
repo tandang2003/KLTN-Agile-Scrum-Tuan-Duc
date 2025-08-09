@@ -7,10 +7,10 @@ from sklearn.svm import SVC
 
 
 class My_Process():
-  def __init__(self, model="models/model.pkl", sprint_data=None, issue_data=None):
+  def __init__(self, model="models/web_model.pkl", sprint_data=None, issue_data=None):
     # change it
     self.model = joblib.load(model)
-    self.kmeans = joblib.load("models/process.pkl")
+    self.kmeans = joblib.load("models/web_process.pkl")
     self.sprint_data = sprint_data
     self.issue_data = issue_data
     self.k = 20
@@ -40,6 +40,24 @@ class My_Process():
 
   def set_k(self, k):
     self.k = k
+
+  def reset_model(self,course_name):
+     match course_name:
+        case "Lập trình Web":
+          self.model = joblib.load("models/web_model.pkl")
+          self.kmeans = joblib.load("models/web_process.pkl")
+        case "Thiết kế hướng đối tượng":
+          self.model = joblib.load("models/oop_model.pkl")
+          self.kmeans = joblib.load("models/oop_process.pkl")
+        case "Máy học":
+          self.model = joblib.load("models/ml_model.pkl")
+          self.kmeans = joblib.load("models/ml_process.pkl")
+        case "Lập trình trên thiết bị di động":
+          self.model = joblib.load("models/android_model.pkl")
+          self.kmeans = joblib.load("models/android_process.pkl")
+        case "Thương mại điện tử":
+          self.model = joblib.load("models/economical_model.pkl")
+          self.kmeans = joblib.load("models/economical_process.pkl")
 
   @classmethod
   def default(cls):

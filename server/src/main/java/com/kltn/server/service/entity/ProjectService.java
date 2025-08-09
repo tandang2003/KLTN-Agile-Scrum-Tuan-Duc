@@ -185,11 +185,11 @@ public class ProjectService {
               .build();
           try {
             workspacesUsersProjectsRepository.save(usersProjects);
-            // emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
-            // Map.of("userId",
-            // workspacesUsersId.getUserId(),
-            // "workspaceId",
-            // workspacesUsersId.getWorkspaceId())));
+            emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
+                Map.of("userId",
+                    workspacesUsersId.getUserId(),
+                    "workspaceId",
+                    workspacesUsersId.getWorkspaceId())));
           } catch (Exception e) {
             throw AppException.builder()
                 .error(Error.DB_SERVER_ERROR)
@@ -259,9 +259,15 @@ public class ProjectService {
         .projectId(projectId)
         .sprintId(sprintId)
         .build());
-    List<ResourceResponse> dailyResources = projectSprint.getDailyFiles() != null && !projectSprint.getDailyFiles()
-        .isEmpty() ? resourceMapper.toResourceResponseList(
-            projectSprint.getDailyFiles()) : new ArrayList<>();
+    List<ResourceResponse> dailyResources = new ArrayList<>();
+    if (projectSprint.getFileDailyFirst() != null) {
+      dailyResources.add(resourceMapper.toResourceResponse(projectSprint.getFileDailyFirst()));
+    } else
+      dailyResources.add(null);
+    if (projectSprint.getFileDailySecond() != null) {
+      dailyResources.add(resourceMapper.toResourceResponse(projectSprint.getFileDailySecond()));
+    } else
+      dailyResources.add(null);
     ResourceResponse fileBacklog = projectSprint.getFileBackLog() != null ? resourceMapper.toResourceResponse(
         projectSprint.getFileBackLog()) : null;
     return ApiResponse.<ResourceOfSprintResponse>builder()

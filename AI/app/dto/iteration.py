@@ -31,6 +31,7 @@ class IssueModel(BaseModel):
 
 class IterationModel(BaseModel):
     sprint_id: str
+    course_name: str
     storyPoint:int
     sprintDuration: int
     numOfIssueAtStart: int

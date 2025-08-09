@@ -12,3 +12,4 @@ def get_mysql_connection():
         cursorclass=pymysql.cursors.DictCursor,
         autocommit=True
     )
+

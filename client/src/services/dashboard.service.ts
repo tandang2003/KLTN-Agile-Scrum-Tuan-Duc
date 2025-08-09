@@ -84,6 +84,20 @@ const dashboardService = {
       `/dashboard/workspace/project/predict?${query}`
     )
     return res.data.data
+  },
+
+  getProjectPredictByProjectId: async (
+    sprintId: Id,
+    projectId: Id
+  ): Promise<ProjectPredictRes> => {
+    const query = toQueryString({
+      projectId,
+      sprintId
+    })
+    const response = await httpService.get<ResponseApi<ProjectPredictRes>>(
+      `/dashboard/workspace/project/predict/current?${query}`
+    )
+    return response.data.data
   }
 }
 

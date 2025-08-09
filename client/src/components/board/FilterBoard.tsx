@@ -25,6 +25,7 @@ const FilterBoard = ({ onRefresh }: FilterBoardProps) => {
   const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
     skip: !workspaceId
   })
+
   const sprint = useAppSelector((state) => state.boardSlice.filter.sprint)
 
   const sprintMemo = useMemo(() => {

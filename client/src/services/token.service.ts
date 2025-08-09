@@ -46,21 +46,26 @@ const tokenService = {
   getWorkspaceLatest: (): Id | null => {
     return sessionStorage.getItem(StorageItem.ProjectIdLatest)
   },
-  setTokenLocal: (token: string) => {
+
+  setTokenAuth: (token: string) => {
     sessionStorage.setItem(StorageItem.AccessToken, token)
     setAuthorization(token)
   },
 
-  removeTokenLocal: () => {
+  removeTokenAuth: () => {
     sessionStorage.removeItem(StorageItem.AccessToken)
     setAuthorization(undefined)
     setProjectAuthorization(undefined)
   },
 
-  restoreTokenLocal: (): string | undefined => {
+  restoreTokenAuth: (): string | undefined => {
     const token = loadSessionStorage(StorageItem.AccessToken, undefined)
     setAuthorization(token)
     return token
+  },
+  clearAxios: () => {
+    setAuthorization(undefined)
+    setProjectAuthorization(undefined)
   },
   clear: () => {
     sessionStorage.clear()

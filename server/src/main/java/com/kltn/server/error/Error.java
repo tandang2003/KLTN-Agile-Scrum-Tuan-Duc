@@ -65,7 +65,10 @@ public enum Error {
   COMMENT_ASSIGNEE_STATUS_ISSUE(HttpServletResponse.SC_CONFLICT, "Người được giao nhiệm vụ chưa comment"),
   COMMENT_REVIEWER_STATUS_ISSUE(HttpServletResponse.SC_CONFLICT, "Người được giao review chưa comment"),
   STATUS_ISSUE_CONFLICT(HttpServletResponse.SC_CONFLICT,
-      "Trạng thái thay đổi quá đôt ngột, vui lòng thực hiện theo thứ tự");
+      "Trạng thái thay đổi quá đôt ngột, vui lòng thực hiện theo thứ tự"),
+  STATUS_ISSUE_CONFLICT_ROLLBACK(HttpServletResponse.SC_CONFLICT,
+      "Issue này đã DONE, không thể rollback");
+  ;
 
   private int code;
   private String message;

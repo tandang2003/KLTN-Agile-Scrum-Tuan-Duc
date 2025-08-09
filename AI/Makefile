@@ -2,6 +2,7 @@
 
 PYTHON=python3
 VENV = .venv/bin/activate
+DOCKER_REPO = ducvui2003/fast-api 
 
 env:
 	@echo "Creating virtual environment..."
@@ -20,3 +21,13 @@ freeze:
 
 run:
 	. $(VENV) && $(PYTHON) -m uvicorn app.main:app --reload
+
+docker-build:
+	@read -p "Enter tag (default: latest): " ts; \
+	if [ -z "$$ts" ]; then \
+		ts="latest"; \
+	else \
+		ts="$$ts"; \
+	fi; \
+	echo "Building Docker image with tag: $$ts"; \
+	docker build -t $(DOCKER_REPO):$$ts .
