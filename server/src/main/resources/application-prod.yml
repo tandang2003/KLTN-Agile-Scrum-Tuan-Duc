@@ -63,7 +63,6 @@ spring:
 verify:
   invite-project-link: ${VERIFY_INVITE_PROJECT_LINK}
 app:
-  time-speech: 7200
   service:
     cloudinary:
       cloud-name: yourstyle
