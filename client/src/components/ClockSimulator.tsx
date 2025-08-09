@@ -124,7 +124,7 @@ const ClockSimulator = () => {
 
   useEffect(() => {
     setNow(simulatedTime)
-  }, [])
+  }, [simulatedTime])
 
   const ClockDisplay = useMemo(
     () => (

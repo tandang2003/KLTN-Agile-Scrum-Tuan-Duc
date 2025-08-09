@@ -14,26 +14,28 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProjectSprintRepository extends JpaRepository<ProjectSprint, ProjectSprintId> {
-    Optional<ProjectSprint> findById(ProjectSprintId projectSprintId);
+  Optional<ProjectSprint> findById(ProjectSprintId projectSprintId);
 
-    boolean existsById(ProjectSprintId projectSprintId);
+  boolean existsById(ProjectSprintId projectSprintId);
 
-    @Modifying
-    @Transactional
-    @Query(value = "INSERT INTO project_sprint (project_id, sprint_id) VALUES (:projectId, :sprintId)", nativeQuery = true)
-    void save(@Param("projectId") String projectId, @Param("sprintId") String sprintId);
+  @Modifying
+  @Transactional
+  @Query(value = "INSERT INTO project_sprint (project_id, sprint_id) VALUES (:projectId, :sprintId)", nativeQuery = true)
+  void save(@Param("projectId") String projectId, @Param("sprintId") String sprintId);
 
-    @Transactional
-    @Query(value = "select project_id from project_sprint where sprint_id = :sprintId", nativeQuery = true)
-    Optional<List<String>> findProjectIdBySprintId(String sprintId);
+  @Transactional
+  @Query(value = "select project_id from project_sprint where sprint_id = :sprintId", nativeQuery = true)
+  Optional<List<String>> findProjectIdBySprintId(String sprintId);
 
   List<ProjectSprint> findBySprintId(String sprintId);
+
   Page<ProjectSprint> findBySprintId(String sprintId, Pageable pageable);
+
+  ProjectSprint findBySprintIdAndProjectId(String sprintId, String projectId);
 
   List<ProjectSprint> findByProjectId(String projectId);
 
   ProjectSprint findFirstByProjectId(String projectId);
 
-
-//    Optional<List<String>> findProjectIdBySprintId(String sprintId);
+  // Optional<List<String>> findProjectIdBySprintId(String sprintId);
 }

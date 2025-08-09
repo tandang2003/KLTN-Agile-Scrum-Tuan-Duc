@@ -35,13 +35,13 @@ const MediaUploading = ({
     (file: File): string | null => {
       // Validate max files
       if (maximum && files.length >= maximum) {
-        return `You can only upload up to ${maximum} files`
+        return `Chỉ cho phép tải tối đa ${maximum} file`
       }
 
       if (type) {
         const mime = file.type
         if (mime !== type.mime) {
-          return `File type must be ${type.label}`
+          return `Định dạng file cho phép: ${type.label}`
         }
       }
 

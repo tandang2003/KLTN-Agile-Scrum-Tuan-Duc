@@ -23,7 +23,7 @@ export const store = configureStore({
   reducer: rootReducer,
   preloadedState: {
     authSlice: {
-      accessToken: tokenService.restoreTokenLocal(),
+      accessToken: tokenService.restoreTokenAuth(),
       loading: false
     },
     projectSlice: {

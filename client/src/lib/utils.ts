@@ -86,4 +86,21 @@ function loadSessionStorage<T>(
   }
 }
 
-export { cn, formatDate, invertColor, toQueryString, uuid, loadSessionStorage }
+function extractPublicId(imageUrl: string): string | null {
+  const matches = imageUrl.match(/\/upload\/(?:v\d+\/)?([^\.]+)\.[a-zA-Z0-9]+$/)
+  return matches ? matches[1] : null
+}
+
+function getRawUrl(publicId: string): string {
+  return `https://res.cloudinary.com/toutr/raw/upload/${publicId}`
+}
+export {
+  cn,
+  formatDate,
+  invertColor,
+  toQueryString,
+  uuid,
+  loadSessionStorage,
+  extractPublicId,
+  getRawUrl
+}

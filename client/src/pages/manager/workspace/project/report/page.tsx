@@ -20,20 +20,20 @@ const ReportPage = ({}: ReportPageProps) => {
           <DropdownMenuContent align='end'>
             <DropdownMenuItem asChild>
               <a
-                href='/public/report/daily.xlsx'
+                href='/report/daily.xlsx'
                 className='hover-opacity'
                 download='daily.xlsx'
               >
-                File Daily
+                File báo cáo daily
               </a>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <a
-                href='/public/report/sprint_backlog.xlsx'
+                href='/report/sprint_backlog.xlsx'
                 download='sprint_backlog.xlsx'
                 className='hover-opacity'
               >
-                File Sprint Backlog
+                File báo cáo Sprint Backlog
               </a>
             </DropdownMenuItem>
           </DropdownMenuContent>
