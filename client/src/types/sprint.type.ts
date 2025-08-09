@@ -1,6 +1,8 @@
 import messages from '@/constant/message.const'
+import { setEndOfUTCDay, setStartOfUTCDay } from '@/lib/date.helper'
 import { SprintModel } from '@/types/model/sprint.model'
 import { Id, stringSchema } from '@/types/other.type'
+import { startOfDay } from 'date-fns'
 import { z } from 'zod'
 
 const isRichTextEmpty = (html: string) => {
@@ -27,10 +29,17 @@ const CreateSprintFormSchema = BaseSprintFormSchema.refine(
     message: messages.validation.sprint.form.endDate,
     path: ['end']
   }
-).refine((data) => data.start < data.predict && data.predict < data.end, {
-  message: messages.validation.sprint.form.predict,
-  path: ['predict']
-})
+)
+  .refine((data) => data.start < data.predict && data.predict < data.end, {
+    message: messages.validation.sprint.form.predict,
+    path: ['predict']
+  })
+  .transform((data) => ({
+    ...data,
+    start: setStartOfUTCDay(data.start),
+    predict: startOfDay(data.predict),
+    end: setEndOfUTCDay(data.end)
+  }))
 
 const UpdateSprintFormSchema = BaseSprintFormSchema.extend({
   id: z.string(),
@@ -44,6 +53,13 @@ const UpdateSprintFormSchema = BaseSprintFormSchema.extend({
     message: messages.validation.sprint.form.predict,
     path: ['predict']
   })
+  .transform((data) => ({
+    ...data,
+    start: setStartOfUTCDay(data.start),
+    predict: startOfDay(data.predict),
+    end: setEndOfUTCDay(data.end)
+  }))
+
 type BaseSprintFormType = z.infer<typeof BaseSprintFormSchema>
 type CreateSprintFormType = z.infer<typeof CreateSprintFormSchema>
 type UpdateSprintFormType = z.infer<typeof UpdateSprintFormSchema>

@@ -43,12 +43,23 @@ const getMiddleDate = (start: Date, end: Date): Date => {
   const diff = differenceInMilliseconds(end, start)
   return addMilliseconds(start, diff / 2)
 }
-
+function setStartOfUTCDay(date: Date | string): Date {
+  const d = new Date(date)
+  d.setUTCHours(0, 0, 0, 0)
+  return d
+}
+function setEndOfUTCDay(date: Date): Date {
+  const d = new Date(date)
+  d.setUTCHours(23, 59, 59, 999)
+  return d
+}
 export {
   formatDateToString,
   formatDateRange,
   parseStringToDate,
   toISODateString,
   getDateByPercent,
-  getMiddleDate
+  getMiddleDate,
+  setStartOfUTCDay,
+  setEndOfUTCDay
 }

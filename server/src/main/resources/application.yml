@@ -45,6 +45,7 @@ spring:
               packages: com.kltn.server.DTO.request.log, com.kltn.server.DTO.request.kafka
             type:
               mapping: "send_mail: com.kltn.server.DTO.request.base.MailRequest, project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest, predict: com.kltn.server.DTO.request.kafka.SprintPredictRequest"
+      auto-offset-reset: latest
     bootstrap-servers: localhost:9092
 #    , localhost:9093, localhost:9094
 
@@ -100,7 +101,7 @@ verify:
 data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
-  server: http://localhost:8081/aggregate
+  server: http://localhost:8000/aggregate
 
 google:
   sheet:

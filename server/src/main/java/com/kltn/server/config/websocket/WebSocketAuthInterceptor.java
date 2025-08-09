@@ -39,7 +39,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
     if (StompCommand.CONNECT.equals(accessor.getCommand())) {
       String token = accessor.getFirstNativeHeader("Authorization");
       if (token != null && token.startsWith("Bearer ")) {
-        System.out.println("token" + token);
         token = token.substring(7);
         String uniId = jwtDecoder.decode(token)
             .getClaim("uniId");
