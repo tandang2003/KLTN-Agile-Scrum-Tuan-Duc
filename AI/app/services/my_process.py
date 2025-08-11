@@ -42,28 +42,50 @@ class My_Process():
   def set_k(self, k):
     self.k = k
 
-  def reset_model(self,course_name):
+  def reset_model_30(self,course_name):
      match course_name:
         case "Lập trình Web":
           self.course_name = "Lập trình Web"
-          self.model = joblib.load("models/web_model.pkl")
-          self.kmeans = joblib.load("models/web_process.pkl")
+          self.model = joblib.load("models/web_model_30.pkl")
+          self.kmeans = joblib.load("models/web_process_30.pkl")
         case "Thiết kế hướng đối tượng":
           self.course_name = "Thiết kế hướng đối tượng"
-          self.model = joblib.load("models/oop_model.pkl")
-          self.kmeans = joblib.load("models/oop_process.pkl")
+          self.model = joblib.load("models/oop_model_30.pkl")
+          self.kmeans = joblib.load("models/oop_process_30.pkl")
         case "Máy học":
           self.course_name = "Máy học"
-          self.model = joblib.load("models/ml_model.pkl")
-          self.kmeans = joblib.load("models/ml_process.pkl")
+          self.model = joblib.load("models/ml_model_30.pkl")
+          self.kmeans = joblib.load("models/ml_process_30.pkl")
         case "Lập trình trên thiết bị di động":
           self.course_name = "Lập trình trên thiết bị di động"
-          self.model = joblib.load("models/android_model.pkl")
-          self.kmeans = joblib.load("models/android_process.pkl")
+          self.model = joblib.load("models/android_model_30.pkl")
+          self.kmeans = joblib.load("models/android_process_30.pkl")
         case "Thương mại điện tử":
           self.course_name = "Thương mại điện tử"
-          self.model = joblib.load("models/economical_model.pkl")
-          self.kmeans = joblib.load("models/economical_process.pkl")
+          self.model = joblib.load("models/economical_model_30.pkl")
+          self.kmeans = joblib.load("models/economical_process_30.pkl")
+  def reset_model_50(self,course_name):
+     match course_name:
+        case "Lập trình Web":
+          self.course_name = "Lập trình Web"
+          self.model = joblib.load("models/web_model_50.pkl")
+          self.kmeans = joblib.load("models/web_process_50.pkl")
+        case "Thiết kế hướng đối tượng":
+          self.course_name = "Thiết kế hướng đối tượng"
+          self.model = joblib.load("models/oop_model_50.pkl")
+          self.kmeans = joblib.load("models/oop_process_50.pkl")
+        case "Máy học":
+          self.course_name = "Máy học"
+          self.model = joblib.load("models/ml_model_50.pkl")
+          self.kmeans = joblib.load("models/ml_process_50.pkl")
+        case "Lập trình trên thiết bị di động":
+          self.course_name = "Lập trình trên thiết bị di động"
+          self.model = joblib.load("models/android_model_50.pkl")
+          self.kmeans = joblib.load("models/android_process_50.pkl")
+        case "Thương mại điện tử":
+          self.course_name = "Thương mại điện tử"
+          self.model = joblib.load("models/economical_model_50.pkl")
+          self.kmeans = joblib.load("models/economical_process_50.pkl")
 
   @classmethod
   def default(cls):
