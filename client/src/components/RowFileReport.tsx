@@ -63,7 +63,7 @@ const File = ({ resource }: FileProps) => {
     <div className='hover:bg-accent/30 focus-visible:border-ring/50 data-[dragging]:border-primary/30 data-[invalid]:border-destructive data-[dragging]:bg-accent/30 data-[invalid]:ring-destructive/20 relative flex items-center justify-start gap-2 rounded-lg border-2 border-dashed p-6 transition-colors outline-none select-none data-[disabled]:pointer-events-none'>
       <DocViewerRoot
         document={{
-          uri: 'https://res.cloudinary.com/yourstyle/raw/upload/v1754544877/KLTN/dc9af886-7862-4815-9876-037e5440de12/_report/21130320/daily_1_wgajkl.xlsx',
+          uri: resource.url,
           fileType: 'xlsx'
         }}
       >

@@ -22,7 +22,6 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 const WorkspaceDetailPage = () => {
   const { workspaceId, projectId } = useAppId()
-  console.log('projectId', projectId)
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId
   })

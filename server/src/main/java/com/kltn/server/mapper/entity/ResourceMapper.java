@@ -18,8 +18,13 @@ public abstract class ResourceMapper {
   protected FileService fileService;
 
   @Named("toUrl")
-  public String toUrl(String publicId) {
-    return fileService.getUrl(publicId);
+  String toUrl(Resource resource) {
+    return fileService.getUrl(resource.getPublicId(), resource.getContentType());
+  }
+
+  @Named("toUrlSnapshot")
+  String toUrl(ResourceSnapshot resource) {
+    return fileService.getUrl(resource.getPublicId(), resource.getContentType());
   }
 
   @Mappings({ @Mapping(target = "id", source = "id"),
@@ -28,7 +33,7 @@ public abstract class ResourceMapper {
       @Mapping(target = "contentType", source = "contentType"),
       @Mapping(target = "placeContent", source = "placeContent"),
       @Mapping(target = "size", source = "size"),
-      @Mapping(target = "url", source = "publicId", qualifiedByName = "toUrl"),
+      @Mapping(target = "url", source = ".", qualifiedByName = "toUrl")
       // @Mapping(target = "publicId", source = "publicId"),
   })
   @BeanMapping(ignoreByDefault = true)
@@ -54,8 +59,7 @@ public abstract class ResourceMapper {
       @Mapping(target = "contentType", source = "contentType"),
       @Mapping(target = "placeContent", source = "placeContent"),
       @Mapping(target = "size", source = "size"),
-      @Mapping(target = "url", source = "publicId", qualifiedByName = "toUrl"),
-      // @Mapping(target = "publicId", source = "publicId"),
+      @Mapping(target = "url", source = ".", qualifiedByName = "toUrlSnapshot")
   })
   @BeanMapping(ignoreByDefault = true)
   @Named("toResourceResponse")
