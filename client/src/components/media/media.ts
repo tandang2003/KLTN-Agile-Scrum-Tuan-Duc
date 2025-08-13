@@ -24,6 +24,7 @@ export type FileType = (typeof DEFAULT_ALLOWED_FILE_TYPES)[FileExtension]
 export type CreateFileData = CloudinaryUploadResultType & {
   baseName: string
   fileName: string
+  extension: string
 }
 
 export type MediaPreviewProps = {}
@@ -36,6 +37,7 @@ export type MediaMediaUploadingProps = {
   onFileValidate?: (file: File) => string | null
   signatureFn: () => Promise<GetSignatureResponseType>
   createFn?: (data: CreateFileData) => Promise<Thumbnail>
+  errorFn?: (error: Error) => void
 }
 
 export type Thumbnail = {
@@ -53,9 +55,13 @@ export type MediaContextType = {
   disabled: boolean
 }
 
-export type MediaProviderProps = {
+export type MediaProps = {
   thumbnail?: Thumbnail
   children?: React.ReactNode
   onDelete?: () => Promise<void>
   disabled?: boolean
 } & Omit<MediaMediaUploadingProps, 'files' | 'maximum'>
+
+export type MediaViewProps = {
+  thumbnail?: Thumbnail
+}

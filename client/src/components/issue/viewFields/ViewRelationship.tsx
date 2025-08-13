@@ -36,30 +36,42 @@ const ViewRelationship = ({ items = [] }: ViewRelationshipProps) => {
     return mapType
   }, [items])
 
+  const isEmpty = Object.values(dataPreprocessing).every(
+    (list) => list.length === 0
+  )
   return (
     <div>
-      <TitleLevel level={'lv-2'}>{message.title}</TitleLevel>
-      {Object.entries(dataPreprocessing).map(([key, value]) => {
-        if (value.length === 0) return null
-        return (
-          <div key={key} className='mt-2 flex gap-3'>
-            <TitleLevel level={'lv-4'} className='mt-2'>
-              {getRelationshipDisplayName(key as IssueRelationShip)}
-            </TitleLevel>
-            <ListView
-              data={value}
-              className='flex flex-1 flex-col gap-1'
-              emptyComponent={<Empty>Không có mối quan hệ</Empty>}
-              render={(item) => (
-                <div className='border-accent flex justify-between rounded-md border-2 px-4 py-2 shadow-md'>
-                  <span>{item.name}</span>
-                  <Badge status={item.status}>{item.status}</Badge>
-                </div>
-              )}
-            />
-          </div>
-        )
-      })}
+      <TitleLevel level={'lv-2'} className='mb-2 block'>
+        {message.title}
+      </TitleLevel>
+      {isEmpty ? (
+        <Empty>Không có mối quan hệ</Empty>
+      ) : (
+        Object.entries(dataPreprocessing).map(([key, value]) => {
+          if (value.length === 0) return null
+          return (
+            <div key={key} className='mt-2 flex gap-3'>
+              <TitleLevel level={'lv-4'} className='mt-2'>
+                {getRelationshipDisplayName(key as IssueRelationShip)}
+              </TitleLevel>
+              <ListView
+                data={value}
+                className='flex flex-1 flex-col gap-1'
+                emptyComponent={null}
+                render={(item) => (
+                  <div
+                    key={item.id}
+                    className='border-accent flex justify-between rounded-md border-2 px-4 py-2 shadow-md'
+                  >
+                    <span>{item.name}</span>
+                    <Badge status={item.status}>{item.status}</Badge>
+                  </div>
+                )}
+              />
+            </div>
+          )
+        })
+      )}
     </div>
   )
 }

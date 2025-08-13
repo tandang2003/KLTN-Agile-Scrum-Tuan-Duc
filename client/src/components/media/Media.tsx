@@ -1,19 +1,24 @@
-import { MediaProviderProps, Thumbnail } from '@/components/media/media'
+import { MediaProps, MediaViewProps, Thumbnail } from '@/components/media/media'
 import MediaContext from '@/components/media/MediaContext'
 import MediaPreview, {
   MediaPreviewEmpty,
   MediaPreviewNoAction
 } from '@/components/media/MediaPreview'
 import MediaUploading from '@/components/media/MediaUploading'
+import { MAX_SIZE } from '@/constant/app.const'
 import { useEffect, useState } from 'react'
 
-const MediaProvider = ({
+const Media = ({
   thumbnail: initialThumbnail,
   onDelete,
   children,
   disabled = false,
+  maxSize,
   ...props
-}: MediaProviderProps) => {
+}: MediaProps) => {
+  if (maxSize && maxSize >= MAX_SIZE) {
+    throw new Error(`Maximum size must be less than ${MAX_SIZE} bytes`)
+  }
   const [thumbnail, setThumbnail] = useState<Thumbnail | null>(
     initialThumbnail ?? null
   )
@@ -36,7 +41,7 @@ const MediaProvider = ({
   }
 
   return (
-    <MediaContext.Provider
+    <MediaContext
       value={{
         thumbnail: thumbnail ?? undefined, // ✅ use reactive state
         onDelete: handleDelete,
@@ -44,14 +49,35 @@ const MediaProvider = ({
         disabled
       }}
     >
-      {disabled && !thumbnail && <MediaPreviewEmpty />}
-      {disabled && thumbnail && <MediaPreviewNoAction />}
-      {!thumbnail && !disabled && <MediaUploading {...props} />}
-      {thumbnail && !disabled && <MediaPreview />}
-      {/* Render children components */}
+      <MediaPreviewEmpty />
+      <MediaPreviewNoAction />
+      <MediaUploading {...props} />
+      <MediaPreview />
       {children}
-    </MediaContext.Provider>
+    </MediaContext>
   )
 }
 
-export default MediaProvider
+const MediaView = ({ thumbnail: initialThumbnail }: MediaViewProps) => {
+  const [thumbnail, setThumbnail] = useState<Thumbnail | null>(
+    initialThumbnail ?? null
+  )
+
+  useEffect(() => {
+    setThumbnail(initialThumbnail ?? null)
+  }, [initialThumbnail])
+
+  return (
+    <MediaContext
+      value={{
+        thumbnail: thumbnail ?? undefined, // ✅ use reactive state
+        disabled: false
+      }}
+    >
+      <MediaPreview />
+    </MediaContext>
+  )
+}
+
+export default Media
+export { MediaView }

@@ -7,11 +7,11 @@ from sklearn.svm import SVC
 
 
 class My_Process():
-  def __init__(self, model="models/web_model.pkl", sprint_data=None, issue_data=None):
+  def __init__(self, model="models/web_model_50.pkl", sprint_data=None, issue_data=None):
     # change it
     self.course_name="Lập trình Web"
     self.model = joblib.load(model)
-    self.kmeans = joblib.load("models/web_process.pkl")
+    self.kmeans = joblib.load("models/web_process_50.pkl")
     self.sprint_data = sprint_data
     self.issue_data = issue_data
     self.k = 20

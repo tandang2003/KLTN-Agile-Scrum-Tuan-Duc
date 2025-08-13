@@ -55,8 +55,8 @@ public class DecisionService {
     Sprint sprint = sprintService.getSprintById(sprintId);
     int duration = Math.toIntExact((sprint.getDtStart().until(sprint.getDtEnd())).get(ChronoUnit.DAYS));
     int durationSpend = Math.toIntExact((sprint.getDtStart().until(ClockSimulator.now())).get(ChronoUnit.DAYS));
-    boolean timeMade = duration*0.3 < durationSpend;
-//     Kiểm tra các issue có thỏa mãn để đưa vào mô hình
+    boolean timeMade = duration * 0.3 < durationSpend;
+    // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
     if (checkPrePredict) {
       var responsePrePredictChecking = checkPrePredict(project, sprint);
       if (responsePrePredictChecking != null)

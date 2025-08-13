@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon'
-import TitleLevel from '@/components/TitleLevel'
+import AttachmentView from '@/components/issue/AttachmenView'
 import ListView from '@/components/ListView'
+import TitleLevel from '@/components/TitleLevel'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,18 +18,15 @@ import {
   FileUploadList,
   FileUploadTrigger
 } from '@/components/ui/file-upload'
+import { MAX_SIZE } from '@/constant/app.const'
 import messages from '@/constant/message.const'
 import useAppId from '@/hooks/use-app-id'
+import { createCtx } from '@/lib/context.helper'
+import { getResourceTypeFromEx } from '@/lib/file.helper'
 import { uuid } from '@/lib/utils'
 import resourceService from '@/services/resource.service'
 import { Upload } from 'lucide-react'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState
-} from 'react'
+import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
 type Attachment = {
@@ -55,19 +53,8 @@ type FileAttachmentContextType = {
   onCreate: (data: CreateAttachmentInputType) => Promise<void>
 }
 
-const FileAttachmentContext = createContext<FileAttachmentContextType | null>(
-  null
-)
-
-const useFileAttachmentContext = () => {
-  const context = useContext(FileAttachmentContext)
-  if (!context) {
-    throw new Error(
-      'useFileAttachmentContext must be used within a FileAttachmentProvider'
-    )
-  }
-  return context
-}
+const [useFileAttachmentContext, FileAttachmentContext] =
+  createCtx<FileAttachmentContextType>()
 
 type UpdateAttachmentIssueProps = {
   data?: Attachment[]
@@ -121,8 +108,9 @@ export const UpdateAttachmentIssue = ({
       attachments?.filter((attachment) => attachment.id !== resourceId) ?? []
     )
   }, [])
+
   return (
-    <FileAttachmentContext.Provider
+    <FileAttachmentContext
       value={{
         issueId: issueId,
         attachments: attachments,
@@ -138,7 +126,7 @@ export const UpdateAttachmentIssue = ({
         <UpdateAttachmentIssueUpload />
         <ListAttachmentIssue />
       </div>
-    </FileAttachmentContext.Provider>
+    </FileAttachmentContext>
   )
 }
 
@@ -194,13 +182,19 @@ const UpdateAttachmentIssueUpload = ({}: UpdateAttachmentIssueUploadProps) => {
             // Simulate server processing delay
             const fileName = file.name // Full name: "model.obj"
             const baseName = fileName.substring(0, fileName.lastIndexOf('.'))
+            const extension = fileName.split('.').pop() || ''
+            const resourceType = getResourceTypeFromEx(file.type)
+
             const { apiKey, folder, signature, timestamp, url } =
               await resourceService.getSignature({
                 projectId: projectId!,
-                issueId: issueId
+                issueId: issueId,
+                extension: extension,
+                nameFile: fileName,
+                resourceType: resourceType
               })
 
-            const { public_id, bytes, format } =
+            const { public_id, bytes } =
               await resourceService.uploadFileToCloudinaryWithSignature(file, {
                 apiKey: apiKey,
                 folder: folder,
@@ -211,7 +205,7 @@ const UpdateAttachmentIssueUpload = ({}: UpdateAttachmentIssueUploadProps) => {
 
             await onCreate({
               contentType: 'IMAGE',
-              extension: format,
+              extension: extension,
               issueId: issueId,
               name: baseName,
               publicId: public_id,
@@ -238,14 +232,13 @@ const UpdateAttachmentIssueUpload = ({}: UpdateAttachmentIssueUploadProps) => {
 
         // Wait for all uploads to complete
         toast.promise(Promise.all(uploadPromises), {
-          loading: 'Uploading files...',
-          success: 'All files uploaded successfully',
-          error: 'Error uploading files'
+          loading: 'Đang thực hiện upload file',
+          success: 'File đã được upload thành công',
+          error: 'Có lỗi xảy ra trong quá trình upload file'
         })
 
         setFiles([]) // Clear files after upload
       } catch (error) {
-        // This handles any error that might occur outside the individual upload processes
         console.error('Unexpected error during upload:', error)
       }
     },
@@ -265,6 +258,7 @@ const UpdateAttachmentIssueUpload = ({}: UpdateAttachmentIssueUploadProps) => {
       onFileValidate={onFileValidate}
       onFileReject={onFileReject}
       onUpload={onUpload}
+      maxSize={MAX_SIZE}
       className='w-full'
       multiple
     >
@@ -305,10 +299,9 @@ const ListAttachmentIssue = ({}: ListAttachmentIssueProps) => {
         return (
           <div
             key={item.id}
-            className='flex items-start gap-4 rounded-md bg-white p-2 shadow-md'
+            className='flex items-start gap-4 rounded-md border-2 bg-white p-2 shadow-md'
           >
-            <AttachmentPreview
-              id={item.id}
+            <AttachmentView
               extension={item.extension}
               filename={item.filename}
               url={item.url}
@@ -338,65 +331,17 @@ const AttachmentDropdownMenu = ({ id }: AttachmentDropdownMenuProps) => {
           className='cancel'
           onClick={() => {
             toast.promise(onDelete(id), {
-              loading: 'Deleting file...',
-              success: 'File deleted successfully',
+              loading: 'Đang xóa file',
+              success: 'File xóa thành công',
               error: 'File is deleted or not exist'
             })
           }}
         >
-          <Icon icon={'line-md:trash'} /> Delete
+          <Icon icon={'line-md:trash'} /> Xóa file
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
-
-type AttachmentPreviewProps = Attachment & {}
-
-const AttachmentPreview = ({
-  filename,
-  url,
-  extension
-}: AttachmentPreviewProps) => {
-  const icon = useMemo(() => {
-    switch (extension.toLowerCase()) {
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-      case 'webp':
-        return (
-          <div className='rounded-md border-1 p-1 shadow-md'>
-            <img
-              src={url}
-              alt={filename}
-              loading='lazy'
-              className='h-[80px] w-[120px] overflow-hidden object-cover'
-            />
-          </div>
-        )
-
-      case 'pdf':
-        return <div>📄 PDF</div>
-
-      case 'docx':
-      case 'doc':
-        return <div>📝 Word</div>
-
-      case 'xlsx':
-      case 'xls':
-        return <div>📊 Excel</div>
-
-      case 'ppt':
-      case 'pptx':
-        return <div>📽 PowerPoint</div>
-
-      default:
-        return <div>📁 File</div>
-    }
-  }, [url, extension, filename])
-
-  return icon
 }
 
 export default UpdateAttachmentIssue

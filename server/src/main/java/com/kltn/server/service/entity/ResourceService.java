@@ -17,7 +17,6 @@ import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.ProjectRepository;
 import com.kltn.server.repository.entity.ResourceRepository;
-import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import com.kltn.server.service.file.FileService;
 import com.kltn.server.service.file.FileSignature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,19 +34,15 @@ import java.util.Map;
 
 @Service
 public class ResourceService {
-  private final SprintService sprintService;
   private final ProjectSprintService projectSprintService;
   private ResourceRepository repository;
   private UserService userService;
-  private ProjectRepository projectRepository;
   private ResourceMapper resourceMapper;
   @Lazy
   @Autowired
   private IssueService issueService;
   private FileService fileService;
   private IssueRepository issueRepository;
-  @Autowired
-  private ProjectSprintRepository projectSprintRepository;
 
   @Autowired
   public ResourceService(ResourceRepository repository, ResourceMapper resourceMapper, UserService userService,
@@ -57,10 +52,7 @@ public class ResourceService {
     this.repository = repository;
     this.resourceMapper = resourceMapper;
     this.userService = userService;
-    this.projectRepository = projectService;
-    this.issueService = issueService;
     this.fileService = fileService;
-    this.sprintService = sprintService;
     this.projectSprintService = projectSprintService;
   }
 
@@ -100,6 +92,7 @@ public class ResourceService {
 
     String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
     paramsToSign.put("timestamp", timestamp);
+    paramsToSign.put("resource_type", request.getResourceType());
 
     FileSignature fileSignature = fileService.getSignature(paramsToSign);
 
