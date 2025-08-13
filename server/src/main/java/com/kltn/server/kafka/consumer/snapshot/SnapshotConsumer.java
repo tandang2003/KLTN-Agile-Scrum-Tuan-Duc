@@ -61,7 +61,6 @@ public class SnapshotConsumer {
   @Transactional
   public void consumeSnapshot1(@Payload SnapshotRequest snapshotRequest, @Header("X-Auth-User") String user) {
     User u = userRepository.findByUniId(user).get();
-    // User u = userService.getUserById(user);
     SecurityContextHolder.getContext()
         .setAuthentication(new UsernamePasswordAuthenticationToken(u.getUniId(), null, u.getAuthorities()));
     boolean flag = projectSprintRepository.existsById(ProjectSprintId.builder()
