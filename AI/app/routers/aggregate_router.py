@@ -15,8 +15,10 @@ process = My_Process()
 @router.post("")
 async def list_issues(data: IterationModel):
   # try:
-  process.reset_model(data.course_name)
-  # except:
+  if data.timeMade:
+    process.reset_model_30(data.course_name)
+  else:
+    process.reset_model_50(data.course_name)
   #   return [-1];
   process.set_sprint_data(sprintMapDataframe(data))
   process.set_issue_data(issueMapListToDataFrame(issueMapList(data.issueModelList)))

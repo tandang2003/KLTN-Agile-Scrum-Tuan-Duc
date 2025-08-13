@@ -25,7 +25,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -51,8 +53,10 @@ public class DecisionService {
   public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean checkPrePredict) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
-
-    // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
+    int duration = Math.toIntExact((sprint.getDtStart().until(sprint.getDtEnd())).get(ChronoUnit.DAYS));
+    int durationSpend = Math.toIntExact((sprint.getDtStart().until(ClockSimulator.now())).get(ChronoUnit.DAYS));
+    boolean timeMade = duration*0.3 < durationSpend;
+//     Kiểm tra các issue có thỏa mãn để đưa vào mô hình
     if (checkPrePredict) {
       var responsePrePredictChecking = checkPrePredict(project, sprint);
       if (responsePrePredictChecking != null)
@@ -69,6 +73,7 @@ public class DecisionService {
     IterationModel.IterationModelBuilder iterationModelBuilder = IterationModel.builder();
     iterationModelBuilder.sprint_id(sprintId);
     iterationModelBuilder.course_name(project.getWorkspace().getCourse().getName());
+    iterationModelBuilder.timeMade(timeMade);
     iterationModelBuilder.storyPoint(sprint.getStoryPoint());
     iterationModelBuilder.sprintDuration(calculateSprintDuration(sprint));
     iterationModelBuilder.numOfIssueAtStart(issueService.getNumberOfIssuesAtStart(project, sprint));
