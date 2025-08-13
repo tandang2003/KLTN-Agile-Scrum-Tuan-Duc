@@ -26,4 +26,4 @@ async def list_issues(data: IterationModel):
     return [-1];
   process.set_sprint_data(sprintMapDataframe(data))
   process.set_issue_data(issueMapListToDataFrame(issueMapList(data.issueModelList)))
-  return process.process();
+  return process.process()

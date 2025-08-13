@@ -92,6 +92,7 @@ public class ResourceService {
 
     String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
     paramsToSign.put("timestamp", timestamp);
+    paramsToSign.put("resource_type", request.getResourceType());
 
     FileSignature fileSignature = fileService.getSignature(paramsToSign);
 

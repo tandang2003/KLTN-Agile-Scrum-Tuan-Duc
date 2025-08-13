@@ -531,6 +531,7 @@ const messages = {
       topic: 'Chủ đề',
       description: 'Mô tả chi tiết',
       priority: 'Mức độ ưu tiên',
+      resource: 'File đính kèm',
       select: {
         placeholder: 'Chọn sinh viên',
         null: 'Không chọn'

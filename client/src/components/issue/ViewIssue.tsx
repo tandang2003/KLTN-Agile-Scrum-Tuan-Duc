@@ -20,6 +20,7 @@ import messages, {
 } from '@/constant/message.const'
 import { formatDate, uuid } from '@/lib/utils'
 import { IssueDetailResponse } from '@/types/issue.type'
+import ViewAttachmentIssue from '@/components/issue/viewFields/ViewAttactment'
 type ViewIssueProps = {
   data: IssueDetailResponse
 }
@@ -62,23 +63,25 @@ const ViewIssue = ({ data }: ViewIssueProps) => {
                 </div>
                 <HtmlViewer
                   value={description}
+                  fallback={'Không có mô tả'}
                   className='rounded-xl border-2 border-gray-300 p-2'
                 />
               </div>
               <Separator className='my-2' />
               <div>
-                {/* <UpdateAttachmentIssue
-                    issueId={data.id}
-                    data={data.resources?.map((item) => {
-                      return {
-                        filename: item.name,
-                        url: item.url,
-                        id: item.id,
-                        extension: item.extension
-                      }
-                    })}
-                  /> */}
+                <ViewAttachmentIssue
+                  data={data.resources?.map((item) => {
+                    return {
+                      url: item.url,
+                      id: item.id,
+                      extension: item.extension,
+                      filename: item.name
+                    }
+                  })}
+                />
               </div>
+              <Separator className='my-2' />
+
               <ViewRelationship items={relations} />
               <Separator className='my-2' />
               <ViewSubTask

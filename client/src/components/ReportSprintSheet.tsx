@@ -1,6 +1,6 @@
 import Icon from '@/components/Icon'
 import { CreateFileData, Thumbnail } from '@/components/media/media'
-import MediaProvider from '@/components/media/MediaProvider'
+import Media from '@/components/media/Media'
 import ToolTip from '@/components/Tooltip'
 import { Button } from '@/components/ui/button'
 import {
@@ -222,7 +222,7 @@ const ReportSprintSheet = ({
               </ToolTip>
             </h4>
 
-            <MediaProvider
+            <Media
               thumbnail={daily1 ?? undefined}
               type={{
                 mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -246,7 +246,7 @@ const ReportSprintSheet = ({
               </ToolTip>
             </h4>
 
-            <MediaProvider
+            <Media
               thumbnail={daily2 ?? undefined}
               type={{
                 mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -262,7 +262,7 @@ const ReportSprintSheet = ({
             <h4 className='mb-3 text-base font-semibold'>
               {message.form.backlog.label}
             </h4>
-            <MediaProvider
+            <Media
               thumbnail={backlog ?? undefined}
               type={{
                 mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
