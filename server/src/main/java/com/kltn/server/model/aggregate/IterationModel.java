@@ -5,6 +5,7 @@ import java.util.List;
 public class IterationModel {
   private String sprint_id;
   private String course_name;
+  private boolean timeMade;
   private int storyPoint;
   private int sprintDuration;
   private int numOfIssueAtStart;
@@ -26,6 +27,7 @@ public class IterationModel {
   private IterationModel(IterationModelBuilder builder) {
     this.sprint_id = builder.sprint_id;
     this.course_name = builder.course_name;
+    this.timeMade = builder.timeMade;
     this.storyPoint = builder.storyPoint;
     this.sprintDuration = builder.sprintDuration;
     this.numOfIssueAtStart = builder.numOfIssueAtStart;
@@ -41,6 +43,7 @@ public class IterationModel {
   public static class IterationModelBuilder {
     private String sprint_id;
     private String course_name;
+    private boolean timeMade;
     private int storyPoint;
     private int sprintDuration;
     private int numOfIssueAtStart;
@@ -59,6 +62,11 @@ public class IterationModel {
 
     public IterationModelBuilder course_name(String course_name) {
       this.course_name = course_name;
+      return this;
+    }
+
+    public IterationModelBuilder timeMade(boolean timeMade) {
+      this.timeMade = timeMade;
       return this;
     }
 
