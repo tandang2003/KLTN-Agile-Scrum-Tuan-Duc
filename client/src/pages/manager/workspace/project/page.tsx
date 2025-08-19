@@ -28,6 +28,7 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
+  const { workspaceId } = useAppId()
 
   const { sprint } = useSprintCurrent()
 
@@ -69,13 +70,13 @@ const ProjectPage = () => {
               <ProjectNavigation id={data.id} />
 
               <div className='flex items-center gap-3'>
-                {/* {workspaceId && (
+                {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={30} />
                 )}
                 {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={50} />
                 )}
-                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />} */}
+                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
                 {projectId && sprint?.id && (
                   <ProjectStatus projectId={projectId} sprintId={sprint?.id} />
                 )}

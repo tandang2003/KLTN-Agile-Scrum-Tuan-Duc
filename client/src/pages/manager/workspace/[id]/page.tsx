@@ -16,13 +16,14 @@ import messages from '@/constant/message.const'
 import { useGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
 import WorkspaceNavigate from '@/pages/manager/workspace/[id]/navigate'
+import { Id } from '@/types/other.type'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const WorkspaceDetailPage = () => {
   const { workspaceId, projectId } = useAppId()
-  const { data } = useGetWorkspaceQuery(workspaceId as string, {
+  const { data } = useGetWorkspaceQuery(workspaceId as Id, {
     skip: !workspaceId
   })
   const [openDialogAddStudent, setOpenDialogAddStudent] =

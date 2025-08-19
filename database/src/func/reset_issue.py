@@ -2,7 +2,7 @@ from src.connection.mysql import get_mysql_connection
 from src.connection.mongo import get_mongo_client
 
 # 🔧 Config
-workspace_id = '88e830a7-f240-4d0f-b8f3-bd08cfb69607'
+workspace_id = '139b821a-f5d0-49c8-9f26-da68e54d59a2'
 
 # === MYSQL: Get all project IDs in the workspace ===
 project_ids = []
@@ -39,7 +39,7 @@ for project_id in project_ids:
                     issues.open = %s
                 WHERE issues.project_id = %s AND issues.status != 'BACKLOG'
             """
-            cursor.execute(update_query, (False, project_id))
+            cursor.execute(update_query, (True, project_id))
             print(f"✅ Updated {cursor.rowcount} issue(s) in MySQL for project {project_id}.")
     finally:
         conn.close()
