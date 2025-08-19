@@ -533,35 +533,38 @@ public class IssueService {
     }
 
     // Check comment
-    if (request.getStatus() == IssueStatus.REVIEW) {
-      if (task.getAssignee() != null) {
-        String assigneeId = task.getAssignee().getUniId();
-        long commentCount = Optional.ofNullable(taskMongo.getComments())
-            .orElse(Collections.emptyList()) // use empty list if null
-            .stream()
-            .filter(n -> assigneeId.equals(n.getFrom()))
-            .count();
+    // if (request.getStatus() == IssueStatus.REVIEW) {
+    // if (task.getAssignee() != null) {
+    // String assigneeId = task.getAssignee().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> assigneeId.equals(n.getFrom()))
+    // .count();
 
-        if (commentCount < 1) {
-          throw AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
-        }
-      }
-    }
+    // if (commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_ASSIGNEE_STATUS_ISSUE).build();
+    // }
+    // }
+    // }
 
-    if (request.getStatus() == IssueStatus.DONE) {
-      if (task.getReviewer() != null) {
-        String reviewerId = task.getReviewer().getUniId();
-        long commentCount = Optional.ofNullable(taskMongo.getComments())
-            .orElse(Collections.emptyList()) // use empty list if null
-            .stream()
-            .filter(n -> reviewerId.equals(n.getFrom()))
-            .count();
-        if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() == IssueStatus.DONE)
-            && commentCount < 1) {
-          throw AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
-        }
-      }
-    }
+    // if (request.getStatus() == IssueStatus.DONE) {
+    // if (task.getReviewer() != null) {
+    // String reviewerId = task.getReviewer().getUniId();
+    // long commentCount = Optional.ofNullable(taskMongo.getComments())
+    // .orElse(Collections.emptyList()) // use empty list if null
+    // .stream()
+    // .filter(n -> reviewerId.equals(n.getFrom()))
+    // .count();
+    // if ((request.getStatus() == IssueStatus.REVIEW || request.getStatus() ==
+    // IssueStatus.DONE)
+    // && commentCount < 1) {
+    // throw
+    // AppException.builder().error(Error.COMMENT_REVIEWER_STATUS_ISSUE).build();
+    // }
+    // }
+    // }
 
     // Check rollback from done
     if (task.getStatus().equals(IssueStatus.DONE) &&
