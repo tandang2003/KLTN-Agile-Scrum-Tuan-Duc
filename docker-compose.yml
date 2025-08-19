@@ -1,0 +1,127 @@
+#docker-compose -f docker-compose.yml --env-file .env up -d
+services:
+  app-redis:
+    image: redis:latest
+    container_name: app-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+  app-mongodb:
+    image: mongo:latest
+    container_name: app-mongodb
+    ports:
+      - "${MONGO_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: >
+        CMD-SHELL mongo --username $${MONGO_INITDB_ROOT_USERNAME} --password $${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --eval "db.adminCommand('ping')"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-mysql:
+    image: mysql:latest
+    container_name: app-mysql
+    ports:
+      - "${MYSQL_PORT}:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app-zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: app-zookeeper
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "echo",
+          "ruok",
+          "|",
+          "nc",
+          "localhost",
+          "${ZOOKEEPER_CLIENT_PORT}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-kafka1:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: app-kafka1
+    depends_on:
+      - app-zookeeper
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-topics",
+          "--bootstrap-server",
+          "localhost:9092",
+          "--list",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_1_ID}
+      KAFKA_ZOOKEEPER_CONNECT: app-zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://app-kafka1:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+    volumes:
+      - kafka_data1:/kafka/kafka-logs
+
+volumes:
+  kafka_data1:
+    driver: local
+  redis_data:
+    driver: local
+  mongo_data:
+    driver: local
+  mysql_data:
+    driver: local
+  zookeeper_data:
+    driver: local
