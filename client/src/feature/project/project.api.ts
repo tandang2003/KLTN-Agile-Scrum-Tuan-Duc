@@ -42,7 +42,8 @@ const projectApi = createApi({
         } catch (error) {
           return { error }
         }
-      }
+      },
+      keepUnusedDataFor: 0
     }),
     getResources: builder.query<
       ResourceOfSprintResponseType,

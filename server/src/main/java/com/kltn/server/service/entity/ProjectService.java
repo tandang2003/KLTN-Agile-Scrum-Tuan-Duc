@@ -185,11 +185,11 @@ public class ProjectService {
               .build();
           try {
             workspacesUsersProjectsRepository.save(usersProjects);
-            emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
-                Map.of("userId",
-                    workspacesUsersId.getUserId(),
-                    "workspaceId",
-                    workspacesUsersId.getWorkspaceId())));
+            // emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
+            // Map.of("userId",
+            // workspacesUsersId.getUserId(),
+            // "workspaceId",
+            // workspacesUsersId.getWorkspaceId())));
           } catch (Exception e) {
             throw AppException.builder()
                 .error(Error.DB_SERVER_ERROR)
