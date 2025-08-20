@@ -53,8 +53,8 @@ public class DecisionService {
   public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean checkPrePredict) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
-    int duration = Math.toIntExact((sprint.getDtStart().until(sprint.getDtEnd())).get(ChronoUnit.DAYS));
-    int durationSpend = Math.toIntExact((sprint.getDtStart().until(ClockSimulator.now())).get(ChronoUnit.DAYS));
+    int duration = Math.toIntExact(ChronoUnit.DAYS.between(sprint.getDtStart(), sprint.getDtEnd()));
+    int durationSpend = Math.toIntExact(ChronoUnit.DAYS.between(sprint.getDtStart(), ClockSimulator.now()));
     boolean timeMade = duration * 0.3 < durationSpend;
     // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
     if (checkPrePredict) {

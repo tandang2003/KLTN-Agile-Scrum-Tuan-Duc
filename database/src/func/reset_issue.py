@@ -5,22 +5,22 @@ from src.connection.mongo import get_mongo_client
 workspace_id = '139b821a-f5d0-49c8-9f26-da68e54d59a2'
 
 # === MYSQL: Get all project IDs in the workspace ===
-project_ids = []
+project_ids = ['dc9af886-7862-4815-9876-037e5440de12']
 conn = get_mysql_connection()
 
-try:
-    with conn.cursor() as cursor:
-        select_query = """
-            SELECT DISTINCT project_id 
-            FROM workspaces_users_projects 
-            WHERE workspace_id = %s
-        """
-        cursor.execute(select_query, (workspace_id,))
-        rows = cursor.fetchall()
-        project_ids = [row['project_id'] for row in rows]
-        print(f"📦 Found {len(project_ids)} project(s) in workspace.")
-finally:
-    conn.close()
+# try:
+#     with conn.cursor() as cursor:
+#         select_query = """
+#             SELECT DISTINCT project_id 
+#             FROM workspaces_users_projects 
+#             WHERE workspace_id = %s
+#         """
+#         cursor.execute(select_query, (workspace_id,))
+#         rows = cursor.fetchall()
+#         project_ids = [row['project_id'] for row in rows]
+#         print(f"📦 Found {len(project_ids)} project(s) in workspace.")
+# finally:
+#     conn.close()
 
 
 # === LOOP THROUGH EACH PROJECT ===
