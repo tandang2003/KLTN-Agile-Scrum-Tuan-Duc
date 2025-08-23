@@ -29,6 +29,8 @@ public class Sprint extends BaseEntity {
   private int storyPoint;
   @Column(name = "dt_predict")
   private Instant dtPredict;
+  @Column(name = "dt_predict_second")
+  private Instant dtPredictSecond;
   @OneToMany(mappedBy = "sprint")
   private List<Issue> issues;
 
@@ -42,6 +44,7 @@ public class Sprint extends BaseEntity {
     this.projectSprints = sprintBuilder.projectSprints;
     this.storyPoint = sprintBuilder.storyPoint;
     this.dtPredict = sprintBuilder.dtPredict;
+    this.dtPredictSecond = sprintBuilder.dtPredictSecond;
   }
 
   public Sprint() {
@@ -59,6 +62,7 @@ public class Sprint extends BaseEntity {
     private Instant DTStart;
     private Instant DTEnd;
     private List<ProjectSprint> projectSprints;
+    private Instant dtPredictSecond;
 
     @Override
     protected SprintEntityBuilder self() {
@@ -91,6 +95,9 @@ public class Sprint extends BaseEntity {
 
     public SprintEntityBuilder dtPredict(Instant dtPredict) {
       this.dtPredict = dtPredict;
+      return this;
+    } public SprintEntityBuilder dtPredictSecond(Instant dtPredictSecond) {
+      this.dtPredictSecond = dtPredictSecond;
       return this;
     }
 
@@ -230,6 +237,14 @@ public class Sprint extends BaseEntity {
 
   public void setDtPredict(Instant dtPredict) {
     this.dtPredict = dtPredict;
+  }
+
+  public Instant getDtPredictSecond() {
+    return dtPredictSecond;
+  }
+
+  public void setDtPredictSecond(Instant dtPredictSecond) {
+    this.dtPredictSecond = dtPredictSecond;
   }
 }
 

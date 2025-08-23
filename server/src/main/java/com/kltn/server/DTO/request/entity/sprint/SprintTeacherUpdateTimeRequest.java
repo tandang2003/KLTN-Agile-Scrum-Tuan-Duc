@@ -1,26 +1,16 @@
 package com.kltn.server.DTO.request.entity.sprint;
 
-import com.kltn.server.util.constant.DateConstraint;
-import com.kltn.server.util.validation.ValidTimeRangeValidator;
-import jakarta.validation.constraints.NotEmpty;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.Instant;
 
-import static com.kltn.server.util.constant.DateFormatString.LOCAL_DATE_TIME;
-
-//@ValidTimeRangeValidator(mainField = "start", dependencyField = "end", constraint = DateConstraint.BEFORE)
-//@ValidTimeRangeValidator(mainField = "end", dependencyField = "start", constraint = DateConstraint.AFTER)
-//@ValidTimeRangeValidator(mainField = "predict", dependencyField = "start", constraint = DateConstraint.AFTER)
-//@ValidTimeRangeValidator(mainField = "start", constraint = DateConstraint.AFTER_NOW)
 public record SprintTeacherUpdateTimeRequest(String id,
-    String title,
-    String description,
-    Instant start,
-    Instant end,
-    int storyPoint,
-    Instant predict,
-    int position) {
+                                             String title,
+                                             String description,
+                                             Instant start,
+                                             Instant end,
+                                             int storyPoint,
+                                             Instant predict,
+                                             Instant predictSecond,
+                                             int position) {
 
   public static class SprintTeacherUpdateTimeRequestBuilder {
     private String id;
@@ -29,8 +19,11 @@ public record SprintTeacherUpdateTimeRequest(String id,
     private Instant dtStart;
     private Instant dtEnd;
     private Instant predict;
+    private Instant predictSecond;
+
     private int storyPoint;
     private int position;
+
 
     public SprintTeacherUpdateTimeRequestBuilder id(String id) {
       this.id = id;
@@ -62,6 +55,11 @@ public record SprintTeacherUpdateTimeRequest(String id,
       return this;
     }
 
+    public SprintTeacherUpdateTimeRequestBuilder predictSecond(Instant predict) {
+      this.predict = predict;
+      return this;
+    }
+
     public SprintTeacherUpdateTimeRequestBuilder dtStart(Instant dtStart) {
       this.dtStart = dtStart;
       return this;
@@ -73,9 +71,8 @@ public record SprintTeacherUpdateTimeRequest(String id,
     }
 
     public SprintTeacherUpdateTimeRequest build() {
-      return new SprintTeacherUpdateTimeRequest(id, title, description, dtStart, dtEnd, storyPoint, predict, position);
+      return new SprintTeacherUpdateTimeRequest(id, title, description, dtStart, dtEnd, storyPoint, predict, predictSecond, position);
     }
-
   }
 
   public static SprintTeacherUpdateTimeRequestBuilder builder() {
