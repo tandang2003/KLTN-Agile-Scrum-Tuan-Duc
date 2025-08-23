@@ -6,26 +6,29 @@ import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SprintResponse(String id,
-    String title,
-    String description,
-    int storyPoint,
-    Instant predict,
-    Instant start,
-    Instant end,
-    Instant planning,
-    Instant preview,
-    int predictedResult) {
+                             String title,
+                             String description,
+                             int storyPoint,
+                             Instant predict,
+                             Instant predictSecond,
+                             Instant start,
+                             Instant end,
+                             Instant planning,
+                             Instant preview,
+                             int predictedResult) {
   public static class SprintResponseBuilder {
     private String id;
     private String title;
     private String description;
     private int storyPoint;
     private Instant predict;
+    private Instant predictSecond;
     private Instant dtStart;
     private Instant dtEnd;
     private Instant planning;
     private Instant preview;
     private int predictedResult;
+    private int predictedResultSecond;
 
     public SprintResponseBuilder id(String id) {
       this.id = id;
@@ -51,6 +54,12 @@ public record SprintResponse(String id,
       this.predict = predict;
       return this;
     }
+
+    public SprintResponseBuilder predictSecond(Instant predictSecond) {
+      this.predictSecond = predictSecond;
+      return this;
+    }
+
 
     public SprintResponseBuilder start(Instant dtStart) {
       this.dtStart = dtStart;
@@ -78,8 +87,8 @@ public record SprintResponse(String id,
     }
 
     public SprintResponse build() {
-      return new SprintResponse(id, title, description, storyPoint, predict, dtStart, dtEnd, planning,
-          preview, predictedResult);
+      return new SprintResponse(id, title, description, storyPoint, predict, predictSecond, dtStart, dtEnd, planning,
+        preview, predictedResult);
     }
   }
 
