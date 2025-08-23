@@ -175,7 +175,7 @@ type ChartStatusPerProjectProps = {
 }
 
 const ChartStatusPerProject = ({
-  data: student
+  data: project
 }: ChartStatusPerProjectProps) => {
   const message =
     messages.component.dashboard.teacher.tasksByStatusPerProjectBarChart
@@ -202,7 +202,7 @@ const ChartStatusPerProject = ({
       </div>
 
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
-        {student.map((item) => {
+        {project.map((item) => {
           const chartData = {
             labels: [],
             datasets: [

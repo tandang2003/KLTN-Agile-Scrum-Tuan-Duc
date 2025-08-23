@@ -1,6 +1,7 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
 import ProjectSocket from '@/components/project/ProjectSocket'
+import ProjectPredict from '@/components/ProjectPredict'
 import ProjectStatus from '@/components/ProjectStatus'
 import RefreshSprint from '@/components/RefreshSprint'
 import SprintPredict from '@/components/SprintPredict'
@@ -53,7 +54,6 @@ const ProjectPage = () => {
       )
     }
   }, [data?.currentSprint, dispatch])
-
   return (
     <SectionContainer className='flex flex-col'>
       <LoadingBoundary<ProjectDetailResponse>
@@ -70,16 +70,17 @@ const ProjectPage = () => {
               <ProjectNavigation id={data.id} />
 
               <div className='flex items-center gap-3'>
-                {workspaceId && (
+                {/* {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={30} />
                 )}
                 {workspaceId && (
                   <StoreData workspaceId={workspaceId} stage={50} />
                 )}
-                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />}
+                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />} */}
                 {projectId && sprint?.id && (
                   <ProjectStatus projectId={projectId} sprintId={sprint?.id} />
                 )}
+                <ProjectPredict data={data} />
                 <RefreshSprint />
                 <SprintPredict
                   project={{

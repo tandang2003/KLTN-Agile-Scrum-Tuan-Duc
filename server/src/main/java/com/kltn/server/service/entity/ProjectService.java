@@ -61,6 +61,7 @@ public class ProjectService {
   private final ChangeLogMapper changeLogMapper;
   private final ResourceMapper resourceMapper;
   private ProjectSprintService projectSprintService;
+  private final WorkspaceService workspaceService;
   @Value("${verify.invite-project-link}")
   private String link;
   private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
@@ -74,7 +75,8 @@ public class ProjectService {
       ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
       com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService,
       ChangeLogMapper changeLogMapper, ResourceMapper resourceMapper,
-      SprintBoardMongoService sprintBoardMongoService) {
+      SprintBoardMongoService sprintBoardMongoService,
+      WorkspaceService workspaceService) {
     this.projectMongoService = projectMongoService;
     this.sprintScheduler = sprintScheduler;
     this.roleInit = roleInit;
@@ -90,6 +92,7 @@ public class ProjectService {
     this.projectSprintService = projectSprintService;
     this.resourceMapper = resourceMapper;
     this.sprintBoardMongoService = sprintBoardMongoService;
+    this.workspaceService = workspaceService;
   }
 
   @Transactional
@@ -150,7 +153,6 @@ public class ProjectService {
     return ApiResponse.<ProjectResponse>builder()
         .message("Create project success")
         .data(projectMapper.toCreationResponse(savedProject, topics))
-        // .logData(log)
         .build();
   }
 
@@ -185,11 +187,11 @@ public class ProjectService {
               .build();
           try {
             workspacesUsersProjectsRepository.save(usersProjects);
-            // emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
-            // Map.of("userId",
-            // workspacesUsersId.getUserId(),
-            // "workspaceId",
-            // workspacesUsersId.getWorkspaceId())));
+            emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
+                Map.of("userId",
+                    workspacesUsersId.getUserId(),
+                    "workspaceId",
+                    workspacesUsersId.getWorkspaceId())));
           } catch (Exception e) {
             throw AppException.builder()
                 .error(Error.DB_SERVER_ERROR)
@@ -226,12 +228,28 @@ public class ProjectService {
     setCurrentSprint(project, workspace.getSprints());
     var project1 = projectMongoService.getByNkProjectId(projectId);
     List<Topic> topics = project1.getTopics();
-    // List<SprintResponse> sprintResponses = getSprintResponses(project);
-    ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics);
+    int completedSprints = workspaceService.completedSprints(project);
+    int totalEndingSprints = workspaceService.totalEndedSprints(project);
+
+    boolean isSuccess = calculateProjectIsSuccess(project, completedSprints, totalEndingSprints);
+
+    ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics, completedSprints,
+        totalEndingSprints, isSuccess);
     return ApiResponse.<ProjectResponse>builder()
         .message("Get project by id")
         .data(projectResponse)
         .build();
+  }
+
+  public boolean calculateProjectIsSuccess(Project project, int completedSprints, int totalEndingSprints) {
+    boolean isSuccess ;
+    var rangeSprint = project.getSprints().size() * 0.7;
+    if (totalEndingSprints < rangeSprint) {
+      isSuccess = completedSprints >= rangeSprint / 2;
+    } else {
+      isSuccess = completedSprints >= rangeSprint;
+    }
+    return isSuccess;
   }
 
   public Project getProjectById(String id) {

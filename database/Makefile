@@ -7,7 +7,7 @@ VENV = .venv/bin/activate
 RESTORE_SCRIPT_MONGO=src.mongo.restore
 RESTORE_SCRIPT_MYSQL=src.mysql.restore
 # Get the latest timestamp folder from BACKUP_DIR
-DB_NAME = kltn
+DB_NAME = kltn_demo
 
 env:
 	@echo "Creating virtual environment..."

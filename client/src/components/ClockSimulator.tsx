@@ -214,17 +214,13 @@ const ClockSimulator = () => {
       })
   }, [form, simulatedTime])
 
-  // useEffect(() => {
-  //   console.log(simulatedTime)
-  // }, [simulatedTime])
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{ClockDisplay}</DialogTrigger>
       <DialogContent className='top-1/4' aria-describedby={undefined}>
         <DialogTitle />
         <DialogHeader>
-          <h3 className='h3'>Simulator time</h3>
+          <h3 className='h3'>Gỉa lập thời gian </h3>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>

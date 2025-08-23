@@ -4,7 +4,7 @@ import { getProjectPredictDisplayName } from '@/constant/message.const'
 import { useGetProjectPredictQuery } from '@/feature/dashboard/dashboard.api'
 import useAppId from '@/hooks/use-app-id'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { PageRequest } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import { useState } from 'react'
@@ -33,6 +33,7 @@ const ProjectPredict = () => {
       <h2 className='mb-4 text-center text-2xl font-bold text-gray-800'>
         Thống kê dự đoán của các project theo sprint hiện tại
       </h2>
+
       {sprint?.id ? (
         <ListViewPagination
           view={{
@@ -41,7 +42,13 @@ const ProjectPredict = () => {
             loading: isFetching,
             render: (item) => {
               return (
-                <Card className='w-full max-w-sm'>
+                <Card
+                  className={cn(
+                    'w-full max-w-sm',
+                    item.predict == -1 && 'border-2 border-red-500',
+                    item.predict == 0 && 'border-2 border-green-500'
+                  )}
+                >
                   <CardHeader>
                     <CardTitle>{item.name}</CardTitle>
                   </CardHeader>
@@ -69,7 +76,11 @@ const ProjectPredict = () => {
           }}
         />
       ) : (
-        <div></div>
+        <div>
+          <div className='text-center text-lg text-red-500'>
+            Chưa có sprint nào đang chạy
+          </div>
+        </div>
       )}
     </div>
   )

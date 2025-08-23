@@ -1,4 +1,5 @@
 import ProjectMessage from '@/components/project/ProjectMessage'
+import messages from '@/constant/message.const'
 import { useAppDispatch, useAppSelector } from '@/context/redux/hook'
 import { enableNotification } from '@/feature/trigger/trigger.slice'
 import { useAuth } from '@/hooks/use-auth'
@@ -19,6 +20,7 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
   const dispatch = useAppDispatch()
   const auth = useAuth()
   const unsubscribeRef = useRef<(() => void) | null>(null)
+  const message = messages.component.sprintPredict
 
   useStompClient({
     accessToken: auth.accessToken,
@@ -42,7 +44,11 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
             }
           }
           if (isPredictResponse(value.bodyParse)) {
-            toast(value.bodyParse.message.message)
+            toast('Chạy dự đoán tự động', {
+              description: value.bodyParse.message.status
+                ? message.toast.success
+                : message.toast.failed
+            })
           }
         }
       )

@@ -163,7 +163,10 @@ const messages = {
           id: '#',
           name: 'Tên nhóm',
           createAt: ' Ngày tạo',
-          report: 'Báo cáo'
+          report: 'Báo cáo',
+          completedSprints: 'Số sprint thành công',
+          totalEndedSprints: 'Tổng số sprint đã kết thúc',
+          isSuccess: 'Trạng thái'
         }
       },
       sprint: {

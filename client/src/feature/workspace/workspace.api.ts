@@ -182,19 +182,6 @@ const workspaceApi = createApi({
         }
       }
     }),
-    getListSprintWorkspace: builder.query<
-      Page<ProjectWorkspaceDataTable>,
-      ListProjectWorkspaceReq
-    >({
-      async queryFn(args) {
-        try {
-          const data = await workspaceService.getListProject(args)
-          return { data: data }
-        } catch (error) {
-          return { error }
-        }
-      }
-    }),
     getAllResourceBySprint: builder.query<SprintResourceResponseType, Id>({
       async queryFn(args) {
         try {

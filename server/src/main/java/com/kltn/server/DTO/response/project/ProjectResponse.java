@@ -9,19 +9,18 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProjectResponse(
-  String id, String name, String description, Instant start, Instant end,
-  List<TopicResponse> topics,
-  List<SprintResponse> sprints,
-  String leader,
-  Instant createdAt,
-  Instant updatedAt,
-  @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse prevSprint,
-  @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
-  @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint,
-  int completedSprints,
-  int totalEndedSprints
-
-) {
+    String id, String name, String description, Instant start, Instant end,
+    List<TopicResponse> topics,
+    List<SprintResponse> sprints,
+    String leader,
+    Instant createdAt,
+    Instant updatedAt,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse prevSprint,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
+    @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint,
+    int completedSprints,
+    int totalEndedSprints,
+    boolean isSuccess) {
 
   public static class ProjectResponseBuilder {
     private String id;
@@ -39,6 +38,7 @@ public record ProjectResponse(
     private SprintResponse nextSprint;
     private int completedSprints;
     private int totalEndedSprints;
+    private boolean isSuccess;
 
     public ProjectResponseBuilder id(String id) {
       this.id = id;
@@ -115,10 +115,15 @@ public record ProjectResponse(
       return this;
     }
 
+    public ProjectResponseBuilder isSuccess(boolean isSuccess) {
+      this.isSuccess = isSuccess;
+      return this;
+    }
+
     public ProjectResponse build() {
       return new ProjectResponse(id, name, description, start, end, topics, sprints, leader, createdAt, updatedAt,
-        prevSprint,
-        currentSprint, nextSprint, completedSprints, totalEndedSprints);
+          prevSprint,
+          currentSprint, nextSprint, completedSprints, totalEndedSprints, isSuccess);
     }
   }
 

@@ -41,7 +41,7 @@ public class DecisionService {
   private final IssueService issueService;
 
   public DecisionService(ProjectService projectService, SprintService sprintService, IssueService issueService,
-      ProjectSprintService projectSprintService, ChangeLogRepository changeLogRepository) {
+                         ProjectSprintService projectSprintService, ChangeLogRepository changeLogRepository) {
     this.projectService = projectService;
     this.sprintService = sprintService;
     this.issueService = issueService;
@@ -53,14 +53,44 @@ public class DecisionService {
   public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean checkPrePredict) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
+
     int duration = Math.toIntExact(ChronoUnit.DAYS.between(sprint.getDtStart(), sprint.getDtEnd()));
     int durationSpend = Math.toIntExact(ChronoUnit.DAYS.between(sprint.getDtStart(), ClockSimulator.now()));
     boolean timeMade = duration * 0.3 < durationSpend;
     // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
     if (checkPrePredict) {
       var responsePrePredictChecking = checkPrePredict(project, sprint);
-      if (responsePrePredictChecking != null)
+      if (responsePrePredictChecking != null) {
+        ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+          .sprintId(sprint.getId())
+          .projectId(project.getId())
+          .build());
+        // Lưu kết quả đa dự đoán vào database
+        projectSprint.setPredictedResult(-1);
+        // Lưu thời gian dự đoán
+        projectSprint.setDtLastPredicted(ClockSimulator.now());
+        projectSprintService.save(projectSprint);
         return responsePrePredictChecking;
+      }
+    }
+    // Xử lý trường hợp project thuộc môn học chưa có mô hình
+    if (!project.getWorkspace().getCourse().isHaveModel()) {
+      double committedPhase = Math.round(durationSpend / duration * 10) / 10;
+      List<Issue> issues = issueService.getIssuesBySprintId(projectId, sprintId);
+      int total = issues.size();
+      int done = Math.toIntExact(issues.stream().filter(s -> s.getStatus().equals(IssueStatus.DONE)).count());
+
+      ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+        .sprintId(sprint.getId())
+        .projectId(project.getId())
+        .build());
+      int result = done >= Math.round(total * committedPhase) ? 0 : -1;
+      // Lưu kết quả đa dự đoán vào database
+      projectSprint.setPredictedResult(result);
+      // Lưu thời gian dự đoán
+      projectSprint.setDtLastPredicted(ClockSimulator.now());
+      projectSprintService.save(projectSprint);
+      return ApiResponse.<Boolean>builder().code(200).message("Decision retrieved successfully").data(done >= Math.round(total * committedPhase)).build();
     }
     // Kiếm tra sprint thực hiện dự đoán hiện tại đang hoạt động
     Instant start = sprint.getDtStart();
@@ -81,7 +111,7 @@ public class DecisionService {
     iterationModelBuilder.numOfIssueRemoved(issueService.getNumberOfIssuesRemoved(project, sprint));
     iterationModelBuilder.numOfIssueTodo(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
     iterationModelBuilder.numOfIssueInProgress(
-        issueService.getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
+      issueService.getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
     iterationModelBuilder.numOfIssueDone(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
     iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
 
@@ -93,9 +123,9 @@ public class DecisionService {
     // Gọi api qua python server để yêu cầu chạy mô hình
     int r = sendToPython(iterationModel);
     ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
-        .sprintId(sprint.getId())
-        .projectId(project.getId())
-        .build());
+      .sprintId(sprint.getId())
+      .projectId(project.getId())
+      .build());
 
     // Lưu kết quả đa dự đoán vào database
     projectSprint.setPredictedResult(r);
@@ -111,54 +141,54 @@ public class DecisionService {
     // Kiểm tra issue rỗng trong sprint
     if (issues == null || issues.isEmpty()) {
       return ApiResponse.<Boolean>builder()
-          .code(400)
-          .message("Không thể tiến hành dự đoán vì không có issue nào trong sprint")
-          .data(false)
-          .build();
+        .code(400)
+        .message("Không thể tiến hành dự đoán vì không có issue nào trong sprint")
+        .data(false)
+        .build();
     }
 
     // Kiểm tra sprint chưa thiết lập thời gian
     if (sprint.getDtStart() == null || sprint.getDtEnd() == null) {
       return ApiResponse.<Boolean>builder()
-          .code(400)
-          .message("Không thể tiến hành dự đoán vì sprint chưa được thiết lập thời gian bắt đầu và kết thúc")
-          .data(false)
-          .build();
+        .code(400)
+        .message("Không thể tiến hành dự đoán vì sprint chưa được thiết lập thời gian bắt đầu và kết thúc")
+        .data(false)
+        .build();
     }
 
     // Kiểm tra sprint đã bắt đầu chưa?
     if (sprint.getDtStart().isAfter(ClockSimulator.now())) {
       return ApiResponse.<Boolean>builder()
-          .code(400)
-          .message("Không thể tiến hành dự đoán vì sprint chưa bắt đầu")
-          .data(false)
-          .build();
+        .code(400)
+        .message("Không thể tiến hành dự đoán vì sprint chưa bắt đầu")
+        .data(false)
+        .build();
     }
 
     // Kiểm tra sprint đã kết thúc chưa?
     if (sprint.getDtEnd().isBefore(ClockSimulator.now())) {
       return ApiResponse.<Boolean>builder()
-          .code(400)
-          .message("Không thể tiến hành dự đoán vì sprint đã kết thúc")
-          .data(false)
-          .build();
+        .code(400)
+        .message("Không thể tiến hành dự đoán vì sprint đã kết thúc")
+        .data(false)
+        .build();
     }
 
     // Kiểm tra số lượng các issue được cập nhập không thỏa điều kiện
     int issueInaccept = 0;
-    String[] propertiesTargets = new String[] {
-        "status" };
+    String[] propertiesTargets = new String[]{
+      "status"};
     for (Issue issue : issues) {
 
       // Lấy ra danh sách các thay đổi trạng thái của issue
       List<ChangeLog> issueLog = changeLogRepository.findByIdRefAndTypeAndPropertiesTargetsContains(issue.getId(),
-          LogType.UPDATE, propertiesTargets);
+        LogType.UPDATE, propertiesTargets);
 
       issueLog = issueLog.stream().filter(i -> i.getChange().getSprintId().equals(sprint.getId())).toList();
       // Kiểm tra số lượng thay đổi trạng thái thỏa mãn
-      if (issueLog.isEmpty() || (issueLog.size() < 2 && issueLog.stream()
-          .anyMatch(changeLog -> Objects.equals(changeLog.getChange()
-              .getStatus(), IssueStatus.DONE.name())))) {
+      if (issueLog.isEmpty() || (issueLog.size() < 3 && issueLog.stream()
+        .anyMatch(changeLog -> Objects.equals(changeLog.getChange()
+          .getStatus(), IssueStatus.DONE.name())))) {
         issueInaccept++;
         continue;
       }
@@ -167,10 +197,10 @@ public class DecisionService {
     // Số lượng issue thỏa mãn phải lớn hơn 50% tổng số issue được tạo trong sprint
     if (issueInaccept > issues.size() / 2) {
       return ApiResponse.<Boolean>builder()
-          .code(400)
-          .message("Không thể tiến hành dự đoán vì có " + issueInaccept + " vấn đề không hợp lệ trong sprint")
-          .data(false)
-          .build();
+        .code(400)
+        .message("Không thể tiến hành dự đoán vì có " + issueInaccept + " vấn đề không hợp lệ trong sprint")
+        .data(false)
+        .build();
     }
     return null;
   }
@@ -183,21 +213,21 @@ public class DecisionService {
     List<IssueModel> issueModels = new ArrayList<>();
     for (Issue issue : issues) {
       IssueModel issueModel = IssueModel.builder()
-          .sprint_id(sprint.getId())
-          .type(issue.getTag())
-          .priority(issue.getPriority())
-          .numOfAffectVersions(issueService.getNumberOfAffectVersions(issue.getId()))
-          .numOfFixVersions(issueService.getNumberOfFixVersions(issue.getId()))
-          .numOfLink(issueService.getNumberOfLink(issue.getId()))
-          .numOfBlocked(issueService.getNumberOfBlocked(issue.getId()))
-          .numOfBlock(issueService.getNumberOfBlock(issue.getId()))
-          .numOfComment(issueService.getNumberOfComments(issue.getId()))
-          .numOfChangeFixVersion(issueService.getNumChangeFixVersion(issue.getId()))
-          .numOfChangeOfPriority(issue.getNumChangeOfPriority())
-          .numOfChangeOfDescription(issue.getNumChangeOfDescription())
-          .complexityOfDescription(issue.getComplexOfDescription())
-          .complatibleOfAssignee(issueService.calculateCompatibleOfAssignee(issue))
-          .build();
+        .sprint_id(sprint.getId())
+        .type(issue.getTag())
+        .priority(issue.getPriority())
+        .numOfAffectVersions(issueService.getNumberOfAffectVersions(issue.getId()))
+        .numOfFixVersions(issueService.getNumberOfFixVersions(issue.getId()))
+        .numOfLink(issueService.getNumberOfLink(issue.getId()))
+        .numOfBlocked(issueService.getNumberOfBlocked(issue.getId()))
+        .numOfBlock(issueService.getNumberOfBlock(issue.getId()))
+        .numOfComment(issueService.getNumberOfComments(issue.getId()))
+        .numOfChangeFixVersion(issueService.getNumChangeFixVersion(issue.getId()))
+        .numOfChangeOfPriority(issue.getNumChangeOfPriority())
+        .numOfChangeOfDescription(issue.getNumChangeOfDescription())
+        .complexityOfDescription(issue.getComplexOfDescription())
+        .complatibleOfAssignee(issueService.calculateCompatibleOfAssignee(issue))
+        .build();
       issueModels.add(issueModel);
     }
     return issueModels;

@@ -49,7 +49,9 @@ const ProjectStatus = ({ projectId, sprintId }: ProjectStatusProps) => {
             getProjectPredictDisplayName(predictData.predict)}
         </span>
         {predictData?.lastTime && (
-          <span>Dự đoán lần cuối vào {formatDate(predictData.lastTime)}</span>
+          <span>
+            Dự đoán lần cuối vào {formatDate(predictData.lastTime, 'LONG')}
+          </span>
         )}
       </>
     )
@@ -78,7 +80,7 @@ const ProjectStatus = ({ projectId, sprintId }: ProjectStatusProps) => {
       <PopoverTrigger asChild>
         <AlertCircleIcon className='text-yellow-400' />
       </PopoverTrigger>
-      <PopoverContent align='end'>
+      <PopoverContent className='min-w-[300px]' align='end'>
         <h3 className='h3'>Cảnh báo trạng thái!</h3>
         <AlertDescription>{ResourceStatus}</AlertDescription>
       </PopoverContent>

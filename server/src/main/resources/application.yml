@@ -80,7 +80,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
-  ip: 192.168.1.59
+  ip: 172.16.17.56
   whitelist:
     - auth
     - auth/register
@@ -102,7 +102,8 @@ data:
   filepath: /home/ducvui2003/Data/university/KLTN/project/resources/data
 python:
   server: http://localhost:8000/aggregate
-
+check:
+  comment: true
 google:
   sheet:
     sprint:

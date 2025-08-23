@@ -4,7 +4,7 @@ from pathlib import Path
 from src.config.env_config import MONGODB_CONFIG, FOLDER_DATA_MONGO
 
 def restore_mongodb(timestamp, target_db=None):
-    source_dir = FOLDER_DATA_MONGO / timestamp / MONGODB_CONFIG['DATABASE']
+    source_dir = FOLDER_DATA_MONGO / timestamp / "kltn"
     if not source_dir.exists():
         print(f"❌ Backup folder not found: {source_dir}")
         return
