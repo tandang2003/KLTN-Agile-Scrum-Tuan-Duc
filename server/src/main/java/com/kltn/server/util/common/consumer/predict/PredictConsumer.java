@@ -28,7 +28,7 @@ public class PredictConsumer {
   @KafkaListener(topics = "predict", groupId = "predict-1")
   @Transactional
   public void consumeSnapshot1(@Payload SprintPredictRequest sprintPredictRequest, @Header("X-Auth-User") String user) {
-    var result = decisionService.makePredict(sprintPredictRequest.getProjectId(), sprintPredictRequest.getSprintId(),
+    var result = decisionService.makePredict(sprintPredictRequest.getProjectId(), sprintPredictRequest.getSprintId(), sprintPredictRequest.isResult(),
       false);
     projectRoomService.sendToRoom(sprintPredictRequest.getProjectId(), new MessageResponse(MessageType.PREDICT,
       new ProjectMessagePredictResponse(result.getData(), result.getMessage())));
