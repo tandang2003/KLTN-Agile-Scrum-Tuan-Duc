@@ -3,6 +3,9 @@ import { Id } from '@/types/other.type'
 type GetSignatureRequestType = {
   projectId: string
   issueId: string
+  resourceType: 'image' | 'video' | 'raw'
+  nameFile: string
+  extension: string
 }
 
 type GetSignatureResponseType = {

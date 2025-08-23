@@ -1,19 +1,17 @@
 package com.kltn.server.service.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
-import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
+import com.kltn.server.DTO.response.project.ProjectSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceOfSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;
@@ -61,6 +59,7 @@ public class ProjectService {
   private final ChangeLogMapper changeLogMapper;
   private final ResourceMapper resourceMapper;
   private ProjectSprintService projectSprintService;
+  private final WorkspaceService workspaceService;
   @Value("${verify.invite-project-link}")
   private String link;
   private final WorkspacesUsersProjectsService workspacesUsersProjectsService;
@@ -74,7 +73,8 @@ public class ProjectService {
       ProjectMapper projectMapper, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
       com.kltn.server.repository.entity.ProjectRepository projectRepository, SprintService sprintService,
       ChangeLogMapper changeLogMapper, ResourceMapper resourceMapper,
-      SprintBoardMongoService sprintBoardMongoService) {
+      SprintBoardMongoService sprintBoardMongoService,
+      WorkspaceService workspaceService) {
     this.projectMongoService = projectMongoService;
     this.sprintScheduler = sprintScheduler;
     this.roleInit = roleInit;
@@ -90,6 +90,7 @@ public class ProjectService {
     this.projectSprintService = projectSprintService;
     this.resourceMapper = resourceMapper;
     this.sprintBoardMongoService = sprintBoardMongoService;
+    this.workspaceService = workspaceService;
   }
 
   @Transactional
@@ -150,7 +151,6 @@ public class ProjectService {
     return ApiResponse.<ProjectResponse>builder()
         .message("Create project success")
         .data(projectMapper.toCreationResponse(savedProject, topics))
-        // .logData(log)
         .build();
   }
 
@@ -226,12 +226,68 @@ public class ProjectService {
     setCurrentSprint(project, workspace.getSprints());
     var project1 = projectMongoService.getByNkProjectId(projectId);
     List<Topic> topics = project1.getTopics();
-    // List<SprintResponse> sprintResponses = getSprintResponses(project);
-    ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics);
+    int completedSprints = workspaceService.completedSprints(project);
+    int totalEndingSprints = workspaceService.totalEndedSprints(project);
+
+    boolean isSuccess = calculateProjectIsSuccess(project, completedSprints, totalEndingSprints);
+    ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics, completedSprints,
+        totalEndingSprints, isSuccess);
     return ApiResponse.<ProjectResponse>builder()
         .message("Get project by id")
         .data(projectResponse)
         .build();
+  }
+
+  public ApiResponse<List<ProjectSprintResponse>> getResultById(String projectId) {
+    User user = userService.getCurrentUser();
+    Project project = projectRepository.findById(projectId)
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.NOT_FOUND)
+            .build());
+
+    if (user.getRole()
+        .getName()
+        .equals("teacher")) {
+      if (!project.getWorkspace()
+          .getOwner()
+          .getId()
+          .equals(user.getId())) {
+        throw AppException.builder()
+            .error(Error.NOT_FOUND_SPECIFYING_PROJECT_TEACHER)
+            .build();
+      }
+    } else {
+      workspacesUsersProjectsService.getByUserIdAndProjectId(user.getId(), projectId);
+    }
+    Workspace workspace = project.getWorkspace();
+    setCurrentSprint(project, workspace.getSprints());
+
+    List<ProjectSprintResponse> projectResponse = project.getProjectSprints().stream()
+        .map(item -> new ProjectSprintResponse(
+            item.getSprint().getId(),
+            item.getSprint().getTitle(),
+            item.getSprint().getDescription(),
+            item.getSprint().getDtPredict(),
+            item.getSprint().getDtStart(),
+            item.getSprint().getDtEnd(),
+            item.getSprint().getStoryPoint(),
+            item.getPredictedResult()))
+        .toList();
+    return ApiResponse.<List<ProjectSprintResponse>>builder()
+        .message("Get project result by id")
+        .data(projectResponse)
+        .build();
+  }
+
+  public boolean calculateProjectIsSuccess(Project project, int completedSprints, int totalEndingSprints) {
+    boolean isSuccess;
+    var rangeSprint = project.getSprints().size() * 0.7;
+    if (totalEndingSprints < rangeSprint) {
+      isSuccess = completedSprints >= rangeSprint / 2;
+    } else {
+      isSuccess = completedSprints >= rangeSprint;
+    }
+    return isSuccess;
   }
 
   public Project getProjectById(String id) {

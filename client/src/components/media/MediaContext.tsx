@@ -1,15 +1,7 @@
 import { MediaContextType } from '@/components/media/media'
-import { createContext, useContext } from 'react'
+import { createCtx } from '@/lib/context.helper'
 
-const MediaContext = createContext<MediaContextType | null>(null)
+const [useMediaContext, MediaContext] = createCtx<MediaContextType>()
 
-const useMediaContext = (): MediaContextType => {
-  const context = useContext(MediaContext)
-  if (!context) {
-    throw new Error('useMediaContext must be used within a MediaProvider')
-  }
-  return context
-}
 export { useMediaContext }
-export type { MediaContextType }
 export default MediaContext

@@ -9,6 +9,7 @@ type FileType =
   | 'text'
   | 'file'
   | 'unknown'
+  | 'xlsx'
 const getFileTypeFromUrl = (url: string): FileType => {
   try {
     const pathname = new URL(url).pathname
@@ -46,6 +47,16 @@ const getFileTypeFromUrl = (url: string): FileType => {
     return 'file'
   }
 }
+const getResourceTypeFromEx = (fileType: string): 'image' | 'video' | 'raw' => {
+  if (fileType.startsWith('image/')) {
+    return 'image'
+  }
+  if (fileType.startsWith('video/') || fileType.startsWith('audio/')) {
+    return 'video'
+  }
+  return 'raw' // everything else is treated as 'raw' in Cloudinary
+}
+
 async function createFileFromUrl(url: string, filename: string): Promise<File> {
   const response = await fetch(url)
   const blob = await response.blob()
@@ -55,4 +66,4 @@ async function createFileFromUrl(url: string, filename: string): Promise<File> {
     lastModified: Date.now()
   })
 }
-export { getFileTypeFromUrl, createFileFromUrl }
+export { getFileTypeFromUrl, createFileFromUrl, getResourceTypeFromEx }

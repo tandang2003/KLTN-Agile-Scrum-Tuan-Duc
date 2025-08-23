@@ -2,6 +2,7 @@ package com.kltn.server.service.file;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.kltn.server.model.type.resource.ContentType;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -59,9 +60,9 @@ public class CloudinaryService implements FileService {
   }
 
   @Override
-  public String getUrl(String publishId, String type) {
-    return cloudinary.url().resourcType(type)
+  public String getUrl(String publishId, ContentType type) {
+    return cloudinary.url().resourcType(type.name().equals(ContentType.FILE
+        .name()) ? "raw" : "image")
         .generate(publishId);
   }
-
 }

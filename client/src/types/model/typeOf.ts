@@ -18,7 +18,7 @@ const issueTagList = ['THEORY', 'PRACTICE'] as const
 
 type IssueTag = (typeof issueTagList)[number]
 
-const sprintStatusList = ['PENDING', 'COMPLETE', 'RUNNING'] as const
+const sprintStatusList = ['PENDING', 'COMPLETE', 'RUNNING', 'PREPARE'] as const
 
 type SprintStatusType = (typeof sprintStatusList)[number]
 

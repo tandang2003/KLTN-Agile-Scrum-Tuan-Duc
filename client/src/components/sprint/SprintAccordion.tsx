@@ -17,17 +17,21 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useClearGetListIssueMutation } from '@/feature/issue/issue.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import { sortSprintsByDateStart } from '@/lib/sprint.helper'
+import {
+  sortSprintsByDateStart,
+  sortSprintsResultByDateStart
+} from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
-import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@/context/redux/hook'
 import { enableCreateIssue } from '@/feature/trigger/trigger.slice'
 import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { Button } from '@/components/ui/button'
+import { SprintResultResponse } from '@/types/sprint.type'
+import { getSprintResultDisplayName } from '@/constant/message.const'
 type SprintAccordionProps = {
-  sprints: SprintModel[]
+  sprints: SprintResultResponse[]
 }
 
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
@@ -46,7 +50,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
       })
     }
   }, [])
-
   return (
     <div>
       <Accordion
@@ -62,7 +65,7 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
         </AccordionItem>
       </Accordion>
 
-      {sortSprintsByDateStart(sprints).map((item, index) => {
+      {sortSprintsResultByDateStart(sprints).map((item, index) => {
         const canCreate =
           getStatusSprint({
             id: item.id,
@@ -78,7 +81,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           })
           dispatch(enableCreateIssue())
         }
-
         return (
           <Accordion
             key={item.id}
@@ -112,6 +114,9 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   status={getStatusSprint(item)}
                   className='ml-auto basis-[150px]'
                 />
+                <Badge sprintPredictResult={item.predictResult}>
+                  {getSprintResultDisplayName(item.predictResult)}
+                </Badge>
                 <Badge>{item.storyPoint}</Badge>
                 <Badge>
                   <Icon icon={'material-symbols:online-prediction'} />

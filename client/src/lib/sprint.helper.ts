@@ -1,6 +1,6 @@
 import { store } from '@/context/redux/store'
 import { SprintStatusType } from '@/types/model/typeOf'
-import { SprintResponse } from '@/types/sprint.type'
+import { SprintResponse, SprintResultResponse } from '@/types/sprint.type'
 import { isAfter, isBefore } from 'date-fns'
 
 const getStatusSprint = ({
@@ -28,4 +28,8 @@ const sortSprintsByDateStart = (sprints: SprintResponse[]) =>
     (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
   )
 
-export { getStatusSprint, sortSprintsByDateStart }
+const sortSprintsResultByDateStart = (sprints: SprintResultResponse[]) =>
+  [...sprints].sort(
+    (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+  )
+export { getStatusSprint, sortSprintsByDateStart, sortSprintsResultByDateStart }

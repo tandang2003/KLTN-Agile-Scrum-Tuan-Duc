@@ -196,6 +196,19 @@ const issueApi = createApi({
         return error ? [] : [{ type: 'Issues', id: id }]
       }
     }),
+    deleteIssueInBacklog: builder.mutation<undefined, Id>({
+      async queryFn(arg) {
+        try {
+          await issueService.deleteIssue(arg)
+          return { data: undefined }
+        } catch (error) {
+          return { error }
+        }
+      },
+      invalidatesTags: (_, error, __) => {
+        return error ? [] : [{ type: 'SprintIssue', id: 'BACKLOG' }]
+      }
+    }),
     getMembers: builder.query<UserSuitableResponse[], Id>({
       async queryFn(arg) {
         try {
@@ -263,5 +276,6 @@ export const {
   useGetMembersQuery,
   useClearGetListIssueMutation,
   useGetCommentsQuery,
-  useDeleteCommentMutation
+  useDeleteCommentMutation,
+  useDeleteIssueInBacklogMutation
 } = issueApi

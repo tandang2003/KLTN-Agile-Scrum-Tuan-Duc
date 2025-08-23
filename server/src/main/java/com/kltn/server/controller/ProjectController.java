@@ -3,7 +3,9 @@ package com.kltn.server.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.kltn.server.DTO.response.project.ProjectSprintResponse;
 import com.kltn.server.model.collection.SprintBoard;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +50,6 @@ public class ProjectController {
         .body(projectService.createProject(creationRequest));
   }
 
-  // TODO update project
-
   @PostMapping("/invite")
   public ResponseEntity<ApiResponse<Void>> addUserToProject(
       @RequestBody @Valid ProjectInvitationRequest invitationRequest) {
@@ -62,6 +62,13 @@ public class ProjectController {
     ApiResponse<ProjectResponse> projectResponse = projectService.getById(projectId);
     return ResponseEntity.status(projectResponse.getCode())
         .body(projectResponse);
+  }
+
+  @GetMapping("/result/{projectId}")
+  public ResponseEntity<ApiResponse<List<ProjectSprintResponse>>> getProjectResultById(@PathVariable String projectId) {
+    ApiResponse<List<ProjectSprintResponse>> projectResponse = projectService.getResultById(projectId);
+    return ResponseEntity.status(projectResponse.getCode())
+      .body(projectResponse);
   }
 
   @GetMapping("/{projectId}/members")

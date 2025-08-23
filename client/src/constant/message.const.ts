@@ -163,7 +163,10 @@ const messages = {
           id: '#',
           name: 'Tên nhóm',
           createAt: ' Ngày tạo',
-          report: 'Báo cáo'
+          report: 'Báo cáo',
+          completedSprints: 'Số sprint thành công',
+          totalEndedSprints: 'Tổng số sprint đã kết thúc',
+          isSuccess: 'Trạng thái'
         }
       },
       sprint: {
@@ -531,6 +534,7 @@ const messages = {
       topic: 'Chủ đề',
       description: 'Mô tả chi tiết',
       priority: 'Mức độ ưu tiên',
+      resource: 'File đính kèm',
       select: {
         placeholder: 'Chọn sinh viên',
         null: 'Không chọn'
@@ -792,6 +796,25 @@ const getPriorityDisplayName = (priority: IssuePriority): string => {
   return map[priority] ?? 'Không xác định'
 }
 
+const getSprintResultDisplayName = (status: -2 | -1 | 0): string => {
+  let result = ''
+  switch (status) {
+    case -2:
+      result = 'Sprint chưa thực hiện dự đoán'
+      break
+    case -1:
+      result = 'Sprint dự đoán có khả năng không thành công'
+      break
+    case 0:
+      result = 'Sprint dự đoán có khả năng thành công'
+      break
+    default:
+      result = 'Không xác định'
+      break
+  }
+  return result
+}
+
 const getRelationshipDisplayName = (type: IssueRelationShip): string => {
   const map: Record<IssueRelationShip, string> = {
     [IssueRelationShip.BLOCKS]: 'Chặn',
@@ -818,5 +841,6 @@ export {
   getPriorityDisplayName,
   getRelationshipDisplayName,
   getComplexOfDescriptionName,
-  getProjectPredictDisplayName
+  getProjectPredictDisplayName,
+  getSprintResultDisplayName
 }

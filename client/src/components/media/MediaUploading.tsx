@@ -18,18 +18,13 @@ const MediaUploading = ({
   maximum,
   type,
   maxSize,
+  errorFn,
   onFileValidate: ownValidate
 }: MediaMediaUploadingProps) => {
   const { setThumbnail } = useMediaContext()
+
   const [files, setFiles] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
-  // useEffect(() => {
-  //   if (thumbnail) {
-  //     createFileFromUrl(thumbnail.url, thumbnail.name).then((file) => {
-  //       setFiles([file])
-  //     })
-  //   }
-  // }, [thumbnail])
 
   const onFileValidate = useCallback(
     (file: File): string | null => {
@@ -43,11 +38,6 @@ const MediaUploading = ({
         if (mime !== type.mime) {
           return `Định dạng file cho phép: ${type.label}`
         }
-      }
-
-      // Validate file size (max 2MB)
-      if (maxSize && file.size > maxSize) {
-        return `File size must be less than ${maxSize / (1024 * 1024)}MB`
       }
 
       if (ownValidate) return ownValidate?.(file)
@@ -94,8 +84,9 @@ const MediaUploading = ({
             // Simulate server processing delay
             const fileName = file.name // Full name: "model.obj"
             const baseName = fileName.substring(0, fileName.lastIndexOf('.'))
+            const extension = fileName.substring(fileName.lastIndexOf('.') + 1)
             const { apiKey, folder, signature, timestamp, url } =
-              await signatureFn()
+              await signatureFn(file)
 
             const response =
               await resourceService.uploadFileToCloudinaryWithSignature(file, {
@@ -110,7 +101,8 @@ const MediaUploading = ({
               const resource = await createFn({
                 ...response,
                 fileName: fileName,
-                baseName: baseName
+                baseName: baseName,
+                extension: extension
               })
               setThumbnail?.({
                 id: resource.id,
@@ -126,10 +118,8 @@ const MediaUploading = ({
               file,
               error instanceof Error ? error : new Error('Upload failed')
             )
-            toast.error(
-              error instanceof Error
-                ? error.message
-                : 'An unknown error occurred'
+            errorFn?.(
+              error instanceof Error ? error : new Error('Upload failed')
             )
           }
         })
@@ -137,7 +127,6 @@ const MediaUploading = ({
         // Wait for all uploads to complete
         await Promise.all(uploadPromises)
       } catch (error) {
-        // This handles any error that might occur outside the individual upload processes
         console.error('Unexpected error during upload:', error)
       } finally {
         setLoading(false)
@@ -160,6 +149,7 @@ const MediaUploading = ({
       onFileReject={onFileReject}
       onUpload={onUpload}
       maxFiles={maxSize}
+      maxSize={maxSize}
       className='w-full'
       multiple={maximum !== 1}
     >
@@ -170,7 +160,7 @@ const MediaUploading = ({
               <div className='flex items-center justify-center rounded-full border p-2.5'>
                 <Upload className='text-muted-foreground size-6' />
               </div>
-              <p className='text-sm font-medium'>Drag & drop files here</p>
+              <p className='text-sm font-medium'>Kéo thả file vào đây</p>
             </div>
             <FileUploadTrigger asChild></FileUploadTrigger>
           </>

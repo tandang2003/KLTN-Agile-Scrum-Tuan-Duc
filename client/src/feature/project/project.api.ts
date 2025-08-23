@@ -8,6 +8,7 @@ import {
 import { Id } from '@/types/other.type'
 import { UserResponse } from '@/types/user.type'
 import { ResourceOfSprintResponseType } from '@/types/resource.type'
+import { SprintResultResponse } from '@/types/sprint.type'
 
 const projectApi = createApi({
   reducerPath: 'projectApi',
@@ -42,7 +43,8 @@ const projectApi = createApi({
         } catch (error) {
           return { error }
         }
-      }
+      },
+      keepUnusedDataFor: 0
     }),
     getResources: builder.query<
       ResourceOfSprintResponseType,
@@ -59,6 +61,21 @@ const projectApi = createApi({
           return { error }
         }
       }
+    }),
+    getResult: builder.query<
+      SprintResultResponse[],
+      {
+        projectId: Id
+      }
+    >({
+      async queryFn({ projectId }) {
+        try {
+          const data = await projectService.getResult(projectId)
+          return { data }
+        } catch (error) {
+          return { error }
+        }
+      }
     })
   })
 })
@@ -69,5 +86,6 @@ export const {
   useCreateProjectMutation,
   useGetProjectQuery,
   useGetMembersQuery,
-  useGetResourcesQuery
+  useGetResourcesQuery,
+  useGetResultQuery
 } = projectApi

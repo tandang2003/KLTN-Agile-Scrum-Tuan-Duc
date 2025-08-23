@@ -15,9 +15,10 @@ const ViewTopic = ({ items }: ViewTopicProps) => {
       <ListView
         data={items}
         emptyComponent={<Empty className='mt-2'>Không có topic được gán</Empty>}
-        className='mt-2 rounded-xl border-2 p-2'
+        className='mt-2 flex-wrap gap-2 rounded-xl border-2 p-2'
+        orientation='horizontal'
         render={(item) => {
-          return <Badge className={item.id}>{item.name}</Badge>
+          return <Badge key={item.id}>{item.name}</Badge>
         }}
       />
     </div>

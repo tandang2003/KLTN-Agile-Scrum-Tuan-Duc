@@ -4,20 +4,29 @@ import DialogViewIssue from '@/components/issue/DialogViewIssue'
 import LoadingBoundary from '@/components/LoadingBoundary'
 import SprintAccordion from '@/components/sprint/SprintAccordion'
 import messages from '@/constant/message.const'
-import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
+import {
+  useGetProjectQuery,
+  useGetResultQuery
+} from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
-import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
+import { ProjectDetailResponse } from '@/types/project.type'
+import { SprintResultResponse } from '@/types/sprint.type'
 
 const BacklogPage = () => {
-  const { workspaceId } = useAppId()
-  const { data, isFetching } = useGetListSprintQuery(workspaceId as Id, {
-    skip: !workspaceId
-  })
+  const { projectId } = useAppId()
+  const { data, isFetching } = useGetResultQuery(
+    {
+      projectId: projectId as Id
+    },
+    {
+      skip: !projectId
+    }
+  )
 
   return (
     <>
-      <LoadingBoundary<SprintModel[]>
+      <LoadingBoundary<SprintResultResponse[]>
         data={data}
         isLoading={isFetching}
         fallback={<div>{messages.manager.project.backlog.list.empty}</div>}

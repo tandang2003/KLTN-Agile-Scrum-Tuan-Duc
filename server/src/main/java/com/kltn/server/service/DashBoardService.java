@@ -361,8 +361,10 @@ public class DashBoardService {
     });
     builder.maxNumMember(maxNumOfMember[0]);
     builder.minNumMember(minNumOfMember[0]);
-    builder.assigneeRate(calculateAssigneeRate(workspace, processingSprint));
-    builder.taskFinishRate(calculateTaskFinishRate(workspace, processingSprint));
+    if (processingSprint != null) {
+      builder.assigneeRate(calculateAssigneeRate(workspace, processingSprint));
+      builder.taskFinishRate(calculateTaskFinishRate(workspace, processingSprint));
+    }
     return ApiResponse.<DashboardWorkspaceResponse>builder()
         .code(200)
         .data(builder.build())

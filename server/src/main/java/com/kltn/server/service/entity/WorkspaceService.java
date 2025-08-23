@@ -55,7 +55,6 @@ public class WorkspaceService {
   private final UserCourseService userCourseService;
   private final CourseService courseService;
   private final SprintService sprintService;
-  //  private UserRepository userRepository;
   private WorkspaceRepository workspaceRepository;
   private WorkspaceMapper workspaceMapper;
   private UserMapper userMapper;
@@ -65,20 +64,22 @@ public class WorkspaceService {
   private WorkspacesUsersProjectsService workspacesUsersProjectsService;
   private RoleService roleService;
   private TokenUtils tokenUtils;
+  @Autowired
+  @Lazy
+  private ProjectService projectService;
 
   @Autowired
   public WorkspaceService(TokenUtils tokenUtils, RoleService roleService,
-                          WorkspacesUsersProjectsService workspacesUsersProjectsService,
-                          ProjectMapper projectMapper, ProjectMongoRepository projectMongoRepository,
-                          WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
-//                          UserRepository userRepository,
-                          UserMapper userMapper,
-                          WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper,
-                          @Lazy
-                          UserService userService, UserCourseRelationRepository userCourseRelationRepository, CourseMapper courseMapper, UserCourseService userCourseService, CourseService courseService, SprintService sprintService) {
+      WorkspacesUsersProjectsService workspacesUsersProjectsService,
+      ProjectMapper projectMapper, ProjectMongoRepository projectMongoRepository,
+      WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository,
+      UserMapper userMapper,
+      WorkspaceRepository workspaceRepository, WorkspaceMapper workspaceMapper,
+      @Lazy UserService userService, UserCourseRelationRepository userCourseRelationRepository,
+      CourseMapper courseMapper, UserCourseService userCourseService, CourseService courseService,
+      SprintService sprintService) {
     this.tokenUtils = tokenUtils;
     this.roleService = roleService;
-//    this.userRepository = userRepository;
     this.workspaceRepository = workspaceRepository;
     this.workspaceMapper = workspaceMapper;
     this.userMapper = userMapper;
@@ -112,32 +113,34 @@ public class WorkspaceService {
   //
   public Workspace getWorkspaceById(String workspaceId) {
     return workspaceRepository.findById(workspaceId)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
   }
 
   public ApiPaging<WorkspaceResponse> getWorkspaceByOwnerIdPaging(int page, int size) {
     User user = userService.getCurrentUser();
     Page<Workspace> workspaces;
     if (user.getRole().getName().equals("teacher")) {
-      workspaces = workspaceRepository.findAllByOwnerId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_JPA));
+      workspaces = workspaceRepository.findAllByOwnerId(user.getId(),
+          PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_JPA));
     } else {
-      workspaces = workspaceRepository.findAllByMembersId(user.getId(), PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_MANUAL));
+      workspaces = workspaceRepository.findAllByMembersId(user.getId(),
+          PageRequest.of(page, size, WorkspaceRepository.DEFAULT_SORT_MANUAL));
     }
     for (Workspace workspace : workspaces) {
       setStatusSprint(workspace);
     }
 
     return ApiPaging.<WorkspaceResponse>builder()
-      .items(workspaces.get().map(workspaceMapper::toWorkspaceResponseForPaging).toList())
-      .totalItems(workspaces.getTotalElements())
-      .totalPages(workspaces.getTotalPages())
-      .currentPage(workspaces.getNumber())
-      .build();
+        .items(workspaces.get().map(workspaceMapper::toWorkspaceResponseForPaging).toList())
+        .totalItems(workspaces.getTotalElements())
+        .totalPages(workspaces.getTotalPages())
+        .currentPage(workspaces.getNumber())
+        .build();
   }
 
   public WorkspaceResponse updateWorkspace(String workspaceId, WorkspaceUpdateRequest workspaceUpdationRequest) {
     Workspace workspace = workspaceRepository.findById(workspaceId)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     if (workspaceUpdationRequest.end().isBefore(workspace.getStart())) {
       Map<String, String> error = new HashMap<>();
       error.put("end", "End date must be after start date");
@@ -147,8 +150,10 @@ public class WorkspaceService {
     }
     workspace = workspaceMapper.updateWorkspace(workspace, workspaceUpdationRequest);
     if (!Objects.equals(workspace.getCourse()
-      .getId(), workspaceUpdationRequest.courseId()) || !Objects.equals(workspace.getCourse()
-      .getCourseId(), workspaceUpdationRequest.courseId())) {
+        .getId(), workspaceUpdationRequest.courseId()) || !Objects.equals(
+            workspace.getCourse()
+                .getCourseId(),
+            workspaceUpdationRequest.courseId())) {
       workspace.setCourse(courseService.getCourse(workspaceUpdationRequest.courseId()));
     }
     workspace = workspaceRepository.save(workspace);
@@ -159,32 +164,32 @@ public class WorkspaceService {
   @Transactional
   public ApiPaging<UserResponse> getStudentInWorkspace(String workspaceId, int page, int size) {
     Workspace workspace = workspaceRepository.findById(workspaceId)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     Set<User> members = workspace.getMembers();
     List<User> users = new ArrayList<>(members);
     if (page * size >= users.size()) {
       return ApiPaging.<UserResponse>builder()
-        .items(Collections.emptyList())
-        .totalItems(members.size())
-        .totalPages((int) Math.ceil((double) members.size() / size))
-        .currentPage(page)
-        .build();
+          .items(Collections.emptyList())
+          .totalItems(members.size())
+          .totalPages((int) Math.ceil((double) members.size() / size))
+          .currentPage(page)
+          .build();
     }
     int start = page * size;
     int end = Math.min(users.size(), (page + 1) * size);
     return ApiPaging.<UserResponse>builder()
-      .items(users.subList(start, end).stream().map(userMapper::toWorkspaceStudentResponse).toList())
-      .totalItems(members.size())
-      .totalPages((int) Math.ceil((double) members.size() / size))
-      .currentPage(page)
-      .build();
+        .items(users.subList(start, end).stream().map(userMapper::toWorkspaceStudentResponse).toList())
+        .totalItems(members.size())
+        .totalPages((int) Math.ceil((double) members.size() / size))
+        .currentPage(page)
+        .build();
   }
 
   // @SendMailEvent(topic = "send-mail")
-  //  @Transactional
+  // @Transactional
   public ApiResponse<Void> addStudentToWorkspace(String workspaceId, String[] uniIds) {
     Workspace workspace = workspaceRepository.findById(workspaceId)
-      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
+        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
     List<String> removedUniIds = new ArrayList<>();
     List<String> emails = new ArrayList<>();
     List<String> uniIdsList = Arrays.stream(uniIds).toList();
@@ -193,11 +198,11 @@ public class WorkspaceService {
       if (!workspace.getMembers().contains(user)) {
         try {
           workspacesUsersProjectsRepository.save(WorkspacesUsersProjects.builder()
-            .id(WorkspacesUsersId.builder().userId(user.getId()).workspaceId(workspace.getId()).build())
-            .workspace(workspace)
-            .user(user)
-            .inWorkspace(true)
-            .build());
+              .id(WorkspacesUsersId.builder().userId(user.getId()).workspaceId(workspace.getId()).build())
+              .workspace(workspace)
+              .user(user)
+              .inWorkspace(true)
+              .build());
         } catch (Exception e) {
           throw AppException.builder().error(Error.INVITED_FAILED).build();
         }
@@ -215,43 +220,48 @@ public class WorkspaceService {
   public ApiResponse<ApiPaging<ProjectResponse>> getListPagingProject(String workspaceId, int page, int size) {
     User user = userService.getCurrentUser();
 
-
     if (user.getWorkspaces().stream().noneMatch(workspace -> workspace.getId().equals(workspaceId))) {
       throw AppException.builder().error(Error.NOT_FOUND_WORKSPACE).build();
     }
-    Page<Project> projects = workspacesUsersProjectsRepository.getProjecByWorkspaceId(workspaceId, PageRequest.of(page, size, WorkspacesUsersProjectsRepository.DEFAULT_SORT));
+    Page<Project> projects = workspacesUsersProjectsRepository.getProjecByWorkspaceId(workspaceId,
+        PageRequest.of(page, size, WorkspacesUsersProjectsRepository.DEFAULT_SORT));
     List<ProjectResponse> projectResponses = new ArrayList<>();
-    projects.getContent().forEach(project ->
-      {
+    projects.getContent().forEach(project -> {
       var project1 = projectMongoRepository.findByNkProjectId(project.getId());
       List<Topic> topics;
-      if (project1.isPresent()) topics = project1.get().getTopics();
-      else topics = new ArrayList<>();
-      ProjectResponse projectResponse= projectMapper.toProjectResponseForPaging(project, topics, completedSprints(project), totalEndedSprints(project));
+      if (project1.isPresent())
+        topics = project1.get().getTopics();
+      else
+        topics = new ArrayList<>();
+      var completedSprints = this.completedSprints(project);
+      var totalEndedSprints = this.totalEndedSprints(project);
+      var isSuccess = projectService.calculateProjectIsSuccess(project, completedSprints, totalEndedSprints);
+      ProjectResponse projectResponse = projectMapper.toProjectResponseForPaging(project, topics,
+          completedSprints, totalEndedSprints, isSuccess);
       projectResponses.add(projectResponse);
-      });
+    });
 
     return ApiResponse.<ApiPaging<ProjectResponse>>builder()
-      .message("Get project by workspace id")
-      .data(ApiPaging.<ProjectResponse>builder()
-        .items(projectResponses)
-        .totalItems(projects.getTotalElements())
-        .totalPages(projects.getTotalPages())
-        .currentPage(page)
-        .build())
-      .build();
+        .message("Get project by workspace id")
+        .data(ApiPaging.<ProjectResponse>builder()
+            .items(projectResponses)
+            .totalItems(projects.getTotalElements())
+            .totalPages(projects.getTotalPages())
+            .currentPage(page)
+            .build())
+        .build();
   }
 
-  private int completedSprints(Project project) {
+  public int completedSprints(Project project) {
     return (int) project.getSprints().stream()
-      .filter(sprint -> sprintService.completedSprint(project, sprint))
-      .count();
+        .filter(sprint -> sprintService.completedSprint(project, sprint))
+        .count();
   }
 
-  private int totalEndedSprints(Project project) {
+  public int totalEndedSprints(Project project) {
     return (int) project.getSprints().stream()
-      .filter(sprint -> sprint.getDtEnd().isBefore(ClockSimulator.now()))
-      .count();
+        .filter(sprint -> sprint.getDtEnd().isBefore(ClockSimulator.now()))
+        .count();
   }
 
   public ApiResponse<WorkspaceAuthorizationResponse> getUserInfoInWorkspace(String workspaceId) {
@@ -268,21 +278,24 @@ public class WorkspaceService {
       Role leaderRole = roleService.getRole(RoleType.LEADER.getName());
       authorities = roleService.mapPermissionsToAuthorities(leaderRole);
     } else {
-      WorkspacesUsersProjects usersProjects = workspacesUsersProjectsService.getByWorkspaceAndUserId(workspaceId, user.getId());
+      WorkspacesUsersProjects usersProjects = workspacesUsersProjectsService.getByWorkspaceAndUserId(workspaceId,
+          user.getId());
       if (usersProjects.isInProject()) {
         workspaceAuthorizationResponse.setProjectId(usersProjects.getProject().getId());
         Role role = usersProjects.getRole();
         authorities = roleService.mapPermissionsToAuthorities(role);
-      } else workspaceAuthorizationResponse.setProjectId("");
+      } else
+        workspaceAuthorizationResponse.setProjectId("");
     }
-    String jwt = tokenUtils.generateVerifyToken("project", Map.of("userId", user.getUniId(), "authorities", authorities.stream()
-      .map(GrantedAuthority::getAuthority)
-      .toList()));
+    String jwt = tokenUtils.generateVerifyToken("project",
+        Map.of("userId", user.getUniId(), "authorities", authorities.stream()
+            .map(GrantedAuthority::getAuthority)
+            .toList()));
     workspaceAuthorizationResponse.setAuthorizationProject(jwt);
     return ApiResponse.<WorkspaceAuthorizationResponse>builder()
-      .message("Get user info in project")
-      .data(workspaceAuthorizationResponse)
-      .build();
+        .message("Get user info in project")
+        .data(workspaceAuthorizationResponse)
+        .build();
   }
 
   public WorkspaceResponse getWorkspaceResponseById(String workspaceId) {
@@ -290,22 +303,22 @@ public class WorkspaceService {
     setStatusSprint(workspace);
     Course course = workspace.getCourse();
     List<Course> prerequisite = course.getDependentCourses()
-      .stream()
-      .map(CourseRelation::getPrerequisiteCourse)
-      .toList()
-      ;
+        .stream()
+        .map(CourseRelation::getPrerequisiteCourse)
+        .toList();
     User user = userService.getCurrentUser();
     List<UserCourseRelation> userCourseRelations = new ArrayList<>();
     for (Course prerequisiteCourse : prerequisite) {
-      UserCourseRelation userCourseRelation = userCourseService.findUserCourseRelationById(UserCourseRelationId.builder()
-        .userId(user.getId())
-        .courseId(prerequisiteCourse.getId())
-        .build());
+      UserCourseRelation userCourseRelation = userCourseService
+          .findUserCourseRelationById(UserCourseRelationId.builder()
+              .userId(user.getId())
+              .courseId(prerequisiteCourse.getId())
+              .build());
       userCourseRelations.add(userCourseRelation);
     }
 
-
-    return workspaceMapper.toWorkspaceResponseById(workspace, courseMapper.toListUserCourseResponse(userCourseRelations));
+    return workspaceMapper.toWorkspaceResponseById(workspace,
+        courseMapper.toListUserCourseResponse(userCourseRelations));
   }
 
   private void setStatusSprint(Workspace workspace) {
@@ -315,23 +328,23 @@ public class WorkspaceService {
     long daysPrev = 0, daysNext = Long.MAX_VALUE;
 
     if (sprints != null && !sprints.isEmpty()) {
-      //      Sprint nextSprint = sprints.getFirst();
+      // Sprint nextSprint = sprints.getFirst();
       for (Sprint sprint : sprints) {
         Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.DAYS);
         Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.DAYS);
-        //previous sprint section
+        // previous sprint section
         if (end.isBefore(now) && daysPrev > end.until(now, ChronoUnit.DAYS)) {
           previous = sprint;
           daysPrev = end.until(now, ChronoUnit.DAYS);
           continue;
         }
-        //next sprint section
+        // next sprint section
         if (start.isAfter(now) && daysNext > start.until(now, ChronoUnit.DAYS)) {
           next = sprint;
           daysNext = end.until(now, ChronoUnit.DAYS);
           continue;
         }
-        //current sprint section
+        // current sprint section
         if ((start.isBefore(now) || start.equals(now)) && (end.isAfter(now) || end.equals(now))) {
           current = sprint;
           continue;

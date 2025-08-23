@@ -15,6 +15,7 @@ type UseSprintOrderResult = {
   data: Sprint[]
   utils: {
     getSprintById: (id: Id) => Sprint | null
+    getSize: () => number
   }
   dataByStatus: Sprint[]
 }
@@ -76,10 +77,15 @@ const useSprintOrder = (): UseSprintOrderResult => {
     })
   }, [sprintData, currentSprint])
 
+  const getSize = useCallback(() => {
+    return sprintData.length
+  }, [sprintData])
+
   return {
     data: sprintData,
     utils: {
-      getSprintById
+      getSprintById,
+      getSize
     },
     dataByStatus: sprintDataStatus
   }

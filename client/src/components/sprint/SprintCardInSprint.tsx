@@ -161,7 +161,10 @@ const SprintCardInSprint = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           {canEdit ? (
-            <UpdateDropdownItem id={id} />
+            <>
+              <UpdateDropdownItem id={id} />
+              <ViewDropdownItem id={id} />
+            </>
           ) : (
             <ViewDropdownItem id={id} />
           )}

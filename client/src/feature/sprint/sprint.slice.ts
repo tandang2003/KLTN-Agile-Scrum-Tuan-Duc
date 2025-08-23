@@ -12,7 +12,9 @@ type SprintState = {
   isOpenDialogCreate: boolean
   active?: Sprint
   mode: 'create' | 'update'
+  previous?: Sprint
   current?: Sprint
+  next?: Sprint
 }
 const initialState: SprintState = {
   isOpenDialogCreate: false,
@@ -43,9 +45,15 @@ const sprintSlice = createSlice({
     },
     setSprintCurrent: (
       state: SprintState,
-      action: PayloadAction<Sprint | undefined>
+      action: PayloadAction<{
+        current?: Sprint
+        previous?: Sprint
+        next?: Sprint
+      }>
     ) => {
-      state.current = action.payload
+      state.current = action.payload.current
+      state.previous = action.payload.previous
+      state.next = action.payload.next
     }
   },
   // reset state

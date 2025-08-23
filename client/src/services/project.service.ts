@@ -14,6 +14,7 @@ import {
 } from '@/types/project.type'
 import { ResourceOfSprintResponseType } from '@/types/resource.type'
 import { AppMessageCallbackType } from '@/types/socket.type'
+import { SprintResponse, SprintResultResponse } from '@/types/sprint.type'
 import { UserResponse } from '@/types/user.type'
 import { Client } from '@stomp/stompjs'
 
@@ -53,6 +54,13 @@ const projectService = {
       ResponseApi<void>,
       InviteStudentProjectRequestType
     >(`/project/invite`, req)
+
+    return response.data.data
+  },
+  getResult: async (projectId: Id) => {
+    const response = await httpService.get<ResponseApi<SprintResultResponse[]>>(
+      `/project/result/${projectId}`
+    )
 
     return response.data.data
   },

@@ -2,25 +2,25 @@ from src.connection.mysql import get_mysql_connection
 from src.connection.mongo import get_mongo_client
 
 # 🔧 Config
-workspace_id = '88e830a7-f240-4d0f-b8f3-bd08cfb69607'
+workspace_id = 'affedb6b-9a2b-4802-a48a-28a2db87aff7'
 
 # === MYSQL: Get all project IDs in the workspace ===
-project_ids = []
+project_ids = ['a1bac79d-be8f-4b83-a143-e4da1d140590']
 conn = get_mysql_connection()
 
-try:
-    with conn.cursor() as cursor:
-        select_query = """
-            SELECT DISTINCT project_id 
-            FROM workspaces_users_projects 
-            WHERE workspace_id = %s
-        """
-        cursor.execute(select_query, (workspace_id,))
-        rows = cursor.fetchall()
-        project_ids = [row['project_id'] for row in rows]
-        print(f"📦 Found {len(project_ids)} project(s) in workspace.")
-finally:
-    conn.close()
+# try:
+#     with conn.cursor() as cursor:
+#         select_query = """
+#             SELECT DISTINCT project_id 
+#             FROM workspaces_users_projects 
+#             WHERE workspace_id = %s
+#         """
+#         cursor.execute(select_query, (workspace_id,))
+#         rows = cursor.fetchall()
+#         project_ids = [row['project_id'] for row in rows]
+#         print(f"📦 Found {len(project_ids)} project(s) in workspace.")
+# finally:
+#     conn.close()
 
 
 # === LOOP THROUGH EACH PROJECT ===
@@ -39,7 +39,7 @@ for project_id in project_ids:
                     issues.open = %s
                 WHERE issues.project_id = %s AND issues.status != 'BACKLOG'
             """
-            cursor.execute(update_query, (False, project_id))
+            cursor.execute(update_query, (True, project_id))
             print(f"✅ Updated {cursor.rowcount} issue(s) in MySQL for project {project_id}.")
     finally:
         conn.close()

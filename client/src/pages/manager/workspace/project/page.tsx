@@ -1,11 +1,10 @@
 import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
 import ProjectSocket from '@/components/project/ProjectSocket'
+import ProjectPredict from '@/components/ProjectPredict'
 import ProjectStatus from '@/components/ProjectStatus'
 import RefreshSprint from '@/components/RefreshSprint'
 import SprintPredict from '@/components/SprintPredict'
-import StoreData from '@/components/StoreData'
-import StoreVelDiff from '@/components/StoreVelDiff'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
@@ -28,21 +27,42 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
+  const { workspaceId } = useAppId()
 
   const { sprint } = useSprintCurrent()
 
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (data?.currentSprint) {
-      dispatch(
-        setSprintCurrent({
-          id: data.currentSprint.id,
-          start: toISODateString(data.currentSprint.start),
-          end: toISODateString(data.currentSprint.end)
-        })
-      )
+    if (!data) return
+    const { prevSprint, currentSprint, nextSprint } = data
 
+    dispatch(
+      setSprintCurrent({
+        previous: prevSprint
+          ? {
+              id: prevSprint.id,
+              start: toISODateString(prevSprint.start),
+              end: toISODateString(prevSprint.end)
+            }
+          : undefined,
+        current: currentSprint
+          ? {
+              id: currentSprint.id,
+              start: toISODateString(currentSprint.start),
+              end: toISODateString(currentSprint.end)
+            }
+          : undefined,
+        next: nextSprint
+          ? {
+              id: nextSprint.id,
+              start: toISODateString(nextSprint.start),
+              end: toISODateString(nextSprint.end)
+            }
+          : undefined
+      })
+    )
+    if (data?.currentSprint) {
       dispatch(
         setSprintFilter({
           id: data.currentSprint.id,
@@ -52,7 +72,6 @@ const ProjectPage = () => {
       )
     }
   }, [data?.currentSprint, dispatch])
-
   return (
     <SectionContainer className='flex flex-col'>
       <LoadingBoundary<ProjectDetailResponse>
@@ -79,21 +98,8 @@ const ProjectPage = () => {
                 {projectId && sprint?.id && (
                   <ProjectStatus projectId={projectId} sprintId={sprint?.id} />
                 )}
+                <ProjectPredict data={data} />
                 <RefreshSprint />
-                <SprintPredict
-                  project={{
-                    id: data.id,
-                    name: data.name
-                  }}
-                  sprint={
-                    data.currentSprint?.id && data.currentSprint?.title
-                      ? {
-                          id: data.currentSprint?.id,
-                          name: data.currentSprint?.title
-                        }
-                      : undefined
-                  }
-                />
               </div>
             </div>
             <Outlet

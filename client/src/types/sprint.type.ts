@@ -85,6 +85,11 @@ type SprintResponse = SprintModel
 
 type SprintWorkspaceDataTable = SprintModel
 
+type SprintPredictResult = -2 | -1 | 0
+type SprintResultResponse = SprintResponse & {
+  predictResult: SprintPredictResult
+}
+
 type SprintOverview = Pick<SprintModel, 'id' | 'start' | 'end'>
 
 export {
@@ -103,5 +108,7 @@ export type {
   UpdateSprintRequest,
   SprintOverview,
   UpdateSprintForStudentRequest,
-  UpdateSprintForStudentFormType
+  UpdateSprintForStudentFormType,
+  SprintResultResponse,
+  SprintPredictResult
 }
