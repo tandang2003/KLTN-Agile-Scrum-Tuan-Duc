@@ -4,6 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 import { IssueStatus, SkillLevel, SprintStatusType } from '@/types/model/typeOf'
+import { SprintPredictResult } from '@/types/sprint.type'
 
 const badgeVariants = cva<{
   variant: {
@@ -15,6 +16,7 @@ const badgeVariants = cva<{
   skillLevel: Record<SkillLevel, string>
   status: Record<IssueStatus, string>
   statusSprint: Record<SprintStatusType, string>
+  sprintPredictResult: Record<SprintPredictResult, string>
 }>(
   'inline-flex items-center justify-center rounded-md border px-2.5 py-1 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden',
   {
@@ -46,6 +48,11 @@ const badgeVariants = cva<{
         '3': 'text-black bg-blue-300 font-semibold',
         '4': 'text-black bg-green-300 font-semibold',
         '5': 'text-white bg-purple-500 font-semibold'
+      },
+      sprintPredictResult: {
+        '-2': 'text-white bg-gray-500 font-semibold',
+        '-1': 'text-white bg-red-500 font-semibold',
+        '0': 'text-white bg-green-500 font-semibold'
       }
     },
 
@@ -68,6 +75,7 @@ const Badge = React.forwardRef<
       status,
       statusSprint,
       skillLevel,
+      sprintPredictResult,
       asChild = false,
       ...props
     },
@@ -80,7 +88,13 @@ const Badge = React.forwardRef<
         ref={ref}
         data-slot='badge'
         className={cn(
-          badgeVariants({ variant, status, statusSprint, skillLevel }),
+          badgeVariants({
+            variant,
+            status,
+            statusSprint,
+            skillLevel,
+            sprintPredictResult
+          }),
           className
         )}
         {...props}

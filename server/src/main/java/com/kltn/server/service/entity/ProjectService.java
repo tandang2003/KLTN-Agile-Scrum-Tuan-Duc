@@ -7,8 +7,10 @@ import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
+import com.kltn.server.DTO.response.project.ProjectSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceOfSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
+import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
@@ -232,7 +234,6 @@ public class ProjectService {
     int totalEndingSprints = workspaceService.totalEndedSprints(project);
 
     boolean isSuccess = calculateProjectIsSuccess(project, completedSprints, totalEndingSprints);
-
     ProjectResponse projectResponse = projectMapper.toProjectResponseById(project, topics, completedSprints,
         totalEndingSprints, isSuccess);
     return ApiResponse.<ProjectResponse>builder()
@@ -241,8 +242,49 @@ public class ProjectService {
         .build();
   }
 
+  public ApiResponse<List<ProjectSprintResponse>> getResultById(String projectId) {
+    User user = userService.getCurrentUser();
+    Project project = projectRepository.findById(projectId)
+        .orElseThrow(() -> AppException.builder()
+            .error(Error.NOT_FOUND)
+            .build());
+
+    if (user.getRole()
+        .getName()
+        .equals("teacher")) {
+      if (!project.getWorkspace()
+          .getOwner()
+          .getId()
+          .equals(user.getId())) {
+        throw AppException.builder()
+            .error(Error.NOT_FOUND_SPECIFYING_PROJECT_TEACHER)
+            .build();
+      }
+    } else {
+      workspacesUsersProjectsService.getByUserIdAndProjectId(user.getId(), projectId);
+    }
+    Workspace workspace = project.getWorkspace();
+    setCurrentSprint(project, workspace.getSprints());
+
+    List<ProjectSprintResponse> projectResponse = project.getProjectSprints().stream()
+        .map(item -> new ProjectSprintResponse(
+            item.getSprint().getId(),
+            item.getSprint().getTitle(),
+            item.getSprint().getDescription(),
+            item.getSprint().getDtPredict(),
+            item.getSprint().getDtStart(),
+            item.getSprint().getDtEnd(),
+            item.getSprint().getStoryPoint(),
+            item.getPredictedResult()))
+        .toList();
+    return ApiResponse.<List<ProjectSprintResponse>>builder()
+        .message("Get project result by id")
+        .data(projectResponse)
+        .build();
+  }
+
   public boolean calculateProjectIsSuccess(Project project, int completedSprints, int totalEndingSprints) {
-    boolean isSuccess ;
+    boolean isSuccess;
     var rangeSprint = project.getSprints().size() * 0.7;
     if (totalEndingSprints < rangeSprint) {
       isSuccess = completedSprints >= rangeSprint / 2;
