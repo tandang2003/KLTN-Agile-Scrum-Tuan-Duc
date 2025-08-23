@@ -1,4 +1,4 @@
-package com.kltn.server.kafka.consumer.predict;
+package com.kltn.server.util.common.consumer.predict;
 
 import com.kltn.server.DTO.request.kafka.SprintPredictRequest;
 import com.kltn.server.DTO.response.message.ProjectMessagePredictResponse;

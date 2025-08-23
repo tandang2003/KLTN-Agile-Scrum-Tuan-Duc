@@ -1,24 +1,21 @@
-package com.kltn.server.kafka.consumer.service;
+package com.kltn.server.util.common.consumer.service;
 
 import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.util.token.TokenUtils;
-import jakarta.activation.DataSource;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component
-public class KafkaSendMailService {
+public class SendMailService {
 
   @Autowired
   private JavaMailSender mailSender;

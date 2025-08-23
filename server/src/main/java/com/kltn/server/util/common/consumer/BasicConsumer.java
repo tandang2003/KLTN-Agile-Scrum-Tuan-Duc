@@ -1,4 +1,4 @@
-package com.kltn.server.kafka.consumer;
+package com.kltn.server.util.common.consumer;
 
 import org.springframework.stereotype.Service;
 

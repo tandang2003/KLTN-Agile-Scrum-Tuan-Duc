@@ -1,21 +1,17 @@
 package com.kltn.server.service.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.kltn.server.DTO.request.base.MailRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectCreationRequest;
 import com.kltn.server.DTO.request.entity.project.ProjectInvitationRequest;
-import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.ApiResponse;
 import com.kltn.server.DTO.response.project.ProjectResponse;
 import com.kltn.server.DTO.response.project.ProjectSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceOfSprintResponse;
 import com.kltn.server.DTO.response.resource.ResourceResponse;
-import com.kltn.server.DTO.response.sprint.SprintResponse;
 import com.kltn.server.DTO.response.user.UserResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.Error;
-import com.kltn.server.kafka.SendKafkaEvent;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
 import com.kltn.server.mapper.entity.ProjectMapper;

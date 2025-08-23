@@ -1,4 +1,4 @@
-package com.kltn.server.kafka;
+package com.kltn.server.util.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SendKafkaEvent {
+public @interface SendEvent {
     String topic() ;
 
     String retry() default "0";

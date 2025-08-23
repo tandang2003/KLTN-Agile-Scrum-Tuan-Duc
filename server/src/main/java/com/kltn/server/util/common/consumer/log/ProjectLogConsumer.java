@@ -1,14 +1,7 @@
-package com.kltn.server.kafka.consumer.log;
+package com.kltn.server.util.common.consumer.log;
 
-import com.kltn.server.DTO.request.log.ChangeLogRequest;
-import com.kltn.server.model.collection.ChangeLog;
 import com.kltn.server.repository.document.ChangeLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service

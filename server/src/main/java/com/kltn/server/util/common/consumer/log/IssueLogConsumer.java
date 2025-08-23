@@ -1,4 +1,4 @@
-package com.kltn.server.kafka.consumer.log;
+package com.kltn.server.util.common.consumer.log;
 
 import com.kltn.server.DTO.request.log.ChangeLogRequest;
 import com.kltn.server.DTO.response.message.MessageResponse;
