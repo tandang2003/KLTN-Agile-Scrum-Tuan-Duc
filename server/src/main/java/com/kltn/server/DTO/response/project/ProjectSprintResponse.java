@@ -7,6 +7,7 @@ public record ProjectSprintResponse(
     String title,
     String description,
     Instant predict,
+    Instant predictSecond,
     Instant start,
     Instant end,
     int storyPoint,

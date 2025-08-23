@@ -2,7 +2,6 @@ package com.kltn.server.schedular;
 
 import com.kltn.server.DTO.request.kafka.SprintPredictRequest;
 import com.kltn.server.config.init.ClockSimulator;
-import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.model.entity.relationship.ProjectSprint;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -25,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 @Service
-public class PredictScheduler {
+public class PredictSecondScheduler {
   private ProjectSprintRepository projectSprintRepository;
   private final TaskScheduler predictScheduler;
   private KafkaTemplate<String, Object> kafkaTemplate;
@@ -35,9 +34,9 @@ public class PredictScheduler {
   private final Map<String, LocalDateTime> taskEndTimes;
 
   @Autowired
-  public PredictScheduler(ClockSimulator clockSimulator, ProjectSprintRepository projectSprintRepository,
-                          @Qualifier("predictThreadScheduler") TaskScheduler predictScheduler,
-                          KafkaTemplate<String, Object> kafkaTemplate) {
+  public PredictSecondScheduler(ClockSimulator clockSimulator, ProjectSprintRepository projectSprintRepository,
+                                @Qualifier("predictSecondThreadScheduler") TaskScheduler predictScheduler,
+                                KafkaTemplate<String, Object> kafkaTemplate) {
     this.clockSimulator = clockSimulator;
     this.predictScheduler = predictScheduler;
     this.kafkaTemplate = kafkaTemplate;
@@ -48,9 +47,10 @@ public class PredictScheduler {
 
   public synchronized void scheduleSprint(String sprintId, LocalDateTime dtPredict) {
     cancelSprintTask(sprintId);
-    Runnable task = () -> {
+    Runnable task = () ->
+      {
       sendMessage(sprintId);
-    };
+      };
     Instant end = dtPredict.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
       .toInstant();
     if (ClockSimulator.now()
@@ -115,8 +115,9 @@ public class PredictScheduler {
       SprintPredictRequest payload = SprintPredictRequest.builder()
         .projectId(projectSprint.getProject().getId())
         .sprintId(projectSprint.getSprint().getId())
-        .isResult(false)
-        .build();
+        .isResult(true)
+        .build()
+        ;
 
       ProducerRecord<String, Object> record = new ProducerRecord<>("predict", payload);
       record.headers().add("X-Auth-User", curUser.getBytes(StandardCharsets.UTF_8));

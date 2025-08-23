@@ -4,6 +4,7 @@ import com.kltn.server.model.entity.Sprint;
 import com.kltn.server.repository.entity.SprintRepository;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
 import com.kltn.server.schedular.PredictScheduler;
+import com.kltn.server.schedular.PredictSecondScheduler;
 import com.kltn.server.schedular.SprintScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -21,7 +22,8 @@ public class SchedularRunInit implements CommandLineRunner {
   private SprintRepository sprintRepository;
   @Autowired
   private PredictScheduler predictScheduler;
-
+  @Autowired
+  private PredictSecondScheduler predictSecondScheduler;
   @Override
   public void run(String... args) throws Exception {
     List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(ClockSimulator.now());
@@ -37,6 +39,13 @@ public class SchedularRunInit implements CommandLineRunner {
       predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict()
           .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
           .toLocalDateTime());
+    });
+
+    List<Sprint> predictSecondSprints = sprintRepository.findALlByDtPredictSecondAfter(ClockSimulator.now());
+    predictSecondSprints.forEach(sprint -> {
+    predictSecondScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredictSecond()
+      .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+      .toLocalDateTime());
     });
   }
 }

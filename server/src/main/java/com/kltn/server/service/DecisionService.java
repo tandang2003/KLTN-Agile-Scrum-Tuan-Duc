@@ -50,7 +50,7 @@ public class DecisionService {
   }
 
   @Transactional
-  public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean checkPrePredict) {
+  public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean isPredict, boolean checkPrePredict) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
 
@@ -66,9 +66,15 @@ public class DecisionService {
           .projectId(project.getId())
           .build());
         // Lưu kết quả đa dự đoán vào database
-        projectSprint.setPredictedResult(-1);
-        // Lưu thời gian dự đoán
-        projectSprint.setDtLastPredicted(ClockSimulator.now());
+        if (!isPredict) {
+          projectSprint.setPredictedResult(-1);
+          // Lưu thời gian dự đoán
+          projectSprint.setDtLastPredicted(ClockSimulator.now());
+        } else {
+          projectSprint.setPredictedResultSecond(-1);
+          // Lưu thời gian dự đoán
+          projectSprint.setDtLastPredictedSecond(ClockSimulator.now());
+        }
         projectSprintService.save(projectSprint);
         return responsePrePredictChecking;
       }
@@ -86,11 +92,21 @@ public class DecisionService {
         .build());
       int result = done >= Math.round(total * committedPhase) ? 0 : -1;
       // Lưu kết quả đa dự đoán vào database
-      projectSprint.setPredictedResult(result);
-      // Lưu thời gian dự đoán
-      projectSprint.setDtLastPredicted(ClockSimulator.now());
+      if (!isPredict) {
+        projectSprint.setPredictedResult(-1);
+        // Lưu thời gian dự đoán
+        projectSprint.setDtLastPredicted(ClockSimulator.now());
+      } else {
+        projectSprint.setPredictedResultSecond(-1);
+        // Lưu thời gian dự đoán
+        projectSprint.setDtLastPredictedSecond(ClockSimulator.now());
+      }
       projectSprintService.save(projectSprint);
-      return ApiResponse.<Boolean>builder().code(200).message("Decision retrieved successfully").data(done >= Math.round(total * committedPhase)).build();
+      return ApiResponse.<Boolean>builder()
+        .code(200)
+        .message("Decision retrieved successfully")
+        .data(done >= Math.round(total * committedPhase))
+        .build();
     }
     // Kiếm tra sprint thực hiện dự đoán hiện tại đang hoạt động
     Instant start = sprint.getDtStart();
@@ -227,7 +243,8 @@ public class DecisionService {
         .numOfChangeOfDescription(issue.getNumChangeOfDescription())
         .complexityOfDescription(issue.getComplexOfDescription())
         .complatibleOfAssignee(issueService.calculateCompatibleOfAssignee(issue))
-        .build();
+        .build()
+        ;
       issueModels.add(issueModel);
     }
     return issueModels;
