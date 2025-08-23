@@ -92,21 +92,3 @@ google:
     issue:
       sheet: Sheet1
       spreadsheetId: 1G3NKAq6O5OyjNPbKwWvvvIfZ9RVU3otE3M8zaX_QJxU
-#kafka:
-#  topic:
-#    send-object-customer:
-#      name: send_object_customer
-#      partitions: 3
-#      replication-factor: 3
-#    send-object-order:
-#      name: send_object_order
-#      partitions: 3
-#      replication-factor: 3
-#    send-object-product:
-#      name: send_object_product
-#      partitions: 3
-#      replication-factor: 3
-#    send-object-user:
-#      name: send_object_user
-#      partitions: 3
-#      replication-factor: 3
