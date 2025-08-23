@@ -1,7 +1,8 @@
 import { useAppSelector } from '@/context/redux/hook'
 import { SprintStatusType } from '@/types/model/typeOf'
 import { SprintOverview } from '@/types/sprint.type'
-import { isAfter, isBefore } from 'date-fns'
+import { log } from 'console'
+import { isAfter, isBefore, isEqual } from 'date-fns'
 import { useCallback } from 'react'
 
 type Sprint = SprintOverview
@@ -15,31 +16,45 @@ type useSprintCurrentReturnType = {
 
 const useSprintCurrent = (): useSprintCurrentReturnType => {
   const sprintCurrent = useAppSelector((state) => state.sprintSlice.current)
+  const sprintNext = useAppSelector((state) => state.sprintSlice.next)
+  const sprintPrev = useAppSelector((state) => state.sprintSlice.previous)
+  console.log('sprintCurrent', sprintCurrent)
+  console.log('sprintPrev', sprintPrev)
+  console.log('sprintNext', sprintNext)
 
   const getStatusSprint = useCallback(
     (sprint: Sprint): SprintStatusType => {
-      if (isBefore(sprint.start, start)) return 'COMPLETE'
-      if (isAfter(sprint.end, end)) return 'PENDING'
+      if (
+        sprintPrev &&
+        (isBefore(sprint.end, sprintPrev?.end) ||
+          isEqual(sprint.end, sprintPrev?.end))
+      )
+        return 'COMPLETE'
+      if (
+        sprintNext &&
+        (isAfter(sprint.start, sprintNext?.start) ||
+          isEqual(sprint.start, sprintNext?.start))
+      )
+        return 'PENDING'
       return 'RUNNING'
     },
-    [sprintCurrent]
+    [sprintCurrent, sprintNext, sprintPrev]
   )
 
   if (!sprintCurrent) {
     return {
       sprint: undefined,
       util: {
-        getStatusSprint: () => 'PENDING'
+        getStatusSprint
       }
     }
   }
-  const { end, id, start } = sprintCurrent
 
   return {
     sprint: {
-      id: id,
-      start: new Date(start),
-      end: new Date(end)
+      id: sprintCurrent.id,
+      start: new Date(sprintCurrent.start),
+      end: new Date(sprintCurrent.end)
     },
     util: {
       getStatusSprint

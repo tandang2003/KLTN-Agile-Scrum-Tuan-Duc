@@ -17,14 +17,30 @@ const RefreshSprint = () => {
     trigger(workspaceId)
       .unwrap()
       .then((res) => {
-        const { currentSprint, nextSprint } = res
+        const { currentSprint, nextSprint, prevSprint } = res
         if (currentSprint) {
           const { id, start, end } = currentSprint
           dispatch(
             setSprintCurrent({
-              id: id,
-              start: toISODateString(start),
-              end: toISODateString(end)
+              previous: prevSprint
+                ? {
+                    id: prevSprint.id,
+                    start: toISODateString(prevSprint.start),
+                    end: toISODateString(prevSprint.end)
+                  }
+                : undefined,
+              current: {
+                id: id,
+                start: toISODateString(start),
+                end: toISODateString(end)
+              },
+              next: nextSprint
+                ? {
+                    id: nextSprint.id,
+                    start: toISODateString(nextSprint.start),
+                    end: toISODateString(nextSprint.end)
+                  }
+                : undefined
             })
           )
           dispatch(

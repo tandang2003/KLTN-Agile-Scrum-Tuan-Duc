@@ -12,7 +12,7 @@ type CreateProjectFormType = z.infer<typeof CreateProjectForm>
 type ProjectResponse = Pick<ProjectModel, 'id' | 'name'>
 type ProjectDetailResponse = ProjectModel & {
   currentSprint?: SprintResponse
-  previousSprint?: SprintResponse
+  prevSprint?: SprintResponse
   nextSprint?: SprintResponse
   leader: string
   totalEndedSprints: number
