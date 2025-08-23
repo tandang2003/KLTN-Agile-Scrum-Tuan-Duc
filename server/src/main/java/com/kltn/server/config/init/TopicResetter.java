@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class KafkaTopicResetter {
+public class TopicResetter {
 
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;

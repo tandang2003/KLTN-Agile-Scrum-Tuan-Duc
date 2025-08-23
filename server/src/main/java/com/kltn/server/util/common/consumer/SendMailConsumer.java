@@ -1,7 +1,7 @@
-package com.kltn.server.kafka.consumer;
+package com.kltn.server.util.common.consumer;
 
 import com.kltn.server.DTO.request.base.MailRequest;
-import com.kltn.server.kafka.consumer.service.KafkaSendMailService;
+import com.kltn.server.util.common.consumer.service.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class SendMailConsumer {
 
-  KafkaSendMailService kafkaSendMailService;
+  SendMailService sendMailService;
 
   @Autowired
-  public SendMailConsumer(KafkaSendMailService kafkaSendMailService) {
-    this.kafkaSendMailService = kafkaSendMailService;
+  public SendMailConsumer(SendMailService sendMailService) {
+    this.sendMailService = sendMailService;
   }
 
   @KafkaListener(topics = "send-mail", groupId = "send-mail")
   public void consumeMail(MailRequest mail) {
     try {
-      kafkaSendMailService.sendEmail(mail);
+      sendMailService.sendEmail(mail);
     } catch (Exception e) {
       throw new RuntimeException("Failed to send email", e);
     }

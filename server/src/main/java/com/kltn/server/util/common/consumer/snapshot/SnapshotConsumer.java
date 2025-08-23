@@ -1,4 +1,4 @@
-package com.kltn.server.kafka.consumer.snapshot;
+package com.kltn.server.util.common.consumer.snapshot;
 
 import com.kltn.server.DTO.request.kafka.SnapshotRequest;
 import com.kltn.server.DTO.response.message.MessageResponse;
@@ -17,15 +17,12 @@ import com.kltn.server.repository.document.snapshot.SnapshotRepository;
 import com.kltn.server.repository.entity.IssueRepository;
 import com.kltn.server.repository.entity.UserRepository;
 import com.kltn.server.repository.entity.relation.ProjectSprintRepository;
-import com.kltn.server.service.entity.UserService;
 import com.kltn.server.service.message.RoomService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

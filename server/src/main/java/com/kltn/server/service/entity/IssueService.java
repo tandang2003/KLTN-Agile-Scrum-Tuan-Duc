@@ -12,7 +12,7 @@ import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.error.AppException;
 import com.kltn.server.error.AppMethodArgumentNotValidException;
 import com.kltn.server.error.Error;
-import com.kltn.server.kafka.SendKafkaEvent;
+import com.kltn.server.util.common.SendEvent;
 import com.kltn.server.mapper.base.SubTaskMapper;
 import com.kltn.server.mapper.base.TopicMapper;
 import com.kltn.server.mapper.document.ChangeLogMapper;
@@ -102,7 +102,7 @@ public class IssueService {
     this.issueRepository = issueRepository;
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   @Transactional
   public ApiResponse<IssueResponse> createTask(IssueCreateRequest issueCreateRequest) {
 
@@ -166,7 +166,7 @@ public class IssueService {
       .build();
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   @Transactional
   public ApiResponse<IssueResponse> createTaskBacklog(IssueCreateRequest issueCreateRequest) {
     Project project = projectService.getProjectById(issueCreateRequest.getProjectId());
@@ -285,7 +285,7 @@ public class IssueService {
     return relations;
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   @Transactional
   public ApiResponse<IssueResponse> updateTask(IssueUpdateRequest updateRequest) {
     String id = updateRequest.getId();
@@ -517,7 +517,7 @@ public class IssueService {
     return buildResponseFromIssues(issues);
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   public ApiResponse<IssueResponse> updateTask(IssueUpdateStatusRequest request) {
     String id = request.getId();
     var task = getEntityById(id);
@@ -553,7 +553,7 @@ public class IssueService {
         }
       }
 
-    if (request.getStatus() == IssueStatus.DONE) {
+    if (request.getStatus().equals(IssueStatus.DONE)) {
       if (task.getReviewer() != null) {
         String reviewerId = task.getReviewer().getUniId();
         long commentCount = Optional.ofNullable(taskMongo.getComments())
@@ -584,7 +584,7 @@ public class IssueService {
     task.setStatus(request.getStatus());
 
     task.setPosition(request.getPosition());
-    task = saveEntity(task);
+      task = saveEntity(task);
     changeLog = changeLogMapper.taskToUpdate(new String[]{
       "status",
       "position"}, task, taskMongo);
@@ -596,7 +596,7 @@ public class IssueService {
       .build();
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   public ApiResponse<Boolean> reopen(String id) {
     Issue issue = getEntityById(id);
     if (issue.getStatus() != IssueStatus.DONE) {
@@ -641,7 +641,7 @@ public class IssueService {
   }
 
   private ApiResponse<List<IssueResponse>> buildResponseFromIssues(List<Issue> issues) {
-    if (issues.isEmpty()) {
+     if (issues.isEmpty()) {
       return ApiResponse.<List<IssueResponse>>builder()
         .code(HttpStatus.OK.value())
         .message("No task found")
@@ -673,7 +673,7 @@ public class IssueService {
 
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   public ApiResponse<IssueRelationResponse> createRelation(IssueAssignRelationRequest request) {
     Issue issue = getEntityById(request.getIssueId());
     Issue relatedIssue = getEntityById(request.getIssueRelatedId());
@@ -694,7 +694,7 @@ public class IssueService {
       .build();
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   public ApiResponse<Void> deleteRelation(IssueRemoveRelationRequest request) {
     IssueRelationId relationId = IssueRelationId.builder()
       .issueId(request.getIssueId())
@@ -917,7 +917,7 @@ public class IssueService {
     return storyPoint / (numIssueStart + numIssueAdded) * numIssueDone - storyPoint;
   }
 
-  @SendKafkaEvent(topic = "task-log")
+  @SendEvent(topic = "task-log")
   @Transactional
   public ApiResponse<Void> delete(String id) {
     Issue issue = getEntityById(id);
