@@ -20,6 +20,7 @@ const BaseSprintFormSchema = z.object({
   }),
   start: z.date(),
   predict: z.date(),
+  predictSecond: z.date(),
   end: z.date()
 })
 

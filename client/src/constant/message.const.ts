@@ -410,7 +410,14 @@ const messages = {
           duration: 'Thời gian Sprint',
           startDate: 'Ngày bắt đầu',
           endDate: 'Ngày kết thúc',
-          predict: 'Thời gian dự đoán',
+          predict: {
+            label: 'Thời gian dự đoán lần 1',
+            description: 'Thời gian mô hình dự đoán chạy tự động'
+          },
+          predictSecond: {
+            label: 'Thời gian dự đoán lần 2',
+            description: 'Thời gian mô hình dự đoán chạy tự động'
+          },
           customDuration: 'Tùy chỉnh',
           week: 'tuần',
           submit: {

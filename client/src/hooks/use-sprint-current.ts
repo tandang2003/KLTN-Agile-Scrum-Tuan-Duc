@@ -1,7 +1,6 @@
 import { useAppSelector } from '@/context/redux/hook'
 import { SprintStatusType } from '@/types/model/typeOf'
 import { SprintOverview } from '@/types/sprint.type'
-import { log } from 'console'
 import { isAfter, isBefore, isEqual } from 'date-fns'
 import { useCallback } from 'react'
 
