@@ -63,18 +63,21 @@ const ReportSprintSheet = ({
       start: sprint.start,
       end: getDateByPercent(sprint.start, sprint.end, 30)
     })
-  }, [now, sprint])
-
+  }, [sprint])
   const disableDaily2 = useCallback(() => {
     return !isWithinInterval(now, {
       start: getDateByPercent(sprint.start, sprint.end, 30),
       end: sprint.end
     })
-  }, [now, sprint])
-  const handleSignatureFn = () => {
+  }, [sprint])
+
+  const handleSignatureFn = (file: File) => {
     return resourceService.getSignature({
       projectId: projectId,
-      issueId: REPORT_DIR
+      issueId: REPORT_DIR,
+      extension: 'xlsx',
+      nameFile: file.name,
+      resourceType: 'raw'
     })
   }
 
@@ -217,7 +220,7 @@ const ReportSprintSheet = ({
               <ToolTip
                 trigger={<Icon size={20} icon={'material-symbols:info'} />}
               >
-                Nộp trước ngày{' '}
+                Thời gian nộp từ {formatDate(sprint.start)} đến{' '}
                 {formatDate(getDateByPercent(sprint.start, sprint.end, 30))}
               </ToolTip>
             </h4>
@@ -241,8 +244,9 @@ const ReportSprintSheet = ({
               <ToolTip
                 trigger={<Icon size={20} icon={'material-symbols:info'} />}
               >
-                Nộp trước ngày{' '}
-                {formatDate(getDateByPercent(sprint.start, sprint.end, 70))}
+                Thời gian nộp từ{' '}
+                {formatDate(getDateByPercent(sprint.start, sprint.end, 70))} đến{' '}
+                {formatDate(sprint.end)}
               </ToolTip>
             </h4>
 
@@ -254,6 +258,7 @@ const ReportSprintSheet = ({
               }}
               signatureFn={handleSignatureFn}
               disabled={disableDaily2()}
+              onFileValidate={validationDaily}
               createFn={(data) => handleUploadDaily(data, 'daily2')}
               onDelete={() => handleDelete('daily2')}
             />

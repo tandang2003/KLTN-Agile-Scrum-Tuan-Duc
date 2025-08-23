@@ -1,8 +1,7 @@
 import { MediaProps, MediaViewProps, Thumbnail } from '@/components/media/media'
 import MediaContext from '@/components/media/MediaContext'
 import MediaPreview, {
-  MediaPreviewEmpty,
-  MediaPreviewNoAction
+  MediaPreviewEmpty
 } from '@/components/media/MediaPreview'
 import MediaUploading from '@/components/media/MediaUploading'
 import { MAX_SIZE } from '@/constant/app.const'
@@ -49,10 +48,14 @@ const Media = ({
         disabled
       }}
     >
-      <MediaPreviewEmpty />
-      <MediaPreviewNoAction />
-      <MediaUploading {...props} />
-      <MediaPreview />
+      {thumbnail ? (
+        <MediaPreview />
+      ) : disabled ? (
+        <MediaPreviewEmpty />
+      ) : (
+        <MediaUploading {...props} />
+      )}
+
       {children}
     </MediaContext>
   )
@@ -70,7 +73,7 @@ const MediaView = ({ thumbnail: initialThumbnail }: MediaViewProps) => {
   return (
     <MediaContext
       value={{
-        thumbnail: thumbnail ?? undefined, // ✅ use reactive state
+        thumbnail: thumbnail ?? undefined,
         disabled: false
       }}
     >

@@ -35,7 +35,7 @@ export type MediaMediaUploadingProps = {
   type?: FileType
   maxSize?: number // in bytes
   onFileValidate?: (file: File) => string | null
-  signatureFn: () => Promise<GetSignatureResponseType>
+  signatureFn: (file: File) => Promise<GetSignatureResponseType>
   createFn?: (data: CreateFileData) => Promise<Thumbnail>
   errorFn?: (error: Error) => void
 }
