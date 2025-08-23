@@ -16,7 +16,6 @@ const WorkspaceDetailLayout = () => {
   const { data } = useGetWorkspaceQuery(workspaceId as string, {
     skip: !workspaceId
   })
-
   useEffect(() => {
     if (!workspaceId) {
       navigate('/404', { replace: true })
@@ -28,11 +27,30 @@ const WorkspaceDetailLayout = () => {
 
   useEffect(() => {
     if (data?.currentSprint) {
+      const { prevSprint, currentSprint, nextSprint } = data
+      const { id, start, end } = currentSprint
+
       dispatch(
         setSprintCurrent({
-          id: data.currentSprint.id,
-          start: toISODateString(data.currentSprint.start),
-          end: toISODateString(data.currentSprint.end)
+          previous: prevSprint
+            ? {
+                id: prevSprint.id,
+                start: toISODateString(prevSprint.start),
+                end: toISODateString(prevSprint.end)
+              }
+            : undefined,
+          current: {
+            id: id,
+            start: toISODateString(start),
+            end: toISODateString(end)
+          },
+          next: nextSprint
+            ? {
+                id: nextSprint.id,
+                start: toISODateString(nextSprint.start),
+                end: toISODateString(nextSprint.end)
+              }
+            : undefined
         })
       )
       dispatch(

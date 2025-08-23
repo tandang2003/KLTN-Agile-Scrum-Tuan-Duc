@@ -21,8 +21,7 @@ const MediaUploading = ({
   errorFn,
   onFileValidate: ownValidate
 }: MediaMediaUploadingProps) => {
-  const { setThumbnail, thumbnail, disabled } = useMediaContext()
-  if (!thumbnail && !disabled) return null
+  const { setThumbnail } = useMediaContext()
 
   const [files, setFiles] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
@@ -87,7 +86,7 @@ const MediaUploading = ({
             const baseName = fileName.substring(0, fileName.lastIndexOf('.'))
             const extension = fileName.substring(fileName.lastIndexOf('.') + 1)
             const { apiKey, folder, signature, timestamp, url } =
-              await signatureFn()
+              await signatureFn(file)
 
             const response =
               await resourceService.uploadFileToCloudinaryWithSignature(file, {

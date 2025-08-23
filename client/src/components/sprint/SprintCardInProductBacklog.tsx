@@ -58,16 +58,6 @@ const SprintCardInProductBacklog = ({
             />
           )
         })
-        // boardService
-        //   .saveNewPosition({
-        //     projectId: item.projectId,
-        //     sprintId: sprintId,
-        //     issueId: item.id,
-        //     status: 'TODO'
-        //   })
-        //   .then(() => {
-
-        //   })
       })
       .catch((err) => {
         if (err.status === HttpStatusCode.Conflict)

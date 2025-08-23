@@ -112,7 +112,6 @@ public class PredictScheduler {
   }
 
   private void sendMessage(String sprintId) {
-    Instant now = ClockSimulator.now();
     List<ProjectSprint> projectSprints = projectSprintRepository.findBySprintId(sprintId);
     for (ProjectSprint projectSprint : projectSprints) {
       String curUser = "21130171";

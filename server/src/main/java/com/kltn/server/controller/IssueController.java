@@ -74,7 +74,8 @@ public class IssueController {
 
   @PutMapping("/update-status")
   @PreAuthorize("hasAuthority('update_task')")
-  public ResponseEntity<ApiResponse<IssueResponse>> updateTask(@Valid @RequestBody IssueUpdateStatusRequest request) {
+  public ResponseEntity<ApiResponse<IssueResponse>> updateTask(
+    @Valid @RequestBody IssueUpdateStatusRequest request) {
     var task = taskService.updateTask(request);
     return ResponseEntity.status(task.getCode())
       .body(task);

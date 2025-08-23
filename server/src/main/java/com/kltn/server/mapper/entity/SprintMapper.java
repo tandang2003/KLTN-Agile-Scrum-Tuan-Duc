@@ -41,8 +41,6 @@ public interface SprintMapper {
       @Mapping(target = "storyPoint", source = "projectSprint.sprint.storyPoint"),
       @Mapping(target = "start", source = "projectSprint.sprint.dtStart"),
       @Mapping(target = "end", source = "projectSprint.sprint.dtEnd"),
-      // @Mapping(target = "planning", source = "projectSprint.dtPlanning"),
-      // @Mapping(target = "preview", source = "projectSprint.dtPreview")
   })
   @BeanMapping(ignoreByDefault = true)
   SprintResponse toSprintStudentUpdateResponse(ProjectSprint projectSprint);
@@ -53,7 +51,6 @@ public interface SprintMapper {
       @Mapping(target = "dtStart", source = "updateRequest.start"),
       @Mapping(target = "dtEnd", source = "updateRequest.end"),
       @Mapping(target = "dtPredict", source = "updateRequest.predict"),
-      // @Mapping(target = "position", source = "updateRequest.position")
   })
   @BeanMapping(ignoreByDefault = true)
   Sprint updateTeacherSprint(@MappingTarget Sprint cur, SprintTeacherUpdateTimeRequest updateRequest);

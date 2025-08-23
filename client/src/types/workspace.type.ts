@@ -80,7 +80,11 @@ type StudentWorkspaceDataTable = Pick<
 type ProjectWorkspaceDataTable = Pick<
   ProjectModel,
   'id' | 'name' | 'description' | 'createdAt'
->
+> & {
+  totalEndedSprints: number
+  completedSprints: number
+  isSuccess: boolean
+}
 
 type InviteStudentWorkspaceReqType = {
   workspaceId: Id

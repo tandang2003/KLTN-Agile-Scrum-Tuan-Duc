@@ -17,38 +17,24 @@ public class ProjectSprint {
   private ProjectSprintId id;
   @MapsId("projectId")
   @ManyToOne(optional = false)
-  @JoinColumn(name = "project_id",
-    insertable = false)
+  @JoinColumn(name = "project_id", insertable = false)
   private Project project;
   @MapsId("sprintId")
   @ManyToOne()
-  @JoinColumn(name = "sprint_id",
-    nullable = false)
+  @JoinColumn(name = "sprint_id", nullable = false)
   private Sprint sprint;
   @OneToOne
-  @JoinColumn(name = "file_backlog_id",
-    referencedColumnName = "id")
+  @JoinColumn(name = "file_backlog_id", referencedColumnName = "id")
   private Resource fileBackLog;
   @OneToOne
-  @JoinColumn(name = "file_daily_first_id",
-    referencedColumnName = "id")
+  @JoinColumn(name = "file_daily_first_id", referencedColumnName = "id")
   private Resource fileDailyFirst;
   @OneToOne
-  @JoinColumn(name = "file_daily_second_id",
-    referencedColumnName = "id")
+  @JoinColumn(name = "file_daily_second_id", referencedColumnName = "id")
   private Resource fileDailySecond;
-//  @ManyToMany
-//  @JoinTable(name = "sprint_resource",
-//    joinColumns = {
-//      @JoinColumn(name = "project_id",
-//        referencedColumnName = "project_id"),
-//      @JoinColumn(name = "sprint_id",
-//        referencedColumnName = "sprint_id")},
-//    inverseJoinColumns = @JoinColumn(name = "resource_id"))
-//  private List<Resource> dailyFiles;
-  //  private Instant dtPreview;
+
   private int removedIssue;
-  private int predictedResult = -2; // -2: not predicted, -1: predicted result is fail, 0: predicted result is success
+  private int predictedResult = -2;
   private Instant dtLastPredicted;
 
   public ProjectSprint() {
@@ -62,9 +48,7 @@ public class ProjectSprint {
     this.id = builder.id;
     this.project = builder.project;
     this.sprint = builder.sprint;
-//        this.issues = builder.issues;
-//        this.dtPlanning = builder.DTPlanning;
-//    this.dtPreview = builder.dtPreview;
+
   }
 
   public static class ProjectSprintBuilder {
@@ -72,8 +56,6 @@ public class ProjectSprint {
     private Project project;
     private Sprint sprint;
     private List<Issue> issues;
-//        private Instant DTPlanning;
-//        private Instant dtPreview;
 
     public ProjectSprintBuilder id(ProjectSprintId id) {
       this.id = id;
@@ -94,10 +76,6 @@ public class ProjectSprint {
       this.issues = issues;
       return this;
     }
-//    public ProjectSprintBuilder dtPreview(Instant dtPreview) {
-//      this.dtPreview = dtPreview;
-//      return this;
-//    }
 
     public ProjectSprint build() {
       return new ProjectSprint(this);

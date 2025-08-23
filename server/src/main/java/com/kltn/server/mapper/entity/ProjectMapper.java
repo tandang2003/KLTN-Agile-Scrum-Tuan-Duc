@@ -50,11 +50,32 @@ public interface ProjectMapper {
       @Mapping(target = "createAt", source = "project.dtCreated"),
       @Mapping(target = "updateAt", source = "project.dtModified"),
       @Mapping(target = "topics", source = "topics", qualifiedByName = "toTopicResponse"),
+      @Mapping(target = "currentSprint", source = "project.currentSprint", qualifiedByName = "toResponse"),
+      @Mapping(target = "prevSprint", source = "project.prevSprint", qualifiedByName = "toResponse"),
+      @Mapping(target = "nextSprint", source = "project.nextSprint", qualifiedByName = "toResponse"),
+      @Mapping(target = "leader", source = "project.createdBy"),
       @Mapping(target = "completedSprints", source = "completedSprints"),
       @Mapping(target = "totalEndedSprints", source = "totalEndedSprints"),
+      @Mapping(target = "isSuccess", source = "isSuccess"),
+  })
+  ProjectResponse toProjectResponseById(Project project, List<Topic> topics, int completedSprints,
+      int totalEndedSprints, boolean isSuccess);
+
+  @Mappings({
+      @Mapping(target = "id", source = "project.id"),
+      @Mapping(target = "name", source = "project.name"),
+      @Mapping(target = "description", source = "project.description"),
+      @Mapping(target = "createAt", source = "project.dtCreated"),
+      @Mapping(target = "updateAt", source = "project.dtModified"),
+      @Mapping(target = "topics", source = "topics", qualifiedByName = "toTopicResponse"),
+      @Mapping(target = "completedSprints", source = "completedSprints"),
+      @Mapping(target = "totalEndedSprints", source = "totalEndedSprints"),
+      @Mapping(target = "isSuccess", source = "isSuccess"),
+
   })
   @BeanMapping(ignoreByDefault = true)
-  ProjectResponse toProjectResponseForPaging(Project project, List<Topic> topics, int completedSprints, int totalEndedSprints);
+  ProjectResponse toProjectResponseForPaging(Project project, List<Topic> topics, int completedSprints,
+      int totalEndedSprints, boolean isSuccess);
 
   // ProjectResponse toProjectResponseById( );
   @Mappings({

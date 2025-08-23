@@ -5,10 +5,11 @@ import { getFileTypeFromUrl } from '@/lib/file.helper'
 import { useMemo } from 'react'
 
 const MediaPreview = ({}: MediaPreviewProps) => {
-  const { thumbnail, onDelete, disabled } = useMediaContext()
-  if (!thumbnail || !disabled) {
+  const { thumbnail, onDelete } = useMediaContext()
+  if (!thumbnail) {
     return null
   }
+
   const IconMemo = useMemo(() => {
     const type = getFileTypeFromUrl(thumbnail.url)
     switch (type) {
@@ -20,6 +21,8 @@ const MediaPreview = ({}: MediaPreviewProps) => {
         return <Icon icon={'mingcute:file-pdf-line'} size={50} />
       case 'word':
         return <Icon icon={'mingcute:doc-line'} size={50} />
+      case 'excel':
+        return <Icon icon={'icon-park-outline:excel'} size={50} />
     }
   }, [thumbnail])
   return (
@@ -47,10 +50,7 @@ const MediaPreview = ({}: MediaPreviewProps) => {
 }
 
 const MediaPreviewNoAction = () => {
-  const { thumbnail, disabled } = useMediaContext()
-  if (disabled || !thumbnail) {
-    return null
-  }
+  const { thumbnail } = useMediaContext()
 
   return (
     <div className='hover:bg-accent/30 focus-visible:border-ring/50 data-[dragging]:border-primary/30 data-[invalid]:border-destructive data-[dragging]:bg-accent/30 data-[invalid]:ring-destructive/20 relative flex items-center justify-start gap-2 rounded-lg border-2 border-dashed p-6 transition-colors outline-none select-none data-[disabled]:pointer-events-none'>
@@ -59,7 +59,7 @@ const MediaPreviewNoAction = () => {
       </div>
       <div className='flex flex-1 flex-col gap-1'>
         <span className='line-clamp-1 w-[200px] text-base'>
-          {thumbnail.name}
+          {/* {thumbnail.name} */}
         </span>
       </div>
     </div>
@@ -67,11 +67,6 @@ const MediaPreviewNoAction = () => {
 }
 
 const MediaPreviewEmpty = () => {
-  const { disabled, thumbnail } = useMediaContext()
-  if (disabled && !thumbnail) {
-    return null
-  }
-
   return (
     <div className='hover:bg-accent/30 focus-visible:border-ring/50 data-[dragging]:border-primary/30 data-[invalid]:border-destructive data-[dragging]:bg-accent/30 data-[invalid]:ring-destructive/20 relative flex items-center justify-start gap-2 rounded-lg border-2 border-dashed p-6 transition-colors outline-none select-none data-[disabled]:pointer-events-none'>
       <div className='flex size-[50px] items-center justify-center shadow-md'>

@@ -1,5 +1,7 @@
 import ToolTip from '@/components/Tooltip'
+import { Badge } from '@/components/ui/badge'
 import messages from '@/constant/message.const'
+import useSprintOrder from '@/hooks/use-sprint-order'
 import { formatDate } from '@/lib/utils'
 import { ProjectWorkspaceDataTable } from '@/types/workspace.type'
 import { ColumnDef } from '@tanstack/react-table'
@@ -7,7 +9,15 @@ import { NavLink } from 'react-router-dom'
 
 type ProjectColumns = ProjectWorkspaceDataTable
 
-const { createAt, name, id } = messages.component.dataTable.project.columns
+const {
+  createAt,
+  name,
+  id,
+  completedSprints,
+  isSuccess,
+  report,
+  totalEndedSprints
+} = messages.component.dataTable.project.columns
 
 const columns: ColumnDef<ProjectColumns>[] = [
   {
@@ -35,6 +45,45 @@ const columns: ColumnDef<ProjectColumns>[] = [
   {
     accessorKey: 'name',
     header: name
+  },
+  {
+    accessorKey: 'totalEndedSprints',
+    header: totalEndedSprints,
+    size: 50,
+    cell: ({ row }) => {
+      const {
+        utils: { getSize }
+      } = useSprintOrder()
+      const value = row.getValue('totalEndedSprints')
+      return value + '/' + getSize()
+    }
+  },
+  {
+    accessorKey: 'completedSprints',
+    header: completedSprints,
+    size: 50,
+    cell: ({ row }) => {
+      const {
+        utils: { getSize }
+      } = useSprintOrder()
+      const value = row.getValue('completedSprints')
+      return value + '/' + getSize()
+    }
+  },
+  {
+    accessorKey: 'isSuccess',
+    header: isSuccess,
+    size: 50,
+    cell: ({ row }) => {
+      const value: boolean = row.getValue('isSuccess')
+      {
+        value ? (
+          <Badge className='bg-green-400'>thành công</Badge>
+        ) : (
+          <Badge className='bg-red-400'>không thành công</Badge>
+        )
+      }
+    }
   },
   {
     accessorKey: 'createdAt',

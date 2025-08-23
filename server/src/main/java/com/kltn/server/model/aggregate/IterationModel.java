@@ -220,4 +220,12 @@ public class IterationModel {
   public void setCourse_name(String course_name) {
     this.course_name = course_name;
   }
+
+  public boolean isTimeMade() {
+    return timeMade;
+  }
+
+  public void setTimeMade(boolean timeMade) {
+    this.timeMade = timeMade;
+  }
 }

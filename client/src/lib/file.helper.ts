@@ -9,6 +9,7 @@ type FileType =
   | 'text'
   | 'file'
   | 'unknown'
+  | 'xlsx'
 const getFileTypeFromUrl = (url: string): FileType => {
   try {
     const pathname = new URL(url).pathname

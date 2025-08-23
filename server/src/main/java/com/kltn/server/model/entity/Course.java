@@ -13,6 +13,7 @@ import java.util.List;
 public class Course extends BaseEntity {
   private String name;
   private String courseId;
+  private boolean haveModel;
   @OneToMany(mappedBy = "dependentCourse")
   private List<CourseRelation> dependentCourses;
   @OneToMany(mappedBy = "prerequisiteCourse")
@@ -29,6 +30,7 @@ public class Course extends BaseEntity {
     super(builder);
     this.name = builder.name;
     this.courseId = builder.courseId;
+    this.haveModel=builder.haveModel;
   }
 
   public static CourseBuilder builder() {
@@ -38,6 +40,7 @@ public class Course extends BaseEntity {
   public static class CourseBuilder extends BaseEntity.BaseEntityBuilder<Course, CourseBuilder> {
     private String name;
     private String courseId;
+    private boolean haveModel;
 
 
     public CourseBuilder name(String name) {
@@ -47,6 +50,11 @@ public class Course extends BaseEntity {
 
     public CourseBuilder courseId(String courseId) {
       this.courseId = courseId;
+      return this;
+    }
+
+    public CourseBuilder haveModel(boolean haveModel){
+      this.haveModel=haveModel;
       return this;
     }
 
@@ -100,5 +108,13 @@ public class Course extends BaseEntity {
 
   public void setWorkspaces(List<Workspace> workspaces) {
     this.workspaces = workspaces;
+  }
+
+  public boolean isHaveModel() {
+    return haveModel;
+  }
+
+  public void setHaveModel(boolean haveModel) {
+    this.haveModel = haveModel;
   }
 }
