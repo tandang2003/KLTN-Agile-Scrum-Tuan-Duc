@@ -17,10 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useClearGetListIssueMutation } from '@/feature/issue/issue.api'
 import useSprintCurrent from '@/hooks/use-sprint-current'
-import {
-  sortSprintsByDateStart,
-  sortSprintsResultByDateStart
-} from '@/lib/sprint.helper'
+import { sortSprintsResultByDateStart } from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
 import { Id } from '@/types/other.type'
 import { useEffect, useState } from 'react'
@@ -30,11 +27,20 @@ import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { Button } from '@/components/ui/button'
 import { SprintResultResponse } from '@/types/sprint.type'
 import { getSprintResultDisplayName } from '@/constant/message.const'
+import { useDate } from '@/providers/DateProvider'
+import { isBefore } from 'date-fns'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from '@/components/ui/hover-card'
+
 type SprintAccordionProps = {
   sprints: SprintResultResponse[]
 }
 
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
+  const { now } = useDate()
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
@@ -81,6 +87,14 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           })
           dispatch(enableCreateIssue())
         }
+
+        console.log(
+          isBefore(now, item.predict)
+            ? getSprintResultDisplayName(item.predictResult)
+            : item.predictSecond &&
+                getSprintResultDisplayName(item.predictResultSecond)
+        )
+
         return (
           <Accordion
             key={item.id}
@@ -114,14 +128,56 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                   status={getStatusSprint(item)}
                   className='ml-auto basis-[150px]'
                 />
-                <Badge sprintPredictResult={item.predictResult}>
-                  {getSprintResultDisplayName(item.predictResult)}
-                </Badge>
+
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Badge
+                      sprintPredictResult={
+                        item.predictResult !== -2
+                          ? item.predictResult
+                          : item.predictResultSecond
+                      }
+                    >
+                      {item.predictResult !== -2
+                        ? getSprintResultDisplayName(item.predictResult)
+                        : getSprintResultDisplayName(item.predictResultSecond)}
+                    </Badge>
+                  </HoverCardTrigger>
+                  <HoverCardContent className='w-fit min-w-[400px]'>
+                    <div className='grid gap-4'>
+                      <div className='grid gap-2'>
+                        <div className='grid grid-cols-3 items-center gap-4'>
+                          <span>Kết quả dự đoán lần 1</span>
+                          <Badge sprintPredictResult={item.predictResult}>
+                            {getSprintResultDisplayName(item.predictResult)}
+                          </Badge>
+                          <Badge>{formatDate(item.predict)}</Badge>
+                        </div>
+                        <div className='grid grid-cols-3 items-center gap-4'>
+                          <span>Kết quả dự đoán lần 2</span>
+                          <Badge sprintPredictResult={item.predictResultSecond}>
+                            {getSprintResultDisplayName(
+                              item.predictResultSecond
+                            )}
+                          </Badge>
+                          <Badge>
+                            {item.predictSecond &&
+                              formatDate(item.predictSecond)}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
                 <Badge>{item.storyPoint}</Badge>
+
                 <Badge>
                   <Icon icon={'material-symbols:online-prediction'} />
-                  {formatDate(item.predict)}
+                  {item.predictResult === -2
+                    ? formatDate(item.predict)
+                    : item.predictSecond && formatDate(item.predictSecond)}
                 </Badge>
+
                 <Badge
                   className='mr-3 basis-[200px]'
                   statusSprint={getStatusSprint(item)}

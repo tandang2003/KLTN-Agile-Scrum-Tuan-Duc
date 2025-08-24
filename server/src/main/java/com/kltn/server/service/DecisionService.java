@@ -143,10 +143,15 @@ public class DecisionService {
       .projectId(project.getId())
       .build());
 
-    // Lưu kết quả đa dự đoán vào database
-    projectSprint.setPredictedResult(r);
-    // Lưu thời gian dự đoán
-    projectSprint.setDtLastPredicted(ClockSimulator.now());
+    if (!isPredict) {
+      projectSprint.setPredictedResult(r);
+      // Lưu thời gian dự đoán
+      projectSprint.setDtLastPredicted(ClockSimulator.now());
+    } else {
+      projectSprint.setPredictedResultSecond(r);
+      // Lưu thời gian dự đoán
+      projectSprint.setDtLastPredictedSecond(ClockSimulator.now());
+    }
     projectSprintService.save(projectSprint);
     return ApiResponse.<Boolean>builder().code(200).message("Decision retrieved successfully").data(r == 0).build();
   }

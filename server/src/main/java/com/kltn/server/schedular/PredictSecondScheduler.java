@@ -92,11 +92,8 @@ public class PredictSecondScheduler {
     System.out.println("reset");
 
     Map<String, LocalDateTime> savedTasks = new HashMap<>(taskEndTimes);
-    for (String key : savedTasks.keySet()) {
-      cancelSprintTask(key);
-    }
-
     for (Map.Entry<String, LocalDateTime> entry : savedTasks.entrySet()) {
+      cancelSprintTask(entry.getKey());
       String[] ids = entry.getKey()
         .split(":");
       String sprintId = ids[0];

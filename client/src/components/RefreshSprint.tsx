@@ -2,6 +2,10 @@ import Icon from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintFilter } from '@/feature/board/board.slice'
+import {
+  useClearGetResultMutation,
+  useLazyGetProjectQuery
+} from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
 import { useLazyGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
@@ -9,45 +13,50 @@ import { toISODateString } from '@/lib/date.helper'
 import { toast } from 'sonner'
 
 const RefreshSprint = () => {
-  const { workspaceId } = useAppId()
+  const { projectId } = useAppId()
   const dispatch = useAppDispatch()
-  const [trigger] = useLazyGetWorkspaceQuery()
+  const [clear] = useClearGetResultMutation()
+  const [trigger] = useLazyGetProjectQuery()
   const handleOnClick = () => {
-    if (!workspaceId) return
-    trigger(workspaceId)
+    if (!projectId) return
+    trigger(projectId)
       .unwrap()
       .then((res) => {
         const { currentSprint, nextSprint, prevSprint } = res
+        console.log('currentSprint', currentSprint)
+        console.log('nextSprint', nextSprint)
+        dispatch(
+          setSprintCurrent({
+            previous: prevSprint
+              ? {
+                  id: prevSprint.id,
+                  start: toISODateString(prevSprint.start),
+                  end: toISODateString(prevSprint.end)
+                }
+              : undefined,
+            current: currentSprint
+              ? {
+                  id: currentSprint.id,
+                  start: toISODateString(currentSprint.start),
+                  end: toISODateString(currentSprint.end)
+                }
+              : undefined,
+            next: nextSprint
+              ? {
+                  id: nextSprint.id,
+                  start: toISODateString(nextSprint.start),
+                  end: toISODateString(nextSprint.end)
+                }
+              : undefined
+          })
+        )
+        clear().unwrap()
         if (currentSprint) {
-          const { id, start, end } = currentSprint
-          dispatch(
-            setSprintCurrent({
-              previous: prevSprint
-                ? {
-                    id: prevSprint.id,
-                    start: toISODateString(prevSprint.start),
-                    end: toISODateString(prevSprint.end)
-                  }
-                : undefined,
-              current: {
-                id: id,
-                start: toISODateString(start),
-                end: toISODateString(end)
-              },
-              next: nextSprint
-                ? {
-                    id: nextSprint.id,
-                    start: toISODateString(nextSprint.start),
-                    end: toISODateString(nextSprint.end)
-                  }
-                : undefined
-            })
-          )
           dispatch(
             setSprintFilter({
-              id: id,
-              start: toISODateString(start),
-              end: toISODateString(end)
+              id: currentSprint.id,
+              start: toISODateString(currentSprint.start),
+              end: toISODateString(currentSprint.end)
             })
           )
           toast.success('Cập nhập sprint hiện tại thành công')

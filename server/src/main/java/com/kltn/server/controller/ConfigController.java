@@ -6,6 +6,7 @@ import com.kltn.server.DTO.response.message.TimeMessageResponse;
 import com.kltn.server.config.init.ClockSimulator;
 import com.kltn.server.model.type.task.MessageType;
 import com.kltn.server.schedular.PredictScheduler;
+import com.kltn.server.schedular.PredictSecondScheduler;
 import com.kltn.server.schedular.SprintScheduler;
 import com.kltn.server.service.message.RoomService;
 
@@ -29,12 +30,14 @@ public class ConfigController {
   private final RoomService roomService;
   private final ClockSimulator clockSimulator;
   private final PredictScheduler predictScheduler1;
+  private final PredictSecondScheduler predictSecondScheduler;
 
-  public ConfigController(SprintScheduler sprintScheduler, RoomService roomService, ClockSimulator clockSimulator, PredictScheduler predictScheduler1) {
+  public ConfigController(SprintScheduler sprintScheduler, RoomService roomService, ClockSimulator clockSimulator, PredictScheduler predictScheduler1, PredictSecondScheduler predictSecondScheduler) {
     this.sprintScheduler = sprintScheduler;
     this.roomService = roomService;
     this.clockSimulator = clockSimulator;
     this.predictScheduler1 = predictScheduler1;
+    this.predictSecondScheduler = predictSecondScheduler;
   }
 
   @PostMapping("config/timespeech")
@@ -46,6 +49,7 @@ public class ConfigController {
                                                                  String senderId) {
     sprintScheduler.updateTimeSpeech(timeSpeech);
     predictScheduler1.updateTimeSpeech(timeSpeech);
+    predictSecondScheduler.updateTimeSpeech(timeSpeech);
     roomService.sentToApp(new MessageResponse(
       MessageType.TIME,
       new TimeMessageResponse(

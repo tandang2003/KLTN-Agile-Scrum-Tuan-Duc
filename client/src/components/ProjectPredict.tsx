@@ -6,8 +6,6 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { ProjectDetailResponse } from '@/types/project.type'
-import { AlertCircleIcon } from 'lucide-react'
-import { ReactNode } from 'react'
 type ProjectPredictProps = {
   data: ProjectDetailResponse
 }

@@ -177,8 +177,9 @@ const messages = {
           status: 'Trạng thái',
           start: 'Ngày bắt đầu',
           end: 'Ngày kết thúc',
-          predict: 'Thời gian dự đoán',
-          predictStatus: 'Trạng thái dự đoán',
+          predict: 'Thời gian dự đoán 1',
+          predictSecond: 'Thời gian dự đoán 2',
+          predictStatus: 'Trạng thái',
           detail: 'Chi tiết'
         },
         actions: {

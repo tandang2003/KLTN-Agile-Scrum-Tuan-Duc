@@ -24,28 +24,29 @@ public class SchedularRunInit implements CommandLineRunner {
   private PredictScheduler predictScheduler;
   @Autowired
   private PredictSecondScheduler predictSecondScheduler;
+
   @Override
   public void run(String... args) throws Exception {
     List<Sprint> sprints = sprintRepository.findAllByDtEndAfter(ClockSimulator.now());
     sprints.forEach(sprint -> {
       sprintScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtEnd()
-          .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
-          .toLocalDateTime());
+        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+        .toLocalDateTime());
       // predictScheduler.scheduleSprintEnd(sprint.getId(),
       // sprint.getDtPredict().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
     });
     List<Sprint> predictSprints = sprintRepository.findALlByDtPredictAfter(ClockSimulator.now());
     predictSprints.forEach(sprint -> {
       predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict()
-          .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
-          .toLocalDateTime());
+        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+        .toLocalDateTime());
     });
 
     List<Sprint> predictSecondSprints = sprintRepository.findALlByDtPredictSecondAfter(ClockSimulator.now());
-    predictSecondSprints.forEach(sprint -> {
-    predictSecondScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredictSecond()
-      .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
-      .toLocalDateTime());
+    predictSecondSprints.stream().forEach(sprint -> {
+      predictSecondScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredictSecond()
+        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+        .toLocalDateTime());
     });
   }
 }

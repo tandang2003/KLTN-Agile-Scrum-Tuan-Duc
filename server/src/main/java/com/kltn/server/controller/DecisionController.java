@@ -112,7 +112,7 @@ public class DecisionController {
 //    return ResponseEntity.ok(response);
 //  }
 
-  @GetMapping("store-data")
+    @GetMapping("store-data")
   public ResponseEntity<ApiResponse<Boolean>> storeData(@RequestParam String stage, @RequestParam String workspaceId) {
     Instant now = ClockSimulator.now();
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);

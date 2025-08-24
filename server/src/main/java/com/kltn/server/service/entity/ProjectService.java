@@ -98,8 +98,7 @@ public class ProjectService {
     WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder()
       .workspaceId(creationRequest.workspaceId())
       .userId(creationRequest.userId())
-      .build()
-      ;
+      .build();
 
     WorkspacesUsersProjects workspacesUsersProjects = workspacesUsersProjectsRepository.findById(workspacesUsersId)
       .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build());
@@ -119,13 +118,13 @@ public class ProjectService {
         .map(Sprint::getId)
         .toList());
       sprints.forEach(sprint ->
-        {
+      {
         if (sprint.getDtEnd() != null) {
           sprintScheduler.scheduleSprintWithProject(sprint.getId(), savedProject.getId(),
             LocalDateTime.ofInstant(sprint.getDtEnd(),
               ZoneId.of("Asia/Ho_Chi_Minh")));
         }
-        });
+      });
     }
 
     workspacesUsersProjects.setProject(savedProject);
@@ -139,8 +138,7 @@ public class ProjectService {
       .nkProjectId(project.getId())
       .description(project.getDescription())
       .topics(topics)
-      .build()
-      ;
+      .build();
     var projectSaved = projectMongoService.save(projectMongo);
 
     // ChangeLogRequest log = changeLogMapper.projectToCreateLog(project,
@@ -168,19 +166,17 @@ public class ProjectService {
       .variable(
         Map.of("sender", userInvite.getName(), "project.name", project.getName()))
       .templateName("invite-student")
-      .build()
-      ;
+      .build();
     invitationRequest.userId()
       .forEach(userId ->
-        {
+      {
         User user = userService.getUserByUniId(userId);
 
         WorkspacesUsersId workspacesUsersId = WorkspacesUsersId.builder()
           .userId(user.getId())
           .workspaceId(
             invitationRequest.workspaceId())
-          .build()
-          ;
+          .build();
         WorkspacesUsersProjects usersProjects = WorkspacesUsersProjects.builder()
           .role(roleInit.getRole(
             RoleType.MEMBER.getName()))
@@ -188,8 +184,7 @@ public class ProjectService {
           .project(project)
           .workspace(project.getWorkspace())
           .id(workspacesUsersId)
-          .build()
-          ;
+          .build();
         try {
           workspacesUsersProjectsRepository.save(usersProjects);
           emailService.inviteToProject(mailRequest.rebuild(user.getEmail(),
@@ -202,7 +197,7 @@ public class ProjectService {
             .error(Error.DB_SERVER_ERROR)
             .build();
         }
-        });
+      });
     return ApiResponse.<Void>builder()
       .message("Invite student to project")
       .build();
@@ -279,9 +274,11 @@ public class ProjectService {
         item.getSprint().getDtStart(),
         item.getSprint().getDtEnd(),
         item.getSprint().getStoryPoint(),
-        item.getPredictedResult()))
-      .toList()
-      ;
+        item.getPredictedResult(),
+        item.getPredictedResultSecond()
+      ))
+
+      .toList();
     return ApiResponse.<List<ProjectSprintResponse>>builder()
       .message("Get project result by id")
       .data(projectResponse)
@@ -312,8 +309,7 @@ public class ProjectService {
     List<UserResponse> userResponses = workspacesUsersProjects.stream()
       .map(wup -> userService.transformToUserResponse(
         wup.getUser(), wup.getRole()))
-      .toList()
-      ;
+      .toList();
     return ApiResponse.<List<UserResponse>>builder()
       .message("Get members of project")
       .data(userResponses)

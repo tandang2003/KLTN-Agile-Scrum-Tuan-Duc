@@ -72,8 +72,6 @@ const BoardPage = () => {
             status: issue.columnTo as IssueStatus,
             position: ''
           })
-          // Rollback
-          // await Promise.reject(new Error('Simulated failure'))
         }
 
         // If updateStatus succeeded or mode is same, update position
@@ -121,13 +119,11 @@ const BoardPage = () => {
   )
 
   const handleOnMove = async (data: DataOnMoveType): Promise<void> => {
-    // // console.log('handleOnMove', active, columnTo, indexTo)
     const { active, columnTo, indexTo } = data
     const oldActiveIndex = findIndex(active)
     const newActiveIndex = indexTo
     const oldColumn: IssueStatus | null = findColumn(active)
     const newColumn = columnTo as IssueStatus | null
-    // console.log(oldActiveIndex, newActiveIndex, oldColumn, newColumn)
     if (
       oldActiveIndex === null ||
       newActiveIndex === null ||
@@ -172,9 +168,20 @@ const BoardPage = () => {
     }
   }
 
+  const refreshBoard = async () => {
+    await refetch() // refresh issue list
+    if (projectId && sprintId) {
+      const res = await boardService.getPositionBySprint({
+        projectId,
+        sprintId
+      })
+      setColumns(res) // refresh columns
+    }
+  }
+
   return (
     <div>
-      <FilterBoard onRefresh={refetch} />
+      <FilterBoard onRefresh={refreshBoard} />
       <LoadingBoundary
         data={data}
         isLoading={isFetching}
