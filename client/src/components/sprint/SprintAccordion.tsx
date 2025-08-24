@@ -27,8 +27,6 @@ import RequiredAuth from '@/components/wrapper/RequiredAuth'
 import { Button } from '@/components/ui/button'
 import { SprintResultResponse } from '@/types/sprint.type'
 import { getSprintResultDisplayName } from '@/constant/message.const'
-import { useDate } from '@/providers/DateProvider'
-import { isBefore } from 'date-fns'
 import {
   HoverCard,
   HoverCardContent,
@@ -40,7 +38,6 @@ type SprintAccordionProps = {
 }
 
 const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
-  const { now } = useDate()
   const {
     util: { getStatusSprint }
   } = useSprintCurrent()
@@ -87,13 +84,6 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
           })
           dispatch(enableCreateIssue())
         }
-
-        console.log(
-          isBefore(now, item.predict)
-            ? getSprintResultDisplayName(item.predictResult)
-            : item.predictSecond &&
-                getSprintResultDisplayName(item.predictResultSecond)
-        )
 
         return (
           <Accordion

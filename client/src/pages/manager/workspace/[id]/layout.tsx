@@ -26,33 +26,35 @@ const WorkspaceDetailLayout = () => {
   }, [navigate, workspaceId, dispatch])
 
   useEffect(() => {
-    if (data?.currentSprint) {
-      const { prevSprint, currentSprint, nextSprint } = data
-      const { id, start, end } = currentSprint
+    if (!data) return
+    const { prevSprint, currentSprint, nextSprint } = data
 
-      dispatch(
-        setSprintCurrent({
-          previous: prevSprint
-            ? {
-                id: prevSprint.id,
-                start: toISODateString(prevSprint.start),
-                end: toISODateString(prevSprint.end)
-              }
-            : undefined,
-          current: {
-            id: id,
-            start: toISODateString(start),
-            end: toISODateString(end)
-          },
-          next: nextSprint
-            ? {
-                id: nextSprint.id,
-                start: toISODateString(nextSprint.start),
-                end: toISODateString(nextSprint.end)
-              }
-            : undefined
-        })
-      )
+    dispatch(
+      setSprintCurrent({
+        previous: prevSprint
+          ? {
+              id: prevSprint.id,
+              start: toISODateString(prevSprint.start),
+              end: toISODateString(prevSprint.end)
+            }
+          : undefined,
+        current: currentSprint
+          ? {
+              id: currentSprint.id,
+              start: toISODateString(currentSprint.start),
+              end: toISODateString(currentSprint.end)
+            }
+          : undefined,
+        next: nextSprint
+          ? {
+              id: nextSprint.id,
+              start: toISODateString(nextSprint.start),
+              end: toISODateString(nextSprint.end)
+            }
+          : undefined
+      })
+    )
+    if (data?.currentSprint) {
       dispatch(
         setSprintFilter({
           id: data.currentSprint.id,

@@ -104,7 +104,7 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
             {formatDate(data.start)} - {formatDate(data.end)}
           </Badge>
 
-          <BadgeSprint status={getStatusSprint(data)} className='ml-auto]' />
+          <BadgeSprint status={getStatusSprint(data)} className='ml-auto' />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

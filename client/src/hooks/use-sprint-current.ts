@@ -23,16 +23,21 @@ const useSprintCurrent = (): useSprintCurrentReturnType => {
 
   const getStatusSprint = useCallback(
     (sprint: Sprint): SprintStatusType => {
+      if (sprint.id === sprintCurrent?.id) return 'RUNNING'
+      if (sprint.id === sprintNext?.id) return 'PENDING'
+      if (sprint.id === sprintPrev?.id) return 'COMPLETE'
+      console.log(sprintNext)
+
       if (
         sprintPrev &&
-        (isBefore(sprint.end, sprintPrev?.end) ||
-          isEqual(sprint.end, sprintPrev?.end))
+        (isBefore(sprint.end, sprintPrev.end) ||
+          isEqual(sprint.end, sprintPrev.end))
       )
         return 'COMPLETE'
       if (
         sprintNext &&
-        (isAfter(sprint.start, sprintNext?.start) ||
-          isEqual(sprint.start, sprintNext?.start))
+        (isAfter(sprint.start, sprintNext.start) ||
+          isEqual(sprint.start, sprintNext.start))
       )
         return 'PENDING'
       return 'RUNNING'
