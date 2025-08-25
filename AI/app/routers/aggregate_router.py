@@ -35,4 +35,4 @@ async def list_issues(data: IterationModel):
 async def list_issues(data: List[IterationModel]):
   project_process.set_sprint_data(data)
   project_process.set_issue_data(data)
-  return process.process()
+  return project_process.process()
