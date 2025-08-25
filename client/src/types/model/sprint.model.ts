@@ -4,6 +4,7 @@ type SprintModel = {
   title: string
   description: string
   predict: Date
+  predictSecond: Date
   start: Date
   end: Date
   position: number

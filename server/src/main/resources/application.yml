@@ -26,7 +26,27 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
-
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            type:
+              mapping: "send_mail: com.kltn.server.DTO.request.base.MailRequest, project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest, predict: com.kltn.server.DTO.request.kafka.SprintPredictRequest"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.kltn.server.DTO.request.log, com.kltn.server.DTO.request.kafka
+            type:
+              mapping: "send_mail: com.kltn.server.DTO.request.base.MailRequest, project-log: com.kltn.server.DTO.request.log.ChangeLogRequest, task-log: com.kltn.server.DTO.request.log.ChangeLogRequest, snapshot: com.kltn.server.DTO.request.kafka.SnapshotRequest, predict: com.kltn.server.DTO.request.kafka.SprintPredictRequest"
+      auto-offset-reset: latest
+    bootstrap-servers: localhost:9092
 #    , localhost:9093, localhost:9094
 
 server:
@@ -60,7 +80,7 @@ mail:
   sender: noreplied@gmail.com
   name: Project manager Web
 app:
-  ip: 172.16.17.56
+  ip: 192.168.1.17
   whitelist:
     - auth
     - auth/register
@@ -92,3 +112,21 @@ google:
     issue:
       sheet: Sheet1
       spreadsheetId: 1G3NKAq6O5OyjNPbKwWvvvIfZ9RVU3otE3M8zaX_QJxU
+#kafka:
+#  topic:
+#    send-object-customer:
+#      name: send_object_customer
+#      partitions: 3
+#      replication-factor: 3
+#    send-object-order:
+#      name: send_object_order
+#      partitions: 3
+#      replication-factor: 3
+#    send-object-product:
+#      name: send_object_product
+#      partitions: 3
+#      replication-factor: 3
+#    send-object-user:
+#      name: send_object_user
+#      partitions: 3
+#      replication-factor: 3

@@ -28,4 +28,14 @@ public class SchedulerConfig {
     scheduler.initialize();
     return scheduler;
   }
+
+  @Bean
+  @Qualifier("predictSecondThreadScheduler")
+  public TaskScheduler predictSecondThreadScheduler() {
+    ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+    scheduler.setPoolSize(10);
+    scheduler.setThreadNamePrefix("DynamicScheduler-");
+    scheduler.initialize();
+    return scheduler;
+  }
 }

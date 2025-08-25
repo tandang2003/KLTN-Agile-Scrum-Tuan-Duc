@@ -9,15 +9,8 @@ import { NavLink } from 'react-router-dom'
 
 type ProjectColumns = ProjectWorkspaceDataTable
 
-const {
-  createAt,
-  name,
-  id,
-  completedSprints,
-  isSuccess,
-  report,
-  totalEndedSprints
-} = messages.component.dataTable.project.columns
+const { createAt, name, id, completedSprints, isSuccess, totalEndedSprints } =
+  messages.component.dataTable.project.columns
 
 const columns: ColumnDef<ProjectColumns>[] = [
   {
@@ -46,18 +39,18 @@ const columns: ColumnDef<ProjectColumns>[] = [
     accessorKey: 'name',
     header: name
   },
-  {
-    accessorKey: 'totalEndedSprints',
-    header: totalEndedSprints,
-    size: 50,
-    cell: ({ row }) => {
-      const {
-        utils: { getSize }
-      } = useSprintOrder()
-      const value = row.getValue('totalEndedSprints')
-      return value + '/' + getSize()
-    }
-  },
+  // {
+  //   accessorKey: 'totalEndedSprints',
+  //   header: totalEndedSprints,
+  //   size: 50,
+  //   cell: ({ row }) => {
+  //     const {
+  //       utils: { getSize }
+  //     } = useSprintOrder()
+  //     const value = row.getValue('totalEndedSprints')
+  //     return value + '/' + getSize()
+  //   }
+  // },
   {
     accessorKey: 'completedSprints',
     header: completedSprints,
@@ -76,13 +69,11 @@ const columns: ColumnDef<ProjectColumns>[] = [
     size: 50,
     cell: ({ row }) => {
       const value: boolean = row.getValue('isSuccess')
-      {
-        value ? (
-          <Badge className='bg-green-400'>thành công</Badge>
-        ) : (
-          <Badge className='bg-red-400'>không thành công</Badge>
-        )
-      }
+      return value ? (
+        <Badge className='bg-green-400'>Thành công</Badge>
+      ) : (
+        <Badge className='bg-red-400'>Không thành công</Badge>
+      )
     }
   },
   {

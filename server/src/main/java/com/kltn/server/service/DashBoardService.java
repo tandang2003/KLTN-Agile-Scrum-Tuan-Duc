@@ -52,9 +52,9 @@ public class DashBoardService {
   private final WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository;
 
   public DashBoardService(IssueService issueService, IssueRepository issueRepository,
-      ProjectRepository projectRepository, ProjectSprintRepository projectSprintRepository,
-      SprintRepository sprintRepository, SnapshotRepository snapshotRepository, RestClient.Builder builder,
-      WorkspaceService workspaceService, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository) {
+                          ProjectRepository projectRepository, ProjectSprintRepository projectSprintRepository,
+                          SprintRepository sprintRepository, SnapshotRepository snapshotRepository, RestClient.Builder builder,
+                          WorkspaceService workspaceService, WorkspacesUsersProjectsRepository workspacesUsersProjectsRepository) {
     this.issueRepository = issueRepository;
     this.projectRepository = projectRepository;
     this.projectSprintRepository = projectSprintRepository;
@@ -82,9 +82,9 @@ public class DashBoardService {
     }
 
     List<Sprint> sprints = projectSprintRepository.findByProjectId(projectId)
-        .stream()
-        .map(ProjectSprint::getSprint)
-        .toList();
+      .stream()
+      .map(ProjectSprint::getSprint)
+      .toList();
     for (Sprint sprint : sprints) {
       boolean isActive = sprint.getDtEnd().isAfter(ClockSimulator.now());
 
@@ -93,7 +93,7 @@ public class DashBoardService {
         issueCreated += issueRepository.countByProjectIdAndSprintId(projectId, sprint.getId());
         issueDone += issueRepository.countByProjectIdAndSprintIdAndStatus(projectId, sprint.getId(), IssueStatus.DONE);
         issueFailed += issueRepository.countByProjectIdAndSprintIdAndStatusNot(projectId, sprint.getId(),
-            IssueStatus.DONE);
+          IssueStatus.DONE);
 
         mergeStatusMap(statusMap, buildStatusMapFromMySQL(projectId, sprint.getId()));
         mergePriorityMap(priorityMap, buildPriorityMapFromMySQL(projectId, sprint.getId()));
@@ -101,7 +101,7 @@ public class DashBoardService {
       } else {
         // from snapshot
         Optional<ProjectSnapshot> snapshotOpt = snapshotRepository.findByProjectIdAndSprintId(projectId,
-            sprint.getId());
+          sprint.getId());
         if (snapshotOpt.isEmpty())
           continue;
 
@@ -125,10 +125,10 @@ public class DashBoardService {
     builder.workload(totalWorkloads);
 
     return ApiResponse.<DashboardProjectResponse>builder()
-        .code(200)
-        .data(builder.build())
-        .message("Đã truy xuất thành công số liệu thống kê bảng điều khiển.")
-        .build();
+      .code(200)
+      .data(builder.build())
+      .message("Đã truy xuất thành công số liệu thống kê bảng điều khiển.")
+      .build();
   }
 
   private void mergeStatusMap(Map<String, Integer> target, Map<String, Integer> source) {
@@ -141,7 +141,7 @@ public class DashBoardService {
 
   private void mergeWorkloads(List<Workload> target, List<Workload> source) {
     Map<String, Workload> map = target.stream()
-        .collect(Collectors.toMap(w -> w.getAssignee().getUniId(), w -> w, (w1, w2) -> w1));
+      .collect(Collectors.toMap(w -> w.getAssignee().getUniId(), w -> w, (w1, w2) -> w1));
 
     for (Workload w : source) {
       String uniId = w.getAssignee().getUniId();
@@ -152,11 +152,11 @@ public class DashBoardService {
         existing.setNotComplete(existing.getNotComplete() + w.getNotComplete());
       } else {
         map.put(uniId, Workload.builder()
-            .assignee(w.getAssignee())
-            .total(w.getTotal())
-            .done(w.getDone())
-            .notComplete(w.getNotComplete())
-            .build());
+          .assignee(w.getAssignee())
+          .total(w.getTotal())
+          .done(w.getDone())
+          .notComplete(w.getNotComplete())
+          .build());
       }
     }
 
@@ -168,8 +168,8 @@ public class DashBoardService {
     Map<String, Integer> status = new LinkedHashMap<>();
     for (IssueStatus issueStatus : IssueStatus.values()) {
       int count = sprintId != null
-          ? issueRepository.countByProjectIdAndSprintIdAndStatus(projectId, sprintId, issueStatus)
-          : issueRepository.countByProjectIdAndStatus(projectId, issueStatus);
+        ? issueRepository.countByProjectIdAndSprintIdAndStatus(projectId, sprintId, issueStatus)
+        : issueRepository.countByProjectIdAndStatus(projectId, issueStatus);
       status.put(issueStatus.name(), count);
     }
     return status;
@@ -179,7 +179,7 @@ public class DashBoardService {
     Map<String, Integer> priority = new LinkedHashMap<>();
     for (IssuePriority p : IssuePriority.values()) {
       int count = sprintId != null ? issueRepository.countByProjectIdAndSprintIdAndPriority(projectId, sprintId, p)
-          : issueRepository.countByProjectIdAndPriority(projectId, p);
+        : issueRepository.countByProjectIdAndPriority(projectId, p);
       priority.put(p.name(), count);
     }
     return priority;
@@ -188,28 +188,28 @@ public class DashBoardService {
   private List<Workload> buildWorkloadsFromMySQL(String projectId, String sprintId) {
     List<Workload> workloads = new ArrayList<>();
     List<WorkspacesUsersProjects> userProjects = projectSprintRepository.findFirstByProjectId(projectId)
-        .getProject()
-        .getWorkspacesUserProjects();
+      .getProject()
+      .getWorkspacesUserProjects();
 
     for (WorkspacesUsersProjects userProject : userProjects) {
       String userId = userProject.getUser().getId();
       workloads.add(Workload.builder()
-          .assignee(Assignee.builder()
-              .name(userProject.getUser().getName())
-              .uniId(userProject.getUser().getUniId())
-              .build())
-          .total(
-              sprintId != null ? issueRepository.countByProjectIdAndSprintIdAndAssigneeId(projectId, sprintId, userId)
-                  : issueRepository.countByProjectIdAndAssigneeId(projectId, userId))
-          .done(sprintId != null
-              ? issueRepository.countByProjectIdAndSprintIdAndAssigneeIdAndStatus(projectId, sprintId, userId,
-                  IssueStatus.DONE)
-              : issueRepository.countByProjectIdAndAssigneeIdAndStatus(projectId, userId, IssueStatus.DONE))
-          .notComplete(sprintId != null
-              ? issueRepository.countByProjectIdAndSprintIdAndAssigneeIdAndStatusNot(projectId, sprintId, userId,
-                  IssueStatus.DONE)
-              : issueRepository.countByProjectIdAndAssigneeIdAndStatusNot(projectId, userId, IssueStatus.DONE))
-          .build());
+        .assignee(Assignee.builder()
+          .name(userProject.getUser().getName())
+          .uniId(userProject.getUser().getUniId())
+          .build())
+        .total(
+          sprintId != null ? issueRepository.countByProjectIdAndSprintIdAndAssigneeId(projectId, sprintId, userId)
+            : issueRepository.countByProjectIdAndAssigneeId(projectId, userId))
+        .done(sprintId != null
+          ? issueRepository.countByProjectIdAndSprintIdAndAssigneeIdAndStatus(projectId, sprintId, userId,
+          IssueStatus.DONE)
+          : issueRepository.countByProjectIdAndAssigneeIdAndStatus(projectId, userId, IssueStatus.DONE))
+        .notComplete(sprintId != null
+          ? issueRepository.countByProjectIdAndSprintIdAndAssigneeIdAndStatusNot(projectId, sprintId, userId,
+          IssueStatus.DONE)
+          : issueRepository.countByProjectIdAndAssigneeIdAndStatusNot(projectId, userId, IssueStatus.DONE))
+        .build());
     }
     return workloads;
   }
@@ -218,8 +218,8 @@ public class DashBoardService {
     Map<String, Integer> status = new LinkedHashMap<>();
     for (IssueStatus issueStatus : IssueStatus.values()) {
       status.put(issueStatus.name(), (int) issues.stream()
-          .filter(s -> s.getStatus().equalsIgnoreCase(issueStatus.name()))
-          .count());
+        .filter(s -> s.getStatus().equalsIgnoreCase(issueStatus.name()))
+        .count());
     }
     return status;
   }
@@ -238,29 +238,29 @@ public class DashBoardService {
         .projectId(projectId)
         .sprintId(sprintId)
         .build())
-        .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build())
-        .getProject()
-        .getWorkspacesUserProjects();
+      .orElseThrow(() -> AppException.builder().error(Error.NOT_FOUND).build())
+      .getProject()
+      .getWorkspacesUserProjects();
 
     for (WorkspacesUsersProjects userProject : userProjects) {
       if (userProject.getUser() == null)
         continue;
       String assigneeId = String.valueOf(userProject.getUser().getId());
       workloads.add(Workload.builder()
-          .assignee(Assignee.builder()
-              .name(userProject.getUser().getName())
-              .uniId(userProject.getUser().getUniId())
-              .build())
-          .total((int) issues.stream().filter(s -> s.getAssignee().equals(assigneeId)).count())
-          .done((int) issues.stream()
-              .filter(
-                  s -> s.getAssignee().equals(assigneeId) && s.getStatus().equalsIgnoreCase(IssueStatus.DONE.name()))
-              .count())
-          .notComplete((int) issues.stream()
-              .filter(
-                  s -> s.getAssignee().equals(assigneeId) && !s.getStatus().equalsIgnoreCase(IssueStatus.DONE.name()))
-              .count())
-          .build());
+        .assignee(Assignee.builder()
+          .name(userProject.getUser().getName())
+          .uniId(userProject.getUser().getUniId())
+          .build())
+        .total((int) issues.stream().filter(s -> s.getAssignee().equals(assigneeId)).count())
+        .done((int) issues.stream()
+          .filter(
+            s -> s.getAssignee().equals(assigneeId) && s.getStatus().equalsIgnoreCase(IssueStatus.DONE.name()))
+          .count())
+        .notComplete((int) issues.stream()
+          .filter(
+            s -> s.getAssignee().equals(assigneeId) && !s.getStatus().equalsIgnoreCase(IssueStatus.DONE.name()))
+          .count())
+        .build());
     }
     return workloads;
   }
@@ -271,9 +271,9 @@ public class DashBoardService {
     Optional<Sprint> sprintOpt = sprintRepository.findById(sprintId);
     if (sprintOpt.isEmpty()) {
       return ApiResponse.<DashboardProjectResponse>builder()
-          .error(Error.DB_SERVER_MISSING_DATA)
-          .message("Không tìm thấy sprint")
-          .build();
+        .error(Error.DB_SERVER_MISSING_DATA)
+        .message("Không tìm thấy sprint")
+        .build();
     }
 
     Sprint sprint = sprintOpt.get();
@@ -300,9 +300,9 @@ public class DashBoardService {
       Optional<ProjectSnapshot> snapshotOpt = snapshotRepository.findByProjectIdAndSprintId(projectId, sprintId);
       if (snapshotOpt.isEmpty()) {
         return ApiResponse.<DashboardProjectResponse>builder()
-            .error(Error.DB_SERVER_MISSING_DATA)
-            .message("Không tìm thấy snapshot")
-            .build();
+          .error(Error.DB_SERVER_MISSING_DATA)
+          .message("Không tìm thấy snapshot")
+          .build();
       }
 
       List<IssueSnapshot> issues = snapshotOpt.get().getIssues();
@@ -324,10 +324,10 @@ public class DashBoardService {
     builder.workload(workloads);
 
     return ApiResponse.<DashboardProjectResponse>builder()
-        .code(200)
-        .data(builder.build())
-        .message("Đã truy xuất thành công số liệu thống kê bảng điều khiển.")
-        .build();
+      .code(200)
+      .data(builder.build())
+      .message("Đã truy xuất thành công số liệu thống kê bảng điều khiển.")
+      .build();
   }
 
   public ApiResponse<DashboardWorkspaceResponse> getForTeacher(String workspaceId, String sprintId) {
@@ -340,16 +340,16 @@ public class DashBoardService {
       processingSprint = getCurrentSprint(workspace);
     } else {
       processingSprint = sprintRepository.findById(sprintId)
-          .orElseThrow(() -> AppException.builder()
-              .error(Error.DB_SERVER_MISSING_DATA)
-              .message("Không tìm thấy sprint với ID: " + sprintId)
-              .build());
+        .orElseThrow(() -> AppException.builder()
+          .error(Error.DB_SERVER_MISSING_DATA)
+          .message("Không tìm thấy sprint với ID: " + sprintId)
+          .build());
       projects = processingSprint.getProjects();
     }
 
     builder.numOfProject(projects.size());
-    final int[] maxNumOfMember = { 0 };
-    final int[] minNumOfMember = { 100 };
+    final int[] maxNumOfMember = {0};
+    final int[] minNumOfMember = {100};
     projects.forEach(project -> {
       int numOfMember = project.getMembers().size();
       if (numOfMember < minNumOfMember[0]) {
@@ -366,10 +366,10 @@ public class DashBoardService {
       builder.taskFinishRate(calculateTaskFinishRate(workspace, processingSprint));
     }
     return ApiResponse.<DashboardWorkspaceResponse>builder()
-        .code(200)
-        .data(builder.build())
-        .message("Đã truy xuất thành công số liệu thống kê bảng điều khiển.")
-        .build();
+      .code(200)
+      .data(builder.build())
+      .message("Đã truy xuất thành công số liệu thống kê bảng điều khiển.")
+      .build();
   }
 
   private double calculateTaskFinishRate(Workspace workspace, Sprint processingSprint) {
@@ -386,18 +386,18 @@ public class DashBoardService {
         boolean issue;
         if (flag) {
           ProjectSnapshot snapshot = snapshotRepository.findByProjectIdAndSprintId(wup.getProject()
-              .getId(), processingSprint.getId()).orElse(null);
+            .getId(), processingSprint.getId()).orElse(null);
           if (snapshot == null) {
             continue;
           }
           issue = snapshot.getIssues()
-              .stream()
-              .filter(s -> s != null && s.getAssignee() != null)
-              .anyMatch(issueSnapshot -> issueSnapshot.getAssignee().equals(u.getId()) && !issueSnapshot.getStatus()
-                  .equalsIgnoreCase(IssueStatus.DONE.name()));
+            .stream()
+            .filter(s -> s != null && s.getAssignee() != null)
+            .anyMatch(issueSnapshot -> issueSnapshot.getAssignee().equals(u.getId()) && !issueSnapshot.getStatus()
+              .equalsIgnoreCase(IssueStatus.DONE.name()));
         } else {
           issue = issueRepository.existsIssueByAssignee_IdAndSprint_IdAndStatusNot(u.getId(), processingSprint.getId(),
-              IssueStatus.DONE);
+            IssueStatus.DONE);
         }
         if (issue) {
           finishedMembers++;
@@ -418,10 +418,10 @@ public class DashBoardService {
       if (wup.getProject() != null) {
         boolean issue = flag ? snapshotRepository.existsByProjectIdAndSprintIdAndIssues_Id(wup.getProject()
             .getId(), processingSprint.getId(),
-            wup.getUser()
-                .getId())
-            : issueRepository.existsIssueByAssignee_IdAndSprint_Id(wup.getUser()
-                .getId(), processingSprint.getId());
+          wup.getUser()
+            .getId())
+          : issueRepository.existsIssueByAssignee_IdAndSprint_Id(wup.getUser()
+          .getId(), processingSprint.getId());
         if (issue) {
           assignedMembers++;
         }
@@ -447,7 +447,7 @@ public class DashBoardService {
   }
 
   public ApiResponse<ApiPaging<Workload>> getWorkloadForTeacher(String workspaceId, String sprintId, int page,
-      int size) {
+                                                                int size) {
     Pageable pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "user.name"));
     Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
     Sprint processingSprint = sprintId != null ? sprintRepository.findById(sprintId).orElse(null) : null;
@@ -461,44 +461,44 @@ public class DashBoardService {
           Sprint currentSprint = getCurrentSprint(workspace);
           if (currentSprint != null) {
             total = issueRepository.countByProjectIdAndAssigneeIdAndSprintId(wup.getProject().getId(), user.getId(),
-                currentSprint.getId());
+              currentSprint.getId());
             done = issueRepository.countByProjectIdAndAssigneeIdAndStatusAndSprintId(wup.getProject()
                 .getId(), user.getId(),
-                IssueStatus.DONE, currentSprint.getId());
+              IssueStatus.DONE, currentSprint.getId());
           }
           List<ProjectSnapshot> snapshot = snapshotRepository.findByProjectId(wup.getProject().getId());
           List<IssueSnapshot> issues = snapshot.stream()
-              .filter(p -> p.getIssues() != null && !p.getIssues().isEmpty())
-              .flatMap(s -> s.getIssues().stream())
-              .filter(i -> i.getAssignee() != null && i.getAssignee().equals(user.getId()))
-              .toList();
+            .filter(p -> p.getIssues() != null && !p.getIssues().isEmpty())
+            .flatMap(s -> s.getIssues().stream())
+            .filter(i -> i.getAssignee() != null && i.getAssignee().equals(user.getId()))
+            .toList();
           total += issues.size();
           done += (int) issues.stream().filter(i -> i.getStatus().equals(IssueStatus.DONE.name())).count();
         } else {
           boolean flag = processingSprint.getDtEnd().isBefore(ClockSimulator.now());
           if (flag) {
             ProjectSnapshot snapshot = snapshotRepository.findByProjectIdAndSprintId(wup.getProject()
-                .getId(), processingSprint.getId()).orElse(null);
+              .getId(), processingSprint.getId()).orElse(null);
             if (snapshot == null) {
               total = 0;
               done = 0;
             } else {
               total = snapshot.getIssues().size();
               done = Math.toIntExact(snapshot.getIssues()
-                  .stream()
-                  .filter(i -> i != null && i.getAssignee() != null && i.getAssignee().equals(user.getId())
-                      && i.getStatus()
-                          .equals(IssueStatus.DONE.name()))
-                  .count());
+                .stream()
+                .filter(i -> i != null && i.getAssignee() != null && i.getAssignee().equals(user.getId())
+                  && i.getStatus()
+                  .equals(IssueStatus.DONE.name()))
+                .count());
               // snapshotRepository.countByProjectIdAndSPrintIdAndIssues_AssigneeIdAndStatus(wup.getProject()
               // .getId(), processingSprint.getId(), user.getId(), IssueStatus.DONE.name());
             }
           } else {
             total = issueRepository.countByProjectIdAndSprintIdAndAssigneeId(workspace.getId(),
-                processingSprint.getId(),
-                user.getId());
+              processingSprint.getId(),
+              user.getId());
             done = issueRepository.countByProjectIdAndSprintIdAndAssigneeIdAndStatus(workspace.getId(),
-                processingSprint.getId(), user.getId(), IssueStatus.DONE);
+              processingSprint.getId(), user.getId(), IssueStatus.DONE);
           }
         }
       }
@@ -506,28 +506,28 @@ public class DashBoardService {
       int notComplete = total - done;
 
       workloads.add(Workload.builder()
-          .assignee(Assignee.builder().name(user.getName()).uniId(user.getId()).build())
-          .total(total)
-          .done(done)
-          .notComplete(notComplete)
-          .build());
+        .assignee(Assignee.builder().name(user.getName()).uniId(user.getId()).build())
+        .total(total)
+        .done(done)
+        .notComplete(notComplete)
+        .build());
     }
     ApiPaging<Workload> paging = ApiPaging.<Workload>builder()
-        .currentPage(page)
-        .items(workloads)
-        .totalItems(wups.getTotalElements())
-        .totalPages(wups.getTotalPages())
-        .build();
+      .currentPage(page)
+      .items(workloads)
+      .totalItems(wups.getTotalElements())
+      .totalPages(wups.getTotalPages())
+      .build();
 
     return ApiResponse.<ApiPaging<Workload>>builder()
-        .code(200)
-        .data(paging)
-        .message("Đã truy xuất thành công số liệu thống kê khối lượng công việc.")
-        .build();
+      .code(200)
+      .data(paging)
+      .message("Đã truy xuất thành công số liệu thống kê khối lượng công việc.")
+      .build();
   }
 
   public ApiResponse<ApiPaging<ProjectLoad>> getProjectLoadForTeacher(String workspaceId, String sprintId, int page,
-      int size) {
+                                                                      int size) {
     Pageable pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "project.name"));
     // Workspace workspace = workspaceService.getWorkspaceById(workspaceId);
     Sprint processingSprint = sprintId != null ? sprintRepository.findById(sprintId).orElse(null) : null;
@@ -541,43 +541,43 @@ public class DashBoardService {
         if (currentSprint != null) {
           total = issueRepository.countByProjectIdAndSprintId(project.getId(), currentSprint.getId());
           done = issueRepository.countByProjectIdAndStatusAndSprintId(project.getId(), IssueStatus.DONE,
-              currentSprint.getId());
+            currentSprint.getId());
           status.merge(IssueStatus.TODO.name(), issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-              currentSprint.getId(), IssueStatus.TODO), Integer::sum);
+            currentSprint.getId(), IssueStatus.TODO), Integer::sum);
           status.merge(IssueStatus.INPROCESS.name(),
-              issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-                  currentSprint.getId(), IssueStatus.INPROCESS),
-              Integer::sum);
+            issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
+              currentSprint.getId(), IssueStatus.INPROCESS),
+            Integer::sum);
           status.merge(IssueStatus.REVIEW.name(), issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-              currentSprint.getId(), IssueStatus.REVIEW), Integer::sum);
+            currentSprint.getId(), IssueStatus.REVIEW), Integer::sum);
           status.merge(IssueStatus.DONE.name(), issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-              currentSprint.getId(), IssueStatus.DONE), Integer::sum);
+            currentSprint.getId(), IssueStatus.DONE), Integer::sum);
         }
         List<ProjectSnapshot> snapshot = snapshotRepository.findByProjectId(project.getId());
         List<IssueSnapshot> issues = snapshot.stream()
-            .filter(p -> p.getIssues() != null && !p.getIssues().isEmpty())
-            .flatMap(s -> s.getIssues().stream())
-            .toList();
+          .filter(p -> p.getIssues() != null && !p.getIssues().isEmpty())
+          .flatMap(s -> s.getIssues().stream())
+          .toList();
         total += issues.size();
         done += (int) issues.stream().filter(i -> i.getStatus().equals(IssueStatus.DONE.name())).count();
         status.merge(IssueStatus.TODO.name(), (int) issues.stream()
-            .filter(i -> i.getStatus().equals(IssueStatus.TODO.name()))
-            .count(), Integer::sum);
+          .filter(i -> i.getStatus().equals(IssueStatus.TODO.name()))
+          .count(), Integer::sum);
         status.merge(IssueStatus.INPROCESS.name(), (int) issues.stream()
-            .filter(i -> i.getStatus().equals(IssueStatus.INPROCESS.name()))
-            .count(), Integer::sum);
+          .filter(i -> i.getStatus().equals(IssueStatus.INPROCESS.name()))
+          .count(), Integer::sum);
         status.merge(IssueStatus.REVIEW.name(), (int) issues.stream()
-            .filter(i -> i.getStatus().equals(IssueStatus.REVIEW.name()))
-            .count(), Integer::sum);
+          .filter(i -> i.getStatus().equals(IssueStatus.REVIEW.name()))
+          .count(), Integer::sum);
         status.merge(IssueStatus.DONE.name(), (int) issues.stream()
-            .filter(i -> i.getStatus().equals(IssueStatus.DONE.name()))
-            .count(), Integer::sum);
+          .filter(i -> i.getStatus().equals(IssueStatus.DONE.name()))
+          .count(), Integer::sum);
       } else {
         boolean flag = processingSprint.getDtEnd().isBefore(ClockSimulator.now());
         if (flag) {
           ProjectSnapshot snapshot = snapshotRepository
-              .findByProjectIdAndSprintId(project.getId(), processingSprint.getId())
-              .orElse(null);
+            .findByProjectIdAndSprintId(project.getId(), processingSprint.getId())
+            .orElse(null);
           if (snapshot == null) {
             total = 0;
             done = 0;
@@ -589,107 +589,105 @@ public class DashBoardService {
             List<IssueSnapshot> issues = snapshot.getIssues();
             total = issues.size();
             done = (int) issues.stream()
-                .filter(i -> i != null && i.getStatus() != null && i.getStatus().equals(IssueStatus.DONE.name()))
-                .count();
+              .filter(i -> i != null && i.getStatus() != null && i.getStatus().equals(IssueStatus.DONE.name()))
+              .count();
             status.merge(IssueStatus.TODO.name(), (int) issues.stream()
-                .filter(i -> i.getStatus().equals(IssueStatus.TODO.name()))
-                .count(), Integer::sum);
+              .filter(i -> i.getStatus().equals(IssueStatus.TODO.name()))
+              .count(), Integer::sum);
             status.merge(IssueStatus.INPROCESS.name(), (int) issues.stream()
-                .filter(i -> i.getStatus().equals(IssueStatus.INPROCESS.name()))
-                .count(), Integer::sum);
+              .filter(i -> i.getStatus().equals(IssueStatus.INPROCESS.name()))
+              .count(), Integer::sum);
             status.merge(IssueStatus.REVIEW.name(), (int) issues.stream()
-                .filter(i -> i.getStatus().equals(IssueStatus.REVIEW.name()))
-                .count(), Integer::sum);
+              .filter(i -> i.getStatus().equals(IssueStatus.REVIEW.name()))
+              .count(), Integer::sum);
             status.merge(IssueStatus.DONE.name(), (int) issues.stream()
-                .filter(i -> i.getStatus().equals(IssueStatus.DONE.name()))
-                .count(), Integer::sum);
+              .filter(i -> i.getStatus().equals(IssueStatus.DONE.name()))
+              .count(), Integer::sum);
           }
         } else {
           total = issueRepository.countByProjectIdAndSprintId(project.getId(), processingSprint.getId());
           done = issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(), processingSprint.getId(),
-              IssueStatus.DONE);
+            IssueStatus.DONE);
           status.merge(IssueStatus.TODO.name(), issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-              processingSprint.getId(), IssueStatus.TODO), Integer::sum);
+            processingSprint.getId(), IssueStatus.TODO), Integer::sum);
           status.merge(IssueStatus.INPROCESS.name(),
-              issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-                  processingSprint.getId(), IssueStatus.INPROCESS),
-              Integer::sum);
+            issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
+              processingSprint.getId(), IssueStatus.INPROCESS),
+            Integer::sum);
           status.merge(IssueStatus.REVIEW.name(), issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-              processingSprint.getId(), IssueStatus.REVIEW), Integer::sum);
+            processingSprint.getId(), IssueStatus.REVIEW), Integer::sum);
           status.merge(IssueStatus.DONE.name(), issueRepository.countByProjectIdAndSprintIdAndStatus(project.getId(),
-              processingSprint.getId(), IssueStatus.DONE), Integer::sum);
+            processingSprint.getId(), IssueStatus.DONE), Integer::sum);
         }
       }
       int notComplete = total - done;
 
       projectLoads.add(ProjectLoad.builder()
-          .id(project.getId())
-          .name(project.getName())
-          .total(total)
-          .done(done)
-          .notComplete(notComplete)
-          .status(status)
-          .build());
+        .id(project.getId())
+        .name(project.getName())
+        .total(total)
+        .done(done)
+        .notComplete(notComplete)
+        .status(status)
+        .build());
     }
     ApiPaging<ProjectLoad> paging = ApiPaging.<ProjectLoad>builder()
-        .currentPage(page)
-        .items(projectLoads)
-        .totalItems(projects.getTotalElements())
-        .totalPages(projects.getTotalPages())
-        .build();
+      .currentPage(page)
+      .items(projectLoads)
+      .totalItems(projects.getTotalElements())
+      .totalPages(projects.getTotalPages())
+      .build();
 
     return ApiResponse.<ApiPaging<ProjectLoad>>builder()
-        .code(200)
-        .data(paging)
-        .message("Đã truy xuất thành công số liệu thống kê khối lượng công việc của dự án.")
-        .build();
+      .code(200)
+      .data(paging)
+      .message("Đã truy xuất thành công số liệu thống kê khối lượng công việc của dự án.")
+      .build();
   }
 
   public ApiResponse<ApiPaging<ProjectPredictResponse>> getPredictForTeacher(String workspaceId, String sprintId,
-      int page,
-      int size) {
+                                                                             int page,
+                                                                             int size) {
     Pageable pageRequest = PageRequest.of(page, size);
     var projectSprint = projectSprintRepository.findBySprintId(sprintId, pageRequest);
     List<ProjectPredictResponse> items = new ArrayList<>();
     for (ProjectSprint item : projectSprint.stream().toList()) {
       items.add(ProjectPredictResponse
-          .builder().id(item.getProject().getId())
-          .name(item.getProject().getName())
-          .lastTime(item.getDtLastPredicted())
-          .predict(item.isPredictedResult())
-          .build());
+        .builder().id(item.getProject().getId())
+        .name(item.getProject().getName())
+        .lastTime(item.getDtLastPredicted())
+        .predict(item.isPredictedResult())
+        .build());
     }
     ApiPaging<ProjectPredictResponse> paging = ApiPaging.<ProjectPredictResponse>builder()
-        .currentPage(page)
-        .items(items)
-        .totalItems(projectSprint.getTotalElements())
-        .totalPages(projectSprint.getTotalPages())
-        .build();
+      .currentPage(page)
+      .items(items)
+      .totalItems(projectSprint.getTotalElements())
+      .totalPages(projectSprint.getTotalPages())
+      .build();
 
     return ApiResponse.<ApiPaging<ProjectPredictResponse>>builder()
-        .code(200)
-        .data(paging)
-        .message("Đã truy xuất thành công dự kết quả của dự án theo mỗi sprint")
-        .build();
+      .code(200)
+      .data(paging)
+      .message("Đã truy xuất thành công dự kết quả của dự án theo mỗi sprint")
+      .build();
   }
 
   public ApiResponse<ProjectPredictResponse> getPredictForTeacher(String sprintId,
-      String projectId) {
+                                                                  String projectId) {
     var projectSprint = projectSprintRepository.findBySprintIdAndProjectId(sprintId, projectId);
     ProjectPredictResponse result = ProjectPredictResponse.builder().id(projectSprint.getProject().getId())
-        .name(projectSprint.getProject().getName())
-        .lastTime(projectSprint.getDtLastPredicted())
-        .predict(projectSprint.isPredictedResult())
-        .build();
+      .name(projectSprint.getProject().getName())
+      .lastTime(projectSprint.getDtLastPredicted())
+      .lastTimeSecond(projectSprint.getDtLastPredictedSecond())
+      .predict(projectSprint.isPredictedResult()).predictSecond(projectSprint.getPredictedResultSecond())
+      .build();
 
     return ApiResponse.<ProjectPredictResponse>builder()
-        .code(200)
-        .data(
-            result)
-        .message("Đã truy xuất thành công dự kết quả của dự án ")
-        .build();
+      .code(200)
+      .data(
+        result)
+      .message("Đã truy xuất thành công dự kết quả của dự án ")
+      .build();
   }
-  // private void addToMap(Map<String, Integer> map, String key, int value) {
-  // map.merge(key, value, Integer::sum);
-  // }
 }

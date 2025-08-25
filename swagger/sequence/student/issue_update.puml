@@ -118,7 +118,7 @@ opt If field == sprint
     end
 end
 
-Service -> Service: update \n Changelog \n via Kafka
+Service -> Service: update \n Changelog
 
 Service --> Controller :  list issue
 deactivate Service

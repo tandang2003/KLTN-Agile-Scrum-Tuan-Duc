@@ -10,7 +10,6 @@ import {
 } from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
 import { Id } from '@/types/other.type'
-import { ProjectDetailResponse } from '@/types/project.type'
 import { SprintResultResponse } from '@/types/sprint.type'
 
 const BacklogPage = () => {

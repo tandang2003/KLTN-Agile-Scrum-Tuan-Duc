@@ -2,26 +2,10 @@ from src.connection.mysql import get_mysql_connection
 from src.connection.mongo import get_mongo_client
 
 # 🔧 Config
-workspace_id = 'affedb6b-9a2b-4802-a48a-28a2db87aff7'
+workspace_id = '80e07861-b2ba-4c27-88f7-b5ec46872474'
 
 # === MYSQL: Get all project IDs in the workspace ===
-project_ids = ['a1bac79d-be8f-4b83-a143-e4da1d140590']
-conn = get_mysql_connection()
-
-# try:
-#     with conn.cursor() as cursor:
-#         select_query = """
-#             SELECT DISTINCT project_id 
-#             FROM workspaces_users_projects 
-#             WHERE workspace_id = %s
-#         """
-#         cursor.execute(select_query, (workspace_id,))
-#         rows = cursor.fetchall()
-#         project_ids = [row['project_id'] for row in rows]
-#         print(f"📦 Found {len(project_ids)} project(s) in workspace.")
-# finally:
-#     conn.close()
-
+project_ids = ['c090565e-6aba-4a26-90c2-a06e5be18e0e']
 
 # === LOOP THROUGH EACH PROJECT ===
 for project_id in project_ids:
@@ -31,7 +15,8 @@ for project_id in project_ids:
     conn = get_mysql_connection()
     try:
         with conn.cursor() as cursor:
-            update_query = """
+            # First update
+            update_issues = """
                 UPDATE issues 
                 JOIN sprints ON sprints.id = issues.sprint_id 
                 SET issues.status = 'TODO',
@@ -39,8 +24,22 @@ for project_id in project_ids:
                     issues.open = %s
                 WHERE issues.project_id = %s AND issues.status != 'BACKLOG'
             """
-            cursor.execute(update_query, (True, project_id))
+            cursor.execute(update_issues, (True, project_id))
             print(f"✅ Updated {cursor.rowcount} issue(s) in MySQL for project {project_id}.")
+
+            # Second update
+            update_project_sprint = """
+                UPDATE project_sprint
+                SET project_sprint.dt_last_predicted = NULL, 
+                    project_sprint.predicted_result = -2,
+                    project_sprint.dt_last_predicted_second = NULL,
+                    project_sprint.predicted_result_second = -2
+                WHERE project_sprint.project_id = %s
+            """
+            cursor.execute(update_project_sprint, (project_id,))
+            print(f"✅ Updated {cursor.rowcount} project_sprint row(s) in MySQL for project {project_id}.")
+
+        conn.commit()
     finally:
         conn.close()
 

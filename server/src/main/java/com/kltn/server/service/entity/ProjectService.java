@@ -268,10 +268,13 @@ public class ProjectService {
             item.getSprint().getTitle(),
             item.getSprint().getDescription(),
             item.getSprint().getDtPredict(),
+            item.getSprint().getDtPredictSecond(),
             item.getSprint().getDtStart(),
             item.getSprint().getDtEnd(),
             item.getSprint().getStoryPoint(),
-            item.getPredictedResult()))
+            item.getPredictedResult(),
+            item.getPredictedResultSecond()))
+
         .toList();
     return ApiResponse.<List<ProjectSprintResponse>>builder()
         .message("Get project result by id")
@@ -346,15 +349,15 @@ public class ProjectService {
         Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.DAYS);
         Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.DAYS);
         // previous sprint section
-        if (end.isBefore(now) && daysPrev < end.until(now, ChronoUnit.DAYS)) {
+        if (end.isBefore(now) && daysPrev < Math.abs(end.until(now, ChronoUnit.DAYS))) {
           previous = sprint;
-          daysPrev = end.until(now, ChronoUnit.DAYS);
+          daysPrev = Math.abs(end.until(now, ChronoUnit.DAYS));
           continue;
         }
         // next sprint section
-        if (start.isAfter(now) && daysNext > start.until(now, ChronoUnit.DAYS)) {
+        if (start.isAfter(now) && daysNext > Math.abs(start.until(now, ChronoUnit.DAYS))) {
           next = sprint;
-          daysNext = end.until(now, ChronoUnit.DAYS);
+          daysNext = Math.abs(start.until(now, ChronoUnit.DAYS));
           continue;
         }
         // current sprint section

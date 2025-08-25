@@ -18,6 +18,7 @@ import com.kltn.server.repository.document.ChangeLogRepository;
 import com.kltn.server.repository.document.snapshot.SnapshotRepository;
 import com.kltn.server.repository.entity.SprintRepository;
 import com.kltn.server.schedular.PredictScheduler;
+import com.kltn.server.schedular.PredictSecondScheduler;
 import com.kltn.server.schedular.SprintScheduler;
 import com.kltn.server.service.mongo.SprintBoardMongoService;
 import jakarta.transaction.Transactional;
@@ -45,6 +46,8 @@ public class SprintService {
   private ProjectSprintService projectSprintService;
   private SprintScheduler sprintScheduler;
   private SprintBoardMongoService sprintBoardMongoService;
+  @Autowired
+  private PredictSecondScheduler predictSecondScheduler;
 
   @Autowired
   public SprintService(SprintScheduler sprintScheduler,
@@ -141,6 +144,11 @@ public class SprintService {
       .truncatedTo(ChronoUnit.DAYS)
       .equals(updateRequest.predict().truncatedTo(ChronoUnit.DAYS))) {
       predictScheduler1.scheduleSprint(sprint.getId(), LocalDateTime.ofInstant(updateRequest.predict(), ZoneId.of("Asia/Ho_Chi_Minh")));
+    }
+    if (!sprint.getDtPredictSecond()
+      .truncatedTo(ChronoUnit.DAYS)
+      .equals(updateRequest.predictSecond().truncatedTo(ChronoUnit.DAYS))) {
+      predictSecondScheduler.scheduleSprint(sprint.getId(), LocalDateTime.ofInstant(updateRequest.predictSecond(), ZoneId.of("Asia/Ho_Chi_Minh")));
     }
     sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
     List<Sprint> sprintList = sprintRepository.findAllByWorkspaceId(sprint.getWorkspace()

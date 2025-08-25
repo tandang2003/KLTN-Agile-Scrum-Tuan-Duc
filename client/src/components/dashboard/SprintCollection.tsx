@@ -1,4 +1,5 @@
-import { Badge } from '@/components/ui/badge'
+import BadgeSprint from '@/components/badge/BadgeSprint'
+import BadgeSprintResult from '@/components/badge/BadgeSprintResult'
 import {
   Table,
   TableBody,
@@ -7,22 +8,32 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import messages, { getSprintStatusDisplayName } from '@/constant/message.const'
-import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
+import messages from '@/constant/message.const'
+import { useGetResultQuery } from '@/feature/project/project.api'
 import useAppId from '@/hooks/use-app-id'
 import useSprintCurrent from '@/hooks/use-sprint-current'
+import {
+  sortSprintsByDateStart,
+  sortSprintsResultByDateStart
+} from '@/lib/sprint.helper'
 import { formatDate } from '@/lib/utils'
-import { SprintModel } from '@/types/model/sprint.model'
 import { Id } from '@/types/other.type'
+import { SprintResultResponse } from '@/types/sprint.type'
 import { lazy, Suspense, useState } from 'react'
 type SprintCollectionProps = {}
 
 const SprintCollection = ({}: SprintCollectionProps) => {
   const message = messages.component.dataTable.sprint.columns
-  const { workspaceId } = useAppId()
-  const { data: sprints } = useGetListSprintQuery(workspaceId as Id, {
-    skip: !workspaceId
-  })
+  const { projectId } = useAppId()
+
+  const { data: sprints } = useGetResultQuery(
+    {
+      projectId: projectId as Id
+    },
+    {
+      skip: !projectId
+    }
+  )
   return (
     <Table>
       <TableHeader>
@@ -32,12 +43,15 @@ const SprintCollection = ({}: SprintCollectionProps) => {
           <TableHead>{message.start}</TableHead>
           <TableHead>{message.end}</TableHead>
           <TableHead>{message.status}</TableHead>
+          <TableHead>{message.predict}</TableHead>
+          <TableHead>{message.predictSecond}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sprints?.map((item, index) => (
-          <SprintCollectionRow order={index + 1} key={item.id} item={item} />
-        ))}
+        {sprints &&
+          sortSprintsResultByDateStart(sprints).map((item, index) => (
+            <SprintCollectionRow order={index + 1} key={item.id} item={item} />
+          ))}
       </TableBody>
     </Table>
   )
@@ -49,7 +63,7 @@ const LazySprintDashboardDetailSheet = lazy(
 
 type SprintCollectionRowProps = {
   order: number
-  item: SprintModel
+  item: SprintResultResponse
 }
 
 const SprintCollectionRow = ({ order, item }: SprintCollectionRowProps) => {
@@ -67,21 +81,25 @@ const SprintCollectionRow = ({ order, item }: SprintCollectionRowProps) => {
         <TableCell>{formatDate(item.start)}</TableCell>
         <TableCell>{formatDate(item.end)}</TableCell>
         <TableCell>
-          <Badge
-            statusSprint={getStatusSprint({
+          <BadgeSprint
+            status={getStatusSprint({
               id: item.id,
               end: item.end,
               start: item.start
             })}
-          >
-            {getSprintStatusDisplayName(
-              getStatusSprint({
-                id: item.id,
-                end: item.end,
-                start: item.start
-              })
-            )}
-          </Badge>
+          />
+        </TableCell>
+        <TableCell>
+          <BadgeSprintResult
+            status={item.predictResult}
+            lastTime={item.predict}
+          />
+        </TableCell>
+        <TableCell>
+          <BadgeSprintResult
+            status={item.predictResultSecond}
+            lastTime={item.predictSecond}
+          />
         </TableCell>
       </TableRow>
 

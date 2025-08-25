@@ -1,0 +1,65 @@
+@startuml
+
+actor "Student" as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Room\nService" as RS
+participant "Schedular\nRun\nInit" as sri
+participant Websocket as WS
+participant "Predict\nConsumer" as PC
+participant "Decision\nService" as Service
+participant "Python\nServer" as Python
+participant "ProjectSprint\nRepository" as Repo
+participant "MySQL" as MySQL
+sri --> sri: Set up \nscheduler\n for sprint
+activate sri
+deactivate sri
+SV -> View : Student access
+
+activate SV
+== WebSocket Connect ==
+activate View
+View -> WS: connect
+activate WS
+WS --> View : establish connect
+View -> WS: subscribe \n"/ws/project/:project_id"
+WS --> View : subscribe establish
+== WebSocket Channel ==
+alt dt_predict sprint == now
+    PC -> Service : makePredict\n(projectId, sprintId)
+    activate PC
+    activate Service
+    Service --> Service: collect data\nsprint
+    Service --> Service: collect data\nissues
+    Service -> Python: POST \n/aggregate
+    activate Python
+    Python --> Python: predict
+    Python --> Service: result \npredict
+    deactivate Python
+    Service -> Repo: save result
+    activate Repo
+    Repo -> MySQL: save
+    activate MySQL
+    MySQL -> Repo: project \nsprint \nmodel
+    deactivate MySQL
+    Repo --> Service: save success
+    deactivate Repo
+    Service --> PC: result of sprintId
+    deactivate Service
+    PC --> RS: send message \nresult of sprint \n predict to projectId
+    activate RS
+    deactivate PC
+    RS -> View: send result \nto client
+    deactivate RS
+    deactivate RS
+    View --> SV: show result \nof sprint predict
+end
+
+== WebSocket Disconnect ==
+SV -> View: Disconnect
+deactivate SV
+View -> WS: close()
+WS --> View: connection closed
+deactivate View
+deactivate WS
+
+@enduml
