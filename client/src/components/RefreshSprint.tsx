@@ -7,7 +7,6 @@ import {
   useLazyGetProjectQuery
 } from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
-import { useLazyGetWorkspaceQuery } from '@/feature/workspace/workspace.api'
 import useAppId from '@/hooks/use-app-id'
 import { toISODateString } from '@/lib/date.helper'
 import { toast } from 'sonner'

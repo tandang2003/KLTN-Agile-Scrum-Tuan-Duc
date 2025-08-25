@@ -165,8 +165,8 @@ const messages = {
           createAt: ' Ngày tạo',
           report: 'Báo cáo',
           completedSprints: 'Số sprint thành công',
-          totalEndedSprints: 'Tổng số sprint đã kết thúc',
-          isSuccess: 'Trạng thái'
+          totalEndedSprints: 'Số sprint đã kết thúc',
+          isSuccess: 'Thành công'
         }
       },
       sprint: {
@@ -766,17 +766,17 @@ const getSprintStatusDisplayName = (status: SprintStatusType): string => {
   return map[status] ?? 'Không xác định'
 }
 
-const getProjectPredictDisplayName = (status: -2 | -1 | 0) => {
+const getSprintPredictDisplayName = (status: -2 | -1 | 0) => {
   let result = ''
   switch (status) {
     case -2:
-      result = 'Dự án chưa thực hiện dự đoán'
+      result = 'Sprint chưa thực hiện dự đoán'
       break
     case -1:
-      result = 'Dự án có khả năng không thành công ở sprint này'
+      result = 'Sprint có khả năng không thành công ở sprint này'
       break
     case 0:
-      result = 'Dự án có khả năng thành công ở sprint này'
+      result = 'Sprint có khả năng thành công ở sprint này'
       break
     default:
       break
@@ -849,6 +849,6 @@ export {
   getPriorityDisplayName,
   getRelationshipDisplayName,
   getComplexOfDescriptionName,
-  getProjectPredictDisplayName,
+  getSprintPredictDisplayName as getProjectPredictDisplayName,
   getSprintResultDisplayName
 }

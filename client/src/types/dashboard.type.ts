@@ -1,5 +1,5 @@
-import { IssuePriority, IssueStatus } from '@/types/model/typeOf'
-import { Id } from '@/types/other.type'
+import {IssuePriority, IssueStatus} from '@/types/model/typeOf'
+import {Id} from '@/types/other.type'
 
 type DashboardRes = {
   issueCreated: number
@@ -61,12 +61,14 @@ type ProjectWorkloadRes = {
   notComplete: number
   taskBalance: number
 }
-
+type ProjectPredictResult = -2 | -1 | 0;
 type ProjectPredictRes = {
   id: Id
   name: string
   lastTime?: Date
-  predict: -2 | -1 | 0
+  lastTimeSecond?: Date
+  predict: ProjectPredictResult
+  predictSecond: ProjectPredictResult
 }
 
 export type {

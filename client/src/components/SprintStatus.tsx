@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { AlertDescription } from '@/components/ui/alert'
 import {
   Popover,
   PopoverContent,
@@ -13,18 +13,28 @@ import { Id } from '@/types/other.type'
 import { AlertCircleIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
-type ProjectStatusProps = {
+type Props = {
   projectId: Id
   sprintId: Id
 }
 
-const ProjectStatus = ({ projectId, sprintId }: ProjectStatusProps) => {
+const SprintStatus = ({ projectId, sprintId }: Props) => {
   const { data } = useGetResourcesQuery({
     projectId: projectId,
     sprintId: sprintId
   })
 
   const [predictData, setPredictData] = useState<ProjectPredictRes | null>(null)
+  const lastTime = useMemo(() => {
+    console.log('predictData', predictData)
+    if (predictData?.lastTimeSecond) {
+      return predictData.lastTimeSecond
+    }
+    if (predictData?.lastTime) {
+      return predictData.lastTime
+    }
+    return null
+  }, [predictData])
 
   useEffect(() => {
     dashboardService
@@ -33,7 +43,6 @@ const ProjectStatus = ({ projectId, sprintId }: ProjectStatusProps) => {
         setPredictData(res)
       })
   }, [sprintId, projectId])
-
   const PredictStatus = useMemo(() => {
     return (
       <>
@@ -45,14 +54,17 @@ const ProjectStatus = ({ projectId, sprintId }: ProjectStatusProps) => {
           )}
         >
           Trạng thái dự đoán :{' '}
-          {predictData?.predict !== undefined &&
-            getProjectPredictDisplayName(predictData.predict)}
+          {predictData &&
+            getProjectPredictDisplayName(
+              predictData.predictSecond === -2
+                ? predictData.predict
+                : predictData.predictSecond
+            )}
         </span>
-        {predictData?.lastTime && (
-          <span>
-            Dự đoán lần cuối vào {formatDate(predictData.lastTime, 'LONG')}
-          </span>
-        )}
+
+        <span>
+          Dự đoán lần cuối vào {lastTime && formatDate(lastTime, 'LONG')}
+        </span>
       </>
     )
   }, [predictData])
@@ -81,11 +93,11 @@ const ProjectStatus = ({ projectId, sprintId }: ProjectStatusProps) => {
         <AlertCircleIcon className='text-yellow-400' />
       </PopoverTrigger>
       <PopoverContent className='min-w-[300px]' align='end'>
-        <h3 className='h3'>Cảnh báo trạng thái!</h3>
+        <h3 className='h3'>Cảnh báo Sprint!</h3>
         <AlertDescription>{ResourceStatus}</AlertDescription>
       </PopoverContent>
     </Popover>
   )
 }
 
-export default ProjectStatus
+export default SprintStatus

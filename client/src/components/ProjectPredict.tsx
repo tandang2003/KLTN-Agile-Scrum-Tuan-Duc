@@ -19,10 +19,16 @@ const ProjectPredict = ({ data }: ProjectPredictProps) => {
         </Badge>
       </PopoverTrigger>
       <PopoverContent className='w-[400px]' align='end'>
-        <h3 className='h3'>Thông tin Project</h3>
+        <h3 className='h3'>Thông tin Dự án</h3>
         <div className={'flex flex-col gap-2 text-black'}>
-          <span>Số lượng sprint đã kết thúc: {data.totalEndedSprints}</span>
-          <span>Số sprint thành công: {data.completedSprints}</span>
+          <span>
+            Số lượng sprint đã kết thúc: {data.totalEndedSprints} /{' '}
+            {data.sprints.length}
+          </span>
+          <span>
+            Số sprint thành công: {data.completedSprints} /{' '}
+            {data.sprints.length}
+          </span>
           <span>
             Project hiện tại được đánh giá là{' '}
             {data.isSuccess ? (

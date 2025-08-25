@@ -17,16 +17,15 @@ const useSprintCurrent = (): useSprintCurrentReturnType => {
   const sprintCurrent = useAppSelector((state) => state.sprintSlice.current)
   const sprintNext = useAppSelector((state) => state.sprintSlice.next)
   const sprintPrev = useAppSelector((state) => state.sprintSlice.previous)
-  console.log('sprintCurrent', sprintCurrent)
-  console.log('sprintPrev', sprintPrev)
-  console.log('sprintNext', sprintNext)
+  // console.log('sprintCurrent', sprintCurrent)
+  // console.log('sprintPrev', sprintPrev)
+  // console.log('sprintNext', sprintNext)
 
   const getStatusSprint = useCallback(
     (sprint: Sprint): SprintStatusType => {
       if (sprint.id === sprintCurrent?.id) return 'RUNNING'
       if (sprint.id === sprintNext?.id) return 'PENDING'
       if (sprint.id === sprintPrev?.id) return 'COMPLETE'
-      console.log(sprintNext)
 
       if (
         sprintPrev &&
