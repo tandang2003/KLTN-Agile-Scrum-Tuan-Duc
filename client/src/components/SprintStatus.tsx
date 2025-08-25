@@ -26,7 +26,6 @@ const SprintStatus = ({ projectId, sprintId }: Props) => {
 
   const [predictData, setPredictData] = useState<ProjectPredictRes | null>(null)
   const lastTime = useMemo(() => {
-    console.log('predictData', predictData)
     if (predictData?.lastTimeSecond) {
       return predictData.lastTimeSecond
     }

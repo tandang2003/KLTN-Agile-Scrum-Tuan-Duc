@@ -43,4 +43,30 @@ const ProjectPredict = ({ data }: ProjectPredictProps) => {
   )
 }
 
+const ProjectPredictInWorkspace = ({ data }: ProjectPredictProps) => {
+  return (
+    <div
+      className={
+        'flex flex-col gap-2 rounded-2xl border-1 px-4 py-2 text-black shadow-md'
+      }
+    >
+      <span>
+        Số lượng sprint đã kết thúc: {data.totalEndedSprints} /{' '}
+        {data.sprints.length}
+      </span>
+      <span>
+        Số sprint thành công: {data.completedSprints} / {data.sprints.length}
+      </span>
+      <span>
+        Project hiện tại được đánh giá là{' '}
+        {data.isSuccess ? (
+          <Badge className='bg-green-400'>thành công</Badge>
+        ) : (
+          <Badge className='bg-red-400'>không thành công</Badge>
+        )}
+      </span>
+    </div>
+  )
+}
+export { ProjectPredictInWorkspace }
 export default ProjectPredict

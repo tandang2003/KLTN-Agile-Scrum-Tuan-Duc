@@ -58,6 +58,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
       complexOfDescription: 1
     }
   })
+  const { control } = form
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -112,7 +113,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
         <div className='flex gap-3'>
           <div className='flex-1 [&>*:not(:first-element)]:mt-3'>
             <FormField
-              control={form.control}
+              control={control}
               name='name'
               render={({ field }) => (
                 <FormItem>
@@ -138,7 +139,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
             </div>
             <div className='grid grid-cols-2 grid-rows-2 gap-3'>
               <SelectEnum
-                control={form.control}
+                control={control}
                 name='priority'
                 label={message.priority}
                 renderItem={(item) => (
@@ -147,7 +148,7 @@ const CreateIssueForm = ({ onSubmit, sprint }: CreateIssueFormProps) => {
                 data={issuePriorityList}
               />
               <SelectEnum
-                control={form.control}
+                control={control}
                 name='tag'
                 label={message.create.form.tag}
                 renderItem={(item) => <span>{getTagDisplayName(item)}</span>}

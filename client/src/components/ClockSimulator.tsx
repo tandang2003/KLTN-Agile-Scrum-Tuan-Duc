@@ -83,8 +83,8 @@ const ClockSimulator = () => {
           setNow(time)
         }
         if (type === 'SNAPSHOT') {
-          toast.info('Create snapshot success')
-          window.location.reload()
+          toast.info('Create snapshot success, refreshing...')
+          // window.location.reload()
         }
       })
 
