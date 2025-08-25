@@ -11,7 +11,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 type SprintColumns = SprintWorkspaceDataTable
 
-const { end, point, predict, start, status, title } =
+const { end, point, predict, start, status, predictSecond, title } =
   messages.component.dataTable.sprint.columns
 
 const columns: ColumnDef<SprintColumns>[] = [
@@ -53,7 +53,6 @@ const columns: ColumnDef<SprintColumns>[] = [
       return <BadgeSprint status={status} />
     }
   },
-
   {
     accessorKey: 'start',
     header: start,
@@ -67,6 +66,20 @@ const columns: ColumnDef<SprintColumns>[] = [
     header: predict,
     cell: ({ row }) => {
       const value: Date = row.getValue('predict')
+      const current: Date = new Date()
+      return (
+        <div>
+          {formatDate(value)}
+          {current > value && <Icon className='ml-3' icon={'mynaui:check'} />}
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: 'predictSecond',
+    header: predictSecond,
+    cell: ({ row }) => {
+      const value: Date = row.getValue('predictSecond')
       const current: Date = new Date()
       return (
         <div>

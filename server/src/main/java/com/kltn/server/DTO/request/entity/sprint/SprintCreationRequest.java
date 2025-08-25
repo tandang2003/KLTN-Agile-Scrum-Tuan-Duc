@@ -19,6 +19,7 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant end,
                                     int storyPoint,
                                     @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant predict,
+                                    @DateTimeFormat(pattern = LOCAL_DATE_TIME) Instant predictSecond,
                                     int position) {
 
 
@@ -29,6 +30,7 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
     private Instant dtStart;
     private Instant dtEnd;
     private Instant predict;
+    private Instant predictSecond;
     private int storyPoint;
     private int position;
 
@@ -57,6 +59,11 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
       return this;
     }
 
+    public SprintCreationRequestBuilder predictSecond(Instant predictSecond) {
+      this.predictSecond = predictSecond;
+      return this;
+    }
+
     public SprintCreationRequestBuilder dtStart(Instant dtStart) {
       this.dtStart = dtStart;
       return this;
@@ -73,7 +80,7 @@ public record SprintCreationRequest(@NotEmpty String workspaceId,
     }
 
     public SprintCreationRequest build() {
-      return new SprintCreationRequest(workspaceId, title, description, dtStart, dtEnd, storyPoint, predict, position);
+      return new SprintCreationRequest(workspaceId, title, description, dtStart, dtEnd, storyPoint, predict,predictSecond, position);
     }
 
   }

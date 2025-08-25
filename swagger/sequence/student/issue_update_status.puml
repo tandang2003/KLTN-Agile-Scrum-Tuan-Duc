@@ -67,7 +67,7 @@ opt If status = DONE
      Service --> Service: setDtEnd(now) for \nissue model
 end
 
-Service -> Service: update \n Changelog \n via Kafka
+Service -> Service: update \n Changelog
 
 Service --> Controller :  issue model
 deactivate Service

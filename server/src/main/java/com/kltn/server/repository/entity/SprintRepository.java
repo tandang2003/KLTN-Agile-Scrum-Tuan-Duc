@@ -27,4 +27,6 @@ public interface SprintRepository extends JpaRepository<Sprint, String> {
   Optional<Sprint> findById(String id);
 
   List<Sprint> findALlByDtPredictAfter(Instant dtPredictAfter);
+
+  List<Sprint> findALlByDtPredictSecondAfter(Instant dtPredictSecondAfter);
 }

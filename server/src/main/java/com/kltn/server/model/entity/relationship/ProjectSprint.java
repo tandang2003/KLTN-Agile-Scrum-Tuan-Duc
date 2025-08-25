@@ -36,6 +36,8 @@ public class ProjectSprint {
   private int removedIssue;
   private int predictedResult = -2;
   private Instant dtLastPredicted;
+  private int predictedResultSecond = -2;
+  private Instant dtLastPredictedSecond;
 
   public ProjectSprint() {
   }
@@ -156,5 +158,21 @@ public class ProjectSprint {
 
   public void setDtLastPredicted(Instant dtLastPredicted) {
     this.dtLastPredicted = dtLastPredicted;
+  }
+
+  public Instant getDtLastPredictedSecond() {
+    return dtLastPredictedSecond;
+  }
+
+  public void setDtLastPredictedSecond(Instant dtLastPredictedSecond) {
+    this.dtLastPredictedSecond = dtLastPredictedSecond;
+  }
+
+  public int getPredictedResultSecond() {
+    return predictedResultSecond;
+  }
+
+  public void setPredictedResultSecond(int predictedResultSecond) {
+    this.predictedResultSecond = predictedResultSecond;
   }
 }

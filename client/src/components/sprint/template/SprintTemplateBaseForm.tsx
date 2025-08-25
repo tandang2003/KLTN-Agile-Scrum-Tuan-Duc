@@ -19,7 +19,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import messages from '@/constant/message.const'
-import { getMiddleDate } from '@/lib/date.helper'
+import { getDateByPercent } from '@/lib/date.helper'
 import { useDate } from '@/providers/DateProvider'
 import {
   BaseSprintFormSchema,
@@ -63,6 +63,7 @@ const SprintTemplateBaseForm = ({
     defaultValues: initialValues ?? {
       title: '',
       predict: addDays(now, 4),
+      predictSecond: addDays(now, 4),
       storyPoint: 0,
       description: '',
       start: addDays(now, 2),
@@ -75,6 +76,7 @@ const SprintTemplateBaseForm = ({
   const startDate = watch('start')
   const endDate = watch('end')
   const predictDate = watch('predict')
+  const predictSecondDate = watch('predictSecond')
 
   useEffect(() => {
     if (durationValue.active !== 'custom') {
@@ -97,8 +99,12 @@ const SprintTemplateBaseForm = ({
 
   useEffect(() => {
     if (!predictDate) {
-      const middle = getMiddleDate(startDate, endDate)
+      const middle = getDateByPercent(startDate, endDate, 30)
       form.setValue('predict', middle)
+    }
+    if (!predictSecondDate) {
+      const middle = getDateByPercent(startDate, endDate, 70)
+      form.setValue('predictSecond', middle)
     }
   }, [])
 
@@ -241,7 +247,33 @@ const SprintTemplateBaseForm = ({
                 name='predict'
                 render={({ field }) => (
                   <FormItem className='flex-1 shrink-0'>
-                    <FormLabel>{message.predict}</FormLabel>
+                    <FormLabel>{message.predict.label}</FormLabel>
+                    <FormDescription>
+                      {message.predict.description}
+                    </FormDescription>
+                    <DatePickerWithPresets
+                      date={field.value}
+                      min={form.getValues('start')}
+                      max={form.getValues('end')}
+                      setDate={(date) => {
+                        if (date) {
+                          field.onChange(date)
+                        }
+                      }}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='predictSecond'
+                render={({ field }) => (
+                  <FormItem className='flex-1 shrink-0'>
+                    <FormLabel>{message.predictSecond.label}</FormLabel>
+                    <FormDescription>
+                      {message.predictSecond.description}
+                    </FormDescription>
                     <DatePickerWithPresets
                       date={field.value}
                       min={form.getValues('start')}
@@ -260,7 +292,7 @@ const SprintTemplateBaseForm = ({
                 control={form.control}
                 name='storyPoint'
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className='flex-1'>
                     <FormLabel>{message.storyPoint.label}</FormLabel>
                     <FormDescription>
                       {message.storyPoint.description}

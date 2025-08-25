@@ -20,6 +20,7 @@ const BaseSprintFormSchema = z.object({
   }),
   start: z.date(),
   predict: z.date(),
+  predictSecond: z.date(),
   end: z.date()
 })
 
@@ -88,6 +89,7 @@ type SprintWorkspaceDataTable = SprintModel
 type SprintPredictResult = -2 | -1 | 0
 type SprintResultResponse = SprintResponse & {
   predictResult: SprintPredictResult
+  predictResultSecond: SprintPredictResult
 }
 
 type SprintOverview = Pick<SprintModel, 'id' | 'start' | 'end'>

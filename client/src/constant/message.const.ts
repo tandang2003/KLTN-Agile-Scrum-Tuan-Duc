@@ -165,8 +165,8 @@ const messages = {
           createAt: ' Ngày tạo',
           report: 'Báo cáo',
           completedSprints: 'Số sprint thành công',
-          totalEndedSprints: 'Tổng số sprint đã kết thúc',
-          isSuccess: 'Trạng thái'
+          totalEndedSprints: 'Số sprint đã kết thúc',
+          isSuccess: 'Thành công'
         }
       },
       sprint: {
@@ -177,8 +177,9 @@ const messages = {
           status: 'Trạng thái',
           start: 'Ngày bắt đầu',
           end: 'Ngày kết thúc',
-          predict: 'Thời gian dự đoán',
-          predictStatus: 'Trạng thái dự đoán',
+          predict: 'Thời gian dự đoán 1',
+          predictSecond: 'Thời gian dự đoán 2',
+          predictStatus: 'Trạng thái',
           detail: 'Chi tiết'
         },
         actions: {
@@ -410,7 +411,14 @@ const messages = {
           duration: 'Thời gian Sprint',
           startDate: 'Ngày bắt đầu',
           endDate: 'Ngày kết thúc',
-          predict: 'Thời gian dự đoán',
+          predict: {
+            label: 'Thời gian dự đoán lần 1',
+            description: 'Thời gian mô hình dự đoán chạy tự động'
+          },
+          predictSecond: {
+            label: 'Thời gian dự đoán lần 2',
+            description: 'Thời gian mô hình dự đoán chạy tự động'
+          },
           customDuration: 'Tùy chỉnh',
           week: 'tuần',
           submit: {
@@ -758,17 +766,17 @@ const getSprintStatusDisplayName = (status: SprintStatusType): string => {
   return map[status] ?? 'Không xác định'
 }
 
-const getProjectPredictDisplayName = (status: -2 | -1 | 0) => {
+const getSprintPredictDisplayName = (status: -2 | -1 | 0) => {
   let result = ''
   switch (status) {
     case -2:
-      result = 'Dự án chưa thực hiện dự đoán'
+      result = 'Sprint chưa thực hiện dự đoán'
       break
     case -1:
-      result = 'Dự án có khả năng không thành công ở sprint này'
+      result = 'Sprint có khả năng không thành công ở sprint này'
       break
     case 0:
-      result = 'Dự án có khả năng thành công ở sprint này'
+      result = 'Sprint có khả năng thành công ở sprint này'
       break
     default:
       break
@@ -841,6 +849,6 @@ export {
   getPriorityDisplayName,
   getRelationshipDisplayName,
   getComplexOfDescriptionName,
-  getProjectPredictDisplayName,
+  getSprintPredictDisplayName as getProjectPredictDisplayName,
   getSprintResultDisplayName
 }

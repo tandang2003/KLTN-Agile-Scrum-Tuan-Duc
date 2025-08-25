@@ -6,13 +6,17 @@ public class ProjectPredictResponse {
   private String id;
   private String name;
   private Instant lastTime;
+  private Instant lastTimeSecond;
   private int predict;
+  private int predictSecond;
 
   private ProjectPredictResponse(Builder builder) {
     this.id = builder.id;
     this.name = builder.name;
     this.lastTime = builder.lastTime;
     this.predict = builder.predict;
+    this.predictSecond = builder.predictSecond;
+    this.lastTimeSecond = builder.lastTimeSecond;
   }
 
   public static Builder builder() {
@@ -23,7 +27,9 @@ public class ProjectPredictResponse {
     private String id;
     private String name;
     private Instant lastTime;
+    private Instant lastTimeSecond;
     private int predict;
+    private int predictSecond;
 
     public Builder id(String id) {
       this.id = id;
@@ -40,8 +46,18 @@ public class ProjectPredictResponse {
       return this;
     }
 
+    public Builder lastTimeSecond(Instant lastTimeSecond) {
+      this.lastTimeSecond = lastTimeSecond;
+      return this;
+    }
+
     public Builder predict(int predict) {
       this.predict = predict;
+      return this;
+    }
+
+    public Builder predictSecond(int predictSecond) {
+      this.predictSecond = predictSecond;
       return this;
     }
 
@@ -65,5 +81,9 @@ public class ProjectPredictResponse {
 
   public int getPredict() {
     return predict;
+  }
+
+  public int getPredictSecond() {
+    return predictSecond;
   }
 }

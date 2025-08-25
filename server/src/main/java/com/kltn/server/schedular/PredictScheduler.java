@@ -48,9 +48,7 @@ public class PredictScheduler {
 
   public synchronized void scheduleSprint(String sprintId, LocalDateTime dtPredict) {
     cancelSprintTask(sprintId);
-    Runnable task = () -> {
-      sendMessage(sprintId);
-    };
+
     Instant end = dtPredict.atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
       .toInstant();
     if (ClockSimulator.now()
@@ -58,10 +56,10 @@ public class PredictScheduler {
       sendMessage(sprintId);
       return;
     }
+    Runnable task = () -> {
+      sendMessage(sprintId);
 
-//    long delay = Duration.between(ClockSimulator.now(), end)
-//      .getSeconds();
-//    delay = Math.max(0, delay);
+    };
     long timeSpeech = ClockSimulator.getTimeSpeech();
     Duration virtualDuration = Duration.between(ClockSimulator.now(), end);
     long adjustedDelaySeconds = virtualDuration.getSeconds() / timeSpeech;
@@ -82,6 +80,7 @@ public class PredictScheduler {
   }
 
   public synchronized void cancelSprintTask(String key) {
+
     ScheduledFuture<?> future = tasks.get(key);
     if (future != null && !future.isCancelled()) {
       future.cancel(true);
@@ -95,11 +94,8 @@ public class PredictScheduler {
     System.out.println("reset");
 
     Map<String, LocalDateTime> savedTasks = new HashMap<>(taskEndTimes);
-    for (String key : savedTasks.keySet()) {
-      cancelSprintTask(key);
-    }
-
     for (Map.Entry<String, LocalDateTime> entry : savedTasks.entrySet()) {
+      cancelSprintTask(entry.getKey());
       String[] ids = entry.getKey()
         .split(":");
       String sprintId = ids[0];
@@ -112,12 +108,14 @@ public class PredictScheduler {
   }
 
   private void sendMessage(String sprintId) {
+
     List<ProjectSprint> projectSprints = projectSprintRepository.findBySprintId(sprintId);
     for (ProjectSprint projectSprint : projectSprints) {
       String curUser = "21130171";
       SprintPredictRequest payload = SprintPredictRequest.builder()
         .projectId(projectSprint.getProject().getId())
         .sprintId(projectSprint.getSprint().getId())
+        .isResult(false)
         .build();
 
       ProducerRecord<String, Object> record = new ProducerRecord<>("predict", payload);

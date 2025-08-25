@@ -2,9 +2,8 @@ import LoadingBoundary from '@/components/LoadingBoundary'
 import ProjectHeader from '@/components/project/ProjectHeader'
 import ProjectSocket from '@/components/project/ProjectSocket'
 import ProjectPredict from '@/components/ProjectPredict'
-import ProjectStatus from '@/components/ProjectStatus'
+import SprintStatus from '@/components/SprintStatus'
 import RefreshSprint from '@/components/RefreshSprint'
-import SprintPredict from '@/components/SprintPredict'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import SectionContainer from '@/components/wrapper/SectionContainer'
@@ -12,7 +11,6 @@ import { useAppDispatch } from '@/context/redux/hook'
 import { setSprintFilter } from '@/feature/board/board.slice'
 import { useGetProjectQuery } from '@/feature/project/project.api'
 import { setSprintCurrent } from '@/feature/sprint/sprint.slice'
-import useAppId from '@/hooks/use-app-id'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { toISODateString } from '@/lib/date.helper'
 import ProjectNavigation from '@/pages/manager/workspace/project/navigation'
@@ -27,7 +25,6 @@ const ProjectPage = () => {
   const { isFetching, data } = useGetProjectQuery(projectId as Id, {
     skip: !projectId
   })
-  const { workspaceId } = useAppId()
 
   const { sprint } = useSprintCurrent()
 
@@ -83,20 +80,13 @@ const ProjectPage = () => {
         {(data) => (
           <>
             <ProjectHeader data={data} />
-            {projectId && <ProjectSocket projectId={projectId} />}
             <div className='flex items-center justify-between pt-2 pb-4'>
               <ProjectNavigation id={data.id} />
 
               <div className='flex items-center gap-3'>
-                {/* {workspaceId && (
-                  <StoreData workspaceId={workspaceId} stage={30} />
-                )}
-                {workspaceId && (
-                  <StoreData workspaceId={workspaceId} stage={50} />
-                )}
-                {workspaceId && <StoreVelDiff workspaceId={workspaceId} />} */}
+                {projectId && <ProjectSocket projectId={projectId} />}
                 {projectId && sprint?.id && (
-                  <ProjectStatus projectId={projectId} sprintId={sprint?.id} />
+                  <SprintStatus projectId={projectId} sprintId={sprint?.id} />
                 )}
                 <ProjectPredict data={data} />
                 <RefreshSprint />
