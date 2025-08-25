@@ -45,11 +45,15 @@ const ProjectSocket = ({ projectId }: ProjectSocketProps) => {
             }
           }
           if (isPredictResponse(value.bodyParse)) {
-            toast('Chạy dự đoán tự động', {
-              description: value.bodyParse.message.status
-                ? message.toast.success
-                : message.toast.failed
-            })
+            if (value.bodyParse.message.status) {
+              toast.success('Chạy dự đoán tự động', {
+                description: message.toast.success
+              })
+            } else {
+              toast.error('Chạy dự đoán tự động', {
+                description: message.toast.failed
+              })
+            }
           }
         }
       )

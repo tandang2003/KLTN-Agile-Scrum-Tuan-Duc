@@ -17,7 +17,6 @@ type ProjectDetailResponse = ProjectModel & {
   leader: string
   totalEndedSprints: number
   completedSprints: number
-  isSuccess: boolean
 }
 type CreateProjectRequest = CreateProjectFormType & {
   workspaceId: Id

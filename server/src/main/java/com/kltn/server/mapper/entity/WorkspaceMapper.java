@@ -17,7 +17,7 @@ import java.util.List;
   unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
   uses = {
     SprintMapper.class,
-    CourseMapper.class})
+    CourseMapper.class, DateMapper.class})
 public interface WorkspaceMapper {
 
   @Mappings({
@@ -38,8 +38,8 @@ public interface WorkspaceMapper {
     @Mapping(target = "currentSprint", source = "currentSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "prevSprint", source = "prevSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "nextSprint", source = "nextSprint", qualifiedByName = "toResponse"),
-    @Mapping(target = "start", source = "start"),
-    @Mapping(target = "end", source = "end"),})
+    @Mapping(target = "start", source = "start", qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "end", source = "end", qualifiedByName = "instantToLocalDateTime"),})
   @BeanMapping(ignoreByDefault = true)
   WorkspaceResponse toWorkspaceCreationResponse(Workspace workspace);
 
@@ -62,9 +62,9 @@ public interface WorkspaceMapper {
     @Mapping(target = "currentSprint", source = "currentSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "prevSprint", source = "prevSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "nextSprint", source = "nextSprint", qualifiedByName = "toResponse"),
-    @Mapping(target = "start", source = "start"),
-    @Mapping(target = "end", source = "end"),
-    @Mapping(target = "createdAt", source = "dtCreated"),
+    @Mapping(target = "start", source = "start", qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "end", source = "end", qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "createdAt", source = "dtCreated",  qualifiedByName = "instantToLocalDateTime"),
     @Mapping(target = "course", source = "course", qualifiedByName = "toResponse"),
   })
   @BeanMapping(ignoreByDefault = true)
@@ -79,9 +79,9 @@ public interface WorkspaceMapper {
     @Mapping(target = "currentSprint", source = "workspace.currentSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "prevSprint", source = "workspace.prevSprint", qualifiedByName = "toResponse"),
     @Mapping(target = "nextSprint", source = "workspace.nextSprint", qualifiedByName = "toResponse"),
-    @Mapping(target = "start", source = "workspace.start"),
-    @Mapping(target = "end", source = "workspace.end"),
-    @Mapping(target = "createdAt", source = "workspace.dtCreated"),
+    @Mapping(target = "start", source = "workspace.start", qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "end", source = "workspace.end", qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "createdAt", source = "workspace.dtCreated", qualifiedByName = "instantToLocalDateTime"),
     @Mapping(target = "course", source = "workspace.course", qualifiedByName = "toResponse"),
     @Mapping(target = "prerequisiteCourse", source = "userCourses"),
 

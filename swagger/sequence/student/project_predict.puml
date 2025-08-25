@@ -1,0 +1,36 @@
+@startuml
+actor "Student" as SV
+participant "View\n(/manager/project/:id)" as View
+participant "Decision\nController" as Controller
+participant "Decision\nService" as Service
+participant "Python\nServer" as Python
+
+activate SV
+SV -> View : Student accesses
+activate View
+View -> Controller: GET /decision/{projectId}\n/predict
+activate Controller
+Controller -> Service: makePredict\n(projectId)
+activate Service
+   Service --> Service: collect data\nsprint
+   Service --> Service: collect data\nissues
+alt sprint < 30% total sprint
+  Service --> Controller: response not\n enough data \nto predict
+  Controller --> View: response
+  View --> SV: notify
+else
+
+  Service -> Python: POST \n/aggregate
+  activate Python
+  Python --> Python: predict
+  Python --> Service: result \npredict
+  deactivate Python
+  Service --> Controller: success
+  deactivate Service
+  Controller --> View: success
+  deactivate Controller
+  View --> SV: show success
+  deactivate View
+  deactivate SV
+end
+@enduml

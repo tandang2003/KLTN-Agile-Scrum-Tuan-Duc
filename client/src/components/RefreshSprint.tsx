@@ -58,14 +58,15 @@ const RefreshSprint = () => {
               end: toISODateString(currentSprint.end)
             })
           )
-          toast.success('Cập nhập sprint hiện tại thành công')
           return
         }
-        if (nextSprint) {
+        if (prevSprint && !currentSprint) {
           toast.info('Kết thúc môn học', {
             description: 'Tất cả mọi sprint đã kết thúc'
           })
+          return
         }
+        toast.success('Cập nhập sprint hiện tại thành công')
       })
   }
   return (

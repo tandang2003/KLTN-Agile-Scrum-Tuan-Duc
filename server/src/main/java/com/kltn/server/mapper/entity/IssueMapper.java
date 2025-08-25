@@ -18,7 +18,7 @@ import java.util.List;
     ResourceMapper.class,
     TopicMapper.class,
     AttachmentMapper.class,
-    SubTaskMapper.class })
+    SubTaskMapper.class , DateMapper.class})
 public interface IssueMapper {
 
   @Mappings({ @Mapping(target = "issue", source = "relation.issue", qualifiedByName = "toIssueResponseSimple"),
@@ -96,8 +96,8 @@ public interface IssueMapper {
       @Mapping(target = "subtasks", source = "issueMongo.subtasks", qualifiedByName = "toListResponse"),
       @Mapping(target = "resources", source = "task.resources", qualifiedByName = "toListResponse"),
       @Mapping(target = "complexOfDescription", source = "task.complexOfDescription"),
-      @Mapping(target = "dtStart", source = "task.dtStart"),
-      @Mapping(target = "dtEnd", source = "task.dtEnd"),
+      @Mapping(target = "dtStart", source = "task.dtStart", qualifiedByName = "instantToLocalDateTime"),
+      @Mapping(target = "dtEnd", source = "task.dtEnd", qualifiedByName = "instantToLocalDateTime"),
       @Mapping(target = "relations", source = "task.affectTo", qualifiedByName = "toListIssueRelationResponse"),
       @Mapping(target = "leader", source = "task.createdBy"),
 
@@ -116,8 +116,8 @@ public interface IssueMapper {
       @Mapping(target = "subtasks", source = "snapshot.subtasks", qualifiedByName = "toListResponse"),
       @Mapping(target = "resources", source = "snapshot.resources", qualifiedByName = "toListResponse"),
       @Mapping(target = "complexOfDescription", source = "snapshot.complexOfDescription"),
-      @Mapping(target = "dtStart", source = "snapshot.dtStart"),
-      @Mapping(target = "dtEnd", source = "snapshot.dtEnd"), })
+      @Mapping(target = "dtStart", source = "snapshot.dtStart", qualifiedByName = "instantToLocalDateTime"),
+      @Mapping(target = "dtEnd", source = "snapshot.dtEnd", qualifiedByName = "instantToLocalDateTime"), })
   @BeanMapping(ignoreByDefault = true)
   IssueDetailResponse toIssueDetailResponseFromSnapshot(IssueSnapshot snapshot);
 

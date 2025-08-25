@@ -50,13 +50,14 @@ public class DecisionService {
   }
 
   @Transactional
-  public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean isPredict, boolean checkPrePredict) {
+  public ApiResponse<Boolean> makePredict(String projectId, String sprintId, boolean isPredict,
+                                          boolean checkPrePredict) {
     Project project = projectService.getProjectById(projectId);
     Sprint sprint = sprintService.getSprintById(sprintId);
 
     int duration = Math.toIntExact(ChronoUnit.DAYS.between(sprint.getDtStart(), sprint.getDtEnd()));
     int durationSpend = Math.toIntExact(ChronoUnit.DAYS.between(sprint.getDtStart(), ClockSimulator.now()));
-    boolean timeMade = duration * 0.3 < durationSpend;
+    boolean timeMade = duration * 0.4 > durationSpend;
     // Kiểm tra các issue có thỏa mãn để đưa vào mô hình
     if (checkPrePredict) {
       var responsePrePredictChecking = checkPrePredict(project, sprint);
@@ -92,7 +93,7 @@ public class DecisionService {
         .build());
       int result = done >= Math.round(total * committedPhase) ? 0 : -1;
       // Lưu kết quả đa dự đoán vào database
-      if (!isPredict) {
+      if (isPredict) {
         projectSprint.setPredictedResult(-1);
         // Lưu thời gian dự đoán
         projectSprint.setDtLastPredicted(ClockSimulator.now());
@@ -136,14 +137,62 @@ public class DecisionService {
     iterationModelBuilder.issueModelList(issueModels);
     IterationModel iterationModel = iterationModelBuilder.build();
 
+    if (issueModels.isEmpty()) return ApiResponse.<Boolean>builder()
+      .code(400)
+      .message("Không thể tiến hành dự đoán vì không có issue nào trong sprint")
+      .data(false)
+      .build();
+    List<Issue> issues = issueService.getIssuesBySprintId(project.getId(), sprint.getId());
+    int numTodo = Math.toIntExact(issues.stream().filter(i -> i.getStatus().equals(IssueStatus.TODO)).count());
+    int numDone = Math.toIntExact(issues.stream().filter(i -> i.getStatus().equals(IssueStatus.DONE)).count());
+
+    if (timeMade) {
+      if (numTodo > 0.3 * issues.size() || numDone <= 0.3 * issues.size()) {
+        ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+          .sprintId(sprint.getId())
+          .projectId(project.getId())
+          .build());
+
+        projectSprint.setPredictedResult(-1);
+        // Lưu thời gian dự đoán
+        projectSprint.setDtLastPredicted(ClockSimulator.now());
+
+        projectSprintService.save(projectSprint);
+
+        return ApiResponse.<Boolean>builder()
+          .code(200)
+//          .message("Không thể tiến hành dự đoán vì không có issue nào trong sprint")
+          .data(false)
+          .build();
+      }
+
+    } else if (numTodo > 0.2 * issues.size() || numDone <= 0.5 * issues.size()) {
+      ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+        .sprintId(sprint.getId())
+        .projectId(project.getId())
+        .build());
+
+      projectSprint.setPredictedResultSecond(-1);
+      // Lưu thời gian dự đoán
+      projectSprint.setDtLastPredictedSecond(ClockSimulator.now());
+
+      projectSprintService.save(projectSprint);
+      return ApiResponse.<Boolean>builder()
+        .code(200)
+//          .message("Không thể tiến hành dự đoán vì không có issue nào trong sprint")
+        .data(false)
+        .build();
+    }
+//    if(timeMade){
+
+//    }
     // Gọi api qua python server để yêu cầu chạy mô hình
-    int r = sendToPython(iterationModel);
-    ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
+    int r = sendToPython(iterationModel);    ProjectSprint projectSprint = projectSprintService.getProjectSprintById(ProjectSprintId.builder()
       .sprintId(sprint.getId())
       .projectId(project.getId())
       .build());
 
-    if (!isPredict) {
+    if (  !isPredict) {
       projectSprint.setPredictedResult(r);
       // Lưu thời gian dự đoán
       projectSprint.setDtLastPredicted(ClockSimulator.now());
@@ -248,8 +297,7 @@ public class DecisionService {
         .numOfChangeOfDescription(issue.getNumChangeOfDescription())
         .complexityOfDescription(issue.getComplexOfDescription())
         .complatibleOfAssignee(issueService.calculateCompatibleOfAssignee(issue))
-        .build()
-        ;
+        .build();
       issueModels.add(issueModel);
     }
     return issueModels;
@@ -282,7 +330,8 @@ public class DecisionService {
     List<ProjectSprint> projectSprints = projectSprintService.getProjectSprintByProjectId(projectId);
     for (ProjectSprint projectSprint : projectSprints) {
       Sprint sprint = projectSprint.getSprint();
-      if (!now.isAfter(sprint.getDtEnd())) continue;
+      if (!now.isAfter(sprint.getDtEnd()))
+        continue;
       Project project = projectSprint.getProject();
 
       String sprintId = sprint.getId();
@@ -297,7 +346,8 @@ public class DecisionService {
       iterationModelBuilder.numOfIssueRemoved(issueService.getNumberOfIssuesRemoved(project, sprint));
       iterationModelBuilder.numOfIssueTodo(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
       iterationModelBuilder.numOfIssueInProgress(
-        issueService.getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
+        issueService.getNumberOfIssuesByStatuses(project, sprint,
+          List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
       iterationModelBuilder.numOfIssueDone(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
       iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
       // Thực hiện lấy dữ liệu issue của sprint để đưa vào mô hình dự đoán
@@ -308,7 +358,6 @@ public class DecisionService {
     }
 
     if (iterations.size() < projectSprints.size() * 0.3) {
-//      return ApiResponse.<Boolean>builder().data().build();
       return ApiResponse.<Boolean>builder()
         .code(400)
         .message("Chưa đủ thông tin để thực hiện dự đoán ")
@@ -322,12 +371,11 @@ public class DecisionService {
 
     HttpEntity<List<IterationModel>> request = new HttpEntity<>(iterations, headers);
 
-    ResponseEntity<Integer[]> response = restTemplate.postForEntity(pythonServer+"/project", request, Integer[].class);
+    ResponseEntity<Integer[]> response = restTemplate.postForEntity(pythonServer + "/project", request,
+      Integer[].class);
     System.out.println("Python Response: ");
     assert response.getBody() != null;
-//    return response.getBody()[0];
     return ApiResponse.<Boolean>builder().data(response.getBody()[0] == 1).build();
-
 
   }
 }

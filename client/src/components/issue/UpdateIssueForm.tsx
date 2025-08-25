@@ -37,6 +37,7 @@ type UpdateIssueFormProps = {
 const UpdateIssueForm = ({ data }: UpdateIssueFormProps) => {
   const message = messages.component.issue
   const { user } = useAuth()
+
   const isLeader = user?.uniId === data.leader
   const form = useForm<UpdateIssueType>({
     resolver: zodResolver(UpdateIssueSchema),

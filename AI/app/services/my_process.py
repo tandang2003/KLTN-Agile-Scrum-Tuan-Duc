@@ -98,6 +98,9 @@ class My_Process():
     data = data.drop(columns=["sprint_id"])
     data.columns = data.columns.astype(str)
     # print(data.columns)
+
+    # print(self.kmeans.predict(data))
+    # print(self.kmeans.predict(data))
     y_pred = self.model.predict(data)
     # print(y_pred)
     return y_pred.tolist()

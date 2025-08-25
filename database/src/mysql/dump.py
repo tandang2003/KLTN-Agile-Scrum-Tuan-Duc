@@ -2,7 +2,7 @@ import subprocess
 from src.config.env_config import MYSQL_CONFIG, FOLDER_DATA_MYSQL
 from datetime import datetime
 from pathlib import Path
-
+import sys
 # Output files
 schema_file = "schema.sql"
 data_file = "data.sql"
@@ -36,9 +36,14 @@ def dump_mysql (schema_file: Path, data_file: Path):
 
 
 def main():
+    if len(sys.argv) != 2:
+          print("❌ Usage: python dump.py <timestamp>")
+          sys.exit(1)
+
+    postfix = sys.argv[1]
     # Create timestamp folder name
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-    backup_dir = FOLDER_DATA_MYSQL / timestamp
+    backup_dir = Path(FOLDER_DATA_MYSQL) / f"{timestamp}_{postfix}"
     backup_dir.mkdir(parents=True, exist_ok=True)
 
     schema_file = backup_dir / "schema.sql"

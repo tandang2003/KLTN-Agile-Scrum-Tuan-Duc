@@ -10,7 +10,8 @@ import org.mapstruct.*;
 
 import java.util.Map;
 
-@Mapper(componentModel = "spring")
+
+@Mapper(componentModel = "spring", uses = {DateMapper.class})
 public interface SprintMapper {
   @Mappings({
     @Mapping(target = "title", source = "title"),
@@ -20,7 +21,6 @@ public interface SprintMapper {
     @Mapping(target = "storyPoint", source = "storyPoint"),
     @Mapping(target = "dtPredict", source = "predict"),
     @Mapping(target = "dtPredictSecond", source = "predictSecond"),
-    // @Mapping(target = "position", source = "position")
   })
   @BeanMapping(ignoreByDefault = true)
   Sprint toSprint(SprintCreationRequest sprintCreationRequest);
@@ -29,12 +29,11 @@ public interface SprintMapper {
     @Mapping(target = "title", source = "title"),
     @Mapping(target = "id", source = "id"),
     @Mapping(target = "description", source = "description"),
-    @Mapping(target = "storyPoint", source = "storyPoint"),
-    @Mapping(target = "predict", source = "dtPredict"),
-    @Mapping(target = "predictSecond", source = "dtPredictSecond"),
-    @Mapping(target = "start", source = "dtStart"),
-    @Mapping(target = "end", source = "dtEnd"),
-    // @Mapping(target = "position", source = "position")
+    @Mapping(target = "storyPoint", source = "storyPoint" ),
+    @Mapping(target = "predict", source = "dtPredict",  qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "predictSecond", source = "dtPredictSecond",  qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "start", source = "dtStart",  qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "end", source = "dtEnd",  qualifiedByName = "instantToLocalDateTime"),
   })
   @BeanMapping(ignoreByDefault = true)
   @Named("toResponse")
@@ -44,8 +43,8 @@ public interface SprintMapper {
     @Mapping(target = "title", source = "projectSprint.sprint.title"),
     @Mapping(target = "id", source = "projectSprint.sprint.id"),
     @Mapping(target = "storyPoint", source = "projectSprint.sprint.storyPoint"),
-    @Mapping(target = "start", source = "projectSprint.sprint.dtStart"),
-    @Mapping(target = "end", source = "projectSprint.sprint.dtEnd"),
+    @Mapping(target = "start", source = "projectSprint.sprint.dtStart",  qualifiedByName = "instantToLocalDateTime"),
+    @Mapping(target = "end", source = "projectSprint.sprint.dtEnd",  qualifiedByName = "instantToLocalDateTime"),
   })
   @BeanMapping(ignoreByDefault = true)
   SprintResponse toSprintStudentUpdateResponse(ProjectSprint projectSprint);
