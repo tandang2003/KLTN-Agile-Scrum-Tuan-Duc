@@ -275,4 +275,59 @@ public class DecisionService {
     assert response.getBody() != null;
     return response.getBody()[0];
   }
+
+  public ApiResponse<Boolean> makePredict(String projectId) {
+    List<IterationModel> iterations = new ArrayList<>();
+    Instant now = ClockSimulator.now();
+    List<ProjectSprint> projectSprints = projectSprintService.getProjectSprintByProjectId(projectId);
+    for (ProjectSprint projectSprint : projectSprints) {
+      Sprint sprint = projectSprint.getSprint();
+      if (!now.isAfter(sprint.getDtEnd())) continue;
+      Project project = projectSprint.getProject();
+
+      String sprintId = sprint.getId();
+      IterationModel.IterationModelBuilder iterationModelBuilder = IterationModel.builder();
+      iterationModelBuilder.sprint_id(sprintId);
+      iterationModelBuilder.course_name(project.getWorkspace().getCourse().getName());
+      iterationModelBuilder.timeMade(true);
+      iterationModelBuilder.storyPoint(sprint.getStoryPoint());
+      iterationModelBuilder.sprintDuration(calculateSprintDuration(sprint));
+      iterationModelBuilder.numOfIssueAtStart(issueService.getNumberOfIssuesAtStart(project, sprint));
+      iterationModelBuilder.numOfIssueAdded(issueService.getNumberOfIssuesAdded(project, sprint));
+      iterationModelBuilder.numOfIssueRemoved(issueService.getNumberOfIssuesRemoved(project, sprint));
+      iterationModelBuilder.numOfIssueTodo(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.TODO));
+      iterationModelBuilder.numOfIssueInProgress(
+        issueService.getNumberOfIssuesByStatuses(project, sprint, List.of(IssueStatus.INPROCESS, IssueStatus.REVIEW)));
+      iterationModelBuilder.numOfIssueDone(issueService.getNumberOfIssuesByStatus(project, sprint, IssueStatus.DONE));
+      iterationModelBuilder.teamSize(issueService.getNumberOfMembersInSprint(project, sprint));
+      // Thực hiện lấy dữ liệu issue của sprint để đưa vào mô hình dự đoán
+      List<IssueModel> issueModels = getIssuesInSprint(project, sprint);
+      iterationModelBuilder.issueModelList(issueModels);
+      IterationModel iterationModel = iterationModelBuilder.build();
+      iterations.add(iterationModel);
+    }
+
+    if (iterations.size() < projectSprints.size() * 0.3) {
+//      return ApiResponse.<Boolean>builder().data().build();
+      return ApiResponse.<Boolean>builder()
+        .code(400)
+        .message("Chưa đủ thông tin để thực hiện dự đoán ")
+        .data(false)
+        .build();
+    }
+    RestTemplate restTemplate = new RestTemplate();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    HttpEntity<List<IterationModel>> request = new HttpEntity<>(iterations, headers);
+
+    ResponseEntity<Integer[]> response = restTemplate.postForEntity(pythonServer+"/project", request, Integer[].class);
+    System.out.println("Python Response: ");
+    assert response.getBody() != null;
+//    return response.getBody()[0];
+    return ApiResponse.<Boolean>builder().data(response.getBody()[0] == 1).build();
+
+
+  }
 }

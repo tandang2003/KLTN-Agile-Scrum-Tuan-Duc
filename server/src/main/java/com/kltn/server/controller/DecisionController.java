@@ -103,14 +103,17 @@ public class DecisionController {
     this.issueService = issueService;
   }
 
-//  @GetMapping("{projectId}/{sprintId}/predict")
-//  public ResponseEntity<ApiResponse<Boolean>> makePredict(
-//      @PathVariable String projectId, @PathVariable String sprintId) {
-//    var response = decisionService.makePredict(projectId, sprintId, true);
-//
-//    // Placeholder for decision logic
-//    return ResponseEntity.ok(response);
-//  }
+  @GetMapping("{projectId}/predict")
+  public ResponseEntity<ApiResponse<Boolean>> makePredict(
+      @PathVariable String projectId) {
+    var response = decisionService.makePredict(projectId);
+
+    // Placeholder for decision logic
+    return ResponseEntity.ok(response);
+  }
+
+
+
 
     @GetMapping("store-data")
   public ResponseEntity<ApiResponse<Boolean>> storeData(@RequestParam String stage, @RequestParam String workspaceId) {
