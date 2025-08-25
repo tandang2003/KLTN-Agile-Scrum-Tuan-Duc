@@ -34,7 +34,7 @@ model = joblib.load("models/random_forest_model_30.joblib")
 class Project_Process():
 
   def __init__(self, under=0.1, sprint_data=None, issue_data=None):
-    self.under = under
+    self.under = 0.08843052496134951
     self.sprint_data = sprint_data
     self.issue_data = issue_data
 
