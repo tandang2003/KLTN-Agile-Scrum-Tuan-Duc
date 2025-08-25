@@ -34,7 +34,7 @@ public class SchedulerConfig {
   public TaskScheduler predictSecondThreadScheduler() {
     ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
     scheduler.setPoolSize(10);
-    scheduler.setThreadNamePrefix("DynamicScheduler-");
+    scheduler.setThreadNamePrefix("DynamicSchedulerSecond-");
     scheduler.initialize();
     return scheduler;
   }

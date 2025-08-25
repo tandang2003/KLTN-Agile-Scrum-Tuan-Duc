@@ -11,6 +11,7 @@ import com.kltn.server.model.entity.Course;
 import com.kltn.server.repository.entity.SprintRepository;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,10 +24,10 @@ public record WorkspaceResponse(
     @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse currentSprint,
     @JsonInclude(JsonInclude.Include.ALWAYS) SprintResponse nextSprint,
     UserResponse owner,
-    Instant start,
-    Instant end,
+    LocalDateTime start,
+    LocalDateTime end,
     List<ProjectResponse> projects,
-    Instant createdAt,
+    LocalDateTime createdAt,
     CourseResponse course,
     List<UserCourseResponse> prerequisiteCourse
 
@@ -43,11 +44,11 @@ public record WorkspaceResponse(
     SprintResponse prevSprint;
     SprintResponse currentSprint;
     SprintResponse nextSprint;
-    Instant start;
-    Instant end;
+    LocalDateTime start;
+    LocalDateTime end;
     UserResponse owner;
     List<ProjectResponse> projects;
-    Instant createdAt;
+    LocalDateTime createdAt;
     CourseResponse course;
     List<UserCourseResponse> prerequisiteCourse;
 
@@ -56,17 +57,17 @@ public record WorkspaceResponse(
       return this;
     }
 
-    public WorkspaceResponseBuilder start(Instant start) {
+    public WorkspaceResponseBuilder start(LocalDateTime start) {
       this.start = start;
       return this;
     }
 
-    public WorkspaceResponseBuilder createdAt(Instant createdAt) {
+    public WorkspaceResponseBuilder createdAt(LocalDateTime createdAt) {
       this.createdAt = createdAt;
       return this;
     }
 
-    public WorkspaceResponseBuilder end(Instant end) {
+    public WorkspaceResponseBuilder end(LocalDateTime end) {
       this.end = end;
       return this;
     }

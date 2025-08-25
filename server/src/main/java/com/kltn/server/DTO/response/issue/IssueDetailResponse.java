@@ -11,6 +11,7 @@ import com.kltn.server.model.type.task.IssueStatus;
 import com.kltn.server.model.type.task.IssueTag;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class IssueDetailResponse {
@@ -28,9 +29,9 @@ public class IssueDetailResponse {
   private List<TopicResponse> topics;
   private List<SubTaskResponse> subtasks;
   private int complexOfDescription;
-  private Instant dtStart;
-  private Instant dtEnd;
-  private Instant dtPlanning;
+  private LocalDateTime dtStart;
+  private LocalDateTime dtEnd;
+  private LocalDateTime dtPlanning;
   private List<IssueRelationResponse> relations;
   private String leader;
 
@@ -53,9 +54,9 @@ public class IssueDetailResponse {
     private List<TopicResponse> topics;
     private List<SubTaskResponse> subtasks;
     private int complexOfDescription;
-    private Instant dtStart;
-    private Instant dtEnd;
-    private Instant dtPlanning;
+    private LocalDateTime dtStart;
+    private LocalDateTime dtEnd;
+    private LocalDateTime dtPlanning;
     private List<IssueRelationResponse> relations;
     private String leader;
 
@@ -129,17 +130,17 @@ public class IssueDetailResponse {
       return this;
     }
 
-    public IssueDetailResponseBuilder dtStart(Instant dtStart) {
+    public IssueDetailResponseBuilder dtStart(LocalDateTime dtStart) {
       this.dtStart = dtStart;
       return this;
     }
 
-    public IssueDetailResponseBuilder dtEnd(Instant dtEnd) {
+    public IssueDetailResponseBuilder dtEnd(LocalDateTime dtEnd) {
       this.dtEnd = dtEnd;
       return this;
     }
 
-    public IssueDetailResponseBuilder dtPlanning(Instant dtPlanning) {
+    public IssueDetailResponseBuilder dtPlanning(LocalDateTime dtPlanning) {
       this.dtPlanning = dtPlanning;
       return this;
     }
@@ -297,27 +298,27 @@ public class IssueDetailResponse {
     this.subtasks = subtasks;
   }
 
-  public Instant getDtStart() {
+  public LocalDateTime getDtStart() {
     return dtStart;
   }
 
-  public void setDtStart(Instant dtStart) {
+  public void setDtStart(LocalDateTime dtStart) {
     this.dtStart = dtStart;
   }
 
-  public Instant getDtEnd() {
+  public LocalDateTime getDtEnd() {
     return dtEnd;
   }
 
-  public void setDtEnd(Instant dtEnd) {
+  public void setDtEnd(LocalDateTime dtEnd) {
     this.dtEnd = dtEnd;
   }
 
-  public Instant getDtPlanning() {
+  public LocalDateTime getDtPlanning() {
     return dtPlanning;
   }
 
-  public void setDtPlanning(Instant dtPlanning) {
+  public void setDtPlanning(LocalDateTime dtPlanning) {
     this.dtPlanning = dtPlanning;
   }
 

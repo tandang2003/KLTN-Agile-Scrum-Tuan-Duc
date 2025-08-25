@@ -1,7 +1,7 @@
 from src.connection.mysql import get_mysql_connection
 from src.connection.mongo import get_mongo_client
 
-workspace_id = '3d4c23db-a9f0-41d2-aa6e-5254b7f48277'
+workspace_id = 'affedb6b-9a2b-4802-a48a-28a2db87aff7'
 project_ids = []
 issue_ids = []
 

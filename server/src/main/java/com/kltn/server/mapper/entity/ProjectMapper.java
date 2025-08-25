@@ -39,7 +39,6 @@ public interface ProjectMapper {
       @Mapping(target = "prevSprint", source = "project.prevSprint", qualifiedByName = "toResponse"),
       @Mapping(target = "nextSprint", source = "project.nextSprint", qualifiedByName = "toResponse"),
       @Mapping(target = "leader", source = "project.createdBy"),
-
   })
   ProjectResponse toProjectResponseById(Project project, List<Topic> topics);
 

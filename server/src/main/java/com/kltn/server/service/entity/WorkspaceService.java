@@ -325,7 +325,7 @@ public class WorkspaceService {
     List<Sprint> sprints = workspace.getSprints();
     Instant now = ClockSimulator.now().truncatedTo(ChronoUnit.DAYS);
     Sprint previous = null, next = null, current = null;
-    long daysPrev = 0, daysNext = Long.MAX_VALUE;
+    long daysPrev = Long.MAX_VALUE, daysNext = Long.MAX_VALUE;
 
     if (sprints != null && !sprints.isEmpty()) {
       // Sprint nextSprint = sprints.getFirst();
@@ -333,13 +333,13 @@ public class WorkspaceService {
         Instant start = sprint.getDtStart().truncatedTo(ChronoUnit.DAYS);
         Instant end = sprint.getDtEnd().truncatedTo(ChronoUnit.DAYS);
         // previous sprint section
-        if (end.isBefore(now) && daysPrev > Math.abs(end.until(now, ChronoUnit.DAYS))) {
+        if (end.isBefore(now) && daysPrev < Math.abs(end.until(now, ChronoUnit.DAYS))) {
           previous = sprint;
           daysPrev = Math.abs(end.until(now, ChronoUnit.DAYS));
           continue;
         }
         // next sprint section
-        if (start.isAfter(now) && daysNext > Math.abs(start.until(now, ChronoUnit.DAYS))) {
+        if (start.isAfter(now) && daysNext < Math.abs(start.until(now, ChronoUnit.DAYS))) {
           next = sprint;
           daysNext = Math.abs(start.until(now, ChronoUnit.DAYS));
           continue;

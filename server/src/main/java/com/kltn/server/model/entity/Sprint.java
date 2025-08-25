@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "sprints")
 public class Sprint extends BaseEntity {
   @Column(name = "title",
-          columnDefinition = "LONGTEXT")
+    columnDefinition = "LONGTEXT")
   private String title;
   @Column(name = "description",
     columnDefinition = "LONGTEXT")
@@ -96,7 +96,9 @@ public class Sprint extends BaseEntity {
     public SprintEntityBuilder dtPredict(Instant dtPredict) {
       this.dtPredict = dtPredict;
       return this;
-    } public SprintEntityBuilder dtPredictSecond(Instant dtPredictSecond) {
+    }
+
+    public SprintEntityBuilder dtPredictSecond(Instant dtPredictSecond) {
       this.dtPredictSecond = dtPredictSecond;
       return this;
     }
@@ -147,8 +149,8 @@ public class Sprint extends BaseEntity {
   @Transient
   public List<Project> getProjects() {
     return projectSprints.stream()
-                         .map(ProjectSprint::getProject)
-                         .toList();
+      .map(ProjectSprint::getProject)
+      .toList();
   }
 
   public String getTitle() {

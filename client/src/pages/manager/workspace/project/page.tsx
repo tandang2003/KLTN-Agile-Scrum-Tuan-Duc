@@ -19,6 +19,7 @@ import { ProjectDetailResponse } from '@/types/project.type'
 import { ProjectParams } from '@/types/route.type'
 import { useEffect } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
+import SprintPredict from '@/components/SprintPredict'
 
 const ProjectPage = () => {
   const { projectId } = useParams<ProjectParams>()
@@ -88,7 +89,6 @@ const ProjectPage = () => {
                 {projectId && sprint?.id && (
                   <SprintStatus projectId={projectId} sprintId={sprint?.id} />
                 )}
-                <ProjectPredict data={data} />
                 <RefreshSprint />
               </div>
             </div>

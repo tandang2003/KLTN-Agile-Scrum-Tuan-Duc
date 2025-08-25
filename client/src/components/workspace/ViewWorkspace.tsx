@@ -1,5 +1,8 @@
 import HtmlViewer from '@/components/HtmlViewer'
 import Icon from '@/components/Icon'
+import ProjectPredict, {
+  ProjectPredictInWorkspace
+} from '@/components/ProjectPredict'
 import ToolTip from '@/components/Tooltip'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -12,8 +15,11 @@ import {
   TimelineTitle
 } from '@/components/ui/timeline'
 import messages from '@/constant/message.const'
+import { useGetProjectQuery } from '@/feature/project/project.api'
 import { useGetListSprintQuery } from '@/feature/sprint/sprint.api'
+import useAppId from '@/hooks/use-app-id'
 import { cn, formatDate } from '@/lib/utils'
+import { Id } from '@/types/other.type'
 import { WorkspaceDetailResponse } from '@/types/workspace.type'
 import { isAfter } from 'date-fns'
 
@@ -22,6 +28,13 @@ type ViewWorkspaceProps = {
 }
 
 const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
+  const { projectId } = useAppId()
+  const { isFetching, data: projectDetailData } = useGetProjectQuery(
+    projectId as Id,
+    {
+      skip: !projectId
+    }
+  )
   const { currentSprint } = data
   const { data: sprints } = useGetListSprintQuery(data.id, {
     skip: !data.id
@@ -86,7 +99,10 @@ const ViewWorkspace = ({ data }: ViewWorkspaceProps) => {
         <h3 className='h3'>
           {messages.component.viewWorkspace.timeline.title}
         </h3>
-        <div>
+        {projectDetailData && (
+          <ProjectPredictInWorkspace data={projectDetailData} />
+        )}
+        <div className='mt-4'>
           <Timeline orientation='vertical' className='min-h-40'>
             {sprints?.map((item, index) => {
               return (

@@ -28,8 +28,10 @@ freeze:
 dump-mysql:
 	@echo "Dumping MySQL database..."
 	@echo "Make sure to set the environment variables MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, and MYSQL_DATABASE."
-	@echo "Running the MySQL dump script..."
-	. $(VENV) && $(PYTHON) -m src.mysql.dump
+	@read -p "Enter prefix (or leave blank): " ts; \
+	 echo "Running the MySQL dump script..."; \
+	 . $(VENV) && $(PYTHON) -m src.mysql.dump $$ts
+
 
 restore-mysql:
 	@db_name="$(DB_NAME)"; \
@@ -53,8 +55,9 @@ restore-mysql-into:
 dump-mongo:
 	@echo "Dumping MongoDB database..."
 	@echo "Make sure to set the environment variables MONGO_URI and MONGO_DB."
-	@echo "Running the MongoDB dump script..."
-	. $(VENV) && $(PYTHON) -m src.mongo.dump
+	@read -p "Enter prefix (or type ''): " ts; \
+	 echo "Running the MongoDB dump script..."; \
+	 . $(VENV) && $(PYTHON) -m src.mongo.dump $$ts
 
 restore-mongo:
 	@db_name="$(DB_NAME)"; \

@@ -95,9 +95,14 @@ const SprintTemplateCard = ({ data }: SprintTemplateCardProps) => {
         <span className='ml-auto flex items-center gap-4'>
           <span>{message.point}: </span>
           <Badge className='w-[50px]'>{data.storyPoint}</Badge>
-          <Badge>
+          <Badge className='inline-flex min-w-[120px] items-center gap-2'>
             <Icon icon={'material-symbols:online-prediction'} />
             {formatDate(data.predict)}
+          </Badge>
+          <Badge className='inline-flex min-w-[120px] items-center justify-between gap-2'>
+            <Icon icon={'material-symbols:online-prediction'} />
+
+            {formatDate(data.predictSecond)}
           </Badge>
           <Badge className='basis-[200px]' statusSprint={getStatusSprint(data)}>
             <Icon icon={'mingcute:time-duration-fill'} />

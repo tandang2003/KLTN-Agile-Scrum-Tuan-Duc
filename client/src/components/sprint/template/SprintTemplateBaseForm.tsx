@@ -63,7 +63,7 @@ const SprintTemplateBaseForm = ({
     defaultValues: initialValues ?? {
       title: '',
       predict: addDays(now, 4),
-      predictSecond: addDays(now, 4),
+      predictSecond: addDays(now, 5),
       storyPoint: 0,
       description: '',
       start: addDays(now, 2),

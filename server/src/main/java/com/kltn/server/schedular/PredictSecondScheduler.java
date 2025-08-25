@@ -81,7 +81,7 @@ public class PredictSecondScheduler {
   public synchronized void cancelSprintTask(String key) {
     ScheduledFuture<?> future = tasks.get(key);
     if (future != null && !future.isCancelled()) {
-      future.cancel(true);
+      future.cancel(false);
       tasks.remove(key);
       taskEndTimes.remove(key);
     }
@@ -93,10 +93,10 @@ public class PredictSecondScheduler {
 
     Map<String, LocalDateTime> savedTasks = new HashMap<>(taskEndTimes);
     for (Map.Entry<String, LocalDateTime> entry : savedTasks.entrySet()) {
-      cancelSprintTask(entry.getKey());
       String[] ids = entry.getKey()
         .split(":");
       String sprintId = ids[0];
+      cancelSprintTask(sprintId);
       scheduleSprint(sprintId, entry.getValue());
     }
   }

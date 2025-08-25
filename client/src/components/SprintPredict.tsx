@@ -23,12 +23,8 @@ type SprintPredictProps = {
     id: Id
     name: string
   }
-  sprint?: {
-    id: Id
-    name: string
-  }
 }
-const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
+const SprintPredict = ({ project }: SprintPredictProps) => {
   const message = messages.component.sprintPredict
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -38,12 +34,12 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
   }, [isOpen])
 
   const handlePredict = async () => {
-    if (!project || !sprint) return
+    if (!project) return
     setLoading(true)
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
-      const res = await aggregateService.createPredict(project.id, sprint.id)
+      const res = await aggregateService.createPredict(project.id)
       if (res.code === 200) {
         setMessagePredict(message.toast.success)
         toast.success(message.toast.success)
@@ -74,9 +70,7 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
         </DialogHeader>
 
         <div>
-          {!project || !sprint ? (
-            <p className='text-muted-foreground text-sm'>No Sprint</p>
-          ) : loading ? (
+          {!project || loading ? (
             <Loading />
           ) : (
             <>
@@ -86,12 +80,7 @@ const SprintPredict = ({ project, sprint }: SprintPredictProps) => {
                   {project.id}
                 </ToolTip>
               </div>
-              <div className='mt-3 flex gap-2'>
-                <strong>Sprint dự đoán:</strong>
-                <ToolTip trigger={<span>{sprint.name}</span>}>
-                  {sprint.id}
-                </ToolTip>
-              </div>
+
               <div className='mt-3 flex gap-2'>
                 <strong>Thông báo:</strong>
                 <span>{messagePredict}</span>

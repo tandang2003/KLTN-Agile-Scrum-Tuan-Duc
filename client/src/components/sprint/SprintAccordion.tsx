@@ -124,13 +124,13 @@ const SprintAccordion = ({ sprints }: SprintAccordionProps) => {
                     <Badge
                       sprintPredictResult={
                         item.predictResult !== -2
-                          ? item.predictResult
-                          : item.predictResultSecond
+                          ? item.predictResultSecond
+                          : item.predictResult
                       }
                     >
                       {item.predictResult !== -2
-                        ? getSprintResultDisplayName(item.predictResult)
-                        : getSprintResultDisplayName(item.predictResultSecond)}
+                        ? getSprintResultDisplayName(item.predictResultSecond)
+                        : getSprintResultDisplayName(item.predictResult)}
                     </Badge>
                   </HoverCardTrigger>
                   <HoverCardContent className='w-fit min-w-[400px]'>

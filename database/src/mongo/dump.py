@@ -2,11 +2,12 @@ import subprocess
 from src.config.env_config import MONGODB_CONFIG, FOLDER_DATA_MONGO
 from datetime import datetime
 from pathlib import Path
+import sys
 
-def backup_mongodb():
+def backup_mongodb(postfix: str = ""):
     # Timestamped backup folder
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-    backup_dir = Path(FOLDER_DATA_MONGO) / timestamp
+    backup_dir = Path(FOLDER_DATA_MONGO) / (timestamp + "_" + postfix)
     backup_dir.mkdir(parents=True, exist_ok=True)
 
     # Construct mongodump command
@@ -29,4 +30,9 @@ def backup_mongodb():
         print("❌ Backup failed:", e)
 
 if __name__ == "__main__":
-    backup_mongodb()
+    if len(sys.argv) != 2:
+        print("❌ Usage: python dump.py <timestamp>")
+        sys.exit(1)
+
+    postfix = sys.argv[1]
+    backup_mongodb(postfix)

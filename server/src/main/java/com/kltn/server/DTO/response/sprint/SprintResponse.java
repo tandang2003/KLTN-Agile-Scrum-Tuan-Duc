@@ -3,30 +3,31 @@ package com.kltn.server.DTO.response.sprint;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SprintResponse(String id,
                              String title,
                              String description,
                              int storyPoint,
-                             Instant predict,
-                             Instant predictSecond,
-                             Instant start,
-                             Instant end,
-                             Instant planning,
-                             Instant preview,
+                             LocalDateTime predict,
+                             LocalDateTime predictSecond,
+                             LocalDateTime start,
+                             LocalDateTime end,
+                             LocalDateTime planning,
+                             LocalDateTime preview,
                              int predictedResult) {
   public static class SprintResponseBuilder {
     private String id;
     private String title;
     private String description;
     private int storyPoint;
-    private Instant predict;
-    private Instant predictSecond;
-    private Instant dtStart;
-    private Instant dtEnd;
-    private Instant planning;
-    private Instant preview;
+    private LocalDateTime predict;
+    private LocalDateTime predictSecond;
+    private LocalDateTime dtStart;
+    private LocalDateTime dtEnd;
+    private LocalDateTime planning;
+    private LocalDateTime preview;
     private int predictedResult;
     private int predictedResultSecond;
 
@@ -50,33 +51,33 @@ public record SprintResponse(String id,
       return this;
     }
 
-    public SprintResponseBuilder predict(Instant predict) {
+    public SprintResponseBuilder predict(LocalDateTime predict) {
       this.predict = predict;
       return this;
     }
 
-    public SprintResponseBuilder predictSecond(Instant predictSecond) {
+    public SprintResponseBuilder predictSecond(LocalDateTime predictSecond) {
       this.predictSecond = predictSecond;
       return this;
     }
 
 
-    public SprintResponseBuilder start(Instant dtStart) {
+    public SprintResponseBuilder start(LocalDateTime dtStart) {
       this.dtStart = dtStart;
       return this;
     }
 
-    public SprintResponseBuilder end(Instant dtEnd) {
+    public SprintResponseBuilder end(LocalDateTime dtEnd) {
       this.dtEnd = dtEnd;
       return this;
     }
 
-    public SprintResponseBuilder planning(Instant planning) {
+    public SprintResponseBuilder planning(LocalDateTime planning) {
       this.planning = planning;
       return this;
     }
 
-    public SprintResponseBuilder preview(Instant preview) {
+    public SprintResponseBuilder preview(LocalDateTime preview) {
       this.preview = preview;
       return this;
     }
