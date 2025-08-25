@@ -12,24 +12,22 @@ import com.kltn.server.service.DecisionService;
 import com.kltn.server.service.entity.IssueService;
 import com.kltn.server.service.entity.ProjectService;
 import com.kltn.server.service.entity.SprintService;
+import com.kltn.server.service.entity.WorkspaceService;
 import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import com.kltn.server.service.entity.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.SheetsScopes;
 
 @RestController
 @RequestMapping("decision")
@@ -103,14 +101,17 @@ public class DecisionController {
     this.issueService = issueService;
   }
 
-//  @GetMapping("{projectId}/{sprintId}/predict")
-//  public ResponseEntity<ApiResponse<Boolean>> makePredict(
-//      @PathVariable String projectId, @PathVariable String sprintId) {
-//    var response = decisionService.makePredict(projectId, sprintId, true);
-//
-//    // Placeholder for decision logic
-//    return ResponseEntity.ok(response);
-//  }
+  @GetMapping("{projectId}/predict")
+  public ResponseEntity<ApiResponse<Boolean>> makePredict(
+      @PathVariable String projectId) {
+    var response = decisionService.makePredict(projectId);
+
+    // Placeholder for decision logic
+    return ResponseEntity.ok(response);
+  }
+
+
+
 
     @GetMapping("store-data")
   public ResponseEntity<ApiResponse<Boolean>> storeData(@RequestParam String stage, @RequestParam String workspaceId) {

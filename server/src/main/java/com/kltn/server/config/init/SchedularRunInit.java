@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 
 @Configuration
@@ -35,18 +36,24 @@ public class SchedularRunInit implements CommandLineRunner {
       // predictScheduler.scheduleSprintEnd(sprint.getId(),
       // sprint.getDtPredict().atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDateTime());
     });
-    List<Sprint> predictSprints = sprintRepository.findALlByDtPredictAfter(ClockSimulator.now());
+    Instant now = ClockSimulator.now();
+    List<Sprint> predictSprints = sprintRepository.findALlByDtPredictAfterOrDtPredictSecondAfter(now, now);
     predictSprints.forEach(sprint -> {
-      predictScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredict()
+     if(sprint.getDtPredict().isAfter(now))
+      predictScheduler.scheduleSprintFirst(sprint.getId(), sprint.getDtPredict()
         .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
         .toLocalDateTime());
+     else if(sprint.getDtPredictSecond().isAfter(now))
+       predictScheduler.scheduleSprintSecond(sprint.getId(), sprint.getDtPredictSecond()
+         .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+         .toLocalDateTime());
     });
 
-    List<Sprint> predictSecondSprints = sprintRepository.findALlByDtPredictSecondAfter(ClockSimulator.now());
-    predictSecondSprints.stream().forEach(sprint -> {
-      predictSecondScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredictSecond()
-        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
-        .toLocalDateTime());
-    });
+//    List<Sprint> predictSecondSprints = sprintRepository.findALlByDtPredictSecondAfter(ClockSimulator.now());
+//    predictSecondSprints.stream().forEach(sprint -> {
+//      predictSecondScheduler.scheduleSprintEnd(sprint.getId(), sprint.getDtPredictSecond()
+//        .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+//        .toLocalDateTime());
+//    });
   }
 }

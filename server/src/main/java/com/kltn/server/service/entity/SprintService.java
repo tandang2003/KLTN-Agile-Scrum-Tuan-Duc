@@ -46,13 +46,11 @@ public class SprintService {
   private ProjectSprintService projectSprintService;
   private SprintScheduler sprintScheduler;
   private SprintBoardMongoService sprintBoardMongoService;
-  @Autowired
-  private PredictSecondScheduler predictSecondScheduler;
 
   @Autowired
   public SprintService(SprintScheduler sprintScheduler,
                        ProjectSprintService projectSprintService, SprintMapper sprintMapper,
-                       SprintRepository sprintRepository, PredictScheduler predictScheduler1,
+                       SprintRepository sprintRepository,@Lazy PredictScheduler predictScheduler1,
                        SprintBoardMongoService sprintBoardMongoService, SnapshotRepository snapshotRepository) {
     this.sprintMapper = sprintMapper;
     this.sprintRepository = sprintRepository;
@@ -143,12 +141,14 @@ public class SprintService {
     if (!sprint.getDtPredict()
       .truncatedTo(ChronoUnit.DAYS)
       .equals(updateRequest.predict().truncatedTo(ChronoUnit.DAYS))) {
-      predictScheduler1.scheduleSprint(sprint.getId(), LocalDateTime.ofInstant(updateRequest.predict(), ZoneId.of("Asia/Ho_Chi_Minh")));
+      predictScheduler1.scheduleSprint(sprint.getId(),updateRequest.predict());
     }
     if (!sprint.getDtPredictSecond()
       .truncatedTo(ChronoUnit.DAYS)
       .equals(updateRequest.predictSecond().truncatedTo(ChronoUnit.DAYS))) {
-      predictSecondScheduler.scheduleSprint(sprint.getId(), LocalDateTime.ofInstant(updateRequest.predictSecond(), ZoneId.of("Asia/Ho_Chi_Minh")));
+      predictScheduler1.scheduleSprint(sprint.getId(), updateRequest.predictSecond());
+
+//      predictSecondScheduler.scheduleSprint(sprint.getId(), LocalDateTime.ofInstant(updateRequest.predictSecond(), ZoneId.of("Asia/Ho_Chi_Minh")));
     }
     sprint = sprintMapper.updateTeacherSprint(sprint, updateRequest);
     List<Sprint> sprintList = sprintRepository.findAllByWorkspaceId(sprint.getWorkspace()

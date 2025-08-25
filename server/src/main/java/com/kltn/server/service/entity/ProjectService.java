@@ -267,10 +267,20 @@ public class ProjectService {
             item.getSprint().getId(),
             item.getSprint().getTitle(),
             item.getSprint().getDescription(),
-            item.getSprint().getDtPredict(),
-            item.getSprint().getDtPredictSecond(),
-            item.getSprint().getDtStart(),
-            item.getSprint().getDtEnd(),
+            LocalDateTime.ofInstant(item.getSprint()
+                .getDtPredict(), ZoneId.systemDefault()),
+            LocalDateTime.ofInstant(item.getSprint()
+                .getDtPredictSecond(),
+                ZoneId
+                    .systemDefault()),
+          LocalDateTime.ofInstant(item.getSprint()
+              .getDtStart(),
+            ZoneId
+              .systemDefault()),
+          LocalDateTime.ofInstant(item.getSprint()
+              .getDtEnd(),
+            ZoneId
+              .systemDefault()),
             item.getSprint().getStoryPoint(),
             item.getPredictedResult(),
             item.getPredictedResultSecond()))

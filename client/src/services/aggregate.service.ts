@@ -45,9 +45,9 @@ const aggregateService = {
       ])
     })
   },
-  createPredict: async (projectId: Id, sprintId: Id) => {
+  createPredict: async (projectId: Id) => {
     const res = await httpService.get<ResponseApi<boolean>>(
-      `/decision/${projectId}/${sprintId}/predict`
+      `/decision/${projectId}/predict`
     )
     return res.data
   },

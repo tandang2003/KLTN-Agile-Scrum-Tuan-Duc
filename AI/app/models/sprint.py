@@ -1,3 +1,5 @@
+from typing import List
+
 import pandas as pd
 from pydantic import BaseModel
 
@@ -7,7 +9,7 @@ from app.dto.iteration import IterationModel
 class Sprint(BaseModel):
   sprint_id: str
   planday: int
-  story_point:int
+  story_point: int
   no_issue_starttime: int
   no_issue_added: int
   no_issue_removed: int
@@ -34,5 +36,12 @@ def map(iterator: IterationModel) -> Sprint:
 
 
 def map_to_dataframe(iterator: IterationModel) -> pd.DataFrame:
-    sprint = map(iterator)  # map to Sprint (Pydantic model)
-    return pd.DataFrame([sprint.model_dump()])
+  sprint = map(iterator)  # map to Sprint (Pydantic model)
+  return pd.DataFrame([sprint.model_dump()])
+
+
+def map_list(issues: List[IterationModel]) -> List[Sprint]:
+  result = list()
+  for i in range(0, len(issues)):
+    result.append(map(issues[i]))
+  return result
