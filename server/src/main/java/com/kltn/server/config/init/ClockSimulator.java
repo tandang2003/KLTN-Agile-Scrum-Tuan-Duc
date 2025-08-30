@@ -12,7 +12,7 @@ public class ClockSimulator {
 
   public ClockSimulator(long timeSpeech) {
     ClockSimulator.timeSpeech = timeSpeech;
-    simulatedStartTime = LocalDateTime.of(2025, 5, 19 , 0, 0)
+    simulatedStartTime = LocalDateTime.of(2025, 5, 12, 0, 0)
         .atZone(ASIA_HO_CHI_MINH)
         .toInstant();
   }
@@ -29,7 +29,7 @@ public class ClockSimulator {
     simulatedStartTime = currentSimulatedNow;
     timeSpeech = newTimeSpeech;
 
-    // Reset real time base pointC
+    // Reset real time base point
     // so elapsed time is always from the moment of speed change
     // (i.e., now becomes new base real time)
     try {

@@ -39,43 +39,7 @@ const columns: ColumnDef<ProjectColumns>[] = [
     accessorKey: 'name',
     header: name
   },
-  // {
-  //   accessorKey: 'totalEndedSprints',
-  //   header: totalEndedSprints,
-  //   size: 50,
-  //   cell: ({ row }) => {
-  //     const {
-  //       utils: { getSize }
-  //     } = useSprintOrder()
-  //     const value = row.getValue('totalEndedSprints')
-  //     return value + '/' + getSize()
-  //   }
-  // },
-  {
-    accessorKey: 'completedSprints',
-    header: completedSprints,
-    size: 50,
-    cell: ({ row }) => {
-      const {
-        utils: { getSize }
-      } = useSprintOrder()
-      const value = row.getValue('completedSprints')
-      return value + '/' + getSize()
-    }
-  },
-  {
-    accessorKey: 'isSuccess',
-    header: isSuccess,
-    size: 50,
-    cell: ({ row }) => {
-      const value: boolean = row.getValue('isSuccess')
-      return value ? (
-        <Badge className='bg-green-400'>Thành công</Badge>
-      ) : (
-        <Badge className='bg-red-400'>Không thành công</Badge>
-      )
-    }
-  },
+
   {
     accessorKey: 'createdAt',
     header: createAt,
