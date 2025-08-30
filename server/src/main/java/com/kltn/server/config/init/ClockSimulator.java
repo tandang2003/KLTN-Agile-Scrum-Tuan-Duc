@@ -29,7 +29,7 @@ public class ClockSimulator {
     simulatedStartTime = currentSimulatedNow;
     timeSpeech = newTimeSpeech;
 
-    // Reset real time base pointC
+    // Reset real time base point
     // so elapsed time is always from the moment of speed change
     // (i.e., now becomes new base real time)
     try {
