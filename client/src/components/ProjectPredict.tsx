@@ -62,14 +62,14 @@ const ProjectPredictInWorkspace = ({ data }: ProjectPredictProps) => {
       if (res.code === 400) {
         setMessagePredict({
           code: res.code,
-          message: res.message
+          message: 'có khả năng không thành công'
         })
         return
       }
       if (res.code === 200) {
         setMessagePredict({
           code: res.code,
-          message: message.toast.success
+          message: 'có khả năng thành công'
         })
       } else {
         setMessagePredict({
@@ -99,9 +99,10 @@ const ProjectPredictInWorkspace = ({ data }: ProjectPredictProps) => {
       }
     >
       <span>
-        Project hiện tại được đánh giá là{' '}
+        Dự án hiện tại được đánh giá là{' '}
         <Badge
           className={cn(
+            'text-md',
             messagePredict.code === 200 ? 'bg-green-400' : 'bg-red-400'
           )}
         >

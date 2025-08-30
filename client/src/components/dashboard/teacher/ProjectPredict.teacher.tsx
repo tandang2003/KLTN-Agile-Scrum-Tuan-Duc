@@ -5,6 +5,7 @@ import { useGetProjectPredictQuery } from '@/feature/dashboard/dashboard.api'
 import useAppId from '@/hooks/use-app-id'
 import useSprintCurrent from '@/hooks/use-sprint-current'
 import { cn, formatDate } from '@/lib/utils'
+import { useProjectDashBoard } from '@/pages/manager/workspace/[id]/dashboard/context'
 import { PageRequest } from '@/types/http.type'
 import { Id } from '@/types/other.type'
 import { useState } from 'react'
@@ -12,7 +13,7 @@ import { useState } from 'react'
 const ProjectPredict = () => {
   const { workspaceId } = useAppId()
 
-  const { sprint } = useSprintCurrent()
+  const { sprint } = useProjectDashBoard()
   const [page, setPage] = useState<PageRequest>({
     page: 0,
     size: 4
@@ -41,12 +42,16 @@ const ProjectPredict = () => {
             className: 'gap-5 mt-4',
             loading: isFetching,
             render: (item) => {
+              const predict = item.lastTimeSecond
+                ? item.predictSecond
+                : item.predict
               return (
                 <Card
+                  key={item.id}
                   className={cn(
                     'w-full max-w-sm',
-                    item.predict == -1 && 'border-2 border-red-500',
-                    item.predict == 0 && 'border-2 border-green-500'
+                    predict == -1 && 'border-2 border-red-500',
+                    predict == 0 && 'border-2 border-green-500'
                   )}
                 >
                   <CardHeader>
@@ -55,12 +60,14 @@ const ProjectPredict = () => {
                   <CardContent>
                     <div>
                       <span>
-                        Trạng thái: {getProjectPredictDisplayName(item.predict)}
+                        Trạng thái:{' '}
+                        {getProjectPredictDisplayName(item.predictSecond)}
                       </span>
                     </div>
                     <p className='pt-4 text-right text-sm text-gray-500'>
-                      {item?.lastTime && formatDate(item.lastTime)}
-                      {/* {formatDate(new Date())} */}
+                      {item?.lastTimeSecond
+                        ? formatDate(item.lastTimeSecond)
+                        : item?.lastTime && formatDate(item.lastTime)}
                     </p>
                   </CardContent>
                 </Card>

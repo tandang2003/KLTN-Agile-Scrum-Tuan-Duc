@@ -86,4 +86,8 @@ public class ProjectPredictResponse {
   public int getPredictSecond() {
     return predictSecond;
   }
+
+  public Instant getLastTimeSecond() {
+    return lastTimeSecond;
+  }
 }
